@@ -55,7 +55,7 @@ class OnBoard::Controller
     iptablesobj.get_all_info
 
     format(
-      :path => '/network/firewall',
+      :path => '/network/packet-mangling',
       :format => params[:format],
       :objects  => iptablesobj,
       :msg  => msg 
