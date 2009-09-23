@@ -7,6 +7,7 @@ class OnBoard::Controller
   get "/network/dhcp-server.:format" do
     dnsmasq = OnBoard::Network::Dnsmasq.new
     dnsmasq.parse_dhcp_conf
+    dnsmasq.parse_dhcp_leasefile
     format(
       :path     => 'network/dhcp-server',
       :format   => params[:format],
@@ -26,6 +27,7 @@ class OnBoard::Controller
     # read updated conf
     dnsmasq = OnBoard::Network::Dnsmasq.new
     dnsmasq.parse_dhcp_conf
+    dnsmasq.parse_dhcp_leasefile
     format(
       :path     => 'network/dhcp-server',
       :format   => params[:format],
