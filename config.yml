@@ -1,0 +1,14 @@
+---
+  environment: development
+  #chdir: 
+  address: 0.0.0.0
+  #user: gd
+  #group: gd
+  port: 4567
+  pid: thin.pid
+  rackup: config.ru
+  log: thin.log
+  max_conns: 1024
+  timeout: 30
+  max_persistent_conns: 512
+  daemonize: true

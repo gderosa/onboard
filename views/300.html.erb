@@ -1,0 +1,10 @@
+<% paths   = objects[:paths] %>
+<h2>Multiple Choices</h2>
+<p>
+The requested resource is available <em>only</em> in the following formats:
+  <ul id="acceptable-representations">
+    <% paths.each do |path| %>
+      <li><kbd><a href="<%= path %>"><%= path %></a></kbd>
+    <% end %>
+  </ul>
+</p>

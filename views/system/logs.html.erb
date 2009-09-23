@@ -1,0 +1,28 @@
+<% if objects.class == Class %>
+  <h2>Logs</h2>
+  <% logs = objects %>
+  <% logs.categories.each_pair do |k, v| %>
+    <% ary = logs.all.select {|h| h['category'] == k} %>
+    <h3><%= v %></h3>
+    <ul>
+    <% ary.each do |logh| %>
+      <li><a href="logs/<%= logh['id'] %>.html"><%= logh['path'] %></a></li>
+    <% end %>
+    </ul>
+  <% end %>
+
+<% elsif objects.class == OnBoard::System::Log %>
+  <% log = objects %>
+  <h2>Log: <%= log.data['meta']['path'] %></h2>
+  <pre class="log"><%= log.data['tail'] %></pre>
+  <p>
+    <% if log.data['tail'].count("\n") < log.class::Tail_n %>
+      Click <a href="<%= log.data['meta']['id'] %>.raw">here</a> to download
+      the file.
+    <% else %>
+      Only the last <%= log.class::Tail_n.to_s %> lines were shown. Click
+      <a href="<%= log.data['meta']['id'] %>.raw">here</a> to download 
+      the whole file. 
+    <% end %>
+  </p>
+<% end %>

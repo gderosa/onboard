@@ -1,0 +1,167 @@
+<% 
+  require 'pp'
+
+  require 'onboard/network/interface'
+
+  all_interfaces = OnBoard::Network::Interface.getAll_layer3
+  all_interfaces.delete_if {|x| x.type == "loopback"}
+  interface_names = all_interfaces.map {|x| x.name} 
+
+  iptablesobj       = objects
+
+  ip_version        = iptablesobj.ip_version
+%>
+<style type="text/css">
+  td {
+    text-align: center;
+  }
+</style>
+<h2>Internet connection sharing (&ldquo;IP Masquerading&rdquo;)</h2>
+
+<% if msg %>
+  <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
+    <div class="error">
+      <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
+      <pre><%= html_escape msg[:stderr].strip %></pre>
+    </div>
+  <% end %>
+<% end %>
+
+<h3>NAT rules</h3>
+
+<!-- <pre>
+<%= 
+  # html_escape iptablesobj.pretty_inspect 
+%>
+</pre> -->
+<% chainname = 'POSTROUTING' %>  
+<% chain = iptablesobj.tables['nat'].chains[chainname] %>
+<h4>Chain <%= chain.name %></h4>
+<table>
+  <thead>
+    <tr>
+      <% chain.listfields[0..0].each do |fieldname| %>
+        <th colspan="4"><%= fieldname  %></th>
+      <% end %>
+      <% chain.listfields[1..-1].each do |fieldname| %>
+        <th><%= fieldname  %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% chain.rules.each_with_index do |rule, rule_idx| %>
+      <tr>
+        <form method="POST">
+          <input type="hidden" name="_method" value="put"/>
+          <input type="hidden" name="chain" value="<%= chain.name %>"/>
+          <input type="hidden" name="rulenum" value="<%= rule[0] %>"/>
+          <% 
+          # rule is an Array of fields, the first (rule[0]) represents
+          # rulenum according to iptables conventions (starts from 1) 
+          # 
+          # Other "fields" come directly from iptables -L -v -n
+          # 
+          # chain.rules is the Array of such arrays
+          #    
+          # It is: rule_idx = rule[0] - 1    
+          %>
+          <input type="hidden" name="rulespec" value="<%= html_escape chain.rulespecs[rule_idx] %>"/>
+          <%
+          # we cannot use rulenum to move up/down a rule; we have to delete 
+          # it, then recreate in a different position, so we need the full
+          # rule specification
+          %>
+          <td>
+            <strong class="highlight"><%= rule[0] %></strong> <!-- rule number -->
+          </td>
+          <td>
+            <button type="submit" name="del_rule" title="Remove"><img src="<%= icondir + '/16x16/actions/remove.png'%>" alt="Remove" title="Remove"/></button>
+          </td>
+          <td>
+            <% 
+              unless rule[0] == 1 # first rule in the chain, so cannot move up
+            %>
+              <button type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
+            <% end %>
+          </td>
+          <td>
+            <% 
+              unless rule[0] == chain.rules.length 
+                # last rule in the chain, so cannot move down
+            %>
+              <button type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
+            <% end %>
+          </td>           
+          <% rule[1..-2].each do |value| %>
+            <td><%= value %></td>
+          <% end %>
+          <!-- "misc" -->
+          <%
+            title = ""
+            if rule[3] =~ /LOG/
+              title << 'Some reasonable defaults have been added to avoid LOG flooding'
+            end
+          %>
+          <td title="<%= title %>" style="text-align: left;"><kbd><%= rule[-1] %></kbd></td>
+        </form>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<!-- <pre><%= 
+  # html_escape params.pretty_inspect 
+%></pre> -->
+<h3>Add a new rule</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          Add!
+        </th>
+        <th>
+          Append/Insert
+        </th>
+        <th>
+          Output interface
+        </th>
+        <th>
+          Source Address/Network
+        </th>        
+        <th>
+          Comment
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:center;">
+          <button title="Add rule" type="submit" name="add_rule"><img src="<%= icondir + '/16x16/actions/add.png'%>" alt="add"/></button>
+        </td>
+        <td>
+          <select name="append_insert">
+            <option value="-A">Append</option>
+            <option value="-I" selected>Insert</option>
+          </select>
+        </td>
+        <input type="hidden" name="chain" value="POSTROUTING"/>
+        <input type="hidden" name="jump-target" value="MASQUERADE"/>
+        <td>
+          <select name="output_iface">
+            <!-- <option value=""></option> -->
+            <% interface_names.each do |ifname| %>
+              <option value="<%= ifname %>"><%= ifname %></option>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <input type="text" class="rwtext" name="source_addr" title="Leave this field blank if you want to connect your whole private network"/>
+        </td>       
+        <td>
+          <input type="text" name="comment" class="humantext"/> 
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>

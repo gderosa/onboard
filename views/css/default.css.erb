@@ -1,0 +1,202 @@
+<% highlight = "#44b" %>
+<% lowlight = "#666" %>
+<% hover = "color: white; background: #{highlight};" %>
+<% lightbg = "#ddd" %>
+
+body {
+  overflow: auto;
+  font-size: 10pt;
+}
+
+.highlight{
+  color: <%= highlight %>
+}
+
+div#sidebar {
+	border-right: 1px gray solid;
+	float:left;
+  width: 17%;
+  height: 80%;
+  margin: 1em 1em 0 0;
+  padding-right: 0.5em;
+  font-size: 97%;
+}
+
+div#sidebar ul {
+  padding: 0 1.4em;
+  margin: 0.2em 0;
+}
+
+div#navbar {
+  font-style: italic;
+}
+
+div#main {
+  /* border: 1px gray dotted;	*/
+  border: 0;
+	float:right;
+	width: 80%;	
+	padding: 2px;
+  margin: 1em 1px;
+}
+
+div#main input.rotext, div#main input.rwtext {
+  font-family: monospace;
+  /* font-size: 130%; */
+}
+
+div#main input.rwtext {
+  color: <%= highlight %>;
+  background: white;
+}
+
+div#main input.rotext {
+  color: <%= lowlight %>;
+  background: <%= lightbg %>;
+}
+
+div#main .warn {
+  border: 1px yellow solid;
+  padding: 3px 0;
+}
+
+code {
+  font-family: monospace;
+  font-style: normal;
+}
+
+div#main .error {
+  border: 1px red dashed;
+  color: black;
+  padding: 3px 2px;
+  margin-bottom: 1em;
+}
+
+div#main .error pre {
+  color: black;
+  margin-bottom: 0;
+
+}
+
+.menu1 {
+  background: <%= highlight %>;
+	color: white;
+	margin: 2px 1px;
+  padding: 1px;
+  border: 1px <%= highlight %> solid; /* avoid size difference from a:hover */
+}
+
+strong {
+  font-size: 107%;
+}
+
+div#main p {
+	margin-top: 0.3em;
+}
+
+a:hover .menu1 {
+  text-decoration: none;
+  color: <%= highlight %>;
+  background: white;
+  border: 1px <%= highlight %> solid;
+}
+
+div#main pre {
+  /* font-size: 11pt; */
+  color: <%= highlight %>;
+}
+
+div#main pre.framed {
+  border: 1px <%= highlight %> solid;
+}
+
+pre.log {
+  margin: 2em 0;
+  overflow: auto; 
+  width: 95%;
+  height: 25em; 
+  border: 2px <%= lightbg %> solid;
+}
+
+code {
+  /* font-size: 120%; */
+}
+
+div#main h2, div#main h4 {
+  font-family: sans-serif;  
+}
+
+div#main h3 {
+  font-size:120%;
+} 
+
+div#main h4 {
+  font-size:95%;
+}
+
+
+div#main h2:first-child {
+  margin-top: 2px;
+}
+
+a:hover pre {<%= hover %>}
+
+a:hover div.item {<%= hover %>}
+
+p a:hover {<%= hover %> text-decoration: none; }
+
+a {
+  color: <%= highlight %>;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover {
+  color: white;
+  background: <%= highlight %>;
+}
+
+div#main div.item {
+  margin: 3px;
+  border: 1px <%= highlight %> solid;  
+}
+
+table {
+  font-size: 90%;
+}
+
+table tr th {
+  border:0; 
+  font-weight: bold; 
+  font-size:80%; 
+  text-align: center;
+  background: <%= lightbg %>;
+  padding: 0 1em;
+}
+
+table tr td {
+  border: 0;
+  background: <%= lightbg %>;
+  padding: 0 3px;
+}
+
+table tr td div {
+  /* border: 0; */
+  /* width: 100%; */
+  /* height: 100%; */
+  /* padding: 0.3em 0.4em; */
+}
+
+table tr td ul {
+  margin: 0 0 0 0;
+  padding: 0 0 0 1.15em;
+}
+
+table tr td button img {
+  height: 14px; 
+}
+
+ul li ul li {
+  /* font-style: italic; */
+  font-size: 92%;
+}

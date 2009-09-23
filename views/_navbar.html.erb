@@ -1,0 +1,33 @@
+<%
+  require 'rack/utils'
+
+  names = request.path_info.sub(/\.html$/, "").split('/')
+  basepath = "/"
+  links = []
+  links << {:name => "Home", :path => "/"}  
+  names.each do |name|
+    basepath = (basepath + "/" + name).gsub /\/{2,}/, "/" 
+    path = basepath + ".html"
+    links << {:name => name, :path => path}  
+  end
+%>
+
+      <div id="navbar">
+        <% http_errors = false %>
+        <% http_errors = true if status.to_s =~ /300|4..|5../ %>
+        <% if http_errors %>
+          <span class="error"><%= Rack::Utils::HTTP_STATUS_CODES[status] %></span>
+        <% end %>
+        <% links.each do |link| %>
+          <% 
+            if link[:name] =~ /\S+/ # don't ask me why... :-P
+          %>
+            <% if link == links.last %>
+              &raquo; <%= link[:name] %>
+            <% else %>
+              &raquo; <a href="<%= link[:path] %>"><%= link[:name] %></a>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+

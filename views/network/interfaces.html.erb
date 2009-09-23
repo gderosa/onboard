@@ -1,0 +1,150 @@
+<% 
+  require "pp"
+  require "onboard/extensions/string"
+  require "onboard/network/interface"
+%>
+
+<% if objects.class == Array %>
+  <h2>Network interfaces</h2>
+  <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method Vendor/Model} %>
+  <% colspans = [1, 2, 1, 1, 1, 1, 1, 1] %>
+  <form method="post"> 
+    <input type="hidden" name="_method" value="put"/>
+    <table>
+      <thead> 
+      <tr>
+        <% fieldnames.each_index do |i| %>
+          <th colspan="<%= colspans[i] %>">
+            <%= fieldnames[i] %>
+          </th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <% objects.each do |netif| %>
+        <% if 
+            ( # 'ieee802.11' is the "low-level" wifi iface and doesn't get IPs
+              not netif.bridged_to and
+              not ['loopback', 'ieee802.11'].include? netif.type
+            ) or 
+              params['view'] == 'all' 
+        %> 
+          <tr>
+            <td>
+              <!-- <div> -->
+                <a href="<%= 'interfaces/' + url_encode(netif.name) + '.html' %>">
+                  <% if netif.type == 'bridge' %>
+                    <%= netif.name + ':' %>
+                    <% if netif.members.length > 0 %>
+                      <ul>
+                        <% netif.members.each do |membername| %>
+                          <li><a href="<%= request.path_info.to_dir + '/' + url_encode(membername) + '.html' %>"><%= membername %></a></li>
+                        <% end %>
+                      </ul>
+                    <% end %>
+                  <% else %>
+                    <%= netif.name %>
+                  <% end %>
+                </a>
+              <!-- </div> -->
+            </td>
+            <td>
+              <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
+            </td>
+            <td><!--<div>--><%= html_escape netif.data['state'] %><!--</div>--></td>
+            <td><!--<div>-->
+              <% if netif.data['type'] == 'bridge' %>
+                <a href="<%= 'bridges/' + url_encode(netif.name) + '.html' %>" title="Configure <%= netif.name %> bridge">
+                  <%= html_escape netif.data['type']  %>            
+                </a>
+              <% else %>
+                <%= html_escape netif.data['type'] %>
+              <% end %>
+            <!--</div>--></td>
+            <td><!--<div>--><%= html_escape netif.data['mtu'] %><!--</div>--></td>
+            <td>
+              <!--<div>--><code><%= html_escape netif.data['mac'] %></code><!--</div>-->
+            </td>
+            <td>
+              <% some_ip_printed = false %>
+              <% if netif.ip.respond_to? :each %>
+                <%
+                  if netif.ipassign[:method] == :dhcp
+                    ip_input_attributes = 'readonly class="rotext"'
+                  else
+                    ip_input_attributes = 'class="rwtext"'
+                  end
+                %>
+                <% netif.ip.each_with_index do |ip, ip_n| %>
+                  <% if ['site', 'global'].include? ip.scope or params['view'] == 'all' %>
+                    <div><input <%= ip_input_attributes %> type="text" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/></div>
+                    <% some_ip_printed = true %>
+                  <% else %>
+                    <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
+                  <% end %>
+                <% end %>
+              <% end %>  
+              <% if netif.ipassign[:method] == :static and netif.active %>
+                <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
+              <% end %>
+              <% if netif.ipassign[:method] == :dhcp and netif.ipassign[:cmd] =~ /\S+/ and not some_ip_printed %>
+                <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
+              <% end %>
+              <% unless some_ip_printed %>
+                &nbsp; <!-- make certain browsers happy :-/ -->
+              <% end %>
+            </td>       
+            <td>
+              <select name="netifs[<%= netif.name %>][ipassign][method]">
+                <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
+                <option value="static" <%= "selected" if netif.ipassign[:method] == :static %>>Static</option>
+              </select>
+              <% %w{pid cmd args}.each do |what| %>
+                <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
+              <% end %>
+            </td> 
+            <td>
+              <% 
+                str = ''
+                begin
+                  str += (netif.vendor  + ' ')  
+                rescue NoMethodError
+                end
+                begin
+                  str += (netif.model   + ' ') 
+                rescue NoMethodError
+                end
+              %>
+              <%= str %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+    <button type="submit">Change</button>
+    (<a href="<%= request.fullpath %>">Refresh</a>)
+    <% showhide = 
+      'loopback, raw ieee802.11 interfaces and IPv6 link-local addresses' %>
+    <% if params['view'] == 'all' %>
+      (<a title="Hide <%= showhide %>" 
+        href="<%= request.path_info %>">Compact view</a>)
+    <% else %>
+      (<a title="Show <%= showhide %>"
+        href="<%= request.path_info + '?view=all' %>">Full view</a>)
+    <% end %>
+  </form>
+<% else %>
+
+      <% netif = objects %>
+      <h2>Network interface: <%= netif.name %></h2>
+      <div class="item">
+        <pre><%= html_escape netif.pretty_inspect  %></pre>
+      </div>
+
+      <a href="<%= request.path_info.to_dir + '/ip.html' %>">
+        <span class="menu1">IP addresses</span>
+      </a>
+
+<% end %>
+

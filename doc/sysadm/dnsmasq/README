@@ -1,0 +1,18 @@
+Providing DHCP an DNS services to the local network.
+
+* Do not use BIND or other nameservers installed locally
+
+* use dnsmasq for serving DHCP and forward DNS queries to external 
+  nameservers (not to localhost) got via dhcp (yes, this appliance may be
+  a dhcp client on some interface and dhcp server on other) or setup 
+  manually
+
+* at least on Debian systems you MUST install the 'resolvconf' package
+  * for example, dhcpcd is wrapped and cannot update /etc/resolv.conf without
+    calling resolvconf
+
+* /etc/dnsmasq.conf must be empty (or not exist at all).
+ * service will be restartet with --conf-dir=__a_custom_dir__ , but 
+   /etc/dnsmasq.conf will be read anyway, so we need to avoid 
+   conficts/duplicates  
+

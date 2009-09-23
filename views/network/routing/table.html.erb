@@ -1,0 +1,139 @@
+<%
+  require 'socket'  
+  require 'ipaddr'
+
+  require 'onboard/extensions/ipaddr'
+%>
+
+<h2>Routing Table</h2>
+
+<% routing_table = objects %>
+
+<% fieldnames = %w{Delete?  Destination Device  Gateway Type} %>
+<% colspans   =   [1,         1,          1,      1,      1] %>
+
+<% 
+  # if not msg or not msg[:stderr] =~ /\S/ 
+  if request.env["REQUEST_METHOD"] == "GET"
+%>
+  <p class="warn">
+    Most of the routing table entries are set up automatically, do not edit
+    if you're not sure what you're doing.
+  <p>
+<% end %>
+
+<% if msg %>
+  <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
+    <div class="error">
+      <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
+      <pre><%= html_escape msg[:stderr].strip %></pre>
+    </div>
+  <% end %>
+<% end %>
+
+<h3>View/Edit the routing table</h3>
+<table>
+  <tr>
+    <%  fieldnames.each_index do |i| %>
+      <th colspan="<%= colspans[i] %>">
+        <%= fieldnames[i] %>
+      </th>
+    <% end %>
+  </tr>
+  <% routing_table.each_route do |route| %>
+    <% 
+      next if 
+          route.dest.family == Socket::AF_INET6 and
+          route.dest.link_local? and
+          not params['view'] == 'all'
+    %>
+    <tr>
+      <form method="POST">
+        <%
+          # instead of DELETEing a "route" resource, we PUT our edits to the 
+          # "routing table" resource; it's not totally RESTful, but it's
+          # simple...
+        %>
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" name="ip_route_del" value="<%= route.rawline %>"/>
+        <td style="text-align:center;">
+          <button type="submit" title="Delete this route!">
+            <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
+          </button>
+        </td>
+        <td><%= route.dest.to_s %>/<%= route.dest.prefixlen %></td>
+        <td><%= route.dev if route.dev %></td>
+        <td><%= route.gw.to_s if route.gw %></td>
+        <td>
+          <% 
+            str =  ""
+            str << "IPv4"       if route.dest.family == Socket::AF_INET
+            str << "IPv6"       if route.dest.family == Socket::AF_INET6
+            str << " "
+            str << "default gateway" \
+                                if [
+                                  IPAddr.new('::/0'), 
+                                  IPAddr.new('0.0.0.0/0')
+                                ].include? route.dest
+            str << "loopback"   if route.dest.loopback?
+            str << "link-local" if route.dest.link_local?
+            str << "multicast"  if route.dest.multicast?
+          %>
+          <%= str %>
+        </td>
+      </form>
+    </tr>
+  <% end %>
+</table>
+
+<!-- While it's not obvious that IPv4 link-local addresses and routes are 
+configured on a given system, IPv6 link-local are always present, and showing
+them adds too much verbosity without giving really significant information -->
+(<a href="<%= request.fullpath %>">Refresh</a>)
+<% showhide = 'IPv6 link-local routes' %>
+<% if params['view'] == 'all' %>
+  (<a title="Hide <%= showhide %>" 
+    href="<%= request.path_info %>">Compact view</a>)
+<% else %>
+  (<a title="Show <%= showhide %>" 
+    href="<%= request.path_info + '?view=all' %>">Full view</a>)
+<% end %>
+
+<h4>Add/Replace a static route</h4>
+
+<table>
+  <tr>
+    <th>Add!</th>
+    <th colspan="3">Destination</th>
+    <th>Device</th>
+    <th>Gateway</th>
+  </tr>
+  <tr>
+    <form method="POST">
+      <input type="hidden" name="_method" value="put">
+      <td style="text-align:center;">
+        <button title="Add route" type="submit" name=""><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="add"/></button>
+      </td>
+
+      <td><input type="text" name="ip" class="rwtext" style="text-align: right;"></td>
+      <td>/</td>
+      <td><input type="text" name="prefixlen" size="3" maxlength="3" class="rwtext"></td>
+
+      <td><input type="text" name="dev" size="6" class="rwtext"></td>
+      <td><input type="text" name="gw" class="rwtext"></td>
+    </form>
+  </tr>
+</table>
+
+<!--
+<pre>
+  <%= 
+      # html_escape params.pretty_inspect 
+  %>
+</pre>
+<pre>
+  <%= 
+      # html_escape routing_table.pretty_inspect 
+  %>
+</pre>
+-->

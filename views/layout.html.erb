@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/default.css"/>
+  </head>
+  <body>
+    <div id="sidebar">
+      <%= OnBoard::MENU_ROOT.to_html_ul %>
+    </div>
+    <div id="main">
+      <%= erb(:"_navbar.html", :layout => false) %>
+      <%= yield %>
+    </div>
+  </body>
+</html>
