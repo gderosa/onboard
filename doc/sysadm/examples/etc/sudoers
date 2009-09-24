@@ -12,7 +12,9 @@ Defaults	env_reset
 # User alias specification
 
 # Cmnd alias specification
-Cmnd_Alias	OnBoard = /sbin/ip, /sbin/dhcpcd, /usr/sbin/brctl, /sbin/iptables, /sbin/iptables-save, /sbin/iptables-restore, /sbin/ip6tables, /sbin/ip6tables-save, /sbin/ip6tables-restore  /bin/kill
+Cmnd_Alias	RUBYONBOARD = /sbin/ip, /sbin/dhcpcd, /usr/sbin/brctl, /sbin/iptables, /sbin/iptables-save, /sbin/iptables-restore, /sbin/ip6tables, /sbin/ip6tables-save, /sbin/ip6tables-restore  /bin/kill
+
+Cmnd_Alias      RUBYONBOARD_ENV = /etc/init.d/dnsmasq
 
 # User privilege specification
 root	ALL=(ALL) ALL
@@ -25,6 +27,7 @@ root	ALL=(ALL) ALL
 # Members of the admin group may gain root privileges
 %admin ALL=(ALL) ALL
 
-# Members of the blsco group may execute OnBoard commands with as root
-%onboard ALL = NOPASSWD: OnBoard
+# Members of the group may execute  commands with as root
+%onboard ALL = NOPASSWD: RUBYONBOARD
+%onboard ALL = NOPASSWD: SETENV: RUBYONBOARD_ENV
 
