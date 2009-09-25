@@ -14,7 +14,9 @@ require 'onboard/menu/node'
 
 require 'onboard/platform/debian'
 
-class OnBoard 
+class OnBoard
+  LONGNAME = 'Ruby OnBoard'
+ 
   ROOTDIR = File.dirname File.expand_path(__FILE__)
   CONFDIR = ROOTDIR + '/etc/config'
 
