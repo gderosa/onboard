@@ -5,7 +5,6 @@ require 'find'
 require 'json'
 require 'yaml'
 require 'logger'
-require 'pp' # always useful for debugging
 
 require 'onboard/extensions/object'
 require 'onboard/menu/node'

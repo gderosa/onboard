@@ -7,8 +7,7 @@ require 'find'
 require 'json'
 require 'yaml'
 require 'logger'
-#require 'daemons'
-require 'pp' # always useful for debugging
+require 'pp' 
 
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
@@ -70,7 +69,7 @@ end
 
 OnBoard.prepare
 exit if ARGV.include? '--restore-only'
-load OnBoard::ROOTDIR + '/lib/onboard/controller.rb'
+load OnBoard::ROOTDIR + '/controller.rb'
 
 if $0 == __FILE__
   OnBoard::Controller.run!
