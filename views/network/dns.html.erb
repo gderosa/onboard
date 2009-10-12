@@ -1,0 +1,20 @@
+<% 
+  # require 'onboard/extensions/array' 
+%>
+
+<h2>DNS</h2>
+<% if msg and msg[:err] %>
+  <div class="error"><%= msg[:err] %></div>
+<% end %>
+  <pre>
+    <%= 
+      html_escape objects.pretty_inspect 
+    %>
+  </pre>
+  <pre>
+    <%= 
+      html_escape params.pretty_inspect 
+    %>
+  </pre>
+
+

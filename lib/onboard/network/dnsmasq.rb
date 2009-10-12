@@ -74,13 +74,22 @@ class OnBoard
 
       def initialize
         @data = {
-          'conf'=> {
-            'dhcp' => {
-              'ranges' => [],
+          'conf'        => {
+            'dhcp'        => {
+              'ranges'      => [],
               'fixed-hosts' => []
+            },
+            'dns'         => {  # explicitly configured
+              'nameservers' => [],
+              'searchdomain'=> '',
+              'localdomain' => ''
             }
           },
-          'leases' => []
+          'leases'      => [],
+          'resolvconf'  => {  # tipically obtained via DHCP (appliance may be DHCP client on the external/WAN interface, and DHCP server on the internal/LAN interface)
+            'file'        => '/etc/resolv.conf',
+            'nameservers' => []  
+          }
         }
       end
 
@@ -143,6 +152,37 @@ class OnBoard
             end
           end
         end
+      end
+
+      # Repeat Yourself :-P # TODO's ?
+      def parse_dns_conf
+        File.open CONFDIR + '/new/dns.conf' do |file|
+          file.each_line do |line|
+            next if line =~ /^\s*#/
+            line.strip!
+            # The following regexes are too 'rigid' to parse conf file 
+            # not written by ourselves, but should be ok for our needs.
+            if line =~ /^\s*server\s*=\s*([^,\s#]+)\s*#\s?(.*)$/
+              @data['conf']['dns']['nameservers'] << {
+                'ip'      => $1,
+                'comment' => $2
+              }
+            elsif line =~ /^\s*server\s*=\s*([^,\s#]+)/
+              @data['conf']['dns']['nameservers'] << {
+                'ip'      => $1,
+                'comment' => ''
+              }
+            elsif line =~ /^\s*domain\s*=\s*([^,\s#]+)/
+              @data['conf']['dns']['searchdomain'] << $1
+            elsif line =~ /^\s*local\s*=\s*\/([^,\s#]+)\//
+              @data['conf']['dns']['localdomain'] << $1
+            end
+          end
+        end
+      end
+
+      def parse_dns_cmdline
+        # NOTE: it's assumed only one dnsmasq instance at a time
       end
 
       def write_dhcp_conf_from_HTTP_request(params) 
