@@ -9,16 +9,15 @@
 <!--
   <pre>
     <%= 
-      html_escape objects.pretty_inspect 
+      # html_escape objects.pretty_inspect 
     %>
   </pre>
   <pre>
     <%= 
-      html_escape params.pretty_inspect 
+      # html_escape params.pretty_inspect 
     %>
   </pre>
--->
-
+  -->
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <h3>Name servers</h3>
@@ -40,13 +39,17 @@
           </td>
         </tr>
       <% end %>
-      <% objects.data['conf']['dns']['nameservers'].each do |nsh| %>
+      <% [0, 1, 2].each do |nsh_i| %>
+        <% 
+          nsh = objects.data['conf']['dns']['nameservers'][nsh_i] 
+          nsh = {'ip' => '', 'comment' => ''} unless nsh       
+        %>
         <tr>
           <td>
-            <input type="text" class="rwtext" value="<%= nsh['ip'] %>"/>
+            <input type="text" class="rwtext" name="nameservers[][ip]" value="<%= nsh['ip'] %>"/>
           </td>
           <td>
-            <input type="text" size="48" class="humantext" value="<%= nsh['comment'] %>"/>
+            <input type="text" size="48" class="humantext" name="nameservers[][comment]" value="<%= nsh['comment'] %>"/>
           </td>
         </tr>
       <% end %> 
@@ -55,11 +58,11 @@
 
   <h3>Local domain</h3>
   <em>Machines served by DHCP will register their name in this domain</em><br/>
-  <input type="text" class="rwtext" value="<%= objects.data['conf']['dns']['localdomain'] %>"/>
+  <input type="text" class="rwtext" name="localdomain" value="<%= objects.data['conf']['dns']['localdomain'] %>"/>
 
   <h3>Search domain</h3>
   <em>Usually the same as Local domain</em><br/>
-  <input type="text" class="rwtext" value="<%= objects.data['conf']['dns']['searchdomain'] %>"/>
+  <input type="text" class="rwtext" name="searchdomain" value="<%= objects.data['conf']['dns']['searchdomain'] %>"/>
 
   <h3> &nbsp; <!-- Commit changes --></h3>
   <button type="submit">Change</button>

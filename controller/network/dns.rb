@@ -6,8 +6,6 @@ class OnBoard::Controller
 
   get "/network/dns.:format" do
     dnsmasq = OnBoard::Network::Dnsmasq.new
-    #dnsmasq.parse_dhcp_conf
-    #dnsmasq.parse_dhcp_leasefile
     dnsmasq.parse_dns_conf
     dnsmasq.parse_dns_cmdline
     format(
@@ -17,7 +15,7 @@ class OnBoard::Controller
     )
   end
 
-  put "/network/dhcp-server.:format" do
+  put "/network/dns.:format" do
     dnsmasq = OnBoard::Network::Dnsmasq.new
     msg = dnsmasq.write_dns_conf_from_HTTP_request(params)
     if msg[:err]  
@@ -28,8 +26,6 @@ class OnBoard::Controller
     
     # read updated conf
     dnsmasq = OnBoard::Network::Dnsmasq.new
-    #dnsmasq.parse_dhcp_conf
-    #dnsmasq.parse_dhcp_leasefile
     dnsmasq.parse_dns_conf
     dnsmasq.parse_dns_cmdline
     format(
