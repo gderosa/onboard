@@ -183,6 +183,17 @@ class OnBoard
 
       def parse_dns_cmdline
         # NOTE: it's assumed only one dnsmasq instance at a time
+        # NOTE: the only option parsed is -r
+        if File.read("/proc/#{`pidof dnsmasq`.strip}/cmdline") =~ /-r\0([^\0]+)/
+          @data['resolvconf']['file'] = $1
+        end         
+        File.open @data['resolvconf']['file'] do |file|
+          file.each_line do |line|
+            if line =~ /^\s*nameserver\s+(\S+)/
+              @data['resolvconf']['nameservers'] << $1
+            end
+          end
+        end
       end
 
       def write_dhcp_conf_from_HTTP_request(params) 
