@@ -50,14 +50,24 @@ class OnBoard
   end
 
   def self.prepare
-
     unless ARGV.include? '--restore-only'
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
     end
-
     unless  ARGV.include? '--no-restore'      
       find_n_load ROOTDIR + '/etc/restore/'
+    end
+
+    # modules
+    Dir.foreach(ROOTDIR + '/modules') do |dir|
+      dir_fullpath = ROOTDIR + '/modules/' + dir
+      if File.directory? dir_fullpath and not dir =~ /^\./
+        Dir.foreach(dir_fullpath) do |entry|
+          if entry =~ /^load_.+\.rb$/
+            load dir_fullpath + '/' + entry
+          end
+        end
+      end 
     end
 
   end
