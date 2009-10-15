@@ -38,6 +38,12 @@ class OnBoard::Controller < Sinatra::Base
 
     # This method should be called PROVIDED that the resource exists.
     def format(h)
+      if h[:module] 
+        h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
+      else
+
+      end
+      
       case h[:format]
       when 'html', 'xhtml'
         return erb(

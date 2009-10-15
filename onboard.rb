@@ -62,11 +62,7 @@ class OnBoard
     Dir.foreach(ROOTDIR + '/modules') do |dir|
       dir_fullpath = ROOTDIR + '/modules/' + dir
       if File.directory? dir_fullpath and not dir =~ /^\./
-        Dir.foreach(dir_fullpath) do |entry|
-          if entry =~ /^load_.+\.rb$/
-            load dir_fullpath + '/' + entry
-          end
-        end
+        load dir_fullpath + '/load.rb'
       end 
     end
 
