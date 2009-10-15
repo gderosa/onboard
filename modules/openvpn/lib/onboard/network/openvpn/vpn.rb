@@ -21,6 +21,7 @@ class OnBoard
             end
             ary << self.new(
               :pid => pid,
+              :cwd => cwd,
               :conffile => conffile
             )
           end
