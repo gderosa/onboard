@@ -39,7 +39,7 @@ class OnBoard
             'conffile' => h[:conffile]
           } 
           parse_conffile()
-          # parse_status() if @data_internal['status']
+          parse_status() if @data_internal['status']
         end
 
         def parse_conffile
@@ -112,6 +112,108 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 " (or couldn't get the full path of '#{@data_internal['conffile']}')"
             end
           end 
+        end
+
+        def parse_status
+          @data['status_data'] = {}
+          @data['status_data']['client_list'] = {}
+          @data['status_data']['client_list']['clients'] = []
+          @data['status_data']['routing_table'] = {}
+          @data['status_data']['routing_table']['routes'] = []
+
+          status_file = ''
+
+          attempts = []
+          attempts << @data_internal['status'] 
+          attempts << File.join(
+              File.dirname(@data_internal['conffile']), 
+              @data_internal['status']
+          ) 
+          attempts << File.join(
+              @data_internal['cwd'],
+              @data_internal['status']
+          )
+
+          attempts.each do |filename|
+            if File.readable? filename
+              status_file = filename
+              break
+            end  
+          end
+
+          if status_file == ''
+            @data['status_data']['err'] = 'no readable status file has been found'
+            return false
+          end
+
+          case @data_internal['status-version']
+          when /1/
+            parse_status_v1(status_file)
+          when /2/
+            parse_status_v2(status_file)
+          else 
+            raise \
+                RuntimeError, 
+                '@data_internal[\'status-version\'] was not set!'
+          end
+        end
+
+        def parse_status_v1(status_file)
+          where                     = :beginning
+          got_client_list_header    = false
+          got_routing_table_header  = false
+          got_global_stats_header   = false
+          client_list_fields        = []
+          routing_table_fields     = []
+
+          File.foreach(status_file) do |line|
+            line.strip!
+
+            where = :client_list    if line =~ /OpenVPN CLIENT LIST/
+            where = :routing_table  if line =~ /ROUTING TABLE/
+            where = :global_stats   if line =~ /GLOBAL STATS/ 
+
+            if where == :client_list
+              if line =~ /^\s*Updated,(\S.*\S)\s*$/
+                @data['status_data']['client_list']['updated'] = $1
+              end
+              if line =~ /Common Name,Real Address,Bytes Received,Bytes Sent,Connected Since/
+                got_client_list_header = true
+                client_list_fields = line.split(',') 
+              elsif got_client_list_header
+                h = {}
+                values = line.split(',')
+                break unless values.length == client_list_fields.length
+                client_list_fields.each_with_index do |name, idx|
+                  h[name] = values[idx]
+                end
+                @data['status_data']['client_list']['clients'] << h
+              end
+            end
+
+            if where == :routing_table
+              if line =~ /Virtual Address,Common Name,Real Address,Last Ref/
+                got_routing_table_header = true
+                routing_table_fields = line.split(',') 
+              elsif got_routing_table_header
+                h = {}
+                values = line.split(',')
+
+                break unless 
+                    values.respond_to? :length and
+                    routing_table_fields.respond_to? :length and
+                    values.length == routing_table_fields.length
+
+                routing_table_fields.each_with_index do |name, idx|
+                  h[name] = values[idx]
+                end
+                @data['status_data']['routing_table']['routes'] << h
+              end
+            end
+
+            # TODO? GLOBAL STATS?
+           
+          end
         end
 
       end
