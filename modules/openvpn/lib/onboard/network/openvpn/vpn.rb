@@ -321,14 +321,14 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           end
 
           if ip_pool_file == ''
-            @data['ip_pool']['err'] = "no readable IP pool file has been found #{@data_internal['ifconfig-pool-persist']}"
+            @data['ip_pool']['err'] = "no readable IP pool file has been found -- @data_internal['ifconfig-pool-persist'] = #{@data_internal['ifconfig-pool-persist']}"
             return false
           end
 
           File.foreach(ip_pool_file) do |line|
             line.strip!
             h = {}
-            h['CN'], h['vIP'] = line.split(',') 
+            h['Common Name'], h['Virtual Address'] = line.split(',') 
             @data['ip_pool']['pool'] << h
           end
         end
