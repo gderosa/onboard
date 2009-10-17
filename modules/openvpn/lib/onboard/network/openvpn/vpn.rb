@@ -78,7 +78,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             line.sub! /\s+[;#].*$/, '' 
 
             # "public" options with no arguments ("boolean" options)
-            %w{duplicate-cn client-to-client}.each do |optname|
+            %w{duplicate-cn client-to-client client}.each do |optname|
               if line =~ /^\s*#{optname}\s*$/
                 @data[optname] = true
                 next
@@ -95,8 +95,13 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
             # "public" options with more arguments
             if line =~ /^\s*server\s+(\S+)\s+(\S+)/
-              @data['server']   = $1
-              @data['netmask']  = $2
+              @data['server']         = $1
+              @data['netmask']        = $2
+              next
+            elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)/
+              @data['remote']         = {}
+              @data['remote']['ip']   = $1
+              @data['remote']['port'] = $2
               next
             end
 
