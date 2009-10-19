@@ -39,11 +39,15 @@ class OnBoard
             'conffile' => h[:conffile]
           } 
           parse_conffile()
-          if @data_internal['status']
-            parse_status() 
-            set_portable_client_list_from_status_data()
+          if @data['server']
+            if @data_internal['status'] 
+              parse_status() 
+              set_portable_client_list_from_status_data()
+            end
+            parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
+          elsif @data['client']
+            get_virtual_address_as_a_client()
           end
-          parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
         end
 
         def parse_conffile
@@ -95,13 +99,13 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
             # "public" options with more arguments
             if line =~ /^\s*server\s+(\S+)\s+(\S+)/
-              @data['server']         = $1
-              @data['netmask']        = $2
+              @data['server']             = $1
+              @data['netmask']            = $2
               next
             elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)/
-              @data['remote']         = {}
-              @data['remote']['ip']   = $1
-              @data['remote']['port'] = $2
+              @data['remote']             = {}
+              @data['remote']['address']  = $1
+              @data['remote']['port']     = $2
               next
             end
 
@@ -125,6 +129,26 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 'timeout'   => $2
               }
               @data_internal['ping'] = @data_internal['keepalive'] # an alias..
+            elsif line =~ /^\s*management\s+(\S+)\s+(\S+)\s*$/
+              address = $1
+              port = $2
+              address = '127.0.0.1' if 
+                  address =~ /(\*|0\.0\.0\.0|::)/ and not
+                  address =~ /[a-f\d]::/i and not
+                  address =~ /::[a-f\d]/i
+                # if "listen on any" (not recommended, though) is set,
+                # this doesn't mean we will telnet to 0.0.0.0 or :: ;-)
+              @data_internal['management'] = {
+                'address' => address,
+                'port'    => port
+              }
+              # TODO: configuration of the management interface may be more 
+              # complicated than that! See OpenVPN docs.
+            elsif line =~ /^\s*ifconfig\s+(\S+)\s+(\S+)\s*$/
+              @data_internal['ifconfig'] = {
+                'address'                 => $1,
+                'remote_peer_or_netmask'  => $2
+              }
             end
 
             # TODO or not TODO
@@ -336,6 +360,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             h['Common Name'], h['Virtual Address'] = line.split(',') 
             @data['ip_pool']['pool'] << h
           end
+        end
+
+        def get_virtual_address_as_a_client
+          
         end
 
       end
