@@ -1,5 +1,8 @@
 require 'onboard/system/process'
 
+autoload :TCPSocket,  'socket'
+autoload :Time,       'time'
+
 class OnBoard
   module Network
     module OpenVPN
@@ -44,8 +47,8 @@ class OnBoard
               set_portable_client_list_from_status_data()
             end
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
-          elsif @data['client']
-            get_virtual_address_as_a_client()
+          elsif @data['client'] and @data_internal['management']
+            get_client_info_from_management_interface()
           end
         end
 
@@ -270,11 +273,6 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
         def set_portable_client_list_from_status_data
           ary = []
 
-          # NOTE: 'time_t' fields UNIX timestamps() are available on 
-          # version 2 only, don't use them, altough they appear useful; work
-          # with formated string instead, and convert them.
-          # TODO: create the 'time_t' field, through conversion
-
           case @data_internal['status-version'].to_s
           when /1/
             ary = @data_internal['status_data']['client_list']['clients'].dup
@@ -283,9 +281,23 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               # the status file...
               route = @data_internal['status_data']['routing_table']['routes'].detect { |x| x['Real Address'] == client['Real Address'] }
               client['Virtual Address'] = route['Virtual Address'].dup
+              client['Connected Since'] = Time.parse client['Connected Since']
             end
           when /2/
-            ary = @data_internal['status_data']['client_list']['clients']
+            ary = @data_internal['status_data']['client_list']['clients'].dup
+            ary.each do |client|
+              t = client['Connected Since (time_t)'].to_i
+              if t > 0
+                client['Connected Since'] = 
+                    Time.at t
+              else
+                client['Connected Since'] =
+                    Time.parse client['Connected Since']
+              end 
+              # creating a Time object from a Unix timestamp should be
+              # more efficient than parsing a human readable string, so
+              # use the former when available
+            end
           else
             raise RuntimeError, "status-version should be either 1 or 2, got #{@data_internal['status-version']}"
           end
@@ -315,8 +327,44 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           end
         end
 
-        def get_virtual_address_as_a_client
-          
+        def get_client_info_from_management_interface
+          tcp = TCPSocket.new(
+              @data_internal['management']['address'],
+              @data_internal['management']['port']
+          )
+
+          tcp.gets # gets the 'banner'
+
+          tcp.puts 'state'
+          @data_internal['management']['state'] = tcp.gets.strip.split(',')
+          @data_internal['management']['status'] = {}
+          until tcp.gets.strip == 'END'; end
+
+          tcp.puts 'status'
+          loop do
+            line = tcp.gets.strip
+            break if line == 'END'
+            keyval = line.split(',')
+            if keyval.length == 2
+              key, val = keyval
+              @data_internal['management']['status'][key] = val
+            end
+          end
+          tcp.puts 'exit'          
+          tcp.close
+
+          @data['client'] = {
+            # 'Common Name'           => 
+            #     TODO: an OpenSSL/TLS/x509 class ? ,
+            'Virtual Address'         => 
+                @data_internal['management']['state'][3],
+            'Bytes Received'          => 
+                @data_internal['management']['status']['TCP/UDP read bytes'],
+            'Bytes Sent'              =>
+                @data_internal['management']['status']['TCP/UDP write bytes'],
+            'Connected Since'          => Time.at(
+                @data_internal['management']['state'][0].to_i)
+          }
         end
 
         private
