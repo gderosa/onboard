@@ -1,3 +1,5 @@
+require 'onboard/system/process'
+
 class OnBoard
   module Network
     module OpenVPN
@@ -10,19 +12,17 @@ class OnBoard
           # in config files, not cmdline args; TODO: parse cmdline too?   
           `pidof openvpn`.split.each do |pid|
             conffile = ''
-            cwd = `sudo readlink /proc/#{pid}/cwd`.strip
-            cmdline = File.read("/proc/#{pid}/cmdline").split("\0")
-            cmdline.each_with_index do |arg, idx|
+            p = System::Process.new(pid)
+            p.cmdline.each_with_index do |arg, idx|
               next if idx == 0
               if 
-                  cmdline[idx - 1] =~ /^\s*\-\-config/ or not 
-                  cmdline[idx - 1] =~ /^\s*\-/
+                  p.cmdline[idx - 1] =~ /^\s*\-\-config/ or not 
+                  p.cmdline[idx - 1] =~ /^\s*\-/
                 conffile = arg
               end
             end
             ary << self.new(
-              :pid => pid,
-              :cwd => cwd,
+              :process  => p,
               :conffile => conffile
             )
           end
@@ -34,8 +34,7 @@ class OnBoard
         def initialize(h) 
           @data = {}
           @data_internal = {
-            'cwd' => h[:cwd],
-            'pid'=> h[:pid],
+            'process' => h[:process],
             'conffile' => h[:conffile]
           } 
           parse_conffile()
@@ -51,19 +50,9 @@ class OnBoard
         end
 
         def parse_conffile
-          conffile = ''
-          attempts = []
-          attempts << @data_internal['conffile']
-          attempts << File.join(
-              @data_internal['cwd'],
-              @data_internal['conffile'])
-          attempts.each do |file|
-            if File.readable? file
-              conffile = file
-            end
-          end
+          conffile = find_file @data_internal['conffile']
 
-          if conffile == ''
+          unless conffile 
             @data['err'] = "couldn't open config file"
             if @data_internal['conffile'] =~ /\S/
               @data['err'] << " '#{@data_internal['conffile']}'"
@@ -170,27 +159,9 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           @data_internal['status_data']['routing_table'] = {}
           @data_internal['status_data']['routing_table']['routes'] = []
 
-          status_file = ''
+          status_file = find_file @data_internal['status']
 
-          attempts = []
-          attempts << @data_internal['status'] 
-          attempts << File.join(
-              File.dirname(@data_internal['conffile']), 
-              @data_internal['status']
-          ) 
-          attempts << File.join(
-              @data_internal['cwd'],
-              @data_internal['status']
-          )
-
-          attempts.each do |filename|
-            if File.readable? filename
-              status_file = filename
-              break
-            end  
-          end
-
-          if status_file == ''
+          unless status_file 
             @data_internal['status_data']['err'] = 'no readable status file has been found'
             return false
           end
@@ -329,27 +300,9 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             'pool' => []
           }
 
-          ip_pool_file = ''
-          # TODO: DRY!
-          attempts = []
-          attempts << @data_internal['ifconfig-pool-persist'] 
-          attempts << File.join(
-              File.dirname(@data_internal['conffile']), 
-              @data_internal['ifconfig-pool-persist']
-          ) 
-          attempts << File.join(
-              @data_internal['cwd'],
-              @data_internal['ifconfig-pool-persist']
-          )
+          ip_pool_file = find_file @data_internal['ifconfig-pool-persist']
 
-          attempts.each do |filename|
-            if File.readable? filename
-              ip_pool_file = filename
-              break
-            end  
-          end
-
-          if ip_pool_file == ''
+          unless ip_pool_file 
             @data['ip_pool']['err'] = "no readable IP pool file has been found -- @data_internal['ifconfig-pool-persist'] = #{@data_internal['ifconfig-pool-persist']}"
             return false
           end
@@ -364,6 +317,30 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
         def get_virtual_address_as_a_client
           
+        end
+
+        private
+
+        # Find out the right path to config files, status logs etc.
+        def find_file(name)
+          attempts = []
+          attempts << name
+          attempts << File.join(
+              @data_internal['process'].env['PWD'], 
+              name
+          )
+          unless @data_internal['conffile'].strip == name.strip
+            attempts << File.join(
+              File.dirname(@data_internal['conffile']),
+              name
+            )
+          end
+
+          attempts.each do |attempt|
+            return attempt if File.readable? attempt
+          end
+
+          return false
         end
 
       end
