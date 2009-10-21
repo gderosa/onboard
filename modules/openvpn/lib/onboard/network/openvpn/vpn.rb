@@ -2,6 +2,7 @@ require 'onboard/system/process'
 
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
+autoload :OpenSSL,    'openssl'
 
 class OnBoard
   module Network
@@ -102,10 +103,39 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end
 
             # "private" options with 1 argument
-            %w{ca cert key dh ifconfig-pool-persist status status-version log log-append}.each do |optname|
+            %w{key dh ifconfig-pool-persist status status-version log log-append}.each do |optname|
               if line =~ /^\s*#{optname}\s+(\S+)\s*$/
                 @data_internal[optname] = $1
                 # puts line + '|' + optname + '|' + $1
+                next
+              end
+            end
+
+            %w{ca cert}.each do |optname|
+              if line =~ /^\s*#{optname}\s+(\S+)\s*$/
+                c = OpenSSL::X509::Certificate.new(File.read find_file($1))
+                @data_internal[optname] = c
+
+                # NOTE: this is a 'lossy' conversion (name_val_type[2] is lost)
+                # I guess we won't need the "type" "field".
+                #
+                # c.issuer.to_a and c.subject.to_a are Arrays made up of
+                # Arrays of three elements each
+                issuer__to_h = {}
+                c.issuer.to_a.each do |name_val_type|
+                  issuer__to_h[name_val_type[0]] = name_val_type[1]
+                end
+                subject__to_h = {}
+                c.subject.to_a.each do |name_val_type|
+                  subject__to_h[name_val_type[0]] = name_val_type[1] 
+                end
+                @data[optname] = {
+                  'serial'      => c.serial.to_i,
+                  'issuer'      => issuer__to_h,
+                  'subject'     => subject__to_h,
+                  'not_before'  => c.not_before,
+                  'not_after'   => c.not_after
+                }
                 next
               end
             end
