@@ -336,24 +336,29 @@ class OnBoard::Network::Interface
   end
 
   def ip_addr_add(ip)
+    return false if @ipassign[:method] != :static
     Command.run "ip addr add #{ip.addr.to_s}/#{ip.prefixlen} dev #@name", :sudo
   end
 
   def ip_addr_del(ip)
+    return false if @ipassign[:method] != :static
     Command.run "ip addr del #{ip.addr.to_s}/#{ip.prefixlen} dev #@name", :sudo
   end
 
   def ip_link_set_up
+    return false if not [:static, :dhcp].include? @ipassign[:method]
     Command.run "ip link set #{@name} up", :sudo 
   end
 
   def ip_link_set_down
+    return false if not [:static, :dhcp].include? @ipassign[:method]
     Command.run "ip link set #{@name} down", :sudo 
   end
 
   def flush_ip
-    Command.run "ip addr flush dev #{@name}", :sudo \
-      if @ip.respond_to? :[] and @ip.length > 0
+    return false if not [:static, :dhcp].include? @ipassign[:method]
+    Command.run("ip addr flush dev #{@name}", :sudo) if 
+        @ip.respond_to? :[] and @ip.length > 0
   end
 
   def start_dhcp_client
