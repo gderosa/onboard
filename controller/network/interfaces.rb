@@ -33,6 +33,8 @@ class OnBoard::Controller
     ) 
   end
 
+  # "Hidden" routes?
+
   get "/network/interfaces/:ifname.:format" do
     interfaces  = OnBoard::Network::Interface.getAll
     names       = interfaces.map {|netif| netif.name}
