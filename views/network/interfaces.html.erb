@@ -67,32 +67,44 @@
             </td>
             <td>
               <% some_ip_printed = false %>
-              <% if netif.ip.respond_to? :each %>
-                <%
-                  if netif.ipassign[:method] != :static
-                    ip_input_attributes = 'readonly class="rotext"'
-                  else
-                    ip_input_attributes = 'class="rwtext"'
-                  end
-                %>
+
+              <% if netif.type == "P-t-P" %>
                 <% netif.ip.each_with_index do |ip, ip_n| %>
-                  <% if ['site', 'global'].include? ip.scope or params['view'] == 'all' %>
-                    <div><input <%= ip_input_attributes %> type="text" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/></div>
-                    <% some_ip_printed = true %>
-                  <% else %>
-                    <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
+                  <span class="lowlight"><%= ip.addr.to_s + ' --> ' + ip.peer.addr.to_s + '/' + ip.peer.prefixlen.to_s %></span>
+                  <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
+                <% end %>
+              <% else %>
+                <% if netif.ip.respond_to? :each %>
+                  <%
+                    if netif.ipassign[:method] != :static
+                      ip_input_attributes = 'readonly class="rotext"'
+                    else
+                      ip_input_attributes = 'class="rwtext"'
+                    end
+                  %>
+                  <% netif.ip.each_with_index do |ip, ip_n| %>
+                    <% if ['site', 'global'].include? ip.scope or params['view'] == 'all' %>
+                      <div><input <%= ip_input_attributes %> type="text" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/></div>
+                      <% some_ip_printed = true %>
+                    <% else %>
+                      <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
+                    <% end %>
                   <% end %>
                 <% end %>
               <% end %>  
+
               <% if netif.ipassign[:method] == :static and netif.active %>
                 <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
               <% end %>
+
               <% if netif.ipassign[:method] == :dhcp and netif.ipassign[:cmd] =~ /\S+/ and not some_ip_printed %>
                 <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
               <% end %>
+
               <% unless some_ip_printed %>
                 &nbsp; <!-- make certain browsers happy :-/ -->
               <% end %>
+
             </td>       
             <td>
               <% if [:static, :dhcp].include? netif.ipassign[:method] %>

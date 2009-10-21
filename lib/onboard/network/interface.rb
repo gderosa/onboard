@@ -90,13 +90,12 @@ class OnBoard::Network::Interface
           netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
           netif_h[:ip] << IP.new(
             :addr       => $1,
-            :scope      => $4
-          )
-          netif_h[:peer] = [] unless netif_h[:peer].respond_to? :<<
-          netif_h[:peer] << IP.new(
-            :addr       => $2,
-            :prefixlen  => $3,
-            :scope      => $4
+            :scope      => $4,
+            :peer       => IP.new(
+              :addr       => $2,
+              :prefixlen  => $3,
+              :scope      => $4  
+            )
           )
         end
 

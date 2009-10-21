@@ -25,7 +25,7 @@ class OnBoard
     class Interface
       class IP
 
-        attr_reader :addr, :prefixlen, :scope, :net, :netmask, :af
+        attr_reader :addr, :prefixlen, :scope, :net, :netmask, :af, :peer
 
         def initialize(arg)
           case arg
@@ -41,6 +41,14 @@ class OnBoard
             @scope      = h[:scope]               
             @net        = @addr.mask(@prefixlen)  
               # returns the masked ip, not the mask
+            # Point-to-Point connection
+            if h[:peer].kind_of? Hash
+              @peer = IP.new h[:peer]
+            elsif h[:peer].kind_of? IP
+              @peer = h[:peer]
+            else
+              @peer = nil
+            end
 
           when String
             str = arg.strip
@@ -68,7 +76,7 @@ class OnBoard
             end
           
           else
-            raise TypeError, "Initialization argument for class #{self.class.name} must be a String or an Hash - got #{args.class.name} instead."   
+            raise TypeError, "Initialization argument for class #{self.class.name} must be a String or an Hash - got #{arg.class.name} instead."   
 
           end
 
@@ -99,6 +107,9 @@ class OnBoard
             h[p]  = (eval "@#{p}") 
           end
           h['af'] = @af.to_s 
+          if @peer
+            h['peer'] = @peer.data
+          end
           return h
         end
 
