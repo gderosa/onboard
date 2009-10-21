@@ -6,7 +6,7 @@ class OnBoard
     module Command
 
       def self.bgexec(cmd, *opts)
-        if opts.include? :sudo and Process.uid != 0
+        if opts.include? :sudo and ::Process.uid != 0
             cmd_do = 'sudo ' + cmd
         else
           cmd_do = cmd
@@ -37,7 +37,7 @@ class OnBoard
       end
 
       def self.run(cmd, *opts)
-        if opts.include? :sudo and Process.uid != 0
+        if opts.include? :sudo and ::Process.uid != 0
             cmd_do = 'sudo ' + cmd
         else
           cmd_do = cmd

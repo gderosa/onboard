@@ -49,16 +49,16 @@
               <!-- </div> -->
             </td>
             <td>
-              <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
+              <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]" <%= 'readonly' unless [:static, :dhcp].include? netif.ipassign[:method] %> />
             </td>
             <td><!--<div>--><%= html_escape netif.data['state'] %><!--</div>--></td>
             <td><!--<div>-->
               <% if netif.data['type'] == 'bridge' %>
                 <a href="<%= 'bridges/' + url_encode(netif.name) + '.html' %>" title="Configure <%= netif.name %> bridge">
-                  <%= html_escape netif.data['type']  %>            
+                  <%= netif.type_hr  %>            
                 </a>
               <% else %>
-                <%= html_escape netif.data['type'] %>
+                <%= netif.type_hr %>
               <% end %>
             <!--</div>--></td>
             <td><!--<div>--><%= html_escape netif.data['mtu'] %><!--</div>--></td>
@@ -69,7 +69,7 @@
               <% some_ip_printed = false %>
               <% if netif.ip.respond_to? :each %>
                 <%
-                  if netif.ipassign[:method] == :dhcp
+                  if netif.ipassign[:method] != :static
                     ip_input_attributes = 'readonly class="rotext"'
                   else
                     ip_input_attributes = 'class="rwtext"'
@@ -95,10 +95,23 @@
               <% end %>
             </td>       
             <td>
-              <select name="netifs[<%= netif.name %>][ipassign][method]">
-                <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
-                <option value="static" <%= "selected" if netif.ipassign[:method] == :static %>>Static</option>
-              </select>
+              <% if [:static, :dhcp].include? netif.ipassign[:method] %>
+                <select name="netifs[<%= netif.name %>][ipassign][method]">
+                  <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
+                  <option value="static" <%= "selected" if netif.ipassign[:method] == :static %>>Static</option>
+                </select>
+              <% else %>
+                <input type="hidden" name="netifs[<%= netif.name %>][ipassign][method]" value="<%= netif.ipassign[:method].to_s %>"/>
+                <div style="text-align:center;">
+                  <%= 
+                    if netif.ipassign[:method] == :none
+                      'None'
+                    else
+                      netif.type_hr
+                    end
+                  %> 
+                </div>
+              <% end %>
               <% %w{pid cmd args}.each do |what| %>
                 <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
               <% end %>

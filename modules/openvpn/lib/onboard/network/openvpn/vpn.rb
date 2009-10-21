@@ -19,9 +19,10 @@ class OnBoard
             p = System::Process.new(pid)
             p.cmdline.each_with_index do |arg, idx|
               next if idx == 0
-              if 
-                  p.cmdline[idx - 1] =~ /^\s*\-\-config/ or not 
-                  p.cmdline[idx - 1] =~ /^\s*\-/
+              if p.cmdline[idx - 1] =~ /^\s*\-\-config/ 
+                conffile = arg
+                break
+              elsif not p.cmdline[idx - 1] =~ /^\s*\-/
                 conffile = arg
               end
             end
@@ -46,6 +47,8 @@ class OnBoard
             if @data_internal['status'] 
               parse_status() 
               set_portable_client_list_from_status_data()
+              # TODO: get client info (and certificate info) 
+              # through --client-connect
             end
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
           elsif @data['client'] and @data_internal['management']

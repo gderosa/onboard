@@ -10,6 +10,16 @@ require 'onboard/extensions/array.rb'
 
 class OnBoard::Network::Interface
 
+  # Constants
+
+  TYPES_HUMAN_READABLE = {
+    'ether'       => 'Ethernet',
+    'P-t-P'       => 'Point-to-Point',
+    'virtual'     => 'Virtual Ethernet',
+    'wi-fi'       => 'Wireless IEEE 802.11',
+    'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;'
+  }
+
   # Class methods.
 
   class << self
@@ -63,19 +73,35 @@ class OnBoard::Network::Interface
             netif_h[:active] = false
           end
         end
-        if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})/ 
+        if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})?/ 
           netif_h[:type]  = $1
-          netif_h[:mac]   = MAC.new $2
+          netif_h[:mac]   = MAC.new $2 if $2
         end
         if line =~ /inet6? ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i 
           # prepare the array of IP(v4/v6) addresses, if not present
-          netif_h[:ip] = [] unless netif_h[:ip].respond_to? :[]
+          netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
           netif_h[:ip] << IP.new( 
             :addr       => $1,
             :prefixlen  => $2, # do not convert to_i
             :scope      => $3
           )
+        elsif line =~ # Point-to-Point interface # TODO: or just TUN? Check!
+            /inet6? ([0-9a-f\.:]+) peer ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i
+          netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
+          netif_h[:ip] << IP.new(
+            :addr       => $1,
+            :scope      => $4
+          )
+          netif_h[:peer] = [] unless netif_h[:peer].respond_to? :<<
+          netif_h[:peer] << IP.new(
+            :addr       => $2,
+            :prefixlen  => $3,
+            :scope      => $4
+          )
         end
+
+        netif_h[:type] = "P-t-P" if netif_h[:misc].include? "POINTOPOINT" 
+
       end
       ary << self.new(netif_h) if netif_h # fill in the last element
       # Now detect ip assigment method for each interface
@@ -224,7 +250,13 @@ class OnBoard::Network::Interface
     elsif @type == 'ether' # ether ifaces w/o pciid are likely tun/tap etc.
       @type = 'virtual'
     end
-    @ipassign = {:method => :static} if [nil, false, '', 0].include? @ipassign
+    if @type == 'P-t-P'
+      @ipassign = {:method => :pointopoint} 
+    elsif @type == 'ieee802.11' # wireless 'master' doesn't get IP
+       @ipassign = {:method => :none} 
+    elsif [nil, false, '', 0].include? @ipassign
+      @ipassign = {:method => :static}
+    end
   end
 
   def is_bridge?
@@ -287,7 +319,8 @@ class OnBoard::Network::Interface
       elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'static'
         stop_dhcp_client h['ipassign']['pid'] 
         assign_static_ips h['ip']
-      elsif@ipassign[:method] == :static and h['ipassign']['method'] == 'static'
+      elsif
+          @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
         assign_static_ips h['ip']
       end # if was dhcp and shall be dhcp... simply do nothing :-)
     elsif @active
@@ -361,6 +394,10 @@ class OnBoard::Network::Interface
         ip_addr_add(newip)
       end
     end
+  end
+
+  def type_hr
+    TYPES_HUMAN_READABLE[@type] or @type
   end
 
   private

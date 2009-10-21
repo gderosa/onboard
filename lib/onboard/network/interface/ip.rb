@@ -33,7 +33,11 @@ class OnBoard
           when Hash
             h = arg 
             @addr       = IPAddr.new h[:addr]  
-            @prefixlen  = h[:prefixlen].to_i           
+            if h[:prefixlen]
+              @prefixlen  = h[:prefixlen].to_i           
+            else
+              @prefixlen  = @addr.prefixlen # /32 or /128
+            end 
             @scope      = h[:scope]               
             @net        = @addr.mask(@prefixlen)  
               # returns the masked ip, not the mask
