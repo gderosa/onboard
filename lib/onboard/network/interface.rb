@@ -17,7 +17,8 @@ class OnBoard::Network::Interface
     'P-t-P'       => 'Point-to-Point',
     'virtual'     => 'Virtual Ethernet',
     'wi-fi'       => 'Wireless IEEE 802.11',
-    'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;'
+    'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;',
+    'bridge'      => 'Bridge'
   }
 
   # Class methods.
