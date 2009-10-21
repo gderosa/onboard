@@ -34,11 +34,17 @@
               <!-- <div> -->
                 <!-- <a href="<%= 'interfaces/' + url_encode(netif.name) + '.html' %>"> -->
                   <% if netif.type == 'bridge' %>
-                    <%= netif.name + ':' %>
+                    <%=
+                      if netif.members.length > 0 
+                        netif.name + ':' 
+                      else
+                        netif.name
+                      end
+                    %>
                     <% if netif.members.length > 0 %>
                       <ul>
                         <% netif.members.each do |membername| %>
-                          <li><a href="<%= request.path_info.to_dir + '/' + url_encode(membername) + '.html' %>"><%= membername %></a></li>
+                          <li><%= membername %></li>
                         <% end %>
                       </ul>
                     <% end %>
@@ -93,7 +99,7 @@
                 <% end %>
               <% end %>  
 
-              <% if netif.ipassign[:method] == :static and netif.active %>
+              <% if netif.ipassign[:method] == :static %>
                 <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
               <% end %>
 

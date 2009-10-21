@@ -328,6 +328,10 @@ class OnBoard::Network::Interface
       #Command.run "ip link set #{@name} down", :sudo # DRY!
       ip_link_set_down
     end
+    if @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
+        assign_static_ips h['ip']
+    end 
+    # if was dhcp and shall be dhcp... simply do nothing :-)
   end
 
   def has_ip?(ipobj)
