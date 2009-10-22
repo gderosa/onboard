@@ -25,7 +25,7 @@
       <th colspan="4">
         Real
       </th>
-      <th colspan="4">
+      <th colspan="2">
         Virtual 
       </th>
     </tr>
@@ -36,16 +36,16 @@
       <th colspan="2">
         Remote 
       </th>     
-      <th colspan="2">
-        Local
+      <th rowspan="2">
+        Local IP Address
       </th>
-      <th colspan="2">
-        Remote 
+      <th rowspan="2">
+        Remote IP Address
       </th>     
     </tr>
     <tr>
-      <% 4.times do %>
-        <th>IP</th>
+      <% 2.times do %>
+        <th>IP Address</th>
         <th>Port</th>
       <% end %>
     </tr>
