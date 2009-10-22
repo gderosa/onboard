@@ -28,8 +28,14 @@
               not ['loopback', 'ieee802.11'].include? netif.type
             ) or 
               params['view'] == 'all' 
-        %> 
-          <tr>
+          %> 
+          <% 
+            title = ''
+            if netif.type == 'P-t-P'
+              title = 'Point-to-Point interfaces are configured automatically by VPN daemons, modem connection utilities and so forth. You cannot manage them directly.'
+            end
+          %>
+          <tr title="<%= title %>">
             <th>
               <!-- <div> -->
                 <!-- <a href="<%= 'interfaces/' + url_encode(netif.name) + '.html' %>"> -->
@@ -78,6 +84,7 @@
                 <% netif.ip.each_with_index do |ip, ip_n| %>
                   <span class="lowlight"><%= ip.addr.to_s + ' --> ' + ip.peer.addr.to_s + '/' + ip.peer.prefixlen.to_s %></span>
                   <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
+                  <% some_ip_printed = true %>
                 <% end %>
               <% else %>
                 <% if netif.ip.respond_to? :each %>
