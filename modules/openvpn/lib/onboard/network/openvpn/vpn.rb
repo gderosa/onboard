@@ -37,11 +37,13 @@ class OnBoard
         attr_reader :data
 
         def initialize(h) 
-          @data = {}
           @data_internal = {
-            'process' => h[:process],
-            'conffile' => h[:conffile]
-          } 
+            'process'   => h[:process],
+            'conffile'  => h[:conffile]
+          }
+          @data = {} 
+          @data['pid'] = @data_internal['process'].pid if 
+              @data_internal['process']
           parse_conffile()
           if @data['server']
             if @data_internal['status'] 
@@ -86,7 +88,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end 
 
             # "public" options with 1 argument 
-            %w{port proto dev max-clients}.each do |optname|
+            %w{port proto dev max-clients local}.each do |optname|
               if line =~ /^\s*#{optname}\s+(.*)\s*$/ 
                 @data[optname] = $1
                 next

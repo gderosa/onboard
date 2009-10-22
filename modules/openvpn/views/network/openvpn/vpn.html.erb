@@ -30,8 +30,11 @@
       </th>
     </tr>
     <tr>
-      <th colspan="2">
-        Local
+      <th rowspan="2">
+        Protocol
+      </th>
+      <th rowspan="2">
+        Local Port
       </th>
       <th colspan="2">
         Remote 
@@ -44,13 +47,57 @@
       </th>     
     </tr>
     <tr>
-      <% 2.times do %>
-        <th>IP Address</th>
-        <th>Port</th>
-      <% end %>
+      <th>IP Address</th>
+      <th>Port</th>
     </tr>
   </thead>
   <tbody>
+    <% objects.each_with_index do |vpn, vpn_i| %>
+      <tr>
+        <td><%= vpn.data['pid'] %></td>
+        <td> </td>
+        <td>
+          <%= 
+            if vpn.data['client']
+              "Client"
+            elsif vpn.data['server']
+              "Server"
+            end
+          %>
+        </td>
+        <td><code><%= vpn.data['cert']['subject']['CN'] %></code></td>
+        <td><%= vpn.data['proto'].upcase %></td>
+        <td>
+          <%= 
+            if vpn.data['port']
+              vpn.data['port']
+            else
+              ' '
+            end
+          %>
+        </td>
+        <td> 
+          <%=
+            if vpn.data['remote'] and vpn.data['remote']['address']
+              vpn.data['remote']['address']
+            else
+              ' '
+            end
+          %>
+        </td>
+        <td> 
+          <%=
+            if vpn.data['remote'] and vpn.data['remote']['port']
+              vpn.data['remote']['port']
+            else
+              ' '
+            end
+          %>
+        </td>
+        <td>,</td>
+        <td>,</td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
 
