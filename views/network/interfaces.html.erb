@@ -107,7 +107,10 @@
                 <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
               <% end %>
 
-              <% unless some_ip_printed %>
+              <% 
+                unless some_ip_printed or netif.ipassign[:method] == :static 
+                # method static implies that "add new" has been printed...
+              %>
                 &nbsp; <!-- make certain browsers happy :-/ -->
               <% end %>
 

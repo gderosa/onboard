@@ -1,6 +1,5 @@
 require 'onboard/network/interface/mac'
 require 'onboard/network/interface/ip'
-require 'onboard/network/wifi'
 require 'onboard/network/bridge'
 require 'onboard/hardware/lspci'
 require 'onboard/extensions/array.rb'
@@ -15,7 +14,8 @@ class OnBoard::Network::Interface
     'virtual'     => 'Virtual Ethernet',
     'wi-fi'       => 'Wireless IEEE 802.11',
     'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;',
-    'bridge'      => 'Bridge'
+    'bridge'      => 'Bridge',
+    'loopback'    => 'Loopback'
   }
 
   # Class methods.
@@ -126,22 +126,12 @@ class OnBoard::Network::Interface
 
       (nonbridges.select {|x| x.type == 'wi-fi'}).each do |wifi|
         wifi.wifi_properties = {} unless wifi.wifi_properties
-        nonbridges.each do |nb|
-          begin
-            puts nb.name + ' ' + nb.type + ' ' + nb.mac.raw.to_s
-          rescue
-            puts nb.name + ' ' + nb.type
-          end
-        end
+        # Prefer pciid over MAC addr to determine whether two 
+        # interfaces have the same underlying hardware
         wifi.wifi_properties['master'] = nonbridges.detect do |x|
-          x.mac == wifi.mac and 
-          x.mac.valid? and
+          x.pciid == wifi.pciid and 
+          x.pciid =~ /\S/ and
           x.type == 'ieee802.11'
-        end
-        begin
-          puts wifi.name + '->' + wifi.wifi_properties['master'].name
-        rescue
-          puts wifi.name + '->' 
         end
       end
 
@@ -238,7 +228,7 @@ class OnBoard::Network::Interface
 
   # Instance methods and attributes.
 
-  attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :vendor, :model, :desc
+  attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :vendor, :model, :desc, :pciid
   attr_accessor :ipassign, :type, :wifi_properties
 
   include OnBoard::System
