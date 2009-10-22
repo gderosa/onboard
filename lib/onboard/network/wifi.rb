@@ -1,3 +1,4 @@
+=begin
 class OnBoard
   module Network
     class WiFi < Interface
@@ -25,3 +26,4 @@ class OnBoard
     end
   end
 end
+=end

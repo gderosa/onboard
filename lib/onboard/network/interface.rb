@@ -123,21 +123,30 @@ class OnBoard::Network::Interface
     def all_layer3(all_layer2=@@all_layer2)
       ary = []
       bridges, nonbridges = all_layer2.partition {|x| x.is_bridge?} 
-      wifi_physicals = nonbridges.select {|x| x.type == 'ieee802.11'} 
-      wifi_physicals.each do |wifi_phys|
-        wifi_ether = nonbridges.detect do |x| 
-          x.mac == wifi_phys.mac and x.type != 'ieee802.11'
+
+      (nonbridges.select {|x| x.type == 'wi-fi'}).each do |wifi|
+        wifi.wifi_properties = {} unless wifi.wifi_properties
+        nonbridges.each do |nb|
+          begin
+            puts nb.name + ' ' + nb.type + ' ' + nb.mac.raw.to_s
+          rescue
+            puts nb.name + ' ' + nb.type
+          end
         end
-        if wifi_ether
-          wifi_ether.type = 'wifi_ether' # mark
-          ary << OnBoard::Network::WiFi.new(
-              :underlying_physical  => wifi_phys,
-              :ip_carrying          => wifi_ether
-          )
-        end 
+        wifi.wifi_properties['master'] = nonbridges.detect do |x|
+          x.mac == wifi.mac and 
+          x.mac.valid? and
+          x.type == 'ieee802.11'
+        end
+        begin
+          puts wifi.name + '->' + wifi.wifi_properties['master'].name
+        rescue
+          puts wifi.name + '->' 
+        end
       end
+
       ary += nonbridges.reject do |x| 
-        ['ieee802.11', 'wifi_ether'].include? x.type or
+        ['ieee802.11'].include? x.type or
         x.bridged_to # "bridged to anyone"
       end
       ary += bridges.map do |x|
@@ -230,7 +239,7 @@ class OnBoard::Network::Interface
   # Instance methods and attributes.
 
   attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :vendor, :model, :desc
-  attr_accessor :ipassign, :type
+  attr_accessor :ipassign, :type, :wifi_properties
 
   include OnBoard::System
 
@@ -254,8 +263,9 @@ class OnBoard::Network::Interface
     elsif [nil, false, '', 0].include? @ipassign
       @ipassign = {:method => :static}
     end
-    if @type == 'ether' and 
-        File.exists? "/sys/class/net/#{@name}/phy80211"
+    if @type == 'ether' and ( 
+        File.exists? "/sys/class/net/#{@name}/phy80211" or
+        File.exists? "/sys/class/net/#{@name}/wireless")
       @type = 'wi-fi'
     end
   end
@@ -307,7 +317,8 @@ class OnBoard::Network::Interface
       'pid'         => @ipassign[:pid].to_i,
       'cmd'         => @ipassign[:cmd],
       'args'        => @ipassign[:args] 
-    } 
+    }
+    h['wifi_properties'] = @wifi_properties
     return h
   end
 
