@@ -1,13 +1,53 @@
 <h2>VPN</h2>
 <pre><%= html_escape objects.pretty_inspect if params['debug'] %></pre>
 
+<%
+  pid_description = "Identifies a running process, and is not preserved across restarts"
+  vpn_id_description = "Only identifies VPN created by this management interface, and doesn&rsquo;t change after a restart"
+  common_name_description = "Information contained in the cryptographic certificate for the VPN"
+%>
 
 <table>
   <thead>
     <tr>
-      <th colspan="3">
+      <th rowspan="3" title="<%= pid_description %>">
         PID
       </th>
+      <th rowspan="3" title="<%= vpn_id_description %>">
+        VPN ID
+      </th>     
+      <th rowspan="3">
+        Client/Server
+      </th>
+      <th rowspan="3" title="<%= common_name_description %>">
+        &ldquo;Common Name&rdquo;
+      </th>
+      <th colspan="4">
+        Real
+      </th>
+      <th colspan="4">
+        Virtual 
+      </th>
+    </tr>
+    <tr>
+      <th colspan="2">
+        Local
+      </th>
+      <th colspan="2">
+        Remote 
+      </th>     
+      <th colspan="2">
+        Local
+      </th>
+      <th colspan="2">
+        Remote 
+      </th>     
+    </tr>
+    <tr>
+      <% 4.times do %>
+        <th>IP</th>
+        <th>Port</th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
