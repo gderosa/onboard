@@ -1,6 +1,3 @@
-require 'pp'
-require 'yaml'
-
 require 'onboard/network/interface/mac'
 require 'onboard/network/interface/ip'
 require 'onboard/network/wifi'
@@ -252,10 +249,14 @@ class OnBoard::Network::Interface
     end
     if @type == 'P-t-P'
       @ipassign = {:method => :pointopoint} 
-    elsif @type == 'ieee802.11' # wireless 'master' doesn't get IP
+    elsif @type == 'ieee802.11' # wireless 'masters' don't get IP
        @ipassign = {:method => :none} 
     elsif [nil, false, '', 0].include? @ipassign
       @ipassign = {:method => :static}
+    end
+    if @type == 'ether' and 
+        File.exists? "/sys/class/net/#{@name}/phy80211"
+      @type = 'wi-fi'
     end
   end
 
