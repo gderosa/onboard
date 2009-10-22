@@ -361,10 +361,18 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
         end
 
         def get_client_info_from_management_interface
-          tcp = TCPSocket.new(
-              @data_internal['management']['address'],
-              @data_internal['management']['port']
-          )
+          begin
+            tcp = TCPSocket.new(
+                @data_internal['management']['address'],
+                @data_internal['management']['port']
+            )
+          rescue
+            @data['client'] = {} unless @data['client'].respond_to? :[] 
+            @data['client']['management_interface_err'] =
+                @data_internal['management']['err'] = 
+                    $!.to_s
+            return false
+          end
 
           tcp.gets # gets the 'banner'
 

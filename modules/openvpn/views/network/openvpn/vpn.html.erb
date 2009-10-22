@@ -1,4 +1,17 @@
 <h2>VPN</h2>
-<pre><%= html_escape objects.pretty_inspect %></pre>
+<pre><%= html_escape objects.pretty_inspect if params['debug'] %></pre>
+
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3">
+        PID
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 
 
