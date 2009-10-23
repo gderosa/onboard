@@ -1,3 +1,7 @@
+<%
+  require 'onboard/extensions/ipaddr'
+%>
+
 <h2>VPN</h2>
 <pre><%= html_escape objects.pretty_inspect if params['debug'] %></pre>
 
@@ -43,7 +47,7 @@
         Local IP Address
       </th>
       <th rowspan="2">
-        Remote IP Address
+        Destinations
       </th>     
     </tr>
     <tr>
@@ -94,8 +98,29 @@
             end
           %>
         </td>
-        <td>,</td>
-        <td>,</td>
+        <td>
+          <%=
+            if vpn.data['client'] 
+              if vpn.data['client'].respond_to? :[] and 
+                  vpn.data['client']['Virtual Address']
+                vpn.data['client']['Virtual Address']
+              else
+                ' '
+              end
+            elsif vpn.data['server']
+              # if, in the config file it's 
+              # server=10.8.0.0 netmask=255.255.255.0, then the virtual local
+              # server address is 10.8.0.1/24
+              ip = IPAddr.new(vpn.data['server'] + '/' + vpn.data['netmask'])
+              ip.to_range.to_a[1].to_s + '/' + ip.prefixlen.to_s
+            end
+          %>
+        </td>
+        <td>
+          <%= 
+              #vpn.data['remote'] 
+          %>
+        </td>
       </tr>
     <% end %>
   </tbody>
