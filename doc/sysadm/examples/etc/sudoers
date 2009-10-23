@@ -12,9 +12,9 @@ Defaults	env_reset
 # User alias specification
 
 # Cmnd alias specification
-Cmnd_Alias	RUBYONBOARD = /sbin/ip, /sbin/dhcpcd, /usr/sbin/brctl, /sbin/iptables, /sbin/iptables-save, /sbin/iptables-restore, /sbin/ip6tables, /sbin/ip6tables-save, /sbin/ip6tables-restore  /bin/kill
-
-Cmnd_Alias      RUBYONBOARD_ENV = /etc/init.d/dnsmasq
+Cmnd_Alias      ONBOARD = /sbin/ip, /sbin/dhcpcd, /usr/sbin/brctl, /sbin/iptables, /sbin/iptables-save, /sbin/iptables-restore, /sbin/ip6tables, /sbin/ip6tables-save, /sbin/ip6tables-restore,  /bin/kill, /bin/killall, /bin/readlink, /bin/cat /proc/*/environ
+Cmnd_Alias      ONBOARD_SETENV = /etc/init.d/dnsmasq
+ 
 
 # User privilege specification
 root	ALL=(ALL) ALL
@@ -24,10 +24,6 @@ root	ALL=(ALL) ALL
 # it further down)
 # %sudo ALL=NOPASSWD: ALL
 
-# Members of the admin group may gain root privileges
-%admin ALL=(ALL) ALL
-
-# Members of the group may execute  commands with as root
-%onboard ALL = NOPASSWD: RUBYONBOARD
-%onboard ALL = NOPASSWD: SETENV: RUBYONBOARD_ENV
-
+%onboard ALL = NOPASSWD: ONBOARD 
+%onboard ALL = SETENV: NOPASSWD: ONBOARD_SETENV 
+	# vim doesn't understand this syntax (multiple tags)
