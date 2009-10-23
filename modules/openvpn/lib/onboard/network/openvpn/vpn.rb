@@ -1,8 +1,11 @@
 require 'onboard/system/process'
+require 'onboard/network/interface'
+require 'onboard/network/routing/table'
 
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :OpenSSL,    'openssl'
+autoload :IPAddr,     'ipaddr'
 
 class OnBoard
   module Network
@@ -11,6 +14,10 @@ class OnBoard
 
         # get info on running OpenVPN instances
         def self.getAll
+
+          @@all_interfaces  = Network::Interface.getAll_layer2()
+          @@all_routes      = Network::Routing::Table.getCurrent()
+
           ary = []
           # NOTE: it's assumed that configuration options are only
           # in config files, not cmdline args; TODO: parse cmdline too?   
@@ -56,6 +63,31 @@ class OnBoard
           elsif @data['client'] and @data_internal['management']
             get_client_info_from_management_interface()
           end
+          set_virtual_address()
+          find_interface()
+          find_routes
+        end
+
+        def find_interface
+          @@all_interfaces.detect do |iface|
+            return nil unless iface.ip
+            iface.ip.detect do |ip|
+              ip.addr.to_s == data['virtual_address']
+            end
+          end
+        end
+
+        def set_virtual_address
+          if data['client']
+            data['virtual_address'] = data['client']['Virtual Address']
+          elsif data['server']
+            data['virtual_address'] = 
+                IPAddr.new(data['server']).to_range.to_a[1].to_s
+          end
+        end
+
+        def find_routes
+
         end
 
         def parse_conffile
