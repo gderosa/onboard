@@ -5,6 +5,7 @@ require 'find'
 require 'json'
 require 'yaml'
 require 'logger'
+require 'pp'
 
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
@@ -67,31 +68,42 @@ class OnBoard::Controller < Sinatra::Base
         else
           return h[:objects].to_(h[:format])
         end
-      else
-        status(300)
-        paths = []
-        @@formats.each do |fmt|
-          paths << request.path_info.sub(/\.[^\.]*$/, '.' + fmt) 
+      when 'rb'
+        if options.environment == :development
+          content_type 'text/x-ruby'
+          return h[:objects].pretty_inspect 
+        else
+          multiple_choices(h)
         end
-        @@formats.each do |fmt|
-          if request.env["HTTP_ACCEPT"] [fmt] # "contains"
-            return format(
-              :path => '300',
-              :format => fmt,
-              :objects => {
-                :paths => paths, 
-              }
-            )
-          end
-          format(
+      else
+        multiple_choices(h)
+      end  
+    end
+
+    def multiple_choices(h)
+      status(300)
+      paths = []
+      @@formats.each do |fmt|
+        paths << request.path_info.sub(/\.[^\.]*$/, '.' + fmt) 
+      end
+      @@formats.each do |fmt|
+        if request.env["HTTP_ACCEPT"] [fmt] # "contains"
+          return format(
             :path => '300',
-            :format => 'html',
+            :format => fmt,
             :objects => {
-                :paths => paths, 
-            }          
+              :paths => paths, 
+            }
           )
         end
-      end  
+        format(
+          :path => '300',
+          :format => 'html',
+          :objects => {
+              :paths => paths, 
+          }          
+        )
+      end
     end
 
   end
