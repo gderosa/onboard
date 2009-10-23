@@ -57,7 +57,11 @@
   <tbody>
     <% objects.each_with_index do |vpn, vpn_i| %>
       <tr>
-        <td><%= vpn.data['pid'] %></td>
+        <td>
+          <a href="pid/<%= vpn.data['pid'] %>.html">
+            <%= vpn.data['pid'] %>
+          </a>
+        </td>
         <td>
           <%= 
             if vpn.data['client']
