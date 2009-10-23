@@ -6,20 +6,16 @@
 <pre><%= html_escape objects.pretty_inspect if params['debug'] %></pre>
 
 <%
-  pid_description = "Identifies a running process, and is not preserved across restarts"
-  vpn_id_description = "Only identifies VPN created by this management interface, and doesn&rsquo;t change after a restart"
+  pid_description = "Identifies a running process"
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
 %>
-
+<h3>Running OpenVPN connections</h3>
 <table>
   <thead>
     <tr>
       <th rowspan="3" title="<%= pid_description %>">
         PID
       </th>
-      <th rowspan="3" title="<%= vpn_id_description %>">
-        VPN ID
-      </th>     
       <th rowspan="3">
         Client/Server
       </th>
@@ -62,7 +58,6 @@
     <% objects.each_with_index do |vpn, vpn_i| %>
       <tr>
         <td><%= vpn.data['pid'] %></td>
-        <td> </td>
         <td>
           <%= 
             if vpn.data['client']
@@ -79,7 +74,7 @@
             if vpn.data['port']
               vpn.data['port']
             else
-              ' '
+              '<span class="lowlight">(auto)</span>'
             end
           %>
         </td>
@@ -87,8 +82,8 @@
           <%=
             if vpn.data['remote'] and vpn.data['remote']['address']
               vpn.data['remote']['address']
-            else
-              ' '
+            elsif vpn.data['server']
+              '<div class="lowlight" style="text-align:center;">*</div>'
             end
           %>
         </td>
@@ -96,8 +91,8 @@
           <%=
             if vpn.data['remote'] and vpn.data['remote']['port']
               vpn.data['remote']['port']
-            else
-              ' '
+            elsif vpn.data['server']
+              '<div class="lowlight" style="text-align:center;">*</div>'
             end
           %>
         </td>
@@ -121,7 +116,7 @@
         </td>
         <td>
           <%= 
-            str = ''
+            str = '<div style="margin:0.3em 0;">'
             vpn.data['routes'].each do |route| 
               addr      = route['dest']['addr'] 
               prefixlen = route['dest']['prefixlen'] 
@@ -134,8 +129,8 @@
                 str << '/'
                 str << prefixlen.to_s
               end
-              str << " (via #{gw})" unless %w{0.0.0.0 ::}.include? gw
-              str << '<br/>'
+              str << "<span class=\"lowlight\"> (via #{gw}) </span>" unless %w{0.0.0.0 ::}.include? gw
+              str << '</div>' 
             end 
             str
           %>

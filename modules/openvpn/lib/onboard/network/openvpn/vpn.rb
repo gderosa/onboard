@@ -78,7 +78,7 @@ class OnBoard
               nil
             end
           end
-          @data['interface'] = interface.name
+          @data['interface'] = interface.name if interface
         end
 
         def find_virtual_address
