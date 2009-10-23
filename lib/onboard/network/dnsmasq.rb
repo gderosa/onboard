@@ -94,6 +94,7 @@ class OnBoard
       end
 
       def parse_dhcp_conf
+        return false unless File.readable? CONFDIR + '/new/dhcp.conf'
         File.open CONFDIR + '/new/dhcp.conf' do |file|
           file.each_line do |line|
             next if line =~ /^#/
@@ -124,6 +125,7 @@ class OnBoard
 
       def parse_dhcp_leasefile
         dhcp_leasefile = ""
+        return false unless File.readable? CONFDIR + '/new/dnsmasq.conf'
         File.open CONFDIR + '/new/dnsmasq.conf' do |file|
           file.each_line do |line|
             next if line =~ /^#/
@@ -134,7 +136,7 @@ class OnBoard
             line.strip!
             # The following regexes are too 'rigid' to parse conf file 
             # not written by ourselves, but should be ok for our needs.
-            if line =~ /dhcp-leasefile=(\S+)/ # TODO? handle flepath w/ spaces?
+            if line =~ /dhcp-leasefile=(\S+)/ # TODO? handle filepath w/ spaces?
               dhcp_leasefile = $1
               break
             end   
@@ -156,6 +158,7 @@ class OnBoard
 
       # Repeat Yourself :-P # TODO's ?
       def parse_dns_conf
+        return false unless File.readable? CONFDIR + '/new/dns.conf'
         File.open CONFDIR + '/new/dns.conf' do |file|
           file.each_line do |line|
             next if line =~ /^\s*#/
