@@ -15,7 +15,7 @@ class OnBoard
         # get info on running OpenVPN instances
         def self.getAll
 
-          @@all_interfaces  = Network::Interface.getAll_layer2()
+          @@all_interfaces  = Network::Interface.getAll()
           @@all_routes      = Network::Routing::Table.getCurrent()
 
           ary = []
@@ -63,31 +63,45 @@ class OnBoard
           elsif @data['client'] and @data_internal['management']
             get_client_info_from_management_interface()
           end
-          set_virtual_address()
+          find_virtual_address()
           find_interface()
-          find_routes
+          find_routes()
         end
 
         def find_interface
-          @@all_interfaces.detect do |iface|
-            return nil unless iface.ip
-            iface.ip.detect do |ip|
-              ip.addr.to_s == data['virtual_address']
+          interface = @@all_interfaces.detect do |iface|
+            if iface.ip
+              iface.ip.detect do |ip|
+                ip.addr.to_s == @data['virtual_address']
+              end
+            else
+              nil
             end
           end
+          @data['interface'] = interface.name
         end
 
-        def set_virtual_address
-          if data['client']
-            data['virtual_address'] = data['client']['Virtual Address']
+        def find_virtual_address
+          if @data['client']
+            @data['virtual_address'] = @data['client']['Virtual Address']
           elsif data['server']
-            data['virtual_address'] = 
-                IPAddr.new(data['server']).to_range.to_a[1].to_s
+            @data['virtual_address'] = IPAddr.new(
+                "#{@data['server']}/#{data['netmask']}"
+            ).to_range.to_a[1].to_s
           end
         end
 
-        def find_routes
 
+        def find_routes
+          ary = []
+          @@all_routes.routes.each do |route|
+            if  @data['interface'] and
+                @data['interface'] =~ /\S/ and
+                @data['interface'] == route.data['dev']
+              ary << route.data
+            end
+          end
+          data['routes'] = ary
         end
 
         def parse_conffile

@@ -132,6 +132,8 @@ class OnBoard
           return result
         end
 
+        attr_reader :routes
+
         def initialize(ary)
           @routes = ary
         end

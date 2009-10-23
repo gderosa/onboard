@@ -16,8 +16,16 @@ class IPAddr
   # for JSON export etc.
   def data
     {
-      :addr       => to_s,
-      :prefixlen  => prefixlen
+      'addr'      => to_s,
+      'prefixlen' => prefixlen,
+      'af'        => (
+          case @family
+          when Socket::AF_INET
+            'inet'
+          when Socket::AF_INET6
+            'inet6'
+          end
+      ) 
     }
   end
 
