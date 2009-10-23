@@ -58,7 +58,7 @@
     <% objects.each_with_index do |vpn, vpn_i| %>
       <tr>
         <td>
-          <a href="pid/<%= vpn.data['pid'] %>.html">
+          <a href="openvpn/pid_<%= vpn.data['pid'] %>.html">
             <%= vpn.data['pid'] %>
           </a>
         </td>

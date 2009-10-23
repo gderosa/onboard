@@ -9,7 +9,7 @@ class OnBoard
 end
 
 class OnBoard::Controller < Sinatra::Base
-  get '/network/openvpn/vpn.:format' do
+  get '/network/openvpn.:format' do
     vpns = OnBoard::Network::OpenVPN::VPN.getAll()
     format(
       :module => 'openvpn',

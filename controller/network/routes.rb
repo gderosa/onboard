@@ -3,7 +3,7 @@ require 'sinatra/base'
 require 'onboard/network/routing/table'
 
 class OnBoard::Controller
-
+=begin
   get "/network/routing.html" do
     format(
       :path     => 'simple_menu',
@@ -15,8 +15,8 @@ class OnBoard::Controller
       }
     )
   end
-
-  get "/network/routing/table.:format" do
+=end
+  get "/network/routes.:format" do
     format(
       :path     => 'network/routing/table',
       :format   => params[:format],
@@ -28,7 +28,7 @@ class OnBoard::Controller
   # table, hence the use of the sole PUT method to an unique URI. 
   # A way to retain our code simple but still respect (somewhat) 
   # the HTTP semantics.
-  put "/network/routing/table.:format" do
+  put "/network/routes.:format" do
     if params['ip_route_del']
       msg = OnBoard::Network::Routing::Table.ip_route_del params['ip_route_del']
     else
