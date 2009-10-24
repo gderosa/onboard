@@ -25,13 +25,11 @@
       </form>
       <form method="post">
         <input type="hidden" name="_method" value="put"/>
-        <td>
+        <th>
           <div>
-            <a href="<%= '../interfaces/' + url_encode(netif.name) + '.html' %>">
                 <%= netif.name %>
-            </a>
           </div>
-        </td>
+        </th>
         <td>
           <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
         </td>
@@ -121,68 +119,15 @@
             <td>
               <button title="Remove from the bridge" type="submit" name="brctl[delif][<%= objects[:bridge].name %>][<%= netif.name %>]" value="yes"><img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="remove"/></button>
             </td>
-            <td>
-              <div>
-                <a href="<%= request.path_info.to_dir + '/' + url_encode(netif.name) + '.html' %>">
-                    <%= netif.name %>
-                </a>
-              </div>
-            </td>
-            <td>
-              <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
-            </td>
-            <% %w{state type mtu}.each do |field| %>
-              <td><div><%= html_escape netif.data[field] %></div></td>
-            <% end %>
-            <td>
-              <div><code><%= html_escape netif.data['mac'] %></code></div>
-            </td>
-            <td>
-              <% some_ip_printed = false %>
-              <% if netif.ip.respond_to? :each %>
-                <%
-                  if netif.ipassign[:method] == :dhcp
-                    ip_input_attributes = 'readonly class="rotext"'
-                  else
-                    ip_input_attributes = 'class="rwtext"'
-                  end
-                %>
-                <% netif.ip.each_with_index do |ip, ip_n| %>
-                  <% if ['site', 'global'].include? ip.scope or params['view'] == 'all' %>
-                    <div><input <%= ip_input_attributes %> type="text" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/></div>
-                    <% some_ip_printed = true %>
-                  <% else %>
-                    <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
-                  <% end %>
-                <% end %>
-              <% end %>  
-              <% if netif.ipassign[:method] == :dhcp and netif.ipassign[:cmd] =~ /\S+/ and not some_ip_printed %>
-                <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
-              <% end %>
-            </td>       
-            <td>
-              <select name="netifs[<%= netif.name %>][ipassign][method]">
-                <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
-                <option value="static" <%= "selected" if netif.ipassign[:method] == :static %>>Static</option>
-              </select>
-              <% %w{pid cmd args}.each do |what| %>
-                <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
-              <% end %>
-            </td> 
-            <td>
-              <% 
-                str = ''
-                begin
-                  str += (netif.vendor  + ' ')  
-                rescue NoMethodError
-                end
-                begin
-                  str += (netif.model   + ' ') 
-                rescue NoMethodError
-                end
-              %>
-              <%= str %>
-            </td>
+            <%=
+              erb(
+                :"network/_interfaces_row.html",
+                {
+                  :layout => false,
+                  :locals => {:netif => netif}
+                }
+              )
+            %>
           </tr>
         <% end %>
       <% end %>
@@ -206,71 +151,15 @@
             <td>
               <button title="Add interface to the bridge" type="submit" name="brctl[addif][<%= objects[:bridge].name %>][<%= netif.name %>]" value="yes"><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="add"/></button>
             </td>
-            <td>
-              <div>
-                <a href="<%= request.path_info.to_dir + '/' + url_encode(netif.name) + '.html' %>">
-                    <%= netif.name %>
-                </a>
-              </div>
-            </td>
-            <td>
-              <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
-            </td>
-            <% %w{state type mtu}.each do |field| %>
-              <td><div><%= html_escape netif.data[field] %></div></td>
-            <% end %>
-            <td>
-              <div><code><%= html_escape netif.data['mac'] %></code></div>
-            </td>
-            <td>
-              <% some_ip_printed = false %>
-              <% if netif.ip.respond_to? :each %>
-                <%
-                  if netif.ipassign[:method] == :dhcp
-                    ip_input_attributes = 'readonly class="rotext"'
-                  else
-                    ip_input_attributes = 'class="rwtext"'
-                  end
-                %>
-                <% netif.ip.each_with_index do |ip, ip_n| %>
-                  <% if ['site', 'global'].include? ip.scope or params['view'] == 'all' %>
-                    <div><input <%= ip_input_attributes %> type="text" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/></div>
-                    <% some_ip_printed = true %>
-                  <% else %>
-                    <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
-                  <% end %>
-                <% end %>
-              <% end %>  
-              <% if netif.ipassign[:method] == :static and netif.active %>
-                <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
-              <% end %>
-              <% if netif.ipassign[:method] == :dhcp and netif.ipassign[:cmd] =~ /\S+/ and not some_ip_printed %>
-                <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
-              <% end %>
-            </td>       
-            <td>
-              <select name="netifs[<%= netif.name %>][ipassign][method]">
-                <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
-                <option value="static" <%= "selected" if netif.ipassign[:method] == :static %>>Static</option>
-              </select>
-              <% %w{pid cmd args}.each do |what| %>
-                <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
-              <% end %>
-            </td> 
-            <td>
-              <% 
-                str = ''
-                begin
-                  str += (netif.vendor  + ' ')  
-                rescue NoMethodError
-                end
-                begin
-                  str += (netif.model   + ' ') 
-                rescue NoMethodError
-                end
-              %>
-              <%= str %>
-            </td>
+            <%=
+              erb(
+                :"network/_interfaces_row.html",
+                {
+                  :layout => false,
+                  :locals => {:netif => netif}
+                }
+              )
+            %>
           </tr>
         <% end %>
       <% end %>
