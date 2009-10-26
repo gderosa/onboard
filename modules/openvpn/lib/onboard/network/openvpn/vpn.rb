@@ -20,6 +20,10 @@ class OnBoard
           @@all_vpn         = [] unless ( 
               class_variable_defined? :@@all_vpn and @@all_vpn)
 
+          @@all_vpn.each do |vpn|
+            vpn.set_not_running # ...until we'll find it actually running ;)
+          end
+
           `pidof openvpn`.split.each do |pid|
             conffile = ''
             p = System::Process.new(pid)
@@ -35,7 +39,8 @@ class OnBoard
             end
             self.new(
               :process  => p,
-              :conffile => conffile
+              :conffile => conffile,
+              :running  => true
             ).add_to_the_pool
           end
           return @@all_vpn
@@ -48,7 +53,7 @@ class OnBoard
             'process'   => h[:process],
             'conffile'  => h[:conffile]
           }
-          @data = {} 
+          @data = {'running' => h[:running]} 
           @data['pid'] = @data_internal['process'].pid if 
               @data_internal['process']
           parse_conffile()
@@ -67,6 +72,10 @@ class OnBoard
           find_virtual_address()
           find_interface()
           find_routes()
+        end
+
+        def set_not_running
+          @data['running'] = false
         end
 
         def running?

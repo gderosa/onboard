@@ -7,12 +7,14 @@
 <%
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
 %>
-<h3>Running OpenVPN connections</h3>
 <table>
   <thead>
     <tr>
       <th rowspan="3">
         #
+      </th>
+      <th rowspan="3">
+        Action
       </th>
       <th rowspan="3">
         Client/Server
@@ -57,8 +59,15 @@
       <tr>
         <td>
           <a href="openvpn/vpn/<%= vpn_i + 1 %>.html">
-            <%= vpn_i + 1 %> <%= vpn.running? %> <%= vpn.data['pid'] %>
-          </a>
+            <%= vpn_i + 1 %> 
+          </a> 
+        </td>
+        <td>
+          <% if vpn.running? %>
+            <button type="submit">Stop!</button>
+          <% else %>
+            <button type="submit">Start!</button>
+          <% end %>
         </td>
         <td>
           <%= 
