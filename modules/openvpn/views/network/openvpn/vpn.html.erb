@@ -57,7 +57,7 @@
       <tr>
         <td>
           <a href="openvpn/vpn/<%= vpn_i + 1 %>.html">
-            <%= vpn_i + 1 %> <%= vpn.running? %>
+            <%= vpn_i + 1 %> <%= vpn.running? %> <%= vpn.data['pid'] %>
           </a>
         </td>
         <td>

@@ -74,18 +74,24 @@ class OnBoard
         end
 
         def add_to_the_pool
-          already_in_the_pool = @@all_vpn.detect do |x|
-            x.data_internal['process'].cmdline ==
-                self.data_internal['process'].cmdline and
-            x.data_internal['process'].env['PWD'] ==
-              self.data_internal['process'].env['PWD']
+          already_in_the_pool = false
+          @@all_vpn.each_with_index do |vpn, vpn_i|
+            if (
+                vpn.data_internal['process'].cmdline ==
+                    self.data_internal['process'].cmdline and
+                vpn.data_internal['process'].env['PWD'] ==
+                    self.data_internal['process'].env['PWD']
+            )
+              @@all_vpn[vpn_i] = self
+              already_in_the_pool = true
+              break
+            end
           end
-          if already_in_the_pool
-            already_in_the_pool = self # update
-          else
+          unless already_in_the_pool
             @@all_vpn << self
           end
         end
+
         
         # Turn the OpenVPN command line into a "virtual" configuration file
         def cmdline2conf

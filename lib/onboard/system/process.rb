@@ -30,11 +30,6 @@ class OnBoard
         rescue
           return false
         end
-        pp current.cmdline
-        pp self.cmdline
-        puts ' '
-        pp current.env
-        pp self.env
         current.cmdline == self.cmdline and
             current.env == self.env and return true
         return false
