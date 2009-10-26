@@ -11,16 +11,15 @@ class OnBoard
   module Network
     module OpenVPN
       class VPN
-
+    
         # get info on running OpenVPN instances
         def self.getAll
 
           @@all_interfaces  = Network::Interface.getAll()
           @@all_routes      = Network::Routing::Table.getCurrent()
+          @@all_vpn         = [] unless ( 
+              class_variable_defined? :@@all_vpn and @@all_vpn)
 
-          ary = []
-          # NOTE: it's assumed that configuration options are only
-          # in config files, not cmdline args; TODO: parse cmdline too?   
           `pidof openvpn`.split.each do |pid|
             conffile = ''
             p = System::Process.new(pid)
@@ -34,12 +33,12 @@ class OnBoard
                 break
                end
             end
-            ary << self.new(
+            self.new(
               :process  => p,
               :conffile => conffile
-            )
+            ).add_to_the_pool
           end
-          return ary
+          return @@all_vpn
         end
 
         attr_reader :data
@@ -58,8 +57,8 @@ class OnBoard
             if @data_internal['status'] 
               parse_status() 
               set_portable_client_list_from_status_data()
-              # TODO: get client info (and certificate info) 
-              # through --client-connect
+              # TODO?: get client info (and certificate info) 
+              # through --client-connect ?
             end
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
           elsif @data['client'] and @data_internal['management']
@@ -70,6 +69,24 @@ class OnBoard
           find_routes()
         end
 
+        def running?
+          @data_internal['process'].running?
+        end
+
+        def add_to_the_pool
+          already_in_the_pool = @@all_vpn.detect do |x|
+            x.data_internal['process'].cmdline ==
+                self.data_internal['process'].cmdline and
+            x.data_internal['process'].env['PWD'] ==
+              self.data_internal['process'].env['PWD']
+          end
+          if already_in_the_pool
+            already_in_the_pool = self # update
+          else
+            @@all_vpn << self
+          end
+        end
+        
         # Turn the OpenVPN command line into a "virtual" configuration file
         def cmdline2conf
           line_ary = []
@@ -482,6 +499,12 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             'Connected Since'          => Time.at(
                 @data_internal['management']['state'][0].to_i)
           }
+        end
+
+        protected
+
+        def data_internal
+          @data_internal
         end
 
         private

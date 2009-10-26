@@ -5,15 +5,14 @@
 <h2>VPN</h2>
 
 <%
-  pid_description = "Identifies a running process"
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
 %>
 <h3>Running OpenVPN connections</h3>
 <table>
   <thead>
     <tr>
-      <th rowspan="3" title="<%= pid_description %>">
-        PID
+      <th rowspan="3">
+        #
       </th>
       <th rowspan="3">
         Client/Server
@@ -57,8 +56,8 @@
     <% objects.each_with_index do |vpn, vpn_i| %>
       <tr>
         <td>
-          <a href="openvpn/pid_<%= vpn.data['pid'] %>.html">
-            <%= vpn.data['pid'] %>
+          <a href="openvpn/vpn/<%= vpn_i + 1 %>.html">
+            <%= vpn_i + 1 %> <%= vpn.running? %>
           </a>
         </td>
         <td>

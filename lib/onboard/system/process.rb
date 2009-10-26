@@ -23,6 +23,22 @@ class OnBoard
           return @env
         end
       end
+      def running?
+        current = nil
+        begin
+          current = self.class.new(@pid)
+        rescue
+          return false
+        end
+        pp current.cmdline
+        pp self.cmdline
+        puts ' '
+        pp current.env
+        pp self.env
+        current.cmdline == self.cmdline and
+            current.env == self.env and return true
+        return false
+      end
     end  
   end
 end
