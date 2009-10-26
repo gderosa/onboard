@@ -24,14 +24,15 @@ class OnBoard
           `pidof openvpn`.split.each do |pid|
             conffile = ''
             p = System::Process.new(pid)
+            if p.cmdline.length == 2
+              p.cmdline.insert 1, '--config' # "sanitize" command line
+            end
             p.cmdline.each_with_index do |arg, idx|
               next if idx == 0
               if p.cmdline[idx - 1] =~ /^\s*\-\-config/ 
                 conffile = arg
                 break
-              elsif not p.cmdline[idx - 1] =~ /^\s*\-/
-                conffile = arg
-              end
+               end
             end
             ary << self.new(
               :process  => p,
@@ -52,6 +53,7 @@ class OnBoard
           @data['pid'] = @data_internal['process'].pid if 
               @data_internal['process']
           parse_conffile()
+          parse_conffile(:text => cmdline2conf())  
           if @data['server']
             if @data_internal['status'] 
               parse_status() 
@@ -66,6 +68,22 @@ class OnBoard
           find_virtual_address()
           find_interface()
           find_routes()
+        end
+
+        # Turn the OpenVPN command line into a "virtual" configuration file
+        def cmdline2conf
+          line_ary = []
+          text = ""
+          @data_internal['process'].cmdline.each do |arg|
+            if arg =~ /\-\-(\S+)/ 
+              text << line_ary.join(' ') << "\n" if line_ary.length > 0
+              line_ary = [$1] 
+            elsif line_ary.length > 0
+              line_ary << arg
+            end
+          end
+          text << line_ary.join(' ') << "\n" if line_ary.length > 0
+          return text
         end
 
         def find_interface
@@ -104,18 +122,28 @@ class OnBoard
           data['routes'] = ary
         end
 
-        def parse_conffile
-          conffile = find_file @data_internal['conffile']
-
-          unless conffile 
-            @data['err'] = "couldn't open config file"
-            if @data_internal['conffile'] =~ /\S/
-              @data['err'] << " '#{@data_internal['conffile']}'"
-            end
-            return false
-          end          
-          
-          File.foreach(conffile) do |line|
+        def parse_conffile(opts={})  
+          text = nil
+          if opts[:text]
+            text = opts[:text]
+          else
+            if opts[:file]
+              conffile = find_file opts[:file]
+            else
+              conffile = find_file @data_internal['conffile']
+            end 
+            begin
+              text = File.read conffile 
+            rescue
+              @data['err'] = "couldn't open config file"
+              if @data_internal['conffile'] =~ /\S/
+                @data['err'] << " '#{@data_internal['conffile']}'"
+              end
+              return false
+            end    
+          end      
+            
+          text.each_line do |line|
 =begin
 # this is a comment
 #this too
