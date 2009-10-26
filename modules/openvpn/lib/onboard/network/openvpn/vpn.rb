@@ -78,10 +78,6 @@ class OnBoard
           @data['running'] = false
         end
 
-        def running?
-          @data_internal['process'].running?
-        end
-
         def add_to_the_pool
           already_in_the_pool = false
           @@all_vpn.each_with_index do |vpn, vpn_i|

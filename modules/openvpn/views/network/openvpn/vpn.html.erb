@@ -2,6 +2,12 @@
   require 'onboard/extensions/ipaddr'
 %>
 
+<style type="text/css">
+  form {
+    display: inline;
+  }
+</style>
+
 <h2>VPN</h2>
 
 <%
@@ -11,10 +17,7 @@
   <thead>
     <tr>
       <th rowspan="3">
-        #
-      </th>
-      <th rowspan="3">
-        Action
+        Actions 
       </th>
       <th rowspan="3">
         Client/Server
@@ -54,20 +57,34 @@
       <th>Port</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody> <!-- TODO: you should PUT to the general resource instead -->
     <% objects.each_with_index do |vpn, vpn_i| %>
-      <tr>
-        <td>
-          <a href="openvpn/vpn/<%= vpn_i + 1 %>.html">
-            <%= vpn_i + 1 %> 
-          </a> 
-        </td>
-        <td>
-          <% if vpn.running? %>
-            <button type="submit">Stop!</button>
-          <% else %>
-            <button type="submit">Start!</button>
-          <% end %>
+      <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
+        <td style="text-align:center;">
+          <form action="openvpn/vpn/<%= vpn_i + 1 %>.html" method="POST">
+            <input type="hidden" name="_method" value="put"/>
+            <% if vpn.data['running'] %>
+              <button type="submit" name="stop" value="yes" title="Stop the VPN connection">
+                <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_disconnect.png'%>" alt="Stop!"/>
+              </button>
+            <% else %>
+              <button type="submit" name="start" value="yes" title="Start the VPN connection">
+                <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_connect.png'%>" alt="Start!"/>
+              </button>
+            <% end %>
+          </form>
+          <a href="openvpn/vpn/<%= vpn_i + 1 %>.html" title="View/Edit VPN details" style="border:0;"><button><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button></a>
+          <% 
+            if vpn.data['running']
+              str = 'Stop the VPN and remove from the list'
+            else
+              str = 'Remove from the list'
+            end
+          %>
+          <form action="openvpn/vpn/<%= vpn_i + 1 %>.html" method="POST">
+            <input type="hidden" name="_method" value="delete"/>
+            <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
+          </form>
         </td>
         <td>
           <%= 
