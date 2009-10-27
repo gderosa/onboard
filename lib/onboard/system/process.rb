@@ -1,23 +1,24 @@
 class OnBoard
   module System
     class Process
-      attr_reader :pid, :cwd, :exe, :cmdline
+      attr_reader :pid, :cwd, :exe, :cmdline, :env
       def initialize(pid)
         @pid      = pid
         @cwd      = `sudo readlink /proc/#{@pid}/cwd`.strip
         @exe      = `sudo readlink /proc/#{@pid}/exe`.strip
         @cmdline  = File.read("/proc/#{@pid}/cmdline").split("\0")
+        @env      = getenv()
       end
-      def env
-        @env = {}
+      def getenv
+        env = {}
         ary = `sudo cat /proc/#{@pid}/environ`.split("\0")
         ary.each do |name_val|
           name_val.strip!
           if name_val =~ /^([^=]*)=([^=]*)$/ 
-            @env[$1] = $2
+            env[$1] = $2
           end
         end
-        return @env
+        return env
       end
     end  
   end

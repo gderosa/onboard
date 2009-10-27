@@ -1,5 +1,6 @@
 <%
   require 'rack/utils'
+  require 'onboard/extensions/sinatra/base'
 
   names = request.path_info.sub(/\.html$/, "").split('/')
   basepath = "/"
@@ -25,7 +26,11 @@
             <% if link == links.last %>
               &raquo; <%= link[:name] %>
             <% else %>
-              &raquo; <a href="<%= link[:path] %>"><%= link[:name] %></a>
+              <% if routed? link[:path] %>
+                &raquo; <a href="<%= link[:path] %>"><%= link[:name] %></a>
+              <% else %>
+                &raquo; <%= link[:name] %>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
