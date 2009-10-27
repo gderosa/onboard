@@ -11,11 +11,26 @@
 <h2>VPN</h2>
 
 <% if msg %>
-  <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
-    <div class="error">
-      <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
-      <pre><%= html_escape msg[:stderr].strip %></pre>
+  <% if status == 202 %>
+    <div class="info" style="">
+      Your request has been queued. You may <a href="">reload this page</a>
+      or <a href="/system/logs.html">check the system logs</a>
+      to get updated info. 
+      <% if params['start'] and params['start'] =~ /\d/ %>
+        You may also want to check the advanced options for the 
+<a href="openvpn/vpn/<%= params['start'] %>.html">specific VPN connection</a>.
+      <% end %>
     </div>
+  <% end %>
+  <% begin %>
+    <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
+      <div class="error">
+        <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
+        <pre><%= html_escape msg[:stderr].strip %></pre>
+      </div>
+    <% end %>
+  <% rescue %>
+    <% pp msg %>
   <% end %>
 <% end %>
 
@@ -184,5 +199,6 @@
     <% end %>
   </tbody>
 </table>
+(<a href="">Refresh</a>) 
 
 

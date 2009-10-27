@@ -89,15 +89,12 @@ class OnBoard
         end
 
         def start
-          msg = ''
           unless @data['running'] # TODO?: these are 'cached' data... "update"?
             pwd = @data_internal['process'].env['PWD']
             cmd = @data_internal['process'].cmdline.join(' ')
-            msg = System::Command.bgexec(
-                "cd #{pwd} && sudo -E #{cmd}"  
-            )
-          end
-          return msg
+            cmd += ' --daemon' unless @data_internal['daemon']
+            System::Command.bgexec ("cd #{pwd} && sudo -E #{cmd}") 
+          end          
         end
 
         def stop          
@@ -243,6 +240,14 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               @data['remote']['port']     = $2
               next
             end
+
+            # "private" options with no args
+            %w{daemon}.each do |optname|
+              if line =~ /^\s*#{optname}\s*$/
+                @data_internal[optname] = true
+                next
+              end
+            end 
 
             # "private" options with 1 argument
             %w{key dh ifconfig-pool-persist status status-version log log-append}.each do |optname|

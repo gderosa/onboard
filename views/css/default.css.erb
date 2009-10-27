@@ -59,27 +59,32 @@ div#main input.rotext {
   background: <%= lightbg %>;
 }
 
+/* 
 div#main .warn {
   border: 1px yellow solid;
   padding: 3px 0;
-}
+} 
+*/
 
 code {
   font-family: monospace;
   font-style: normal;
 }
 
-div#main .error {
-  border: 1px red dashed;
+div#main .error, div#main .warn, div#main .info {
   color: black;
   padding: 3px 2px;
   margin-bottom: 1em;
 }
 
-div#main .error pre {
+div#main .error pre, div#main .warn pre, div#main .info pre {
   color: black;
   margin-bottom: 0;
 }
+
+.error  {border: 1px red dashed;}
+.warn   {border: 1px yellow solid;}
+.info   {border: 1px #0b0 dotted;}
 
 strong {
   font-size: 107%;
