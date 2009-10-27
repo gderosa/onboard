@@ -46,6 +46,20 @@ class OnBoard
           return @@all_vpn
         end
 
+        def self.all_cached; @@all_vpn; end
+
+        def self.modify_from_HTTP_request(params) 
+          if    params['stop']
+            i = params['stop'].to_i - 1 
+                # array index = "human-friendly index" - 1
+            @@all_vpn[i].stop()
+          elsif params['start']
+            i = params['start'].to_i - 1 
+                # array index = "human-friendly index" - 1
+            @@all_vpn[i].start()
+          end
+        end
+
         attr_reader :data
 
         def initialize(h) 
@@ -74,6 +88,27 @@ class OnBoard
           find_routes()
         end
 
+        def start
+          msg = ''
+          unless @data['running'] # TODO?: these are 'cached' data... "update"?
+            pwd = @data_internal['process'].env['PWD']
+            cmd = @data_internal['process'].cmdline.join(' ')
+            msg = System::Command.bgexec(
+                "cd #{pwd} && sudo -E #{cmd}"  
+            )
+          end
+          return msg
+        end
+
+        def stop          
+          msg = ''
+          if @data['running'] # TODO?: these are 'cached' data... "update"?
+            msg = System::Command.run(
+               "kill #{@data_internal['process'].pid}", :sudo)
+          end
+          return msg
+        end
+       
         def set_not_running
           @data['running'] = false
         end
@@ -527,7 +562,8 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           attempts << File.join(
               @data_internal['process'].env['PWD'], 
               name
-          )
+          ) if @data_internal['process'].env['PWD']
+          
           unless @data_internal['conffile'].strip == name.strip
             attempts << File.join(
               File.dirname(@data_internal['conffile']),

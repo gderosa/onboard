@@ -10,6 +10,15 @@
 
 <h2>VPN</h2>
 
+<% if msg %>
+  <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
+    <div class="error">
+      <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
+      <pre><%= html_escape msg[:stderr].strip %></pre>
+    </div>
+  <% end %>
+<% end %>
+
 <%
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
 %>
@@ -98,8 +107,12 @@
             end
           %>
         </td>
-        <td><code><%= vpn.data['cert']['subject']['CN'] %></code></td>
-        <td><%= vpn.data['proto'].upcase %></td>
+        <td><code><%= 
+          begin; vpn.data['cert']['subject']['CN']; rescue; end
+        %></code></td>
+        <td><%= 
+          begin; vpn.data['proto'].upcase; rescue; end
+        %></td>
         <td>
           <%= 
             if vpn.data['port']

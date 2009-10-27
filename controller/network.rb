@@ -1,3 +1,6 @@
+# I will decide what to do with this ugly submenu dump...
+
+=begin
 require 'sinatra/base'
 
 class OnBoard::Controller
@@ -15,3 +18,4 @@ class OnBoard::Controller
   end
 
 end
+=end
