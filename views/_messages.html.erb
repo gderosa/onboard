@@ -1,0 +1,23 @@
+<% if msg %>
+  <% if status == 202 %>
+    <div class="info" style="">
+      Your request has been queued. You may check <a href="">this</a> 
+      or other pages later
+      to get updated informations. A look at the 
+      <a href="/system/logs.html">system logs</a> may be helpful too. 
+    </div>
+  <% end %>
+  <% begin %>
+    <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
+      <div class="error">
+        <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
+        <pre><%= html_escape msg[:stderr].strip %></pre>
+      </div>
+    <% elsif not msg[:ok] and msg[:err] =~ /\S/ %>
+     <div class="error"><pre><%= msg[:err] %></pre></div>
+    <% end %>
+  <% rescue %>
+    <% pp msg %>
+  <% end %>
+<% end %>
+

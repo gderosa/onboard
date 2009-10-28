@@ -18,14 +18,18 @@
 </style>
 <h2>Port Forwarding/&ldquo;Virtual Server&rdquo;</h2>
 
-<% if msg %>
-  <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
-    <div class="error">
-      <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
-      <pre><%= html_escape msg[:stderr].strip %></pre>
-    </div>
-  <% end %>
-<% end %>
+  <%=
+    erb(
+      :"/_messages.html",
+      {
+        :layout => false,
+        :locals => {
+          :msg => msg,
+          :status => status
+        }
+      }
+    )
+  %>
 
 <h3>NAT rules</h3>
 

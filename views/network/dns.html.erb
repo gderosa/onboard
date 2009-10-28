@@ -3,9 +3,20 @@
 %>
 
 <h2>DNS</h2>
-<% if msg and msg[:err] %>
-  <div class="error"><%= msg[:err] %></div>
-<% end %>
+
+  <%=
+    erb(
+      :"/_messages.html",
+      {
+        :layout => false,
+        :locals => {
+          :msg => msg,
+          :status => status
+        }
+      }
+    )
+  %>
+
 <!--
   <pre>
     <%= 

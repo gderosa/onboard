@@ -6,6 +6,7 @@ class OnBoard
     module Command
 
       def self.bgexec(cmd, *opts)
+        msg = {:background => true}
         if opts.include? :sudo and ::Process.uid != 0
             cmd_do = 'sudo ' + cmd
         else
@@ -34,6 +35,7 @@ class OnBoard
           stdout.close
           stderr.close 
         end
+        return msg
       end
 
       def self.run(cmd, *opts)

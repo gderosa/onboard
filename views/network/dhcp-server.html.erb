@@ -1,21 +1,19 @@
 <% require 'onboard/extensions/array' %>
 
 <h2>DHCP Server</h2>
-<% if msg and msg[:err] %>
-  <div class="error"><%= msg[:err] %></div>
-<% end %>
-<!--
-  <pre>
-    <%= 
-      # html_escape objects.pretty_inspect 
-    %>
-  </pre>
-  <pre>
-    <%= 
-      # html_escape params.pretty_inspect 
-    %>
-  </pre>
--->
+
+  <%=
+    erb(
+      :"/_messages.html",
+      {
+        :layout => false,
+        :locals => {
+          :msg => msg,
+          :status => status
+        }
+      }
+    )
+  %>
 
 <% 
   dhcp_ranges       = objects.data['conf']['dhcp']['ranges'] 

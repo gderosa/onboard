@@ -21,7 +21,7 @@ class OnBoard::Controller < Sinatra::Base
   end
 
   put '/network/openvpn.:format' do
-    vpns = OnBoard::Network::OpenVPN::VPN.getAll()
+    #vpns = OnBoard::Network::OpenVPN::VPN.getAll()
     msg = OnBoard::Network::OpenVPN::VPN.modify_from_HTTP_request(params) 
     vpns = OnBoard::Network::OpenVPN::VPN.getAll()
     # Bringin' an OpenVPN connection up is an asynchronous operation,
