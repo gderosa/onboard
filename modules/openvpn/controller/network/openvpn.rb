@@ -21,7 +21,7 @@ class OnBoard::Controller < Sinatra::Base
   end
 
   put '/network/openvpn.:format' do
-    #vpns = OnBoard::Network::OpenVPN::VPN.getAll()
+    vpns = OnBoard::Network::OpenVPN::VPN.getAll()
     msg = OnBoard::Network::OpenVPN::VPN.modify_from_HTTP_request(params) 
     vpns = OnBoard::Network::OpenVPN::VPN.getAll()
     # Bringin' an OpenVPN connection up is an asynchronous operation,
@@ -44,12 +44,28 @@ class OnBoard::Controller < Sinatra::Base
     )
   end
 
-  # modeled on DELETE bridge; TODO: DRY 
-  delete '/network/openvpn/vpn/:vpnid.:format' do
-    index = params[:vpnid].to_i - 1
-    if vpn = OnBoard::Network::OpenVPN::VPN.getAll[index]
+  # :vpnid may be an incremental index (@@all_vpn array index +1) 
+  # OR
+  # a "portable_id" (a more robust way to identify a VPN) 
+  #
+  # There shouldn't be collisions since the former is a very short integer
+  # (though converted to a String) while the latter is a longer string
+  # (hex md5 hash).
+  #
+  delete '/network/openvpn/vpn/:vpn_identifier.:format' do
+    vpn = nil
+    all = OnBoard::Network::OpenVPN::VPN.getAll()
+    # Lookup: first try by portable_id:
+    vpn = all.detect {|x| x.data['portable_id'] == params[:vpn_identifier]} 
+    # Then try by array index ("old" method)
+    unless vpn 
+      ary_index = params[:vpn_identifier].to_i - 1
+      vpn = OnBoard::Network::OpenVPN::VPN.getAll[ary_index]
+    end
+    # 
+    if vpn 
       vpn.stop()
-      OnBoard::Network::OpenVPN::VPN.all_cached.delete_at index
+      OnBoard::Network::OpenVPN::VPN.all_cached.delete vpn
       redirection = "/network/openvpn.#{params[:format]}"
       status(303)                       # HTTP "See Other"
       headers('Location' => redirection)

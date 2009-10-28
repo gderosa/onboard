@@ -80,6 +80,7 @@
         <td style="text-align:center;">
           <form method="POST">
             <input type="hidden" name="_method" value="put"/>
+            <input type="hidden" name="portable_id" value="<%= vpn.data['portable_id'] if vpn.data['portable_id'] %>"/>
             <% if vpn.data['running'] %>
               <button type="submit" name="stop" value="<%= vpnid %>" title="Stop the VPN connection">
                 <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_disconnect.png'%>" alt="Stop!"/>
@@ -98,7 +99,11 @@
               str = 'Remove from the list'
             end
           %>
+          <% if vpn.data['portable_id'] and vpn.data['portable_id'] =~ /\S/ %>
+          <form action="openvpn/vpn/<%= vpn.data['portable_id'] %>.html" method="POST">
+          <% else %>
           <form action="openvpn/vpn/<%= vpnid %>.html" method="POST">
+          <% end %>
             <input type="hidden" name="_method" value="delete"/>
             <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
           </form>

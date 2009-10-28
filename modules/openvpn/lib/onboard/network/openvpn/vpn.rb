@@ -1,11 +1,13 @@
-require 'onboard/system/process'
-require 'onboard/network/interface'
-require 'onboard/network/routing/table'
-
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :OpenSSL,    'openssl'
 autoload :IPAddr,     'ipaddr'
+
+require 'onboard/system/process'
+require 'onboard/network/interface'
+require 'onboard/network/routing/table'
+
+require 'onboard/network/openvpn/process'
 
 class OnBoard
   module Network
@@ -26,7 +28,7 @@ class OnBoard
 
           `pidof openvpn`.split.each do |pid|
             conffile = ''
-            p = System::Process.new(pid)
+            p = OpenVPN::Process.new(pid)
             if p.cmdline.length == 2
               p.cmdline.insert 1, '--config' # "sanitize" command line
             end
@@ -49,14 +51,26 @@ class OnBoard
         def self.all_cached; @@all_vpn; end
 
         def self.modify_from_HTTP_request(params) 
-          if    params['stop']
+          vpn = nil
+          if    params['portable_id'] and params['portable_id'] =~ /\S/
+            vpn = @@all_vpn.detect do |x| 
+              x.data['portable_id'] == params['portable_id'] 
+            end
+          end
+          if vpn  # the VPN has been found by portable_id (preferred method)
+            if params['stop']
+              return vpn.stop()
+            elsif params['start']
+              return vpn.start()
+            end
+          elsif params['stop'] # try to seek the right VPN by array index
             i = params['stop'].to_i - 1 
                 # array index = "human-friendly index" - 1
-            @@all_vpn[i].stop()
+            return @@all_vpn[i].stop()
           elsif params['start']
             i = params['start'].to_i - 1 
                 # array index = "human-friendly index" - 1
-            @@all_vpn[i].start()
+            return @@all_vpn[i].start()
           end
         end
 
@@ -68,8 +82,7 @@ class OnBoard
             'conffile'  => h[:conffile]
           }
           @data = {'running' => h[:running]} 
-          @data['pid'] = @data_internal['process'].pid if 
-              @data_internal['process']
+          @data['portable_id'] = @data_internal['process'].portable_id 
           parse_conffile()
           parse_conffile(:text => cmdline2conf())  
           if @data['server']

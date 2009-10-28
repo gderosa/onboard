@@ -6,7 +6,9 @@ class OnBoard
         @pid      = pid
         @cwd      = `sudo readlink /proc/#{@pid}/cwd`.strip
         @exe      = `sudo readlink /proc/#{@pid}/exe`.strip
-        @cmdline  = File.read("/proc/#{@pid}/cmdline").split("\0")
+        @cmdline_raw \
+                  = File.read("/proc/#{@pid}/cmdline")
+        @cmdline  = @cmdline_raw.split("\0")
         @env      = getenv()
       end
       def getenv
