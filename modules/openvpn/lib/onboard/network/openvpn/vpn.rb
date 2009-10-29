@@ -37,8 +37,20 @@ class OnBoard
         end
 
         def self.restore
-          puts "RESTORE called!"
-          sleep 3
+          datafile = ROOTDIR + '/etc/config/network/openvpn/vpn/vpn.dat'
+          return false unless File.readable? datafile
+          current_VPNs = getAll()
+          Marshal.load(File.read datafile).each do |h|
+            if current_vpn = current_VPNs.detect{ |x| 
+                h[:process].portable_id == x.data['portable_id'] }
+              next if current_vpn.data['running'] 
+              current_vpn.start() if h[:start_at_boot] 
+            else
+              new_vpn = new(h)
+              new_vpn.start() if h[:start_at_boot] 
+              @@all_vpn << new_vpn
+            end
+          end
         end
     
         # get info on running OpenVPN instances
