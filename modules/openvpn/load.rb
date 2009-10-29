@@ -1,5 +1,12 @@
-$LOAD_PATH.unshift  OnBoard::ROOTDIR + '/modules/openvpn/lib'
+class OnBoard
+  module Network
+    module OpenVPN
+      ROOTDIR = File.dirname(__FILE__)
+      $LOAD_PATH.unshift  ROOTDIR + '/lib'
+      OnBoard.find_n_load ROOTDIR + '/etc/menu'
+      OnBoard.find_n_load ROOTDIR + '/controller'
+    end
+  end
+end
 
-OnBoard.find_n_load OnBoard::ROOTDIR + '/modules/openvpn/etc/menu'
-OnBoard.find_n_load OnBoard::ROOTDIR + '/modules/openvpn/controller'
 

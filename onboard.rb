@@ -71,6 +71,9 @@ class OnBoard
   def self.save!
     LOGGER.info 'Saving configuration...'
     find_n_load ROOTDIR + '/etc/save/'
+
+    # modules
+    Dir.glob('modules/*/etc/save/*.rb').each {|x| load x}
   end
 
 end
