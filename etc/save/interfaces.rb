@@ -1,4 +1,4 @@
-require 'onboard/network/iptables'
+require 'onboard/network/interface' 
 
 OnBoard::Network::Interface.save
 

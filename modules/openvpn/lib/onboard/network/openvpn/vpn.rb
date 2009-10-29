@@ -13,6 +13,28 @@ class OnBoard
   module Network
     module OpenVPN
       class VPN
+
+        def self.save
+          @@all_vpn = getAll() unless (
+              class_variable_defined? :@@all_vpn and @@all_vpn)
+          File.open(
+              ROOTDIR + '/etc/config/network/openvpn/vpn/vpn.dat', 
+              'w'
+          ) do |f|
+            f.write(
+              Marshal.dump(
+                @@all_vpn.map do |vpn| 
+                  vpn_data_internal = vpn.instance_variable_get(:@data_internal)
+                  {
+                    :process        => vpn_data_internal['process'],
+                    :conffile       => vpn_data_internal['conffile'],
+                    :start_at_boot  => vpn.data['running']
+                  } 
+                end
+              )
+            )
+          end
+        end
     
         # get info on running OpenVPN instances
         def self.getAll
