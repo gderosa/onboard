@@ -35,6 +35,11 @@ class OnBoard
             )
           end
         end
+
+        def self.restore
+          puts "RESTORE called!"
+          sleep 3
+        end
     
         # get info on running OpenVPN instances
         def self.getAll

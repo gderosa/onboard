@@ -1,4 +1,4 @@
-autoload :Digest, 'digest/md5' 
+require 'digest/md5' 
 
 class OnBoard
   module Network
