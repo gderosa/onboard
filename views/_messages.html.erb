@@ -1,10 +1,14 @@
-<% if msg %>
-  <% if status == 202 %>
+<% if msg and msg.kind_of? Hash %>
+  <% if status == 202 and msg[:ok] %>
     <div class="info" style="">
-      Your request has been queued. You may check <a href="">this</a> 
-      or other pages later
-      to get updated informations. A look at the 
-      <a href="/system/logs.html">system logs</a> may be helpful too. 
+      <% if msg[:info] and msg[:info] =~ /\S/ %>
+        <%= msg[:info] %>
+      <% else %>
+        Your request has been queued. You may check <a href="">this</a> 
+        or other pages later
+        to get updated informations. A look at the 
+        <a href="/system/logs.html">system logs</a> may be helpful too. 
+      <% end %>
     </div>
   <% end %>
   <% begin %>
@@ -14,7 +18,9 @@
         <pre><%= html_escape msg[:stderr].strip %></pre>
       </div>
     <% elsif not msg[:ok] and msg[:err] =~ /\S/ %>
-     <div class="error"><pre><%= msg[:err] %></pre></div>
+     <div class="error"><%= msg[:err] %></div>
+    <% elsif not msg[:ok] and msg[:warn] =~ /\S/ %>
+      <div class="warn"><%= msg[:warn] %></div>
     <% end %>
   <% rescue %>
     <% pp msg %>

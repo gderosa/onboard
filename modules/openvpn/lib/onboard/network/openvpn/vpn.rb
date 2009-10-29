@@ -102,11 +102,16 @@ class OnBoard
         end
 
         def start
-          unless @data['running'] # TODO?: these are 'cached' data... "update"?
+          if @data['running'] # TODO?: these are 'cached' data... "update"?
+            return {:err => 'Already started.'}
+          else
             pwd = @data_internal['process'].env['PWD']
             cmd = @data_internal['process'].cmdline.join(' ')
             cmd += ' --daemon' unless @data_internal['daemon']
-            System::Command.bgexec ("cd #{pwd} && sudo -E #{cmd}") 
+            msg = System::Command.bgexec ("cd #{pwd} && sudo -E #{cmd}") 
+            msg[:ok] = true
+            msg[:info] = 'VPN has been started. You may check <a href="">this page</a> again to get updated information.'
+            return msg
           end          
         end
 

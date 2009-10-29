@@ -27,7 +27,7 @@ class OnBoard::Controller < Sinatra::Base
     # Bringin' an OpenVPN connection up is an asynchronous operation,
     # while bringing it down is synchronous.
     if params['start']
-      status(202)                         # HTTP 'Accepted'
+      msg[:ok] ? status(202) : status(409) 
     elsif params['stop']
       if not msg[:ok] and msg[:stderr]
         status(409)                       # HTTP 'Conflict'
