@@ -134,7 +134,7 @@
           rescue
             begin
               text = html_escape vpn.data['cert']['err']
-              cssclass = "warn"
+              cssclass = "error"
               cssclass2 = "lowlight"
             rescue
               text = "?"
