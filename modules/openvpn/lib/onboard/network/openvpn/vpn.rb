@@ -2,6 +2,7 @@ autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :OpenSSL,    'openssl'
 autoload :IPAddr,     'ipaddr'
+autoload :Timeout,    'timeout'
 
 require 'onboard/system/process'
 require 'onboard/network/interface'
@@ -133,10 +134,12 @@ class OnBoard
             end
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
           elsif @data['client'] and @data_internal['management']
-            Thread.new do 
-              get_client_info_from_management_interface()
+            begin
+              Timeout::timeout(1) do 
+                get_client_info_from_management_interface()
+              end
+            rescue Timeout::Error
             end
-            sleep 0.3 # a crude way to set a short timeout... :-P
           end
           find_virtual_address()
           find_interface()
