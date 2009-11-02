@@ -133,7 +133,10 @@ class OnBoard
             end
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
           elsif @data['client'] and @data_internal['management']
-            get_client_info_from_management_interface()
+            Thread.new do 
+              get_client_info_from_management_interface()
+            end
+            sleep 0.3 # a crude way to set a short timeout... :-P
           end
           find_virtual_address()
           find_interface()
@@ -218,7 +221,10 @@ class OnBoard
 
         def find_virtual_address
           if @data['client']
-            @data['virtual_address'] = @data['client']['Virtual Address']
+            begin
+              @data['virtual_address'] = @data['client']['Virtual Address']
+            rescue NoMethodError, TypeError
+            end
           elsif data['server']
             @data['virtual_address'] = IPAddr.new(
                 "#{@data['server']}/#{data['netmask']}"
