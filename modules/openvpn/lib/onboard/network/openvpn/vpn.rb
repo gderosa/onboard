@@ -343,7 +343,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   }
                 rescue OpenSSL::X509::CertificateError
                   @data_internal[optname] = $!
-                  @data[optname] = {'err' => $!.to_s} 
+                  @data[optname] = {'err' => $!.inspect} 
                 end
                 next
               end

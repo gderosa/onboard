@@ -6,6 +6,9 @@
   form {
     display: inline;
   }
+  button {
+    display: inline;
+  }
 </style>
 
 <h2>VPN</h2>
@@ -30,7 +33,7 @@
 <table>
   <thead>
     <tr>
-      <th rowspan="3">
+      <th rowspan="3" colspan="3">
         Actions 
       </th>
       <th rowspan="3">
@@ -91,7 +94,11 @@
               </button>
             <% end %>
           </form>
+        </td>
+        <td>
           <a href="openvpn/vpn/<%= vpnid %>.html" title="View/Edit VPN details" style="border:0;"><button><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button></a>
+        </td>
+        <td>
           <% 
             if vpn.data['running']
               str = 'Stop the VPN and remove from the list'
@@ -117,9 +124,26 @@
             end
           %>
         </td>
-        <td><code><%= 
-          begin; vpn.data['cert']['subject']['CN']; rescue; end
-        %></code></td>
+        <% 
+          cssclass = ""
+          cssclass2 = ""
+          text = ""
+          extrastyle = ""
+          begin
+            text = vpn.data['cert']['subject']['CN']
+          rescue
+            begin
+              text = html_escape vpn.data['cert']['err']
+              cssclass = "warn"
+              cssclass2 = "lowlight"
+            rescue
+              text = "?"
+              cssclass = "warn"
+              cssclass2 = "lowlight"
+            end
+          end
+        %>
+        <td class="<%= cssclass %>"><code class="<%= cssclass2 %>"><%= text %></code></td>
         <td><%= 
           begin; vpn.data['proto'].upcase; rescue; end
         %></td>
