@@ -129,9 +129,11 @@
           cssclass2 = ""
           text = ""
           extrastyle = ""
+          errortext = ""
           begin
             text = vpn.data['cert']['subject']['CN']
           rescue
+            errortext = "Certificate error: "
             begin
               text = html_escape vpn.data['cert']['err']
               cssclass = "error"
@@ -143,7 +145,9 @@
             end
           end
         %>
-        <td class="<%= cssclass %>"><code class="<%= cssclass2 %>"><%= text %></code></td>
+        <td class="<%= cssclass %>"><span class="<%= cssclass2 %>">
+          <%= errortext %><code><%= text %></code>
+        </span></td>
         <td><%= 
           begin; vpn.data['proto'].upcase; rescue; end
         %></td>
@@ -174,23 +178,29 @@
             end
           %>
         </td>
-        <td>
-          <%=
-            if vpn.data['client'] 
-              if vpn.data['client'].respond_to? :[] and 
-                  vpn.data['client']['Virtual Address']
-                vpn.data['client']['Virtual Address']
-              else
-                ' '
-              end
-            elsif vpn.data['server']
-              # if, in the config file it's 
-              # server=10.8.0.0 netmask=255.255.255.0, then the virtual local
-              # server address is 10.8.0.1/24
-              ip = IPAddr.new(vpn.data['server'] + '/' + vpn.data['netmask'])
-              ip.to_range.to_a[1].to_s + '/' + ip.prefixlen.to_s
+        <% 
+          cssclass = ''; cssclass2 = ''; text = ''; errortext = ''
+          if vpn.data['client'] and vpn.data['client'].respond_to? :[] 
+            if vpn.data['client']['Virtual Address'] and
+                vpn.data['client']['Virtual Address'] =~ /\S/
+              text = vpn.data['client']['Virtual Address']
+            elsif vpn.data['client']['management_interface_err'] 
+              cssclass = 'error'; cssclass2 = 'lowlight'
+              text = vpn.data['client']['management_interface_err']
+              errortext = 'Management Interface error: '
             end
-          %>
+          elsif vpn.data['server']
+            # if, in the config file it's
+            # server=10.8.0.0 netmask=255.255.255.0, then the virtual local
+            # server address is 10.8.0.1/24
+            ip = IPAddr.new(vpn.data['server'] + '/' + vpn.data['netmask'])
+            text = ip.to_range.to_a[1].to_s + '/' + ip.prefixlen.to_s
+          end
+        %>
+        <td class="<%= cssclass %>">
+          <span class="<%= cssclass2 %>">
+            <%= errortext %><code><%= html_escape text %></code>
+          </span>
         </td>
         <td>
           <%= 

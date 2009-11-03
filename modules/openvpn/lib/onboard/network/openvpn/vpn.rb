@@ -135,10 +135,12 @@ class OnBoard
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
           elsif @data['client'] and @data_internal['management']
             begin
-              Timeout::timeout(1) do 
+              Timeout::timeout(3) do 
                 get_client_info_from_management_interface()
               end
             rescue Timeout::Error
+              @data['client'] = {} unless @data['client'].respond_to? :[]
+              @data['client']['management_interface_err'] = $!.to_s
             end
           end
           find_virtual_address()
@@ -352,7 +354,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   }
                 rescue OpenSSL::X509::CertificateError
                   @data_internal[optname] = $!
-                  @data[optname] = {'err' => $!.inspect} 
+                  @data[optname] = {'err' => $!.to_s} 
                 end
                 next
               end
@@ -583,9 +585,8 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             )
           rescue
             @data['client'] = {} unless @data['client'].respond_to? :[] 
-            @data['client']['management_interface_err'] =
-                @data_internal['management']['err'] = 
-                    $!.to_s
+            @data_internal['management']['err'] = $!
+            @data['client']['management_interface_err'] = $!.to_s
             return false
           end
 
