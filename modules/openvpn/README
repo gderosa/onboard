@@ -1,0 +1,13 @@
+The directory structure of this module follows the same conventions
+of the root dir, so you could *in principle* move all files there and make
+its functionalities part of the core.
+
+Anyway, this should not be a requirement for all modules: sometimes
+a simpler file hierarcy might be considered more valuable than the bare
+compliance to a "standard". 
+
+DEPENDENCIES: 
+
+This module depends on the module "easy-rsa".
+
+
