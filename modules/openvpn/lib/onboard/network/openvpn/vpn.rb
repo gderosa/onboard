@@ -133,14 +133,18 @@ class OnBoard
               # through --client-connect ?
             end
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
-          elsif @data['client'] and @data_internal['management']
-            begin
-              Timeout::timeout(3) do 
-                get_client_info_from_management_interface()
+          elsif @data['client'] 
+            @data['client'] = {} unless @data['client'].respond_to? :[]
+            if @data_internal['management']
+              begin
+                Timeout::timeout(3) do # three seconds should be fair
+                  get_client_info_from_management_interface()
+                end
+              rescue Timeout::Error
+                @data['client']['management_interface_err'] = $!.to_s
               end
-            rescue Timeout::Error
-              @data['client'] = {} unless @data['client'].respond_to? :[]
-              @data['client']['management_interface_err'] = $!.to_s
+            else
+              @data['client']['management_interface_warn'] = 'OpenVPN Management Interface unavailable for this client connection'
             end
           end
           find_virtual_address()

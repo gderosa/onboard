@@ -188,6 +188,10 @@
               cssclass = 'error'; cssclass2 = 'lowlight'
               text = vpn.data['client']['management_interface_err']
               errortext = 'Management Interface error: '
+            elsif vpn.data['client']['management_interface_warn']
+              cssclass = 'warn'; cssclass2 = 'lowlight'
+              errortext = vpn.data['client']['management_interface_warn']
+              text = ''
             end
           elsif vpn.data['server']
             # if, in the config file it's
@@ -230,4 +234,18 @@
 </table>
 (<a href="">Refresh</a>) 
 
+<h3>Create new VPN (client mode)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Add?</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<h3>Create new VPN (server mode)</h3>
 
