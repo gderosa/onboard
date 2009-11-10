@@ -142,18 +142,20 @@ class OnBoard
             end   
           end
         end
-        File.open dhcp_leasefile do |leasefile|
-          leasefile.each_line do |line|
-            if line =~ /^(\d+)\s+([\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2})\s+(\S+)\s+(\S+)/i # TODO? String#split would be more efficient?
-              @data['leases'] << {
-                'expiry'  => $1,
-                'mac'     => $2,
-                'ip'      => $3,
-                'name'    => $4
-              }
+        if File.readable? dhcp_leasefile
+          File.open dhcp_leasefile do |leasefile|
+            leasefile.each_line do |line|
+              if line =~ /^(\d+)\s+([\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2})\s+(\S+)\s+(\S+)/i # TODO? String#split would be more efficient?
+                @data['leases'] << {
+                  'expiry'  => $1,
+                  'mac'     => $2,
+                  'ip'      => $3,
+                  'name'    => $4
+                }
+              end
             end
           end
-        end
+        end  
       end
 
       # Repeat Yourself :-P # TODO's ?
