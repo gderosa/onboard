@@ -1,22 +1,59 @@
+Ruby OnBoard -- http://dev.vemarsas.it/onboard/ .
+
 Except where otherwise stated, this work is
-Copyright 2009 Guido De Rosa <job at guidoderosa dot net>
+Copyright 2009 Guido De Rosa <guido.derosa at vemarsas.it>
 License: GPLv2 
 
-A web interface to configure Linux-based network appliances. It's been
-developed and tested on Voyage GNU/Linux (htp//linux.voyage.hk/) but
-one of its goals is to support many GNU/Linux distributions (contributors
-and testers are always welcome ;-).
+Some artworks from the GNOME project are included, see 
+public/icons/gnome for details and Copyright info.
 
-It's based on Sinatra, ERB, and a bunch of other gems. 
+---
+
+A web interface to configure Linux-based network appliances. It's been
+developed and tested on Debian GNU/Linux and one of its derivatives for
+embedded systems, Voyage Linux (http://linux.voyage.hk/). It should work on 
+other GNU/Linux distros too, altough untested right now. Fell free to 
+contribute and test.
+
+---
+
+Default username and pasword: admin .
+
+For any web page, you may change .html extension into .json or .yaml to
+get machine-readable data. 
+
+An .rb extension is also available for debugging purposes when in 'development'
+environment.
+
+---
+
+Software requirements for "core" (check individual directories under modules/
+for module-specific, additional requirements): 
+
+* ruby 1.9 (preferably >=1.9.1)
+* iproute2
+* iptables (with proper kernel support)
+* dhcpcd
+* dnsmasq
+
+Gems:
+
+# gem source --add http://gems.github.com/
+# gem install rubytree
+# gem install sinatra-sinatra
+# gem install thin 
+  ## (for some reasons I was compelled to explicitly 'require' thin, so a
+  ## slight modification to the code is required to use one of the 
+  ## other webservers supported by Sinatra and Rack). 
 
 Optionally, you can get pretty-printed JSON output via JsonPrinter 
 by Mark McGranaghan. To get it, change to the lib/ directory, then:
 
 git clone git://github.com/techcrunch/json_printer.git
 
-Some artworks from the GNOME project are included too, see 
-public/icons/gnome for details and Copyright info.
+---
 
-
+This Free/Open Source Software project is sponsored by 
+VEMAR sas, Paterno (PZ), Italy -- http://www.vemarsas.it/ 
 
 
