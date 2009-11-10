@@ -161,7 +161,7 @@ class OnBoard
             cmd += ' --daemon' unless @data_internal['daemon']
             msg = System::Command.bgexec ("cd #{pwd} && sudo -E #{cmd}") 
             msg[:ok] = true
-            msg[:info] = 'Request accepted. You may check <a href="">this page</a> again to get updated info for the active VPNs.'
+            msg[:info] = 'Request accepted. You may check <a href="">this page</a> again to get updated info for the active VPNs. You may also check the <a href="/system/logs.html">logs</a>.'
             return msg
           end          
         end

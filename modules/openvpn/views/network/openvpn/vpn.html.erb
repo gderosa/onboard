@@ -133,15 +133,16 @@
           begin
             text = vpn.data['cert']['subject']['CN']
           rescue
-            errortext = "Certificate error: "
             begin
+              errortext = "Certificate error: "
               text = html_escape vpn.data['cert']['err']
               cssclass = "error"
               cssclass2 = "lowlight"
             rescue
-              text = "?"
-              cssclass = "warn"
-              cssclass2 = "lowlight"
+              errortext = ""
+              text = ""
+              cssclass = ""
+              cssclass2 = ""
             end
           end
         %>

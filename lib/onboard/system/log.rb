@@ -87,7 +87,11 @@ class OnBoard
 
       # An alternative solution that aims at not wasting system RAM anymore.
       def tail(n=Tail_n)
-        `tail -n #{n} #{@meta['path']}` 
+        if File.readable? @meta['path']
+          return `tail -n #{n} #{@meta['path']}`
+        else
+          return `sudo tail -n #{n} #{@meta['path']}` 
+        end
       end
 
       # It doesn't make much sense to embed the content of a whole log file

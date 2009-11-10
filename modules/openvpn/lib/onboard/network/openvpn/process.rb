@@ -7,9 +7,13 @@ class OnBoard
         attr_reader :portable_id
         def initialize(pid)
           super(pid)
-          @portable_id = Digest::MD5.hexdigest(
-              @env['PWD'] + "\0" + @cmdline_raw
-          )
+          if @env['PWD'] and @env['PWD'].kind_of? String 
+            @portable_id = Digest::MD5.hexdigest(
+                @env['PWD'] + "\0" + @cmdline_raw
+            )
+          else
+            @portable_id = Digest::MD5.hexdigest(@cmdline_raw)
+          end
         end
       end
     end

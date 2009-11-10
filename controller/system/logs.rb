@@ -17,7 +17,7 @@ class OnBoard::Controller
     not_found if not hash
     attachment(params['logid']) 
     content_type 'text/plain'
-    File.read hash['path'] 
+    `sudo cat #{hash['path']}` 
   end
 
   get "/system/logs/:logid.:format" do

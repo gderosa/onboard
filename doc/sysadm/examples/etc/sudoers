@@ -12,8 +12,8 @@ Defaults	env_reset
 # User alias specification
 
 # Cmnd alias specification
-Cmnd_Alias      ONBOARD = /sbin/ip, /sbin/dhcpcd, /usr/sbin/brctl, /sbin/iptables, /sbin/iptables-save, /sbin/iptables-restore, /sbin/ip6tables, /sbin/ip6tables-save, /sbin/ip6tables-restore,  /bin/kill, /bin/killall, /bin/readlink, /bin/cat /proc/*/environ
-Cmnd_Alias      ONBOARD_SETENV = /etc/init.d/dnsmasq
+Cmnd_Alias      ONBOARD = /sbin/ip, /sbin/dhcpcd, /usr/sbin/brctl, /sbin/iptables, /sbin/iptables-save, /sbin/iptables-restore, /sbin/ip6tables, /sbin/ip6tables-save, /sbin/ip6tables-restore,  /bin/kill, /bin/killall, /bin/readlink, /bin/cat /proc/*/environ, /bin/cat /var/log/*, /usr/bin/tail -n * /var/log/*, /usr/sbin/openvpn
+Cmnd_Alias      ONBOARD_SETENV = /etc/init.d/dnsmasq, /usr/sbin/openvpn
  
 
 # User privilege specification
