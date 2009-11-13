@@ -20,6 +20,8 @@ class OnBoard
     set :views, OnBoard::ROOTDIR + '/views'
     # TODO: set :root, OnBoard::ROOTDIR # better ?
 
+    Thread.abort_on_exception = true if environment == :development
+
     # TODO: do not hardcode, make it configurable. 
     use Rack::Auth::Basic do |username, password|
       [username, password] == ['admin', 'admin']

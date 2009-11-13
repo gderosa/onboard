@@ -26,10 +26,10 @@ class OnBoard::Controller < Sinatra::Base
     end
     #t.join
     format(
-      :module => 'easy-rsa',
-      :path => '/crypto/easy-rsa',
-      :format => params[:format],
-      :objects  => []
+      :module   => 'easy-rsa',
+      :path     => '/crypto/easy-rsa',
+      :format   => params[:format],
+      :objects  => OnBoard::Crypto::SSL.getAll() 
     )
   end
 

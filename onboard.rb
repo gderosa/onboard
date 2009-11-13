@@ -34,7 +34,7 @@ class OnBoard
     "#{datetime} #{severity}: #{msg}\n"
   }
 
-  LOGGER.info "Ruby on OnBoard started."
+  LOGGER.info "Ruby OnBoard started."
 
   def self.find_n_load(dir)
     # sort to resamble /etc/rc*.d/* or run-parts behavior
