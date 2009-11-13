@@ -1,0 +1,78 @@
+<% 
+# encoding: utf-8
+%>
+<% require 'i18n_data' %>
+
+<%
+  countries = I18nData.countries
+  cc_by_name = countries.keys.sort_by {|x| countries[x]}  
+%>
+
+<h2>SSL keys and certificates</h2>
+<h3>Diffie-Hellman parameters</h3>
+<table>
+  <thead>
+    <tr>
+      <th>File name</th>
+      <th>Size</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% objects['dh'].each_pair do |filename, dh_h| %>   
+      <tr> 
+        <td><code><%= filename %></code></td>
+        <td><%= dh_h['size'] %></td>
+        <td>
+          <%= 
+            if not dh_h['err']
+              'Ok'  
+            elsif dh_h['being_created'] 
+              '<span style="font-style:italic;">generating DH params... this may take a long time...</span>'
+            else
+              dh_h['err']
+            end
+          %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<h3>Certificate Authorities</h3>
+<h4>Create new</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Key Size (bits)</th>
+      <th>Expiry (days)</th>
+      <th>Country</th>
+      <th>Province/State</th>
+      <th>Organization Name</th>
+      <th>Organizational Unit</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <select>
+          <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
+            <option><%= ksiz %></option>  
+          <% end %>
+        </select>
+      </td>
+      <td><input size="5" value="3650"/></td>
+      <td>
+        <select>
+          <% cc_by_name.each do |cc| %>
+            <option value="<%= cc %>"><%= html_escape countries[cc] %></option>
+          <% end %>
+        </select> 
+      </td>
+      <td>_</td>
+      <td>_</td>
+      <td>_</td>
+      <td>_</td>
+    </tr>
+  </tbody>
+</table>

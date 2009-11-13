@@ -35,12 +35,16 @@ for module-specific, additional requirements):
 * iptables (with proper kernel support)
 * dhcpcd
 * dnsmasq
+* locales 
+  ## and set the locale to something reasonable, with Unicode support
+  ## i.e. "en_US.UTF-8" is ok, "C" or "POSIX" is not
 
 Gems:
 
 # gem source --add http://gems.github.com/
 # gem install rubytree
 # gem install sinatra-sinatra
+# gem install grosser-i18n_data
 # gem install thin 
   ## (for some reasons I was compelled to explicitly 'require' thin, so a
   ## slight modification to the code is required to use one of the 

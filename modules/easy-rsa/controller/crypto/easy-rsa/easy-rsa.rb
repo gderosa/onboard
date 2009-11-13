@@ -5,26 +5,22 @@
 require 'sinatra/base'
 
 require 'onboard/crypto/easy-rsa'
-
-class OnBoard
-  module Crypto 
-#    autoload :EasyRSA,  'onboard/crypto/easy-rsa'
-    autoload :SSL,      'onboard/crypto/ssl'
-  end
-end
+require 'onboard/crypto/ssl'
 
 class OnBoard::Controller < Sinatra::Base
 
   get '/crypto/easy-rsa.:format' do
     # create Diffie-Hellman params if they don't exist
-    t = Thread.new do
-      OnBoard::Crypto::SSL::dh_mutex(1024).synchronize do
-        unless OnBoard::Crypto::SSL.dh_exists?(1024) 
-          OnBoard::Crypto::EasyRSA.create_dh(1024)
+    OnBoard::Crypto::SSL::KEY_SIZES.each do |n|
+      Thread.new do
+        OnBoard::Crypto::SSL.dh_mutex(n).synchronize do
+          unless OnBoard::Crypto::SSL.dh_exists?(n) 
+            OnBoard::Crypto::EasyRSA.create_dh(n)
+          end
         end
       end
     end
-    #t.join
+    sleep 0.1 # this is diiiiirty!
     format(
       :module   => 'easy-rsa',
       :path     => '/crypto/easy-rsa',
