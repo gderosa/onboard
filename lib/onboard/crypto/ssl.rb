@@ -24,9 +24,13 @@ class OnBoard
         def getAllDH
           dh_h = {}
           Dir.glob(DIR + '/dh*.pem').each do |dh_file|
-            dh_h[File.basename dh_file] = {
-              'size' => dh(dh_file).params['p'].to_i.to_s(2).length
-            }
+            begin
+              dh_h[File.basename dh_file] = {
+                'size' => dh(dh_file).params['p'].to_i.to_s(2).length
+              }
+            rescue NoMethodError
+              dh_h[File.basename dh_file] = {'err' => 'invalid data'}
+            end
           end
           return dh_h
         end
