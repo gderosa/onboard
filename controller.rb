@@ -22,10 +22,13 @@ class OnBoard
 
     Thread.abort_on_exception = true if environment == :development
 
-    # TODO: do not hardcode, make it configurable. 
+    # TODO: do not hardcode, make it configurable
+    # NOTE: and, until then, comment it out ;-)
+=begin    
     use Rack::Auth::Basic do |username, password|
       [username, password] == ['admin', 'admin']
     end  
+=end
 
     # TODO: do not hardcode, make it themable :-)
     IconDir = '/icons/gnome/gnome-icon-theme-2.18.0'
@@ -50,7 +53,8 @@ class OnBoard
         end
         
         case h[:format]
-        when 'html', 'xhtml'
+        when 'html'#, 'xhtml'
+          content_type 'text/html', :charset => 'utf-8'
           return erb(
             (h[:path] + '.' + h[:format]).to_sym,
             :layout => ("layout." + h[:format]).to_sym,

@@ -26,18 +26,14 @@ class OnBoard
         def getAllDH
           dh_h = {}
           n = nil
-          @@dh_mutexes.each_pair do |n, mutex|
-            if mutex.locked?
-              dh_h["dh#{n}.pem"] = {'being_created' => true, 'size' => n} 
-            end
-          end
-          Dir.glob(DIR + '/dh*.pem').each do |dh_file_fullpath|
-            dh_file = File.basename dh_file_fullpath
-            if dh_file =~ /^dh(\d+)\.pem$/
-              n = $1.to_i
-            else
-              next
-            end
+          #@@dh_mutexes.each_pair do |n, mutex|
+          #  if mutex.locked?
+          #    dh_h["dh#{n}.pem"] = {'being_created' => true, 'size' => n} 
+          #  end
+          #end
+          KEY_SIZES.each do |n|
+            dh_file = "dh#{n}.pem"
+            dh_file_fullpath = File.join(DIR, dh_file) 
             dh_h[dh_file] = {} unless dh_h[dh_file]
             if @@dh_mutexes[n] and @@dh_mutexes[n].respond_to? :locked?
               dh_h[dh_file]['being_created'] = @@dh_mutexes[n].locked? 
@@ -48,7 +44,7 @@ class OnBoard
               dh_h[dh_file]['size'] = 
                   dh(dh_file_fullpath).params['p'].to_i.to_s(2).length
             rescue NoMethodError
-              dh_h[dh_file]['err'] = 'invalid data'
+              dh_h[dh_file]['err'] = 'no valid data'
             end
           end
           return dh_h

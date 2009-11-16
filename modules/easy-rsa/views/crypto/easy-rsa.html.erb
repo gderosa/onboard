@@ -1,10 +1,7 @@
-<% 
-# encoding: utf-8
-%>
 <% require 'i18n_data' %>
 
 <%
-  countries = I18nData.countries
+  countries = I18nData.countries('it')
   cc_by_name = countries.keys.sort_by {|x| countries[x]}  
 %>
 
