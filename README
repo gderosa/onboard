@@ -41,9 +41,10 @@ for module-specific, additional requirements):
 
 Gems:
 
-# gem source --add http://gems.github.com/
+# gem source --add http://gems.github.com
+
 # gem install rubytree
-# gem install sinatra-sinatra
+# gem install sinatra
 # gem install grosser-i18n_data
 # gem install thin 
   ## (for some reasons I was compelled to explicitly 'require' thin, so a
