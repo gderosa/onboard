@@ -1,8 +1,10 @@
+<% require 'locale' %>
 <% require 'i18n_data' %>
 
 <%
-  countries = I18nData.countries('it')
-  cc_by_name = countries.keys.sort_by {|x| countries[x]}  
+  countries = I18nData.countries
+  cc_by_name = countries.keys.sort_by {|x| countries[x]} 
+  current_country_code = Locale.current.region 
 %>
 
 <h2>SSL keys and certificates</h2>
@@ -62,7 +64,7 @@
       <td>
         <select>
           <% cc_by_name.each do |cc| %>
-            <option value="<%= cc %>"><%= html_escape countries[cc] %></option>
+            <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %>><%= html_escape countries[cc] %></option>
           <% end %>
         </select> 
       </td>

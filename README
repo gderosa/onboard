@@ -46,10 +46,8 @@ Gems:
 # gem install rubytree
 # gem install sinatra
 # gem install i18n_data
+# gem install locale
 # gem install thin 
-  ## (for some reasons I was compelled to explicitly 'require' thin, so a
-  ## slight modification to the code is required to use one of the 
-  ## other webservers supported by Sinatra and Rack). 
 
 Optionally, you can get pretty-printed JSON output via JsonPrinter 
 by Mark McGranaghan. To get it, change to the lib/ directory, then:
