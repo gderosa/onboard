@@ -30,12 +30,23 @@ class OnBoard::Controller < Sinatra::Base
   end
 
   post '/crypto/easy-rsa/ca.:format' do
-    OnBoard::Crypto::EasyRSA.create_from_HTTP_request(params) 
+    if OnBoard::Crypto::EasyRSA::CA.validate_HTTP_POST(params) 
+      msg = OnBoard::Crypto::EasyRSA::CA.create_from_HTTP_request(params)
+      if msg[:ok]
+        status(201)  
+      else # client sent a valid request but (server-side) errors occured
+        status(500) 
+      end     
+    else # client sent invalid data
+      status(400) 
+      msg = {:ok => false, :err => "Invalid data."}
+    end
     format(
       :module   => 'easy-rsa',
       :path     => '/crypto/easy-rsa/ca-create',
       :format   => params[:format],
-      :objects  => nil # OnBoard::Crypto::SSL.getAll() 
+      :objects  => nil,
+      :msg      => msg
     )
   end
 

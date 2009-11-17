@@ -1,2 +1,12 @@
 <h2>Certificate Authority</h2>
-<pre><%= html_escape params.pretty_inspect %></pre>
+<% if msg[:ok] %>
+  <p>Certificate Authority has been successfully initialized.</p>
+  <p>(<a href="../easy-rsa.html">Go back</a>)</b>.
+<% else %>
+  <div class="error">
+    <p style="font-style: italic;">
+      Request was not fulfilled due to the reported errors:</p>
+    <pre><%= html_escape msg[:err] %></pre>
+    <pre><%= html_escape msg[:stderr] %></pre>
+  </diV>
+<% end %>
