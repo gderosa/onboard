@@ -33,6 +33,7 @@ for module-specific, additional requirements):
 * ruby 1.9 (preferably >=1.9.1)
 * iproute2
 * iptables (with proper kernel support)
+* bridge-utils (brctl)
 * dhcpcd
 * dnsmasq
 * locales 
@@ -52,7 +53,7 @@ Gems:
 Optionally, you can get pretty-printed JSON output via JsonPrinter 
 by Mark McGranaghan. To get it, change to the lib/ directory, then:
 
-git clone git://github.com/techcrunch/json_printer.git
+Git clone git://github.com/techcrunch/json_printer.git
 
 ---
 

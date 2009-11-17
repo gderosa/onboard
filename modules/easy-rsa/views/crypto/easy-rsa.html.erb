@@ -6,7 +6,6 @@
   cc_by_name = countries.keys.sort_by {|x| countries[x]} 
   current_country_code = Locale.current.region 
 %>
-
 <h2>SSL keys and certificates</h2>
 <h3>Diffie-Hellman parameters</h3>
 <table>
@@ -42,10 +41,11 @@
 <table>
   <thead>
     <tr>
+      <th>Create!</th>
       <th>Key Size (bits)</th>
       <th>Expiry (days)</th>
       <th>Country</th>
-      <th>Province/State</th>
+      <th>Province / State</th>
       <th>Organization Name</th>
       <th>Organizational Unit</th>
       <th>Email</th>
@@ -53,25 +53,37 @@
   </thead>
   <tbody>
     <tr>
-      <td>
-        <select>
-          <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
-            <option><%= ksiz %></option>  
-          <% end %>
-        </select>
-      </td>
-      <td><input size="5" value="3650"/></td>
-      <td>
-        <select>
-          <% cc_by_name.each do |cc| %>
-            <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %>><%= html_escape countries[cc] %></option>
-          <% end %>
-        </select> 
-      </td>
-      <td>_</td>
-      <td>_</td>
-      <td>_</td>
-      <td>_</td>
+      <form method="POST" action="easy-rsa/ca.html">
+        <td style="text-align:center;"><button type="submit" title="Create new CA"><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="create"/></button></td>
+        <td>
+          <select name="key_size">
+            <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
+              <option value="<%= ksiz %>"><%= ksiz %></option>  
+            <% end %>
+          </select>
+        </td>
+        <td><input name="days" size="4" value="3650"/></td>
+        <td style="text-align:center;">
+          <select name="C">
+            <% cc_by_name.each do |cc| %>
+              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%= html_escape countries[cc] %>"><%= html_escape countries[cc][0..18] %></option> 
+                <%
+                  # long country names may mess the page layout, so they are 
+                  # truncated 
+                %>
+            <% end %>
+          </select> 
+        </td>
+        <td style="text-align:center;">
+          <input name="ST" type="text" size="3"/></td>
+        <td style="text-align:center;">
+          <input name="O" type="text" size="12"/></td>
+        <td style="text-align:center;">
+          <input name="OU" type="text" size="11"/></td>
+        <td style="text-align:center;">
+          <input name="emailAddress" type="text" size="14"/></td>
+      </form>
     </tr>
   </tbody>
 </table>
+

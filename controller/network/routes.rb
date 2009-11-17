@@ -3,19 +3,7 @@ require 'sinatra/base'
 require 'onboard/network/routing/table'
 
 class OnBoard::Controller
-=begin
-  get "/network/routing.html" do
-    format(
-      :path     => 'simple_menu',
-      :format   => 'html',
-      :objects  => {
-        :menu     => OnBoard::MENU_ROOT['network']['routing'],
-        :title    => 'Routing',
-        :desc     => nil
-      }
-    )
-  end
-=end
+
   get "/network/routes.:format" do
     format(
       :path     => 'network/routing/table',

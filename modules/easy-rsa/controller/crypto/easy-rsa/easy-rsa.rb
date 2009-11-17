@@ -29,6 +29,16 @@ class OnBoard::Controller < Sinatra::Base
     )
   end
 
+  post '/crypto/easy-rsa/ca.:format' do
+    OnBoard::Crypto::EasyRSA.create_from_HTTP_request(params) 
+    format(
+      :module   => 'easy-rsa',
+      :path     => '/crypto/easy-rsa/ca-create',
+      :format   => params[:format],
+      :objects  => nil # OnBoard::Crypto::SSL.getAll() 
+    )
+  end
+
 =begin  
   put '/network/openvpn.:format' do
     vpns = OnBoard::Network::OpenVPN::VPN.getAll()
