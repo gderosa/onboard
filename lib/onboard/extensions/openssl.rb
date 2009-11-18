@@ -11,7 +11,7 @@ module OpenSSL
           'not_before'          => not_before(),
           'not_after'           => not_after(),
           'serial'              => serial().to_i,
-          'version'             => version(), # X509 version
+          'version'             => version() + 1, # X509 version 0x02 -> 3 etc..
           'signature_algorithm' => signature_algorithm()
         }
 
