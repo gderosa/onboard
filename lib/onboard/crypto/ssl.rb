@@ -1,4 +1,4 @@
-autoload :OpenSSL, 'openssl'
+autoload :OpenSSL, 'onboard/extensions/openssl'
 
 class OnBoard
   module Crypto
@@ -20,6 +20,8 @@ class OnBoard
         def getAll
           h = {}
           h['dh'] = getAllDH()
+          h['ca'] = OpenSSL::X509::Certificate.new(
+              File.read DIR + '/ca.crt').to_h
           return h
         end
 

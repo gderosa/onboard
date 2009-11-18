@@ -28,15 +28,19 @@ EOF
         def self.filter_HTTP_POST(params)
         end
 =end
-        def self.validate_HTTP_POST(params)
-          return false unless params['key_size']      =~ /^\d+$/
-          return false unless params['days']          =~ /^\d+$/
-          return false unless params['C']             =~ /^[A-Z][A-Z]$/i
-          return false unless params['L']             =~ /\w/
-          return false unless params['O']             =~ /\w/
-          return false unless params['emailAddress']  =~ 
-              /^[a-z0-9_\-\.]+@[a-z0-9_\-\.]+[^_\-]$/i
-          return true
+        def self.HTTP_POST_data_invalid?(params)
+          return "Invalid key size."        unless params['key_size'] =~ /^\d+$/
+          return "Invalid expiry."          unless params['days']     =~ /^\d+$/
+          return "Invalid country name."    unless params['C']        =~ 
+              /^[A-Z][A-Z]$/i
+          return "Invalid province/state."  unless params['ST']       =~ /\S/
+          return "Invalid city name"        unless params['L']        =~ /\S/
+          return "Invalid Organization name" \
+                                            unless params['O']        =~ /\S/
+          #return "Invalid email address"    unless 
+                                              params['emailAddress']  =~ 
+                                                /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i
+          return false
         end
 
         def self.create_from_HTTP_request(params)

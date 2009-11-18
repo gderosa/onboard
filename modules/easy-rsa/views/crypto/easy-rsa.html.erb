@@ -36,8 +36,9 @@
     <% end %>
   </tbody>
 </table>
-<h3>Certificate Authorities</h3>
-<h4>Create new</h4>
+<h3>Certificate Authority</h3>
+
+<h4>Initialize new</h4>
 <table>
   <thead>
     <tr>
@@ -66,11 +67,12 @@
         <td style="text-align:center;">
           <select name="C">
             <% cc_by_name.each do |cc| %>
-              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%= html_escape countries[cc] %>"><%= html_escape countries[cc][0..18] %></option> 
-                <%
-                  # long country names may mess the page layout, so they are 
-                  # truncated 
-                %>
+              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%= html_escape countries[cc] %>">
+                <%= 
+                  html_escape countries[cc][0..18] 
+                      # truncate to not mess the page layout
+                %> 
+              </option> 
             <% end %>
           </select> 
         </td>
