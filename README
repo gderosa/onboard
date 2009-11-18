@@ -51,9 +51,10 @@ Gems:
 # gem install thin 
 
 Optionally, you can get pretty-printed JSON output via JsonPrinter 
-by Mark McGranaghan. To get it, change to the lib/ directory, then:
+by Mark McGranaghan. A forked version is suggested to fix some issues with
+localization, encodings etc. To get it, change to the lib/ directory, then:
 
-Git clone git://github.com/techcrunch/json_printer.git
+Git clone git://github.com/gderosa/json_printer.git
 
 ---
 

@@ -40,7 +40,19 @@
 
 <pre>
   <%= html_escape objects['ca'].pretty_inspect %>
-</pre>
+  ---
+  <%= 
+    objects['ca']['issuer']['L']
+  %>
+  <%
+    ['issuer', 'subject'].each do |who|
+      puts who
+      objects['ca'][who].each_pair do |k, v|
+        puts "#{k}, #{v.encoding}" 
+      end
+    end
+  %>
+</pre> 
 
 <h4>Initialize new</h4>
 <table>

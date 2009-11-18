@@ -1,4 +1,5 @@
-autoload :OpenSSL, 'onboard/extensions/openssl'
+require 'openssl'
+require 'onboard/extensions/openssl'
 
 class OnBoard
   module Crypto
