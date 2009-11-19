@@ -10,20 +10,18 @@ public/icons/gnome for details and Copyright info.
 ---
 
 A web interface to configure Linux-based network appliances. It's been
-developed and tested on Debian GNU/Linux and one of its derivatives for
+developed and tested on Debian GNU/Linux and its derivative for
 embedded systems, Voyage Linux (http://linux.voyage.hk/). It should work on 
-other GNU/Linux distros too, altough untested right now. Fell free to 
-contribute and test.
+other distros too, altough untested right now. Fell free to contribute and 
+test.
 
 ---
-
-Default username and pasword: admin .
 
 For any web page, you may change .html extension into .json or .yaml to
 get machine-readable data. 
 
-An .rb extension is also available for debugging purposes when in 'development'
-environment.
+An .rb extension is also available for debugging purposes when in 
+Sinatra 'development' environment. 
 
 ---
 
@@ -60,14 +58,14 @@ by Mark McGranaghan. To get it, change to the lib/ directory, then:
 git clone git://github.com/techcrunch/json_printer.git
 
 You can also take advantage of Ya2YAML by Akira FUNAI to get native 
-UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as raw binary data 
+UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
 and encode them in base64). Change to lib/, then:
 
 wget http://rubyforge.org/frs/download.php/51481/ya2yaml-0.29.tar.gz
 tar xvzf ya2yaml-0.29.tar.gz
 
-(This manual install will not be required when ya2yaml-0.29 become available
-as a gem. Check http://rubyforge.org/frs/?group_id=2206 for updates).
+(This manual install will not be required when ya2yaml >= 0.29 becomes 
+available as a gem. Check http://rubyforge.org/frs/?group_id=2206 for updates).
 
 ---
 

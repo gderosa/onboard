@@ -1,5 +1,8 @@
-<% require 'locale' %>
-<% require 'i18n_data' %>
+<% 
+  require 'locale'
+  require 'i18n_data' 
+  require 'date'
+%>
 
 <%
   countries = I18nData.countries
@@ -40,11 +43,39 @@
 
 <pre>
   <%= html_escape objects['ca'].pretty_inspect %>
-  ---
-  <%= 
-    objects['ca']['issuer']['L']
-  %>
 </pre> 
+
+<% 
+  # just a proof-of-concept, for now...
+  require 'r18n-core' 
+      # apparently sinatra/r18n works for classic style apps only
+  i18n = R18n::I18n.new(['it'])
+  it_locale = R18n::Locale.load('it')
+%>
+
+<table>
+  <caption>CA certificate</caption>
+  <tbody>
+    <tr>
+      <th scope="row">Validity</th>
+      <td>
+        <%= 
+          it_locale.format_date_full(
+            i18n,
+            objects['ca']['not_before']
+          )  
+        %>
+        -      
+        <%= 
+          it_locale.format_date_full(
+            i18n,
+            objects['ca']['not_after']
+          )  
+        %>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <h4>Initialize new</h4>
 <table>
