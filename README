@@ -50,11 +50,24 @@ Gems:
 # gem install locale
 # gem install thin 
 
-Optionally, you can get pretty-printed JSON output via JsonPrinter 
-by Mark McGranaghan. A forked version is suggested to fix some issues with
-localization, encodings etc. To get it, change to the lib/ directory, then:
+--
 
-Git clone git://github.com/gderosa/json_printer.git
+Optional add-ons:
+
+You can get pretty-printed JSON output via JsonPrinter 
+by Mark McGranaghan. To get it, change to the lib/ directory, then:
+
+git clone git://github.com/techcrunch/json_printer.git
+
+You can also take advantage of Ya2YAML by Akira FUNAI to get native 
+UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as raw binary data 
+and encode them in base64). Change to lib/, then:
+
+wget http://rubyforge.org/frs/download.php/51481/ya2yaml-0.29.tar.gz
+tar xvzf ya2yaml-0.29.tar.gz
+
+(This manual install will not be required when ya2yaml-0.29 become available
+as a gem. Check http://rubyforge.org/frs/?group_id=2206 for updates).
 
 ---
 

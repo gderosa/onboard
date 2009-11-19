@@ -48,8 +48,6 @@ class OnBoard
       def format(h)
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
-        else
-
         end
         
         case h[:format]
@@ -65,9 +63,20 @@ class OnBoard
               :msg => h[:msg] 
             } 
           )
+
         when 'json', 'yaml'
-          content_type 'application/json' if h[:format] == 'json'
-          content_type 'text/x-yaml'      if h[:format] == 'yaml'
+          # Some converters use sorts of ASCII escaping, other emit UTF8
+          # strings as they are.
+          if h[:format] == 'json'
+            content_type  'application/json'
+          else  # elsif h[:format] == 'yaml' would be redundant...
+            if $ya2yaml_1_9compatible_available
+              content_type 'application/json', :charset => 'utf-8'
+            else
+              content_type 'application/json' # base64(ASCII) used by std lib
+            end
+          end
+          # The following is common to YAML and JSON.
           if h[:objects].class == Array and h[:objects][0].respond_to? :data
             # we assume that array is made up of objects of the same class
             return (h[:objects].map {|obj| obj.data}).to_(h[:format]) 
@@ -76,6 +85,7 @@ class OnBoard
           else
             return h[:objects].to_(h[:format])
           end
+
         when 'rb'
           if options.environment == :development
             content_type 'text/x-ruby'
