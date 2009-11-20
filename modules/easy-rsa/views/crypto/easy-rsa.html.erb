@@ -1,13 +1,18 @@
 <% 
-  require 'locale'
   require 'i18n_data' 
   require 'date'
 %>
 
 <%
-  countries = I18nData.countries
-  cc_by_name = countries.keys.sort_by {|x| countries[x]} 
-  current_country_code = Locale.current.region 
+  locale = Locale::Tag.parse(params['locale']) 
+      # Locale::Tag.parse( __invalid_arg__ ) = #<Locale::Tag::Irregular: en> 
+      # which still set a default, valid language, but no country
+      # (.country() returns nil) 
+  syslocale = Locale.current
+  current_language_code = locale.language
+  current_country_code = (locale.country or syslocale.country or 'US')
+  countries = I18nData.countries current_language_code
+  cc_by_name = countries.keys.sort_by {|x| countries[x]}  
 %>
 <h2>SSL keys and certificates</h2>
 <h3>Diffie-Hellman parameters</h3>
@@ -42,16 +47,11 @@
 <h3>Certificate Authority</h3>
 
 <pre>
-  <%= html_escape objects['ca'].pretty_inspect %>
+  <%= 
+    # html_escape objects['ca'].pretty_inspect 
+    html_escape i18n.locale.data.pretty_inspect 
+  %>
 </pre> 
-
-<% 
-  # just a proof-of-concept, for now...
-  require 'r18n-core' 
-      # apparently sinatra/r18n works for classic style apps only
-  i18n = R18n::I18n.new(['it'])
-  #it_locale = R18n::Locale.load('it')
-%>
 
 <table>
   <caption>CA certificate</caption>
@@ -59,15 +59,9 @@
     <tr>
       <th scope="row">Validity</th>
       <td>
-        <%= 
-            i18n.l(objects['ca']['not_before'].to_date, :full)  
-        #pp objects['ca']['not_before'].to_date
-        %>
+        <%= i18n.l(objects['ca']['not_before'].to_date, :full) %>
         -      
-        <%= 
-          i18n.l((Date.parse '2010-02-01'), :full)
-        #pp Date.parse '2010-01-01'
-        %>
+        <%= i18n.l(objects['ca']['not_after'].to_date, :full)  %>
       </td>
     </tr>
   </tbody>

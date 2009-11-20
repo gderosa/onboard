@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'thin' # we need to explicit the server, for some reason... :-?
 require 'sinatra/base'
+require 'sinatra/r18n'
+require 'locale'
 require 'erb'
 require 'find'
 require 'json'
@@ -13,12 +15,15 @@ require 'onboard/menu/node'
 
 class OnBoard
   class Controller < ::Sinatra::Base
+    # Extensions must be explicitly registered in modular style apps.
+    register ::Sinatra::R18n
+
     # Several options are not enabled by default if you inherit from 
     # Sinatra::Base .
     enable :methodoverride, :static, :show_exceptions
+    set :root, OnBoard::ROOTDIR
     set :public, OnBoard::ROOTDIR + '/public'
     set :views, OnBoard::ROOTDIR + '/views'
-    # TODO: set :root, OnBoard::ROOTDIR # better ?
 
     Thread.abort_on_exception = true if environment == :development
 
@@ -42,7 +47,17 @@ class OnBoard
       format(:path=>'404', :format=>'html') 
     end
 
+    #before do
+    #  if request.path_info =~ /\.html$/ or request.path_info =~ /^\/?$/
+    #    puts "filter called at #{request.path_info}"
+    #  end
+    #end
+
     helpers do
+
+      def current_language_code
+        #i18n.locale.
+      end
 
       # This method should be called PROVIDED that the resource exists.
       def format(h)
