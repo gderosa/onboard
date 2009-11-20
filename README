@@ -35,8 +35,7 @@ for module-specific, additional requirements):
 * dhcpcd
 * dnsmasq
 * locales 
-  ## and set the locale to something reasonable, with Unicode support
-  ## i.e. "en_US.UTF-8" is ok, "C" or "POSIX" is not
+  ## and generate (UTF8) locales for language/countries you want to support
 
 Gems:
 
@@ -47,6 +46,11 @@ Gems:
 # gem install i18n_data
 # gem install locale
 # gem install thin 
+# gem install r18n-core
+  ## NOTE: if you want Italian support, until next release, you have to 
+  ## get the latest development snapshot (and build the gem by yourself):
+  ##
+  ## git clone git://github.com/ai/r18n.git
 
 --
 

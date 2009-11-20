@@ -50,7 +50,7 @@
   require 'r18n-core' 
       # apparently sinatra/r18n works for classic style apps only
   i18n = R18n::I18n.new(['it'])
-  it_locale = R18n::Locale.load('it')
+  #it_locale = R18n::Locale.load('it')
 %>
 
 <table>
@@ -60,17 +60,13 @@
       <th scope="row">Validity</th>
       <td>
         <%= 
-          it_locale.format_date_full(
-            i18n,
-            objects['ca']['not_before']
-          )  
+            i18n.l(objects['ca']['not_before'].to_date, :full)  
+        #pp objects['ca']['not_before'].to_date
         %>
         -      
         <%= 
-          it_locale.format_date_full(
-            i18n,
-            objects['ca']['not_after']
-          )  
+          i18n.l((Date.parse '2010-02-01'), :full)
+        #pp Date.parse '2010-01-01'
         %>
       </td>
     </tr>
