@@ -35,11 +35,8 @@
 </table>
 <h3>Certificate Authority</h3>
 
-<pre>
-</pre> 
-
 <table>
-  <caption>CA certificate</caption>
+  <caption>CA certificate <%= '(<span style="font-style:italic;">self-signed</span>)' if objects['ca']['issuer'] == objects['ca']['subject'] %></caption>
   <tbody>
     <tr>
       <th scope="row">Validity</th>
@@ -49,6 +46,18 @@
         <%= i18n.l(objects['ca']['not_after'].to_date, :full)  %>
       </td>
     </tr>
+    <tr>
+      <th scope="row">Serial No.</th>
+      <td><code><%= objects['ca']['serial'] %></code></td>
+    </tr>   
+    <tr>
+      <th scope="row">X509 Standard version</th>
+      <td><%= objects['ca']['version'] %></td>
+    </tr>
+    <tr>
+      <th scope="row">Signature algorithm</th>
+      <td><code><%= objects['ca']['signature_algorithm'] %></code></td>
+    </tr> 
   </tbody>
 </table>
 
