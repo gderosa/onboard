@@ -34,7 +34,12 @@
   </tbody>
 </table>
 <h3>Certificate Authority</h3>
-<% if objects['ca'] %>
+<% if objects['ca'] and objects['ca']['err'] %>
+  <span class="error">
+    Certificate error: <code><%= html_escape objects['ca']['err'] %></code>
+  </span>
+<% end %>
+<% if objects['ca'] and not objects['ca']['err'] %>
   <%
     if objects['ca']['issuer'] == objects['ca']['subject']
       signed_info_html = '<span style="font-style:italic;"><strong>self-signed</strong></span>'
