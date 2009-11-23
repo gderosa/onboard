@@ -92,13 +92,17 @@ class OnBoard
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
         end
-        
         case h[:format]
-        when 'html'#, 'xhtml'
+        when 'html'
+          if h[:partial]
+            layout = false
+          else
+            layout = :"layout.html"
+          end
           content_type 'text/html', :charset => 'utf-8'
           return erb(
-            (h[:path] + '.' + h[:format]).to_sym,
-            :layout => ("layout." + h[:format]).to_sym,
+            (h[:path] + '.html').to_sym,
+            :layout => layout,
             :locals => {
               :objects => h[:objects], 
               :icondir => IconDir, 
