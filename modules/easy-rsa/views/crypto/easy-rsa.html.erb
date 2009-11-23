@@ -3,17 +3,6 @@
   require 'date'
 %>
 
-<%
-  locale = Locale::Tag.parse(params['locale']) 
-      # Locale::Tag.parse( __invalid_arg__ ) = #<Locale::Tag::Irregular: en> 
-      # which still set a default, valid language, but no country
-      # (.country() returns nil) 
-  syslocale = Locale.current
-  current_language_code = locale.language
-  current_country_code = (locale.country or syslocale.country or 'US')
-  countries = I18nData.countries current_language_code
-  cc_by_name = countries.keys.sort_by {|x| countries[x]}  
-%>
 <h2>SSL keys and certificates</h2>
 <h3>Diffie-Hellman parameters</h3>
 <table>
@@ -47,10 +36,6 @@
 <h3>Certificate Authority</h3>
 
 <pre>
-  <%= 
-    # html_escape objects['ca'].pretty_inspect 
-    html_escape i18n.locale.data.pretty_inspect 
-  %>
 </pre> 
 
 <table>
@@ -95,7 +80,7 @@
         <td><input name="days" size="4" value="3650"/></td>
         <td style="text-align:center;">
           <select name="C">
-            <% cc_by_name.each do |cc| %>
+            <% country_codes_by_name.each do |cc| %>
               <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%= html_escape countries[cc] %>">
                 <%= 
                   html_escape countries[cc][0..18] 
