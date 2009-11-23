@@ -17,17 +17,7 @@ EOF
       end
 
       module CA
-=begin        
-        HTTP_POST_PARAMS = {
-          'key_size'  => /^\d+$/,
-          'days'      => /^\d+$/,
-          'C'         => /^[A-Z][A-Z]$/i,
-          'L'         => 
-        }
 
-        def self.filter_HTTP_POST(params)
-        end
-=end
         def self.HTTP_POST_data_invalid?(params)
           return "Invalid key size."        unless params['key_size'] =~ /^\d+$/
           return "Invalid expiry."          unless params['days']     =~ /^\d+$/
@@ -37,9 +27,9 @@ EOF
           return "Invalid city name"        unless params['L']        =~ /\S/
           return "Invalid Organization name" \
                                             unless params['O']        =~ /\S/
-          #return "Invalid email address"    unless 
-                                              params['emailAddress']  =~ 
-                                                /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i
+          # delegate to openssl...                                    
+          #return "Invalid email address"    unless (
+          #    params['emailAddress'] =~ /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i )
           return false
         end
 
