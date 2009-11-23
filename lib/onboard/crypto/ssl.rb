@@ -21,8 +21,11 @@ class OnBoard
         def getAll
           h = {}
           h['dh'] = getAllDH()
-          h['ca'] = OpenSSL::X509::Certificate.new(
-              File.read DIR + '/ca.crt').to_h
+          begin
+            h['ca'] = OpenSSL::X509::Certificate.new(
+                File.read DIR + '/ca.crt').to_h
+          rescue Errno::ENOENT
+          end
           return h
         end
 

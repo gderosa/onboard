@@ -34,76 +34,76 @@
   </tbody>
 </table>
 <h3>Certificate Authority</h3>
-<%
-  if objects['ca']['issuer'] == objects['ca']['subject']
-    signed_info_html = '<span style="font-style:italic;"><strong>self-signed</strong></span>'
-  else
-    signed_info_html = 'issued by <em>' + objects['ca']['issuer']['CN'] + '</em>'
-  end
-%>
-<table style="display: inline;">
-  <caption>CA certificate (<%= signed_info_html %>)</caption>
-  <tbody>
-    <tr>
-      <th scope="row">Validity</th>
-      <td>
-        <%= i18n.l(objects['ca']['not_before'].to_date, :full) %>
-        -      
-        <%= i18n.l(objects['ca']['not_after'].to_date, :full)  %>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">Serial No.</th>
-      <td>
-        <code>
-          <%= objects['ca']['serial'].to_s(16).scan(/..?/).join(':') %>
-        </code>
-      </td>
-    </tr>   
-    <tr>
-      <th scope="row">X509 Standard version</th>
-      <td><%= objects['ca']['version'] %></td>
-    </tr>
-    <tr>
-      <th scope="row">Signature algorithm</th>
-      <td><code><%= objects['ca']['signature_algorithm'] %></code></td>
-    </tr> 
-  </tbody>
-</table>
-<% cadata = objects['ca']['subject'] %>
-<table style="display:inline;">
-  <caption style="margin-top:0.5em;">CA details</caption>
-  <tbody>
-    <tr>
-      <th scope="row">Country</th>
-      <td>
-        <%= countries[cadata['C']] %>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">State/Province</th>
-      <td><%= cadata['ST'] %></td>
-    </tr>   
-    <tr>
-      <th scope="row">Location</th>
-      <td><%= cadata['L'] %></td>
-    </tr>
-    <tr>
-      <th scope="row">Organization</th>
-      <td><%= cadata['O'] %><%= (', <span style="font-style: italic;">' + cadata['OU'] + '</span>') if cadata['OU'] =~ /\S/ %></td>
-    </tr> 
-    <tr>
-      <th scope="row">&ldquo;Common Name&rdquo;</th>     
-      <td><code><%= cadata['CN'] %></code></td>
-    </tr>
-    <tr>
-      <th scope="row">E-mail</th>
-      <td><code><%= cadata['emailAddress'] %></code></td>
-    </tr>
-  </tbody>
-</table>
-
-
+<% if objects['ca'] %>
+  <%
+    if objects['ca']['issuer'] == objects['ca']['subject']
+      signed_info_html = '<span style="font-style:italic;"><strong>self-signed</strong></span>'
+    else
+      signed_info_html = 'issued by <em>' + objects['ca']['issuer']['CN'] + '</em>'
+    end
+  %>
+  <table style="display: inline;">
+    <caption>CA certificate (<%= signed_info_html %>)</caption>
+    <tbody>
+      <tr>
+        <th scope="row">Validity</th>
+        <td>
+          <%= i18n.l(objects['ca']['not_before'].to_date, :full) %>
+          -      
+          <%= i18n.l(objects['ca']['not_after'].to_date, :full)  %>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Serial No.</th>
+        <td>
+          <code>
+            <%= objects['ca']['serial'].to_s(16).scan(/..?/).join(':') %>
+          </code>
+        </td>
+      </tr>   
+      <tr>
+        <th scope="row">X509 Standard version</th>
+        <td><%= objects['ca']['version'] %></td>
+      </tr>
+      <tr>
+        <th scope="row">Signature algorithm</th>
+        <td><code><%= objects['ca']['signature_algorithm'] %></code></td>
+      </tr> 
+    </tbody>
+  </table>
+  <% cadata = objects['ca']['subject'] %>
+  <table style="display:inline;">
+    <caption style="margin-top:0.5em;">CA details</caption>
+    <tbody>
+      <tr>
+        <th scope="row">Country</th>
+        <td>
+          <%= countries[cadata['C']] %>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">State/Province</th>
+        <td><%= cadata['ST'] %></td>
+      </tr>   
+      <tr>
+        <th scope="row">Location</th>
+        <td><%= cadata['L'] %></td>
+      </tr>
+      <tr>
+        <th scope="row">Organization</th>
+        <td><%= cadata['O'] %><%= (', <span style="font-style: italic;">' + cadata['OU'] + '</span>') if cadata['OU'] =~ /\S/ %></td>
+      </tr> 
+      <tr>
+        <th scope="row">&ldquo;Common Name&rdquo;</th>     
+        <td><code><%= cadata['CN'] %></code></td>
+      </tr>
+      <tr>
+        <th scope="row">E-mail</th>
+        <td><code><%= cadata['emailAddress'] %></code></td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
 
 <h4>Initialize new</h4>
 <table>
