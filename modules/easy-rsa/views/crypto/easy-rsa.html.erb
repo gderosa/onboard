@@ -54,7 +54,11 @@
     </tr>
     <tr>
       <th scope="row">Serial No.</th>
-      <td><code><%= objects['ca']['serial'] %></code></td>
+      <td>
+        <code>
+          <%= objects['ca']['serial'].to_s(16).scan(/..?/).join(':') %>
+        </code>
+      </td>
     </tr>   
     <tr>
       <th scope="row">X509 Standard version</th>
