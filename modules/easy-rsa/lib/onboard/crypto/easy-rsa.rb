@@ -27,9 +27,8 @@ EOF
           return "Invalid city name"        unless params['L']        =~ /\S/
           return "Invalid Organization name" \
                                             unless params['O']        =~ /\S/
-          # delegate to openssl...                                    
-          #return "Invalid email address"    unless (
-          #    params['emailAddress'] =~ /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i )
+          return "Invalid email address"    unless (
+              params['emailAddress'] =~ /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i )
           return false
         end
 
