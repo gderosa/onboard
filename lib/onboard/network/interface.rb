@@ -373,7 +373,7 @@ class OnBoard::Network::Interface
     return success
   end
 
-  def stop_dhcp_client(pid)
+  def stop_dhcp_client(pid=@ipassign[:pid])
     Command.run "kill #{pid}", :sudo # apparently dhcpcd --release #{@name} is useless...
   end
 
