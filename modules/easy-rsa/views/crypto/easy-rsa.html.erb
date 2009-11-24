@@ -110,11 +110,18 @@
   </table>
 <% end %>
 
-<h4>Initialize new</h4>
+<% if objects['ca'] and not objects['ca']['err'] %>
+  <h3>Issue a new certificate</h3>
+<% else %>
+  <h4>Initialize a new CA</h4>
+<% end %>  
 <table>
   <thead>
     <tr>
       <th>Create!</th>
+    <% if objects['ca'] and not objects['ca']['err'] %>
+      <th>Server?</th>
+    <% end %>
       <th>Key Size (bits)</th>
       <th>Expiry (days)</th>
       <th>Country</th>
@@ -126,8 +133,16 @@
   </thead>
   <tbody>
     <tr>
-      <form method="POST" action="easy-rsa/ca.html">
+      <% if objects['ca'] and not objects['ca']['err'] %>
+        <!-- <form method="POST" action="easy-rsa/cert.html"> -->
+        <form method="POST" action="/">
+      <% else %>
+        <form method="POST" action="easy-rsa/ca.html">
+      <% end %>
         <td style="text-align:center;"><button type="submit" title="Create new CA"><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="create"/></button></td>
+        <% if objects['ca'] and not objects['ca']['err'] %>
+          <td style="text-align:center;"><input type="checkbox" name="is_server"/></td>
+        <% end %>
         <td>
           <select name="key_size">
             <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>

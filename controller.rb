@@ -11,6 +11,7 @@ require 'logger'
 require 'pp'
 
 require 'onboard/extensions/object'
+require 'onboard/extensions/sinatra/base'
 require 'onboard/menu/node'
 
 class OnBoard
@@ -44,14 +45,14 @@ class OnBoard
     @@formats = %w{html json yaml} # order matters
 
     not_found do
-      format(:path=>'404', :format=>'html') 
+      if routed? request.path_info, :any
+        status(405) # HTTP Method Not Allowed
+        headers "Allow" => allowed_methods(request.path_info).join(', ')
+        format(:path=>'405', :format=>'html')
+      else
+        format(:path=>'404', :format=>'html') 
+      end
     end
-
-    #before do
-    #  if request.path_info =~ /\.html$/ or request.path_info =~ /^\/?$/
-    #    puts "filter called at #{request.path_info}"
-    #  end
-    #end
 
     helpers do
 
