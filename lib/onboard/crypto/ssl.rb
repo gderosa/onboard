@@ -5,6 +5,7 @@ class OnBoard
   module Crypto
     module SSL
       DIR       = OnBoard::ROOTDIR + '/etc/config/crypto/ssl'
+      CERTDIR   = DIR + '/cert'
       KEY_SIZES = [1024, 2048]
       CACERT    = DIR + '/ca/ca.crt'
       CAKEY     = DIR + '/ca/private/ca.key'

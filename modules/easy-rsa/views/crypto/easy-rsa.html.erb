@@ -115,34 +115,28 @@
 <% else %>
   <h4>Initialize a new CA</h4>
 <% end %>  
-<table>
-  <thead>
-    <tr>
-      <th>Create!</th>
-    <% if objects['ca'] and not objects['ca']['err'] %>
-      <th>Server?</th>
-    <% end %>
-      <th>Key Size (bits)</th>
-      <th>Expiry (days)</th>
-      <th>Country</th>
-      <th colspan="2">City (Province/State)</th>
-      <th>Organization Name</th>
-      <th>Organizational Unit</th>
-      <th>E-mail</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <% if objects['ca'] and not objects['ca']['err'] %>
-        <form method="POST" action="easy-rsa/cert.html"> 
-      <% else %>
-        <form method="POST" action="easy-rsa/ca.html">
-      <% end %>
-        <td style="text-align:center;"><button type="submit" title="Create new CA"><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="create"/></button></td>
-        <% if objects['ca'] and not objects['ca']['err'] %>
-          <td style="text-align:center;"><input type="checkbox" name="is_server"/></td>
-        <% end %>
-        <td>
+
+<% if objects['ca'] and not objects['ca']['err'] %>
+  <form method="POST" action="easy-rsa/cert.html"> 
+<% else %>
+  <form method="POST" action="easy-rsa/ca.html">
+<% end %>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Key Size (bits)</th>
+        <th>Expiry (days)</th>
+        <th>Country</th>
+        <th colspan="2">City (Province/State)</th>
+        <th>Organization Name</th>
+        <th>Organizational Unit</th>
+        <th>E-mail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:center;">
           <select name="key_size">
             <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
               <option value="<%= ksiz %>"><%= ksiz %></option>  
@@ -170,8 +164,30 @@
           <input name="OU" type="text" size="11"/></td>
         <td style="text-align:center;">
           <input name="emailAddress" type="text" size="14"/></td>
-      </form>
-    </tr>
-  </tbody>
-</table>
+      </tr>
+    </tbody>
+  </table>
+  <% if objects['ca'] and not objects['ca']['err'] %>
+    <table>
+      <thead>
+        <tr>
+          <th title="A unique identifier, typically the hostname of the subject machine">&ldquo;Common Name&rdquo;</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="input" name="CN" title="A unique identifier, typically the hostname of the subject machine"/></td>
+          <td>
+            <select name="type">
+              <option value="client">Client</option>
+              <option value="server">Server</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+  <button type="submit" style="margin: 0.3em 0.6em;">Create!</button>
+</form>
 
