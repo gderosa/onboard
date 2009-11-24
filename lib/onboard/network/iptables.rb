@@ -12,35 +12,37 @@ class OnBoard
           raise ArgumentError, 
               "IP version must be 4 or 6, got #{params['version']}"
         end
-        str << '-t '     << params['table']         << ' ' if
+        str << '-t '                  << params['table']            << ' ' if
             params['table'] =~ /\S/
-        str <<              params['append_insert'] << ' '
-        str <<              params['chain']         << ' '
-        str << '-j '     << params['jump-target']   << ' '      
+        str <<              params['append_insert']                 << ' '
+        str <<              params['chain']                         << ' '
+        str << '-j '                  << params['jump-target']      << ' '      
         if params['jump-target'] =~ /LOG/
           # add some reasonable defaults to avoid DOS attacks...
-          # TODO: do not hardcode, allow user's choice
+          # TODO?: do not hardcode, allow user's choice?
           str << 
               '-m state --state NEW,UNTRACKED,INVALID ' <<
               '-m limit --limit 6/minute --limit-burst 10 '              
         end 
         str << "-m comment --comment \"#{params['comment']}\" " if
             params['comment'] and params['comment'] =~ /\S/ 
-        str << "-p "     << params['proto']         << ' ' if
+        str << "-p "                  << params['proto']            << ' ' if
             params['proto']         =~ /\S/    
-        str << "-i "     << params['input_iface']   << ' ' if
+        str << "-i "                  << params['input_iface']      << ' ' if
             params['input_iface']   =~ /\S/
-        str << "-o "     << params['output_iface']  << ' ' if
+        str << "-o "                  << params['output_iface']     << ' ' if
             params['output_iface']  =~ /\S/
-        str << "-s "     << params["source_addr"]   << ' ' if
+        str << "-s "                  << params["source_addr"]      << ' ' if
             params["source_addr"]   =~ /\S/
-        str << "-d "     << params["dest_addr"]     << ' ' if
+        str << "-d "                  <<   params["dest_addr"]      << ' ' if
             params["dest_addr"]     =~ /\S/
-        str << "--sport " << params["source_ports"] << ' ' if
+        str << "--sport "             <<  params["source_ports"]    << ' ' if
             params["source_ports"]  =~ /\S/
-        str << "--dport " << params["dest_ports"]   << ' ' if
-            params["dest_ports"]     =~ /\S/
-        str << "-m state --state " << params["state"].join(",") << ' ' if
+        str << "--dport "             << params["dest_ports"]       << ' ' if
+            params["dest_ports"]    =~ /\S/
+        str << "-m mac --mac-source " << params["mac_source"]       << ' ' if
+            params["mac_source"]    =~ /\S/             
+        str << "-m state --state "    << params["state"].join(",")  << ' ' if
             params["state"].respond_to? :join and params["state"].length > 0
         if params['to-destination_addr'] =~ /\S/
           str << "--to-destination " << params['to-destination_addr']
