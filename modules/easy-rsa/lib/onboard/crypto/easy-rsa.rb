@@ -46,13 +46,31 @@ export KEY_OU="#{params['OU']}"
 export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool --initca
 EOF
-          if msg[:ok]
+          if msg[:ok] # TODO: DRY! DRY! DRY!
             begin
-              FileUtils.cp( SCRIPTDIR + '/keys/ca.crt', 
-                  OnBoard::ROOTDIR + '/etc/config/crypto/ssl/')  
+              # hard links
+              FileUtils.ln( SCRIPTDIR + '/keys/ca.crt', 
+                  OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/')  
+              FileUtils.ln( SCRIPTDIR + '/keys/ca.key', 
+                  OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private')  
             rescue
               msg[:ok] = false
               msg[:err] = $!
+            end
+            begin
+              FileUtils.chown(
+                nil, 'onboard', 
+                OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private/ca.key'
+              )
+              FileUtils.chmod(
+                0640, 
+                OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private/ca.key'
+              )
+            rescue
+              FileUtils.chmod(
+                0600,
+                OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private/ca.key'
+              )
             end
           end
           return msg

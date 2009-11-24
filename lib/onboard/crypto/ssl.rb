@@ -23,7 +23,7 @@ class OnBoard
           h['dh'] = getAllDH()
           begin
             h['ca'] = OpenSSL::X509::Certificate.new(
-                File.read DIR + '/ca.crt').to_h
+                File.read DIR + '/ca/ca.crt').to_h
           rescue Errno::ENOENT
           rescue OpenSSL::X509::CertificateError
             h['ca'] = {'err' => $!}
