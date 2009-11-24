@@ -12,8 +12,7 @@ cd #{SCRIPTDIR}
 export KEY_SIZE=#{n} 
 ./build-dh
 EOF
-        FileUtils.cp( SCRIPTDIR + '/keys/dh' + n.to_s + '.pem', 
-            OnBoard::ROOTDIR + '/etc/config/crypto/ssl/') 
+        FileUtils.cp(SCRIPTDIR + '/keys/dh' + n.to_s + '.pem', SSL::DIR)  
       end
 
       module CA
@@ -49,28 +48,17 @@ EOF
           if msg[:ok] # TODO: DRY! DRY! DRY!
             begin
               # hard links
-              FileUtils.ln( SCRIPTDIR + '/keys/ca.crt', 
-                  OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/')  
-              FileUtils.ln( SCRIPTDIR + '/keys/ca.key', 
-                  OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private')  
+              FileUtils.ln( SCRIPTDIR + '/keys/ca.crt', SSL::CACERT)
+              FileUtils.ln( SCRIPTDIR + '/keys/ca.key', SSL::CAKEY) 
             rescue
               msg[:ok] = false
               msg[:err] = $!
             end
             begin
-              FileUtils.chown(
-                nil, 'onboard', 
-                OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private/ca.key'
-              )
-              FileUtils.chmod(
-                0640, 
-                OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private/ca.key'
-              )
+              FileUtils.chown nil, 'onboard', SSL::CAKEY
+              FileUtils.chmod 0640, SSL::CAKEY
             rescue
-              FileUtils.chmod(
-                0600,
-                OnBoard::ROOTDIR + '/etc/config/crypto/ssl/ca/private/ca.key'
-              )
+              FileUtils.chmod 0600, SSL::CAKEY
             end
           end
           return msg

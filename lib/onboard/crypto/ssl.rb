@@ -4,9 +4,10 @@ require 'onboard/extensions/openssl'
 class OnBoard
   module Crypto
     module SSL
-
-      DIR = OnBoard::ROOTDIR + '/etc/config/crypto/ssl'
+      DIR       = OnBoard::ROOTDIR + '/etc/config/crypto/ssl'
       KEY_SIZES = [1024, 2048]
+      CACERT    = DIR + '/ca/ca.crt'
+      CAKEY     = DIR + '/ca/private/ca.key'
 
       @@dh_mutexes = {} unless class_variable_defined? :@@dh_mutexes
 
@@ -22,8 +23,7 @@ class OnBoard
           h = {}
           h['dh'] = getAllDH()
           begin
-            h['ca'] = OpenSSL::X509::Certificate.new(
-                File.read DIR + '/ca/ca.crt').to_h
+            h['ca'] = OpenSSL::X509::Certificate.new(File.read CACERT).to_h
           rescue Errno::ENOENT
           rescue OpenSSL::X509::CertificateError
             h['ca'] = {'err' => $!}
