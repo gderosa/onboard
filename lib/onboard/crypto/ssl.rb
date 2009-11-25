@@ -29,6 +29,37 @@ class OnBoard
           rescue OpenSSL::X509::CertificateError
             h['ca'] = {'err' => $!}
           end
+          h['certs'] = getAllCerts()
+          return h
+        end
+
+        def getAllCerts
+          h = {}
+          Dir.glob CERTDIR + '/*.crt' do |certfile|
+            name = File.basename(certfile).sub(/\.crt$/, '')
+            keyfile = CERTDIR + '/private/' + name + '.key'
+            certobj = OpenSSL::X509::Certificate.new(File.read certfile)
+            h[name] = {'cert' => certobj.to_h, 'private_key' => false} 
+            if File.exists? keyfile 
+              begin
+                if certobj.check_private_key(
+                    OpenSSL::PKey::RSA.new(File.read keyfile) 
+                )
+                  h[name]['private_key'] = {'ok' => true} 
+                else
+                  h[name]['private_key'] = {
+                    'ok'  => false,
+                    'err' => 'private key verification failed'
+                  }
+                end
+              rescue
+                h[name]['private_key'] = {
+                  'ok'  => false,
+                  'err' => $!
+                }
+              end
+            end
+          end
           return h
         end
 

@@ -35,7 +35,7 @@ export KEY_OU="#{params['OU']}"
 export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool --initca
 EOF
-          if msg[:ok] # TODO: DRY! DRY! DRY!
+          if msg[:ok] 
             begin
               # hard links
               FileUtils.ln( SCRIPTDIR + '/keys/ca.crt', SSL::CACERT)

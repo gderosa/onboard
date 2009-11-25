@@ -12,7 +12,9 @@ module OpenSSL
           'not_after'           => not_after(),
           'serial'              => serial().to_i,
           'version'             => version() + 1, # X509 version 0x02 -> 3 etc..
-          'signature_algorithm' => signature_algorithm()
+          'signature_algorithm' => signature_algorithm(),
+          'key_size'            => public_key.size #,
+          #'public_key'          => public_key().to_s
         }
 
         # less trivial part
@@ -36,6 +38,19 @@ module OpenSSL
 
         return h
       end
+    end
+  end
+  module PKey
+    class RSA
+      # Returns key size in bytes
+      def size_bytes
+        n.to_i.size
+            # NOTE: Why something so basic is apparently missing?
+      end
+      def size_bits
+        size_bytes * 8
+      end
+      def size; size_bits; end
     end
   end
 end
