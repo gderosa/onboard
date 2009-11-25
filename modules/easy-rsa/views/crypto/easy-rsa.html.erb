@@ -46,13 +46,15 @@
     <th>Server?</th>
   </tr></thead>
   <tbody>
-    <% objects['certs'].each_value do |cert| %>
+    <% objects['certs'].each_pair do |name, cert| %>
       <tr>
         <td style="text-align: center;">
-          <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
-          <button>
-            <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
-          </button>
+          <form method="POST" action="/crypto/ssl/certs/<%= name %>.crt">
+            <input type="hidden" name="_method" value="delete"/>
+            <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
+              <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
+            </button>
+          </form>
         </td>
         <td><code><%= cert['cert']['subject']['CN'] %></code></td>
         <td><%= cert['cert']['issuer']['CN'] %></td>
