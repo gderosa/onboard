@@ -4,20 +4,27 @@ module OpenSSL
   module X509
     class Certificate
       def to_h
-        # TODO? metaprogramming DRY?
-        
-        # just sugar
+
         h = {
           'not_before'          => not_before(),
           'not_after'           => not_after(),
           'serial'              => serial().to_i,
           'version'             => version() + 1, # X509 version 0x02 -> 3 etc..
           'signature_algorithm' => signature_algorithm(),
-          'key_size'            => public_key.size #,
+          'key_size'            => public_key.size,
+          'is_ca'               => false,
+          'is_server'           => false
           #'public_key'          => public_key().to_s
         }
 
-        # less trivial part
+        extensions.each do |ext|
+          h['is_ca'] = true if ext.to_a[1] == "CA:TRUE" # and
+              # ext.to_a[0] = "basicConstraints"
+          h['is_server'] = true if ext.to_a[1] == "SSL Server" # and
+              # ext.to_a[0] = "nsCertType"
+          # commented conditions should be unnecessary....
+        end
+
         issuer_h = {}
         issuer.to_a.each do |elem|
           if elem[1].encoding == Encoding::ASCII_8BIT
