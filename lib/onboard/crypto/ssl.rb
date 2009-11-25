@@ -49,7 +49,7 @@ class OnBoard
                 else
                   h[name]['private_key'] = {
                     'ok'  => false,
-                    'err' => 'private key verification failed'
+                    'err' => 'Private key verification failed'
                   }
                 end
               rescue

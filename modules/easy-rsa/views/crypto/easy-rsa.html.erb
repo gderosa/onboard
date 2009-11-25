@@ -34,6 +34,55 @@
   </tbody>
 </table>
 <h3>Certificates</h3>
+<table>
+  <thead><tr>
+    <th>Delete?</th>
+    <th>&ldquo;Common Name&rdquo;</th>
+    <th>Issued by:</th>
+    <th>Issued to:</th>
+    <th>Key size (bits)</th>
+    <th>Private Key?</th>
+    <th>Cert. Authority?</th> 
+    <th>Server?</th>
+  </tr></thead>
+  <tbody>
+    <% objects['certs'].each_value do |cert| %>
+      <tr>
+        <td style="text-align: center;">
+          <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
+          <button>
+            <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
+          </button>
+        </td>
+        <td><code><%= cert['cert']['subject']['CN'] %></code></td>
+        <td><%= cert['cert']['issuer']['CN'] %></td>
+        <% 
+          str = ''
+          if cert['cert']['subject']['O'] =~ /\S/
+            str << cert['cert']['subject']['O']
+            str << ", <span style=\"font-style:italic;\">#{cert['cert']['subject']['OU']}</span>" if cert['cert']['subject']['OU'] =~ /\S/
+            str << ", " << cert['cert']['subject']['L'] if cert['cert']['subject']['L'] =~ /\S/
+            str << "&nbsp;(#{cert['cert']['subject']['ST']})" if cert['cert']['subject']['ST'] =~ /\S/
+            str << ", " << cert['cert']['subject']['C'] if cert['cert']['subject']['C'] =~ /\S/
+          end
+        %>
+        <td><%= str %></td>
+        <td><%= cert['cert']['key_size'] %></td>
+        <% if cert['private_key'] %>
+          <% if cert['private_key']['ok'] %>
+            <td><%= "<strong>#{i18n.yes}</strong>" %></td>
+          <% else %>
+            <td class="error"><code><%= html_escape cert['private_key']['err'] %></code></td>
+          <% end %>
+        <% else %>
+          <td><%= i18n.no %></td>
+        <% end %>
+        <td><%= cert['cert']['is_ca']     ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td>
+        <td><%= cert['cert']['is_server'] ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 <h3>Certificate Authority</h3>
 <% if objects['ca'] and objects['ca']['err'] %>
   <span class="error">
