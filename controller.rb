@@ -140,6 +140,17 @@ class OnBoard
             end
           end
           # The following is common to YAML and JSON.
+          #
+          # Let JSON and YAML clients know about error messages. 
+          if h[:msg]
+            x_headers = {}
+            x_headers['X-Err']    = h[:msg][:err]     if 
+                h[:msg][:err]     =~ /\S/
+            x_headers['X-Stderr'] = h[:msg][:stderr]  if 
+                h[:msg][:stderr]  =~ /\S/
+            headers x_headers                         if 
+                x_headers.length > 0
+          end
           if h[:objects].class == Array and h[:objects][0].respond_to? :data
             # we assume that array is made up of objects of the same class
             return (h[:objects].map {|obj| obj.data}).to_(h[:format]) 

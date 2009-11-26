@@ -30,5 +30,16 @@ class OnBoard
       end
     end
 
+    post '/crypto/ssl/certs.:format' do
+      msg = {}
+      format(
+        :path     => '/crypto/ssl/cert-create',
+        :format   => params[:format],
+        :objects  => nil,
+        :msg      => msg
+      )
+    end
+
+
   end
 end
