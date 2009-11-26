@@ -66,6 +66,7 @@ class OnBoard
         status(400)
         msg = {:ok => false, :err => $!}
       end
+      params['certificate'][:tempfile].unlink
       format(
         :path     => '/crypto/ssl/cert_create',
         :format   => params[:format],
