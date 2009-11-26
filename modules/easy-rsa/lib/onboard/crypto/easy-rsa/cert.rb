@@ -9,13 +9,13 @@ class OnBoard
         def self.HTTP_POST_data_invalid?(params)
           return "Invalid key size."        unless params['key_size'] =~ /^\d+$/
           return "Invalid expiry."          unless params['days']     =~ /^\d+$/
-          return "Invalid country name."    unless params['C']        =~ 
+          return "Invalid Country code."    unless params['C']        =~ 
               /^[A-Z][A-Z]$/i
-          return "Invalid province/state."  unless params['ST']       =~ /\S/
-          return "Invalid city name"        unless params['L']        =~ /\S/
-          return "Invalid Organization name" \
+          return "Missing province/state."  unless params['ST']       =~ /\S/
+          return "Missing city name"        unless params['L']        =~ /\S/
+          return "Missing Organization Name" \
                                             unless params['O']        =~ /\S/
-          return "Invalid Common Name"      unless params['CN']       =~ /\S/ 
+          return "Missing Common Name"      unless params['CN']       =~ /\S/ 
           return "Invalid email address"    unless (
               params['emailAddress'] =~ /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i )
           return false

@@ -38,8 +38,12 @@ class OnBoard
           Dir.glob CERTDIR + '/*.crt' do |certfile|
             name = File.basename(certfile).sub(/\.crt$/, '')
             keyfile = CERTDIR + '/private/' + name + '.key'
-            certobj = OpenSSL::X509::Certificate.new(File.read certfile)
-            h[name] = {'cert' => certobj.to_h, 'private_key' => false} 
+            begin
+              certobj = OpenSSL::X509::Certificate.new(File.read certfile)
+              h[name] = {'cert' => certobj.to_h, 'private_key' => false}
+            rescue OpenSSL::X509::CertificateError
+              h[name] = {'cert' => {'err' => $!}} 
+            end
             if File.exists? keyfile 
               begin
                 if certobj.check_private_key(
