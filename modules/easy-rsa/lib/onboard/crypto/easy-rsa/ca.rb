@@ -1,5 +1,8 @@
+autoload :FileUtils, 'fileutils'
+autoload :Filepath, 'filepath'
+
 require 'onboard/crypto/easy-rsa'
-require 'fileutils'
+
 
 class OnBoard
   module Crypto
@@ -36,19 +39,28 @@ export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool --initca
 EOF
           if msg[:ok] 
-            begin
+            #begin
               FileUtils.mv SSL::CACERT, SSL::CACERT + '.old' if
                   File.exists? SSL::CACERT
               FileUtils.mv SSL::CAKEY, SSL::CAKEY + '.old' if
                   File.exists? SSL::CAKEY
-              FileUtils.mv(SCRIPTDIR + '/keys/ca.crt', SSL::CACERT)
-              FileUtils.mv(SCRIPTDIR + '/keys/ca.key', SSL::CAKEY) 
-              FileUtils.symlink SSL::CACERT, (SCRIPTDIR + '/keys/')
-              FileUtils.symlink SSL::CAKEY, (SCRIPTDIR + '/keys/')
-            rescue
-              msg[:ok] = false
-              msg[:err] = $!
-            end
+              FileUtils.mv(KEYDIR + '/ca.crt', SSL::CACERT)
+              FileUtils.mv(KEYDIR + '/ca.key', SSL::CAKEY) 
+              cacertpn = Pathname.new SSL::CACERT
+              cakeypn = Pathname.new SSL::CAKEY
+              easy_rsa_keydir_pn = Pathname.new KEYDIR
+              FileUtils.symlink(
+                  cacertpn.relative_path_from(easy_rsa_keydir_pn), 
+                  KEYDIR
+              ) 
+              FileUtils.symlink(
+                  cakeypn.relative_path_from(easy_rsa_keydir_pn), 
+                  KEYDIR
+              )
+            #rescue
+            #  msg[:ok] = false
+            #  msg[:err] = $!
+            #end
             begin
               FileUtils.chown nil, 'onboard', SSL::CAKEY
               FileUtils.chmod 0640, SSL::CAKEY
