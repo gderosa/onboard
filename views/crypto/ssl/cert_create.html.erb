@@ -1,0 +1,17 @@
+
+<h2>Cerificate</h2>
+<% if msg[:ok] %>
+  <p>Certificate has been successfully uploaded.</p>
+<% else %> 
+  <div class="error">
+    <p>Invalid certificate data: </p>
+    <pre><%= html_escape msg[:err] %></pre>
+    <pre><%= html_escape msg[:stderr] %></pre>
+  </diV>
+<% end %>
+<% if request.referer =~ /\S/ %>
+  <p>
+    (<a href="<%= request.referer%>">Back</a>).
+  </p>
+<% end %>
+
