@@ -37,9 +37,8 @@ export KEY_EMAIL="#{params['emailAddress']}"
 EOF
           if msg[:ok] 
             begin
-              # hard links
-              FileUtils.ln( SCRIPTDIR + '/keys/ca.crt', SSL::CACERT)
-              FileUtils.ln( SCRIPTDIR + '/keys/ca.key', SSL::CAKEY) 
+              FileUtils.mv(SCRIPTDIR + '/keys/ca.crt', SSL::CACERT)
+              FileUtils.mv(SCRIPTDIR + '/keys/ca.key', SSL::CAKEY) 
             rescue
               msg[:ok] = false
               msg[:err] = $!

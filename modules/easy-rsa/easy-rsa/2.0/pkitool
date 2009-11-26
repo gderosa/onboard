@@ -308,7 +308,7 @@ if [ -d "$KEY_DIR" ] && [ "$KEY_CONFIG" ]; then
         # Make sure CA key/cert is available
 	if [ $DO_CA -eq 1 ] || [ $DO_P12 -eq 1 ]; then
 	    if [ ! -r "$CA.crt" ] || [ ! -r "$CA.key" ]; then
-		echo "$PROGNAME: Need a readable $CA.crt and $CA.key in $KEY_DIR"
+		echo "$PROGNAME: Need a readable $CA.crt and $CA.key in $KEY_DIR" 1>&2
 		echo "Try $PROGNAME --initca to build a root certificate/key."
 		exit 1
 	    fi

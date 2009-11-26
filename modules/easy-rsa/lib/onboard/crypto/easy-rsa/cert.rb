@@ -38,12 +38,11 @@ EOF
           destkey = SSL::CERTDIR + "/private/#{params['CN']}.key"
           if msg[:ok] 
             begin
-              # hard links
-              FileUtils.ln(
+              FileUtils.mv(
                   SCRIPTDIR + "/keys/#{params['CN']}.crt", 
                   SSL::CERTDIR 
               )
-              FileUtils.ln( 
+              FileUtils.mv( 
                   SCRIPTDIR + "/keys/#{params['CN']}.key", 
                   destkey  
               ) 
