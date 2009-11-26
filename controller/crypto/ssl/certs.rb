@@ -10,14 +10,15 @@ class OnBoard
       certfile = "#{Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
       keyfile = "#{Crypto::SSL::CERTDIR}/private/#{params[:name]}.key"
       if File.exists? certfile
-        #begin
+        begin
           FileUtils.rm certfile
           FileUtils.rm keyfile if File.exists? keyfile
-        #  msg = {:ok => true}
-        #rescue
-        #  msg = {:ok=> false, :err => $!} 
-        #  status(500) 
-        #end
+          msg = {:ok => true}
+        rescue
+          msg = {:ok=> false, :err => $!} 
+          status(500) 
+        end
+        msg[:ok] = true if msg[:ok].nil?
         format(
           :path => '/crypto/ssl/cert_del',
           :format => 'html',

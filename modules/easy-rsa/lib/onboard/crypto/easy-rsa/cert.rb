@@ -22,6 +22,22 @@ class OnBoard
         end
 
         def self.create_from_HTTP_request(params)
+
+          # First, create necessary files if they are missing
+          File.mkdir SCRIPTDIR + '/keys' unless Dir.exists?(SCRIPTDIR + '/keys')
+          %w{index.txt serial}.each do |file|
+            path = SCRIPTDIR + '/keys/' + file
+            unless File.exists? path
+              File.new(path, 'w') 
+            end
+          end
+          serfile = SCRIPTDIR + '/keys/serial'
+          unless File.read(serfile).strip =~ /^([a-f\d][a-f\d])+$/i
+            File.open serfile, 'w' do |f|
+              f.puts '01'
+            end
+          end
+          
           msg = System::Command.run <<EOF 
 cd #{SCRIPTDIR}
 . ./vars

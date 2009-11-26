@@ -37,8 +37,14 @@ export KEY_EMAIL="#{params['emailAddress']}"
 EOF
           if msg[:ok] 
             begin
+              FileUtils.mv SSL::CACERT, SSL::CACERT + '.old' if
+                  File.exists? SSL::CACERT
+              FileUtils.mv SSL::CAKEY, SSL::CAKEY + '.old' if
+                  File.exists? SSL::CAKEY
               FileUtils.mv(SCRIPTDIR + '/keys/ca.crt', SSL::CACERT)
               FileUtils.mv(SCRIPTDIR + '/keys/ca.key', SSL::CAKEY) 
+              FileUtils.symlink SSL::CACERT, (SCRIPTDIR + '/keys/')
+              FileUtils.symlink SSL::CAKEY, (SCRIPTDIR + '/keys/')
             rescue
               msg[:ok] = false
               msg[:err] = $!
