@@ -45,13 +45,17 @@ class OnBoard
     @@formats = %w{html json yaml} # order matters
 
     not_found do
-      if routed? request.path_info, :any
-        status(405) # HTTP Method Not Allowed
-        headers "Allow" => allowed_methods(request.path_info).join(', ')
-        format(:path=>'405', :format=>'html')
-      else
+      ## Commented out since it breaks any explicit call to not_found
+      ## TODO: find something better
+      #
+      #if routed? request.path_info, :any 
+      #  status(405) # HTTP Method Not Allowed
+      #  headers "Allow" => allowed_methods(request.path_info).join(', ')
+      #  format(:path=>'405', :format=>'html')
+      #else
+        status(404)
         format(:path=>'404', :format=>'html') 
-      end
+      #end
     end
 
     helpers do
