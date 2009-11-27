@@ -1,6 +1,8 @@
 <% 
   require 'i18n_data' 
   require 'date'
+
+  require 'onboard/extensions/integer'
 %>
 
 <h2>SSL keys and certificates</h2>
@@ -38,6 +40,7 @@
   <thead><tr>
     <th>Delete?</th>
     <th>&ldquo;Common Name&rdquo;</th>
+    <th>Serial no.</th>
     <th>Issued by:</th>
     <th>Issued to:</th>
     <th>Key size (bits)</th>
@@ -60,6 +63,7 @@
           <td colspan="0" class="error">Certificate Error for &ldquo;<code><%= name %>.crt</code>&rdquo;: <code><%= cert['cert']['err'] %></code></td>
         <% else %>
           <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
+          <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
           <td><%= cert['cert']['issuer']['CN'] %></td>
           <% 
             str = ''
@@ -118,7 +122,7 @@
         <th scope="row">Serial No.</th>
         <td>
           <code>
-            <%= objects['ca']['serial'].to_s(16).scan(/..?/).join(':') %>
+            <%= objects['ca']['serial'].to_byte_s %>
           </code>
         </td>
       </tr>   
