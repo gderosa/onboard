@@ -7,14 +7,16 @@ class OnBoard
     get '/crypto/ssl/ca/ca.crt' do
       # decode it, for better human readability (but it's still a valid cert.)
       c = ::OpenSSL::X509::Certificate.new(File.read(Crypto::SSL::CACERT))
-      content_type "application/x-509-ca-cert"
+      content_type "application/x-x509-ca-cert"
+      attachment "ca.crt"
       c.to_text + c.to_pem
     end
 
     get '/crypto/ssl/certs/:name.crt' do
       certfile = "#{Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
       if File.exists? certfile
-        content_type "application/x-509-ca-cert"
+        content_type "application/x-x509-cert" # exists?
+        attachment "#{params[:name]}.crt"
         File.read certfile
       else
         not_found
