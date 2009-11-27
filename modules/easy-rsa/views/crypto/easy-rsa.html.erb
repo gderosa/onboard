@@ -59,7 +59,7 @@
         <% if cert['cert']['err'] and not cert['cert']['ok'] %>
           <td colspan="0" class="error">Certificate Error for &ldquo;<code><%= name %>.crt</code>&rdquo;: <code><%= cert['cert']['err'] %></code></td>
         <% else %>
-          <td><code><%= cert['cert']['subject']['CN'] %></code></td>
+          <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
           <td><%= cert['cert']['issuer']['CN'] %></td>
           <% 
             str = ''
@@ -75,7 +75,7 @@
           <td><%= cert['cert']['key_size'] %></td>
           <% if cert['private_key'] %>
             <% if cert['private_key']['ok'] %>
-              <td><%= "<strong>#{i18n.yes}</strong>" %></td>
+              <td><%= "<strong>#{i18n.yes}</strong>" %> <small>[<a href="/crypto/ssl/certs/private/<%= name %>.key">download</a>]</small></td>
             <% else %>
               <td class="error"><code><%= html_escape cert['private_key']['err'] %></code></td>
             <% end %>

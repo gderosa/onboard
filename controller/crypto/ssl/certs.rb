@@ -4,6 +4,28 @@ autoload :OpenSSL,    'onboard/extensions/openssl'
 class OnBoard
   class Controller  
 
+    get '/crypto/ssl/certs/:name.crt' do
+      certfile = "#{Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
+      if File.exists? certfile
+        content_type "application/x-509-ca-cert"
+        File.read certfile
+      else
+        not_found
+      end
+    end
+
+    get '/crypto/ssl/certs/private/:name.key' do
+      keyfile = "#{Crypto::SSL::KEYDIR}/#{params[:name]}.key"
+      if File.exists? keyfile
+        content_type "application/octet-stream" # ???
+        File.read keyfile
+      else
+        not_found
+      end
+    end
+
+
+
     # A WebService client does not need an entity-body (headers and Status
     # will suffice), so html is fine as well, since it will be ignored...
     delete '/crypto/ssl/certs/:name.crt' do
