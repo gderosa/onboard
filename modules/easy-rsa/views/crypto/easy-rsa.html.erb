@@ -249,7 +249,17 @@
 
 <h3>Import certificate</h3>
 <form method="POST" action="/crypto/ssl/certs.html" enctype="multipart/form-data">
-  <input type="file" name="certificate"/>
+  <input type="hidden" name="file_upload" value="yes"/>
+  <table>
+    <tr>
+      <th scope="row">X509 Certificate</th>
+      <td><input type="file" name="certificate"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Associated private key (optional)</th>
+      <td><input type="file" name="private_key"/></td>
+    </tr>
+  </table>
   <button type="submit">Upload!</button>
 </form>
 

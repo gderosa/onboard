@@ -33,40 +33,56 @@ class OnBoard
 
     post '/crypto/ssl/certs.:format' do
       target = nil
-      msg = {:ok => true} 
-      begin
-        cert = OpenSSL::X509::Certificate.new(
-            params['certificate'][:tempfile].read
-        )
-        cn = cert.to_h['subject']['CN']
-        target = "#{Crypto::SSL::CERTDIR}/#{cn}.crt"
-        if File.readable? target # already exists
-          begin # check if it's valid
-            OpenSSL::X509::Certificate.new(File.read target)
-            status(409)
-            msg = {
-              :ok => false, 
-              :err => "A certificate with the same COMMON NAME (#{cn}) and/or filename already exists!"
-            }
-          rescue OpenSSL::X509::CertificateError # otherwise you can overwrite
+      msg = {:ok => true}
+      if params['certificate'].respond_to? :[] 
+        begin
+          cert = OpenSSL::X509::Certificate.new(
+              params['certificate'][:tempfile].read
+          )
+          cn = cert.to_h['subject']['CN']
+          target = "#{Crypto::SSL::CERTDIR}/#{cn}.crt"
+          if File.readable? target # already exists
+            begin # check if it's valid
+              OpenSSL::X509::Certificate.new(File.read target)
+              status(409)
+              msg = {
+                :ok => false, 
+                :err_html => "A certificate with the same Common Name (<code>#{cn}</code>) already exists!"
+              }
+            rescue OpenSSL::X509::CertificateError # otherwise you can overwrite
+              File.open(target, 'w') do |f|
+                # the same format created by easy-rsa...
+                f.write cert.to_text # human readable data
+                f.write cert.to_s # the certificate itself between BEGIN-END tags
+              end           
+            end
+          else
             File.open(target, 'w') do |f|
               # the same format created by easy-rsa...
               f.write cert.to_text # human readable data
               f.write cert.to_s # the certificate itself between BEGIN-END tags
-            end           
+            end
           end
-        else
-          File.open(target, 'w') do |f|
-            # the same format created by easy-rsa...
-            f.write cert.to_text # human readable data
-            f.write cert.to_s # the certificate itself between BEGIN-END tags
-          end
+        rescue OpenSSL::X509::CertificateError
+          status(400)
+          msg = {:ok => false, :err => $!}
         end
-      rescue OpenSSL::X509::CertificateError
-        status(400)
-        msg = {:ok => false, :err => $!}
+        if params['private_key'].respond_to? :[]
+          # priv. key verification is not done here...
+          File.open("#{Crypto::SSL::KEYDIR}/#{cn}.key", 'w') do |f|
+            f.write File.read params['private_key'][:tempfile]
+          end
+          params['private_key'][:tempfile].unlink
+        end 
+        params['certificate'][:tempfile].unlink
+      else
+        status(400)  
+        msg = {
+          :ok => false, 
+          :err => "No certificate was sent.",
+          :err_html => "No certificate was sent."
+        }
       end
-      params['certificate'][:tempfile].unlink
       format(
         :path     => '/crypto/ssl/cert_create',
         :format   => params[:format],

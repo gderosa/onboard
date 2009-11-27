@@ -6,6 +6,7 @@ class OnBoard
     module SSL
       DIR       = OnBoard::ROOTDIR + '/etc/config/crypto/ssl'
       CERTDIR   = DIR + '/cert'
+      KEYDIR    = CERTDIR + '/private'
       KEY_SIZES = [1024, 2048]
       CACERT    = DIR + '/ca/ca.crt'
       CAKEY     = DIR + '/ca/private/ca.key'
@@ -37,7 +38,7 @@ class OnBoard
           h = {}
           Dir.glob CERTDIR + '/*.crt' do |certfile|
             name = File.basename(certfile).sub(/\.crt$/, '')
-            keyfile = CERTDIR + '/private/' + name + '.key'
+            keyfile = KEYDIR + '/' + name + '.key'
             begin
               certobj = OpenSSL::X509::Certificate.new(File.read certfile)
               h[name] = {'cert' => certobj.to_h, 'private_key' => false}

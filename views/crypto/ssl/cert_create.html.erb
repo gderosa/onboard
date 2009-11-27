@@ -4,9 +4,13 @@
   <p>Certificate has been successfully uploaded.</p>
 <% else %> 
   <div class="error">
-    <p>Invalid certificate data: </p>
-    <pre><%= html_escape msg[:err] %></pre>
-    <pre><%= html_escape msg[:stderr] %></pre>
+    <% if msg[:err_html] =~ /\S/ %>
+      <p style="margin:0.7em;"><%= msg[:err_html] %></p>
+    <% elsif msg[:err] =~ /\S/ or msg[:stderr] =~ /\S/ %>
+      Invalid or missing certificate:
+      <pre><%= html_escape msg[:err] %></pre>
+      <pre><%= html_escape msg[:stderr] %></pre>
+    <% end %>
   </diV>
 <% end %>
 <% if request.referer =~ /\S/ %>
