@@ -104,7 +104,7 @@
     end
   %>
   <table style="display: inline;">
-    <caption>CA certificate (<%= signed_info_html %>) [<a title="Click to download the Certificate Authority X509 certificate" href="/crypto/ssl/ca/ca.crt">download</a>]</caption>
+    <caption>CA certificate (<%= signed_info_html %>)</caption>
     <tbody>
       <tr>
         <th scope="row">Validity</th>
@@ -164,6 +164,15 @@
       </tr>
     </tbody>
   </table>
+  <h4>Downloads</h4>
+  <ul>
+    <li>
+      CA Certificate: <a href="/crypto/ssl/ca/ca.crt"><code>ca.crt</code></a>
+    </li>
+    <li>
+      Full Hystory of issued certificates: <a href="/crypto/easy-rsa/ca/index.txt"><code>index.txt</code></a>
+    </li>
+  </ul>
 <% end %>
 
 <% if objects['ca'] and not objects['ca']['err'] %>

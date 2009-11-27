@@ -3,6 +3,11 @@ require 'openssl'
 module OpenSSL
   module X509
     class Certificate
+
+      def ca?
+        to_h['is_ca'] 
+      end
+
       def to_h
 
         h = {

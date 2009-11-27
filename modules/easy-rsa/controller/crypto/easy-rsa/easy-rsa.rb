@@ -29,6 +29,17 @@ class OnBoard::Controller < Sinatra::Base
     )
   end
 
+  get '/crypto/easy-rsa/ca/index.txt' do
+    index_txt = OnBoard::Crypto::EasyRSA::KEYDIR + '/index.txt'
+    if File.exists? index_txt
+      content_type 'text/plain'
+      attachment "index.txt"
+      File.read index_txt
+    else
+      not_found
+    end
+  end
+
   post '/crypto/easy-rsa/ca.:format' do
     msg = {}
     if msg[:err] = OnBoard::Crypto::EasyRSA::CA.HTTP_POST_data_invalid?(params) 
