@@ -62,7 +62,7 @@ class OnBoard::Controller < Sinatra::Base
     )
   end
 
-  post '/crypto/easy-rsa/cert.:format' do
+  post '/crypto/easy-rsa/certs.:format' do
     msg = {}
     if msg[:err] = 
         OnBoard::Crypto::EasyRSA::Cert.HTTP_POST_data_invalid?(params) 
@@ -85,4 +85,35 @@ class OnBoard::Controller < Sinatra::Base
     )
   end
 
+  # A WebService client does not need an entity-body (headers and Status
+  # will suffice), so html is fine as well, since it will be ignored...
+  delete '/crypto/easy-rsa/certs/:name.crt' do
+    msg = {}
+    certfile = "#{OnBoard::Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
+    keyfile = "#{OnBoard::Crypto::SSL::CERTDIR}/private/#{params[:name]}.key"
+    if File.exists? certfile
+      begin
+        msg = OnBoard::System::Command.run <<EOF
+cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}
+. ./vars
+./revoke-full #{params['name']}
+EOF
+        FileUtils.rm certfile
+        FileUtils.rm keyfile if File.exists? keyfile
+      rescue
+        msg = {:ok=> false, :err => $!}
+        status(500)
+      end
+      format(
+        :path => '/crypto/ssl/cert_del',
+        :format => 'html',
+        :objects => {},
+        :msg => msg
+      )
+    else
+      not_found
+    end
+  end
+
+ 
 end

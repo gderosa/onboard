@@ -1,5 +1,7 @@
-require 'onboard/crypto/easy-rsa'
 require 'fileutils'
+require 'pathname'
+
+require 'onboard/crypto/easy-rsa'
 
 class OnBoard
   module Crypto
@@ -58,6 +60,12 @@ EOF
                   SCRIPTDIR + "/keys/#{params['CN']}.crt", 
                   SSL::CERTDIR 
               )
+              certpn = Pathname.new "#{SSL::CERTDIR}/#{params['CN']}.crt"
+              easy_rsa_keydir_pn = Pathname.new EasyRSA::KEYDIR
+              FileUtils.symlink(
+                  certpn.relative_path_from(easy_rsa_keydir_pn),
+                  EasyRSA::KEYDIR
+              )              
               FileUtils.mv( 
                   SCRIPTDIR + "/keys/#{params['CN']}.key", 
                   destkey  

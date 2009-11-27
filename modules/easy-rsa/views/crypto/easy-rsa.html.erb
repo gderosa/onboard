@@ -52,7 +52,7 @@
     <% objects['certs'].each_pair do |name, cert| %>
       <tr>
         <td style="text-align: center;">
-          <form method="POST" action="/crypto/ssl/certs/<%= name %>.crt">
+          <form method="POST" action="/crypto/easy-rsa/certs/<%= name %>.crt">
             <input type="hidden" name="_method" value="delete"/>
             <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
               <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
@@ -186,7 +186,7 @@
 <% end %>  
 
 <% if objects['ca'] and not objects['ca']['err'] %>
-  <form method="POST" action="easy-rsa/cert.html"> 
+  <form method="POST" action="easy-rsa/certs.html"> 
 <% else %>
   <form method="POST" action="easy-rsa/ca.html">
 <% end %>
