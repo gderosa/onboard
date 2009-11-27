@@ -47,7 +47,7 @@ class OnBoard
               status(409)
               msg = {
                 :ok => false, 
-                :err_html => "A certificate with the same Common Name (<code>#{cn}</code>) already exists!"
+                :err_html => "A certificate with the same Common Name &ldquo;<code>#{cn}</code>&rdquo; already exists!"
               }
             rescue OpenSSL::X509::CertificateError # otherwise you can overwrite
               File.open(target, 'w') do |f|

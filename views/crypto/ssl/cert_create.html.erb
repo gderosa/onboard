@@ -1,17 +1,19 @@
-
-<h2>Cerificate</h2>
+<h2>Certificate</h2>
 <% if msg[:ok] %>
   <p>Certificate has been successfully uploaded.</p>
 <% else %> 
-  <div class="error">
+  <div class="error" style="padding: 0.4em;">
     <% if msg[:err_html] =~ /\S/ %>
-      <p style="margin:0.7em;"><%= msg[:err_html] %></p>
-    <% elsif msg[:err] =~ /\S/ or msg[:stderr] =~ /\S/ %>
-      Invalid or missing certificate:
-      <pre><%= html_escape msg[:err] %></pre>
-      <pre><%= html_escape msg[:stderr] %></pre>
+      <p><%= msg[:err_html] %></p>
+    <% else %>
+      <% if msg[:err].kind_of? OpenSSL::X509::CertificateError %> 
+        <p>Invalid certificate. OpenSSL reported: &ldquo;<code><%= html_escape msg[:err] %></code>&rdquo;.</p>
+      <% else %> <%% String assumed, .to_s as a fallback %>
+       <pre><%= html_escape msg[:err] %></pre>
+     <% end %>
     <% end %>
-  </diV>
+    <pre><%= html_escape msg[:stderr] %></pre>
+  </div>
 <% end %>
 <% if request.referer =~ /\S/ %>
   <p>
