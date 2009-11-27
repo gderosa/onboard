@@ -4,6 +4,13 @@ autoload :OpenSSL,    'onboard/extensions/openssl'
 class OnBoard
   class Controller  
 
+    get '/crypto/ssl/ca/ca.crt' do
+      # decode it, for better human readability (but it's still a valid cert.)
+      c = ::OpenSSL::X509::Certificate.new(File.read(Crypto::SSL::CACERT))
+      content_type "application/x-509-ca-cert"
+      c.to_text + c.to_pem
+    end
+
     get '/crypto/ssl/certs/:name.crt' do
       certfile = "#{Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
       if File.exists? certfile
