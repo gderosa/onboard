@@ -33,7 +33,8 @@ class OnBoard
     get '/crypto/ssl/certs/private/:name.key' do
       keyfile = "#{Crypto::SSL::KEYDIR}/#{params[:name]}.key"
       if File.exists? keyfile
-        content_type "application/octet-stream" # ???
+        content_type "application/x-pem-key"
+        attachment "#{params[:name]}.key"
         File.read keyfile
       else
         not_found

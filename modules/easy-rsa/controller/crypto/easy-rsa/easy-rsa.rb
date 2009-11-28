@@ -40,6 +40,19 @@ class OnBoard::Controller < Sinatra::Base
     end
   end
 
+  get '/crypto/easy-rsa/ca/crl.pem' do
+    crl_pem = OnBoard::Crypto::EasyRSA::KEYDIR + '/crl.pem'
+    if File.exists? crl_pem
+      content_type 'application/pkix-crl'
+      attachment "crl.pem"
+      crl = OpenSSL::X509::CRL.new File.read crl_pem
+      crl.to_text + crl.to_s
+    else
+      not_found # TODO: more exception handling
+    end
+  end
+
+
   post '/crypto/easy-rsa/ca.:format' do
     msg = {}
     if msg[:err] = OnBoard::Crypto::EasyRSA::CA.HTTP_POST_data_invalid?(params) 
