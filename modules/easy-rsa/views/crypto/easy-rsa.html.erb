@@ -52,7 +52,7 @@
     <% objects['certs'].each_pair do |name, cert| %>
       <tr>
         <td style="text-align: center;">
-          <form method="POST" action="/crypto/easy-rsa/certs/<%= name %>.crt">
+          <form method="POST" action="/crypto/easy-rsa/certs/<%= url_encode name %>.crt">
             <input type="hidden" name="_method" value="delete"/>
             <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
               <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
@@ -62,7 +62,7 @@
         <% if cert['cert']['err'] and not cert['cert']['ok'] %>
           <td colspan="0" class="error">Certificate Error for &ldquo;<code><%= name %>.crt</code>&rdquo;: <code><%= cert['cert']['err'] %></code></td>
         <% else %>
-          <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
+          <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= url_encode name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
           <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
           <td><%= cert['cert']['issuer']['CN'] %></td>
           <% 

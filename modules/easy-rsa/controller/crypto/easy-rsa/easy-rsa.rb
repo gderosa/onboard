@@ -101,31 +101,36 @@ class OnBoard::Controller < Sinatra::Base
   # A WebService client does not need an entity-body (headers and Status
   # will suffice), so html is fine as well, since it will be ignored...
   delete '/crypto/easy-rsa/certs/:name.crt' do
-    msg = {}
+    msg = {:ok => true} 
     certfile = "#{OnBoard::Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
     keyfile = "#{OnBoard::Crypto::SSL::CERTDIR}/private/#{params[:name]}.key"
-    if File.exists? certfile
-      begin
-        msg = OnBoard::System::Command.run <<EOF
+    certfile_easyrsa = 
+        "#{OnBoard::Crypto::EasyRSA::KEYDIR}/#{params[:name]}.crt"
+    keyfile_easyrsa = 
+      "#{OnBoard::Crypto::EasyRSA::KEYDIR}/#{params[:name]}.key"
+    csr_easyrsa = 
+      "#{OnBoard::Crypto::EasyRSA::KEYDIR}/#{params[:name]}.csr"
+
+    if File.exists? certfile_easyrsa
+      msg = OnBoard::System::Command.run <<EOF
 cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}
 . ./vars
 ./revoke-full #{params['name']}
 EOF
-        FileUtils.rm certfile
-        FileUtils.rm keyfile if File.exists? keyfile
-      rescue
-        msg = {:ok=> false, :err => $!}
-        status(500)
-      end
-      format(
-        :path => '/crypto/ssl/cert_del',
-        :format => 'html',
-        :objects => {},
-        :msg => msg
-      )
-    else
-      not_found
     end
+    [
+        certfile, keyfile, 
+        certfile_easyrsa, keyfile_easyrsa, csr_easyrsa
+    ].each do |file|
+      FileUtils.rm file if File.exists? file
+    end
+    format(
+      :module   => 'easy-rsa',
+      :path     => '/crypto/easy-rsa/cert-del',
+      :format   => 'html',
+      :objects  => {},
+      :msg      => msg
+    )
   end
 
  

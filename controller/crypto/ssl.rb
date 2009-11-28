@@ -50,7 +50,8 @@ class OnBoard
               params['certificate'][:tempfile].read
           )
           cn = cert.to_h['subject']['CN']
-          target = "#{Crypto::SSL::CERTDIR}/#{cn}.crt"
+          cn_escaped = cn.gsub('/', '===slash===')
+          target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crt"
           if File.readable? target # already exists
             begin # check if it's valid
               OpenSSL::X509::Certificate.new(File.read target)
