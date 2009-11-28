@@ -35,7 +35,7 @@ for module-specific, additional requirements):
 * dhcpcd
 * dnsmasq
 * locales 
-  ## and generate (UTF8) locales for language/countries you want to support
+  ## and generate (UTF8) locales for languages/countries you want to support
 
 Gems:
 
@@ -47,6 +47,7 @@ Gems:
 # gem install locale
 # gem install thin 
 # gem install r18n-core
+# gem install r18n-sinatra
   ## NOTE: if you want Italian support, until next release, you have to 
   ## get the latest development snapshot (and build the gem by yourself):
   ##
