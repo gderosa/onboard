@@ -75,16 +75,20 @@ class OnBoard::Controller < Sinatra::Base
     )
   end
 
+  # cert. creation and signature by our CA
   post '/crypto/easy-rsa/certs.:format' do
     msg = {}
     if msg[:err] = 
         OnBoard::Crypto::EasyRSA::Cert.HTTP_POST_data_invalid?(params) 
       # client sent invalid data
+      #
       status(400)
     else
       msg = OnBoard::Crypto::EasyRSA::Cert.create_from_HTTP_request(params)
       if msg[:ok]
         status(201)  
+      elsif msg[:err] =~ /already exists/
+        status(409) # Conflict
       else # client sent a valid request but (server-side) errors occured
         status(500) 
       end     
@@ -115,7 +119,7 @@ class OnBoard::Controller < Sinatra::Base
       msg = OnBoard::System::Command.run <<EOF
 cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}
 . ./vars
-./revoke-full #{params['name']}
+./revoke-full "#{params['name']}"
 EOF
     end
     [

@@ -41,11 +41,11 @@ die()
 
 need_vars()
 {
-    echo '  Please edit the vars script to reflect your configuration,'
-    echo '  then source it with "source ./vars".'
-    echo '  Next, to start with a fresh PKI configuration and to delete any'
-    echo '  previous certificates and keys, run "./clean-all".'
-    echo "  Finally, you can run this tool ($PROGNAME) to build certificates/keys."
+    echo '  Please edit the vars script to reflect your configuration,' >&2
+    echo '  then source it with "source ./vars".' >&2
+    echo '  Next, to start with a fresh PKI configuration and to delete any' >&2
+    echo '  previous certificates and keys, run "./clean-all".' >&2
+    echo "  Finally, you can run this tool ($PROGNAME) to build certificates/keys." >&2
 }
 
 usage()
@@ -293,9 +293,9 @@ if [ -d "$KEY_DIR" ] && [ "$KEY_CONFIG" ]; then
     if $GREP -i 'easy-rsa version 2\.[0-9]' "$KEY_CONFIG" >/dev/null; then
 	:
     else
-	echo "$PROGNAME: KEY_CONFIG (set by the ./vars script) is pointing to the wrong"
-        echo "version of openssl.cnf: $KEY_CONFIG"
-	echo "The correct version should have a comment that says: easy-rsa version 2.x";
+	echo "$PROGNAME: KEY_CONFIG (set by the ./vars script) is pointing to the wrong" >&2
+        echo "version of openssl.cnf: $KEY_CONFIG" >&2
+	echo "The correct version should have a comment that says: easy-rsa version 2.x"; >&2
 	exit 1;
     fi
 
@@ -309,7 +309,7 @@ if [ -d "$KEY_DIR" ] && [ "$KEY_CONFIG" ]; then
 	if [ $DO_CA -eq 1 ] || [ $DO_P12 -eq 1 ]; then
 	    if [ ! -r "$CA.crt" ] || [ ! -r "$CA.key" ]; then
 		echo "$PROGNAME: Need a readable $CA.crt and $CA.key in $KEY_DIR" 1>&2
-		echo "Try $PROGNAME --initca to build a root certificate/key."
+		echo "Try $PROGNAME --initca to build a root certificate/key." >&2
 		exit 1
 	    fi
 	fi

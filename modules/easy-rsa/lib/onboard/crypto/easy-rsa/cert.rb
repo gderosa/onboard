@@ -39,8 +39,16 @@ class OnBoard
               f.puts '01'
             end
           end
-          
-          msg = System::Command.run <<EOF 
+
+          if Crypto::SSL.getAllCerts.values.detect do |c|
+            c['cert']['subject']['CN'] == params['CN']
+          end
+            msg = {
+              :ok => false,
+              :err => 'A certificate with the same Common Name already exists!'
+            }
+          else
+            msg = System::Command.run <<EOF 
 cd #{SCRIPTDIR}
 . ./vars
 export KEY_SIZE=#{params['key_size']}
@@ -53,32 +61,33 @@ export KEY_OU="#{params['OU']}"
 export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool #{'--server' if params['type'] == 'server'} "#{params['CN']}" 
 EOF
-          destkey = SSL::CERTDIR + "/private/#{params['CN']}.key"
-          if msg[:ok] 
-            begin
-              FileUtils.mv(
-                  SCRIPTDIR + "/keys/#{params['CN']}.crt", 
-                  SSL::CERTDIR 
-              )
-              certpn = Pathname.new "#{SSL::CERTDIR}/#{params['CN']}.crt"
-              easy_rsa_keydir_pn = Pathname.new EasyRSA::KEYDIR
-              FileUtils.symlink(
-                  certpn.relative_path_from(easy_rsa_keydir_pn),
-                  EasyRSA::KEYDIR
-              )              
-              FileUtils.mv( 
-                  SCRIPTDIR + "/keys/#{params['CN']}.key", 
-                  destkey  
-              ) 
-            rescue
-              msg[:ok] = false
-              msg[:err] = $!
-            end
-            begin
-              FileUtils.chown nil, 'onboard', destkey
-              FileUtils.chmod 0640, destkey
-            rescue
-              FileUtils.chmod 0600, destkey
+            destkey = SSL::CERTDIR + "/private/#{params['CN']}.key"
+            if msg[:ok] 
+              begin
+                FileUtils.mv(
+                    SCRIPTDIR + "/keys/#{params['CN']}.crt", 
+                      SSL::CERTDIR 
+                )
+                certpn = Pathname.new "#{SSL::CERTDIR}/#{params['CN']}.crt"
+                easy_rsa_keydir_pn = Pathname.new EasyRSA::KEYDIR
+                FileUtils.symlink(
+                    certpn.relative_path_from(easy_rsa_keydir_pn),
+                    EasyRSA::KEYDIR
+                )              
+                FileUtils.mv( 
+                    SCRIPTDIR + "/keys/#{params['CN']}.key", 
+                    destkey  
+                ) 
+              rescue
+                msg[:ok] = false
+                msg[:err] = $!
+              end
+              begin
+                FileUtils.chown nil, 'onboard', destkey
+                FileUtils.chmod 0640, destkey
+              rescue
+                FileUtils.chmod 0600, destkey
+              end
             end
           end
           return msg
