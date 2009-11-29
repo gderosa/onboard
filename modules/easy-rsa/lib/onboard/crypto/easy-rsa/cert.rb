@@ -45,6 +45,7 @@ class OnBoard
           end
             msg = {
               :ok => false,
+              :err_html => "A certificate with the same Common Name &ldquo;<code>#{params['CN']}</code>&rdquo; already exists!",
               :err => 'A certificate with the same Common Name already exists!'
             }
           else

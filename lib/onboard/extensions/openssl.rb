@@ -23,7 +23,7 @@ module OpenSSL
         }
 
         extensions.each do |ext|
-          h['is_ca'] = true if ext.to_a[1] == "CA:TRUE" # and
+          h['is_ca'] = true if ext.to_a[1] =~ /CA:TRUE/ # and
               # ext.to_a[0] = "basicConstraints"
           h['is_server'] = true if ext.to_a[1] == "SSL Server" # and
               # ext.to_a[0] = "nsCertType"

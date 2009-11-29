@@ -50,6 +50,8 @@ class OnBoard
               params['certificate'][:tempfile].read
           )
           cn = cert.to_h['subject']['CN']
+          raise OpenSSL::X509::CertificateError, 
+              'Cannot find subject\'s Common Name' if not cn
           cn_escaped = cn.gsub('/', '===slash===')
           target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crt"
           if File.readable? target # already exists
