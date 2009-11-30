@@ -25,7 +25,8 @@ class OnBoard
           h = {}
           h['dh'] = getAllDH()
           begin
-            h['ca'] = OpenSSL::X509::Certificate.new(File.read CACERT).to_h
+            @@our_CA = OpenSSL::X509::Certificate.new(File.read CACERT)
+            h['ca'] = @@our_CA.to_h
           rescue Errno::ENOENT
           rescue OpenSSL::X509::CertificateError
             h['ca'] = {'err' => $!}
@@ -41,7 +42,11 @@ class OnBoard
             keyfile = KEYDIR + '/' + name + '.key'
             begin
               certobj = OpenSSL::X509::Certificate.new(File.read certfile)
-              h[name] = {'cert' => certobj.to_h, 'private_key' => false}
+              h[name] = {
+                  'cert'              => certobj.to_h, 
+                  'private_key'       => false,
+                  'signed_by_our_CA'  => certobj.verify(@@our_CA.public_key)
+              }
             rescue OpenSSL::X509::CertificateError
               h[name] = {'cert' => {'err' => $!}} 
             end

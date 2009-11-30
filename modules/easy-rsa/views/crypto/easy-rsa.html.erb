@@ -39,7 +39,7 @@
 <h3>Certificates</h3>
 <table>
   <thead><tr>
-    <th>Delete?</th>
+    <th title="Certificates issued by our CA will be revoked aside with deletion">Delete / Revoke</th>
     <th>&ldquo;Common Name&rdquo;</th>
     <th>Serial no.</th>
     <th>Issued by:</th>
@@ -65,7 +65,7 @@
         <% else %>
           <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= url_encode name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
           <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
-          <td><%= cert['cert']['issuer']['CN'] %></td>
+          <td><%= '<strong class="superhighlight" title="Signed by our internal Certificate Authority">' if cert['signed_by_our_CA'] %><%= cert['cert']['issuer']['CN'] %><%= '</strong>' if cert['signed_by_our_CA'] %></td>
           <% 
             str = ''
             if cert['cert']['subject']['O'] =~ /\S/
@@ -142,6 +142,10 @@
     <caption style="margin-top:0.5em;">CA details</caption>
     <tbody>
       <tr>
+        <th scope="row">&ldquo;Common Name&rdquo;</th>     
+        <td><strong><code><%= cadata['CN'] %></code></strong></td>
+      </tr>
+      <tr>
         <th scope="row">Country</th>
         <td>
           <%= countries[cadata['C']] %>
@@ -159,10 +163,6 @@
         <th scope="row">Organization</th>
         <td><%= cadata['O'] %><%= (', <span style="font-style: italic;">' + cadata['OU'] + '</span>') if cadata['OU'] =~ /\S/ %></td>
       </tr> 
-      <tr>
-        <th scope="row">&ldquo;Common Name&rdquo;</th>     
-        <td><code><%= cadata['CN'] %></code></td>
-      </tr>
       <tr>
         <th scope="row">E-mail</th>
         <td><code><%= cadata['emailAddress'] %></code></td>

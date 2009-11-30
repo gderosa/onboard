@@ -1,3 +1,4 @@
+<% superhighlight = "#080" %>
 <% highlight = "#44b" %>
 <% lowlight = "#777" %>
 <% hover = "color: white; background: #{highlight};" %>
@@ -10,6 +11,10 @@ body {
 
 .highlight{
   color: <%= highlight %>
+}
+
+.superhighlight{
+  color: <%= superhighlight %>
 }
 
 .lowlight{
@@ -86,6 +91,8 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 .error  {border: 1px red dashed;}
 .warn   {border: 1px yellow solid;}
 .info   {border: 1px #4b0 dotted;}
+
+
 
 strong {
   font-size: 107%;
