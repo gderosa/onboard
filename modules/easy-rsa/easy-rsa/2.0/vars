@@ -38,6 +38,9 @@ export KEY_CONFIG=`$EASY_RSA/whichopensslcnf $EASY_RSA`
 # it correctly!
 export KEY_DIR="$EASY_RSA/keys"
 
+export CACERT="$KEY_DIR/ca.crt"
+export CAKEY="$KEY_DIR/ca.key"
+
 # Issue rm -rf warning
 echo NOTE: If you run ./clean-all, I will be doing a rm -rf on $KEY_DIR
 

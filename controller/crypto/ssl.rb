@@ -52,7 +52,7 @@ class OnBoard
           cn = cert.to_h['subject']['CN']
           raise OpenSSL::X509::CertificateError, 
               'Cannot find subject\'s Common Name' if not cn
-          cn_escaped = cn.gsub('/', '===slash===')
+          cn_escaped = cn.gsub('/', '__slash__')
           target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crt"
           if File.readable? target # already exists
             begin # check if it's valid

@@ -25,9 +25,19 @@ class OnBoard
         end
 
         def self.create_from_HTTP_request(params)
+          if Dir.exists? KEYDIR
+            msg = System::Command.run <<EOF
+cd #{SCRIPTDIR}
+export KEY_DIR=#{KEYDIR}
+./clean-all
+EOF
+            return msg unless msg[:ok]
+          end
           msg = System::Command.run <<EOF 
 cd #{SCRIPTDIR}
 . ./vars
+export CACERT=#{SSL::CACERT}
+export CAKEY=#{SSL::CAKEY}
 export KEY_SIZE=#{params['key_size']}
 export CA_EXPIRE=#{params['days']}
 export KEY_COUNTRY="#{params['C']}"
@@ -39,28 +49,6 @@ export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool --initca
 EOF
           if msg[:ok] 
-            #begin
-              FileUtils.mv SSL::CACERT, SSL::CACERT + '.old' if
-                  File.exists? SSL::CACERT
-              FileUtils.mv SSL::CAKEY, SSL::CAKEY + '.old' if
-                  File.exists? SSL::CAKEY
-              FileUtils.mv(KEYDIR + '/ca.crt', SSL::CACERT)
-              FileUtils.mv(KEYDIR + '/ca.key', SSL::CAKEY) 
-              cacertpn = Pathname.new SSL::CACERT
-              cakeypn = Pathname.new SSL::CAKEY
-              easy_rsa_keydir_pn = Pathname.new KEYDIR
-              FileUtils.symlink(
-                  cacertpn.relative_path_from(easy_rsa_keydir_pn), 
-                  KEYDIR
-              ) 
-              FileUtils.symlink(
-                  cakeypn.relative_path_from(easy_rsa_keydir_pn), 
-                  KEYDIR
-              )
-            #rescue
-            #  msg[:ok] = false
-            #  msg[:err] = $!
-            #end
             begin
               FileUtils.chown nil, 'onboard', SSL::CAKEY
               FileUtils.chmod 0640, SSL::CAKEY

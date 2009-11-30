@@ -54,8 +54,9 @@ class OnBoard::Controller < Sinatra::Base
   end
 
   delete '/crypto/easy-rsa/ca.:format' do
-    OnBoard::System::Command.run <<EOF
+    msg = OnBoard::System::Command.run <<EOF
 cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}    
+export KEY_DIR=#{OnBoard::Crypto::EasyRSA::KEYDIR}
 ./clean-all    
 EOF
     FileUtils.rm OnBoard::Crypto::SSL::CACERT
@@ -66,8 +67,7 @@ EOF
     headers('Location' => redirection)
     format(
       :path     => '/303',
-      :format   => params['format'],
-      :objects  => redirection
+      :format   => params['format']
     )
   end
 
@@ -137,6 +137,8 @@ EOF
       msg = OnBoard::System::Command.run <<EOF
 cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}
 . ./vars
+export CACERT=#{OnBoard::Crypto::SSL::CACERT}
+export CAKEY=#{OnBoard::Crypto::SSL::CAKEY} 
 ./revoke-full "#{params['name']}"
 EOF
     end

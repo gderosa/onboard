@@ -134,7 +134,6 @@ DO_ROOT="0"
 NODES_REQ="-nodes"
 NODES_P12=""
 BATCH="-batch"
-CA="ca"
 # must be set or errors of openssl.cnf
 PKCS11_MODULE_PATH="dummy"
 PKCS11_PIN="dummy"
@@ -237,6 +236,14 @@ if [ -z "$KEY_OU" ]; then
     KEY_OU=""
 fi
 
+# 
+if [ -z "$CACERT" ]; then
+    CACERT="$KEY_DIR/ca.crt"
+fi
+if [ -z "$CAKEY" ]; then
+    CAKEY="$KEY_DIR/ca.key"
+fi 
+
 # Set KEY_CN
 if [ $DO_ROOT -eq 1 ]; then
     if [ -z "$KEY_CN" ]; then
@@ -260,10 +267,12 @@ else
     fi
 fi
 
-export CA_EXPIRE KEY_EXPIRE KEY_OU KEY_CN PKCS11_MODULE_PATH PKCS11_PIN
+export CA_EXPIRE KEY_EXPIRE KEY_OU KEY_CN PKCS11_MODULE_PATH PKCS11_PIN 
 
 # Show parameters (debugging)
 if [ $DEBUG -eq 1 ]; then
+    echo CACERT $CACERT
+    echo CAKEY $CAKEY
     echo DO_REQ $DO_REQ
     echo REQ_EXT $REQ_EXT
     echo DO_CA $DO_CA
@@ -302,13 +311,13 @@ if [ -d "$KEY_DIR" ] && [ "$KEY_CONFIG" ]; then
     # Build root CA
     if [ $DO_ROOT -eq 1 ]; then
 	$OPENSSL req $BATCH -days $CA_EXPIRE $NODES_REQ -new -newkey rsa:$KEY_SIZE -sha1 \
-	    -x509 -keyout "$CA.key" -out "$CA.crt" -config "$KEY_CONFIG" && \
-	    chmod 0600 "$CA.key"
+	    -x509 -keyout "$CAKEY" -out "$CACERT" -config "$KEY_CONFIG" && \
+	    chmod 0600 "$CAKEY"
     else        
         # Make sure CA key/cert is available
 	if [ $DO_CA -eq 1 ] || [ $DO_P12 -eq 1 ]; then
-	    if [ ! -r "$CA.crt" ] || [ ! -r "$CA.key" ]; then
-		echo "$PROGNAME: Need a readable $CA.crt and $CA.key in $KEY_DIR" 1>&2
+	    if [ ! -r "$CACERT" ] || [ ! -r "$CAKEY" ]; then
+		echo "$PROGNAME: Need a readable $CACERT and $CAKEY" 1>&2
 		echo "Try $PROGNAME --initca to build a root certificate/key." >&2
 		exit 1
 	    fi
@@ -337,7 +346,7 @@ if [ -d "$KEY_DIR" ] && [ "$KEY_CONFIG" ]; then
 	    ( [ $DO_CA -eq 0 ]  || $OPENSSL ca $BATCH -days $KEY_EXPIRE -out "$KEY_CN.crt" \
 	        -in "$KEY_CN.csr" $CA_EXT -md sha1 -config "$KEY_CONFIG" ) && \
 	    ( [ $DO_P12 -eq 0 ] || $OPENSSL pkcs12 -export -inkey "$KEY_CN.key" \
-	        -in "$KEY_CN.crt" -certfile "$CA.crt" -out "$KEY_CN.p12" $NODES_P12 ) && \
+	        -in "$KEY_CN.crt" -certfile "$CACERT" -out "$KEY_CN.p12" $NODES_P12 ) && \
 	    ( [ $DO_CA -eq 0 -o $DO_P11 -eq 1 ]  || chmod 0600 "$KEY_CN.key" ) && \
 	    ( [ $DO_P12 -eq 0 ] || chmod 0600 "$KEY_CN.p12" )
 

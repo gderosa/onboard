@@ -52,6 +52,8 @@ class OnBoard
             msg = System::Command.run <<EOF 
 cd #{SCRIPTDIR}
 . ./vars
+export CACERT=#{SSL::CACERT}
+export CAKEY=#{SSL::CAKEY}
 export KEY_SIZE=#{params['key_size']}
 export CA_EXPIRE=#{params['days']}
 export KEY_COUNTRY="#{params['C']}"
