@@ -9,6 +9,7 @@ class OnBoard
 
       SCRIPTDIR = OnBoard::ROOTDIR + '/modules/easy-rsa/easy-rsa/2.0'
       KEYDIR = SCRIPTDIR + '/keys'
+      CRL = KEYDIR + '/crl.pem'
 
       def self.create_dh(n)
         System::Command.run <<EOF

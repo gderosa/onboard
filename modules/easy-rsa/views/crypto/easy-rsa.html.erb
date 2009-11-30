@@ -3,6 +3,7 @@
   require 'date'
 
   require 'onboard/extensions/integer'
+  require 'onboard/crypto/easy-rsa'
 %>
 
 <h2>SSL keys and certificates</h2>
@@ -177,7 +178,14 @@
       Full Hystory of issued certificates: <a href="/crypto/easy-rsa/ca/index.txt"><code>index.txt</code></a>
     </li>
     <li>
-    Certificate Revocation List: <a href="/crypto/easy-rsa/ca/crl.pem"><code>crl.pem</code></a>
+      Certificate Revocation List: 
+      <% if File.exists? OnBoard::Crypto::EasyRSA::CRL %>
+        <a href="/crypto/easy-rsa/ca/crl.pem">
+          <code>crl.pem</code>
+        </a>
+      <% else %>
+        <code class="lowlight" title="No certificate has been revoked.">crl.pem</code>
+      <% end %>
     </li>
   </ul>
 <% end %>
