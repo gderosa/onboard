@@ -12,6 +12,7 @@ class OnBoard
       CAKEY     = DIR + '/ca/private/ca.key'
 
       @@dh_mutexes = {} unless class_variable_defined? :@@dh_mutexes
+      @@our_CA = nil unless class_variable_defined? :@@our_CA
 
       class << self
 
@@ -42,10 +43,13 @@ class OnBoard
             keyfile = KEYDIR + '/' + name + '.key'
             begin
               certobj = OpenSSL::X509::Certificate.new(File.read certfile)
+              signed_by_our_CA = false
+              signed_by_our_CA = certobj.verify(@@our_CA.public_key) if
+                  @@our_CA.respond_to? :public_key
               h[name] = {
                   'cert'              => certobj.to_h, 
                   'private_key'       => false,
-                  'signed_by_our_CA'  => certobj.verify(@@our_CA.public_key)
+                  'signed_by_our_CA'  => signed_by_our_CA
               }
             rescue OpenSSL::X509::CertificateError
               h[name] = {'cert' => {'err' => $!}} 

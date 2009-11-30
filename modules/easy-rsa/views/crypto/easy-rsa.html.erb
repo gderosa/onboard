@@ -200,7 +200,7 @@
       c['signed_by_our_CA'] }) %>
     <h4>RESET CA (use with caution!)</h4>
     <form method="POST" action="/crypto/easy-rsa/ca.html">
-      <input type="hidden" name="_method" value="put"/>
+      <input type="hidden" name="_method" value="delete"/>
       <button type="submit"><img style="vertical-align:middle;" src="<%= "#{icondir}/#{iconsize}/emblems/emblem-important.png" %>"/> RESET!</a></button>
     </form>
   <% end %>

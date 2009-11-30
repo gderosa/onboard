@@ -4,6 +4,7 @@
 
 require 'sinatra/base'
 
+require 'onboard/system/command'
 require 'onboard/crypto/easy-rsa'
 require 'onboard/crypto/ssl'
 
@@ -52,6 +53,23 @@ class OnBoard::Controller < Sinatra::Base
     end
   end
 
+  delete '/crypto/easy-rsa/ca.:format' do
+    OnBoard::System::Command.run <<EOF
+cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}    
+./clean-all    
+EOF
+    FileUtils.rm OnBoard::Crypto::SSL::CACERT
+    FileUtils.rm OnBoard::Crypto::SSL::CAKEY
+
+    redirection = "/crypto/easy-rsa.#{params['format']}"      
+    status(303)                       # HTTP "See Other"
+    headers('Location' => redirection)
+    format(
+      :path     => '/303',
+      :format   => params['format'],
+      :objects  => redirection
+    )
+  end
 
   post '/crypto/easy-rsa/ca.:format' do
     msg = {}
