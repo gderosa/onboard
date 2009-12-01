@@ -143,10 +143,10 @@ export CAKEY=#{OnBoard::Crypto::SSL::CAKEY}
 EOF
     end
     [
-        certfile, keyfile, 
-        certfile_easyrsa, keyfile_easyrsa, csr_easyrsa
+        certfile_easyrsa, keyfile_easyrsa, csr_easyrsa,
+        certfile, keyfile
     ].each do |file|
-      FileUtils.rm file if File.exists? file
+      FileUtils.rm(file) if File.exists?(file) or File.symlink?(file) 
     end
     format(
       :module   => 'easy-rsa',

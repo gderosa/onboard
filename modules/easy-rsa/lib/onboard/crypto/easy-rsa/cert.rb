@@ -64,32 +64,38 @@ export KEY_OU="#{params['OU']}"
 export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool #{'--server' if params['type'] == 'server'} "#{params['CN']}" 
 EOF
-            destkey = SSL::CERTDIR + "/private/#{params['CN']}.key"
             if msg[:ok] 
+              destcert = "#{SSL::CERTDIR}/#{params['CN']}.crt"
+              destkey = "#{SSL::KEYDIR}/#{params['CN']}.key"
+              certpn = Pathname.new destcert
+              keypn  = Pathname.new destkey
+              easy_rsa_keydir_pn = Pathname.new EasyRSA::KEYDIR
               begin
                 FileUtils.mv(
                     SCRIPTDIR + "/keys/#{params['CN']}.crt", 
-                      SSL::CERTDIR 
+                    SSL::CERTDIR 
                 )
-                certpn = Pathname.new "#{SSL::CERTDIR}/#{params['CN']}.crt"
-                easy_rsa_keydir_pn = Pathname.new EasyRSA::KEYDIR
                 FileUtils.symlink(
                     certpn.relative_path_from(easy_rsa_keydir_pn),
                     EasyRSA::KEYDIR
                 )              
                 FileUtils.mv( 
                     SCRIPTDIR + "/keys/#{params['CN']}.key", 
-                    destkey  
-                ) 
+                    SSL::KEYDIR  
+                )
+                FileUtils.symlink(
+                    keypn.relative_path_from(easy_rsa_keydir_pn),
+                    EasyRSA::KEYDIR
+                )              
+                begin
+                  FileUtils.chown nil, 'onboard', destkey
+                  FileUtils.chmod 0640, destkey
+                rescue
+                  FileUtils.chmod 0600, destkey
+                end
               rescue
                 msg[:ok] = false
                 msg[:err] = $!
-              end
-              begin
-                FileUtils.chown nil, 'onboard', destkey
-                FileUtils.chmod 0640, destkey
-              rescue
-                FileUtils.chmod 0600, destkey
               end
             end
           end
