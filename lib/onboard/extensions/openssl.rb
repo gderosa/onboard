@@ -2,6 +2,21 @@ require 'openssl'
 
 module OpenSSL
   module X509
+
+    class Name
+      # So you can check, for example, whether a CRL was issued by a given CA,
+      # if you have its certificate.
+      #
+      #     crl     = OpenSSL::X509::CRL.new          File.read 'crl.pem'
+      #     cacert  = OpenSSL::X509::Certificate.new  File.read 'ca.crt'
+      #
+      #     crl.issuer == cacert.subject #=> true or false
+      #
+      def ==(other)
+        #self.hash == other.hash # other methods: to_a, to_s, to_der
+      end  
+    end
+
     class Certificate
 
       def ca?
