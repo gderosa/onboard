@@ -4,12 +4,13 @@ require 'onboard/extensions/openssl'
 class OnBoard
   module Crypto
     module SSL
-      DIR       = OnBoard::ROOTDIR + '/etc/config/crypto/ssl'
-      CERTDIR   = DIR + '/cert'
-      KEYDIR    = CERTDIR + '/private'
-      KEY_SIZES = [1024, 2048]
-      CACERT    = DIR + '/ca/ca.crt'
-      CAKEY     = DIR + '/ca/private/ca.key'
+      DIR                   = OnBoard::ROOTDIR + '/etc/config/crypto/ssl'
+      CERTDIR               = DIR + '/cert'
+      KEYDIR                = CERTDIR + '/private'
+      KEY_SIZES             = [1024, 2048]
+      CACERT                = DIR + '/ca/ca.crt'
+      CAKEY                 = DIR + '/ca/private/ca.key'
+      SLASH_FILENAME_ESCAPE = '__slash__'
 
       @@dh_mutexes = {} unless class_variable_defined? :@@dh_mutexes
       @@our_CA = nil unless class_variable_defined? :@@our_CA

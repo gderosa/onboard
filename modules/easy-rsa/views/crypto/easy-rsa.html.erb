@@ -290,19 +290,34 @@
   <button type="submit" style="margin: 0.3em 0.6em;">Create!</button>
 </form>
 
-<h3>Import certificate</h3>
-<form method="POST" action="/crypto/ssl/certs.html" enctype="multipart/form-data">
-  <input type="hidden" name="file_upload" value="yes"/>
-  <table>
-    <tr>
-      <th scope="row">X509 Certificate</th>
-      <td><input type="file" name="certificate"/></td>
-    </tr>
-    <tr>
-      <th scope="row">Associated private key (optional)</th>
-      <td><input type="file" name="private_key"/></td>
-    </tr>
-  </table>
-  <button type="submit">Upload!</button>
-</form>
+<h3>Import</h3>
 
+<div style="width:48%; float:left;">
+  <form method="POST" action="/crypto/ssl/certs.html" enctype="multipart/form-data">
+    <input type="hidden" name="file_upload" value="yes"/>
+    <table>
+      <tr>
+        <th scope="row">X509 Certificate</th>
+        <td><input type="file" name="certificate"/></td>
+      </tr>
+      <tr>
+        <th scope="row">Associated private key (optional)</th>
+        <td><input type="file" name="private_key"/></td>
+      </tr>
+    </table>
+    <button type="submit">Upload!</button>
+  </form>
+</div>
+
+<div style="width:48%; float:right;">
+  <form method="POST" action="/crypto/ssl/CRLs.html" enctype="multipart/form-data">
+    <input type="hidden" name="file_upload" value="yes"/>
+    <table>
+      <tr>
+        <th scope="row">Certificate Revocation List</th>
+        <td><input type="file" name="CRL"/></td>
+      </tr>
+    </table>
+    <button type="submit">Upload!</button>
+  </form>
+</div>
