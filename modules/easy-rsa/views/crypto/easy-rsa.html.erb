@@ -4,6 +4,7 @@
 
   require 'onboard/extensions/integer'
   require 'onboard/crypto/easy-rsa'
+  require 'onboard/crypto/ssl'
 %>
 
 <h2>SSL keys and certificates</h2>
@@ -66,17 +67,13 @@
           <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= url_encode name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
           <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
           <td><%= '<strong class="superhighlight" title="Signed by our internal Certificate Authority">' if cert['signed_by_our_CA'] %><%= cert['cert']['issuer']['CN'] %><%= '</strong>' if cert['signed_by_our_CA'] %></td>
-          <% 
-            str = ''
-            if cert['cert']['subject']['O'] =~ /\S/
-              str << cert['cert']['subject']['O']
-              str << ", <span style=\"font-style:italic;\">#{cert['cert']['subject']['OU']}</span>" if cert['cert']['subject']['OU'] =~ /\S/
-              str << ", " << cert['cert']['subject']['L'] if cert['cert']['subject']['L'] =~ /\S/
-              str << "&nbsp;(#{cert['cert']['subject']['ST']})" if cert['cert']['subject']['ST'] =~ /\S/
-              str << ", " << cert['cert']['subject']['C'] if cert['cert']['subject']['C'] =~ /\S/
-            end
-          %>
-          <td><%= str %></td>
+          <td>
+            <%= 
+              ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
+                cert['cert']['subject'] 
+              )
+            %>
+          </td>
           <td><%= cert['cert']['key_size'] %></td>
           <% if cert['private_key'] %>
             <% if cert['private_key']['ok'] %>

@@ -111,39 +111,22 @@ class OnBoard
       if params['CRL'].respond_to? :[] 
         begin
           crl = OpenSSL::X509::CRL.new(
-              params['certificate'][:tempfile].read
+              params['CRL'][:tempfile].read
           )
           cn = crl.issuer.to_h['CN']
           fail 'Cannot find subject\'s Common Name' if not cn
           cn_escaped = cn.gsub('/', Crypto::SSL::SLASH_FILENAME_ESCAPE)
           target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crl"
-          if File.readable? target # already exists
-            begin # check if it's valid
-              OpenSSL::X509::CRL.new(File.read target)
-              status(409)
-              msg = {
-                :ok => false, 
-                :err_html => "A certificate with the same Common Name &ldquo;<code>#{cn}</code>&rdquo; already exists!"
-              }
-            rescue OpenSSL::X509::CRLError # otherwise you can overwrite
-              File.open(target, 'w') do |f|
-                # the same format created by easy-rsa...
-                f.write cert.to_text # human readable data
-                f.write cert.to_s # the CRL itself between BEGIN-END tags
-              end           
-            end
-          else
-            File.open(target, 'w') do |f|
-              # the same format created by easy-rsa...
-              f.write cert.to_text # human readable data
-              f.write cert.to_s # the CRL itself between BEGIN-END tags
-            end
+          File.open(target, 'w') do |f|
+            # the same format created by easy-rsa...
+            f.write crl.to_text # human readable data
+            f.write crl.to_s # the CRL itself between BEGIN-END tags
           end
         rescue OpenSSL::X509::CRLError
           status(400)
           msg = {:ok => false, :err => $!}
         end
-        params['certificate'][:tempfile].unlink
+        params['CRL'][:tempfile].unlink
       else
         status(400)  
         msg = {
