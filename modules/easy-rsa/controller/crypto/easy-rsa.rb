@@ -41,13 +41,23 @@ class OnBoard::Controller < Sinatra::Base
     end
   end
 
-  get '/crypto/easy-rsa/ca/crl.pem' do
+  get '/crypto/easy-rsa/ca/crl.:sslformat' do
+    # CRL is stored in PEM format
     crl_pem = OnBoard::Crypto::EasyRSA::KEYDIR + '/crl.pem'
     if File.exists? crl_pem
-      content_type 'application/pkix-crl'
-      attachment "crl.pem"
-      crl = OpenSSL::X509::CRL.new File.read crl_pem
-      crl.to_text + crl.to_s
+      case params[:sslformat]
+      when 'pem'
+        content_type 'application/pkix-crl'
+        attachment "crl.pem"
+        crl = OpenSSL::X509::CRL.new File.read crl_pem
+        crl.to_text + crl.to_s
+      when 'der'
+        content_type 'application/x-x509-crl'
+        attachment "crl.der"
+        OpenSSL::X509::CRL.new(File.read(crl_pem)).to_der
+      else
+        not_found # Multiple Choices appropriately
+      end
     else
       not_found # TODO: more exception handling
     end

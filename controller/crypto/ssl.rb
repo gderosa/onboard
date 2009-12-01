@@ -30,6 +30,29 @@ class OnBoard
       end
     end
 
+    get '/crypto/ssl/CRLs/:name.crl.?:sslformat?' do
+      params[:sslformat] = 'pem' unless params[:sslformat]
+      crlfile = "#{Crypto::SSL::CERTDIR}/#{params[:name]}.crl"
+      if File.exists? crlfile
+        # TODO: which is the right MIME type for PEM and DER format?
+        case params[:sslformat]
+        when 'pem'
+          content_type 'application/pkix-crl'
+          attachment "#{params[:name]}.crl.pem"
+          OpenSSL::X509::CRL.new(File.read crlfile).to_text + # hum. read. part
+          OpenSSL::X509::CRL.new(File.read crlfile).to_pem  # BEGIN--END PEM
+        when 'der'
+          content_type 'application/x-x509-crl'
+          attachment "#{params[:name]}.crl.der"
+          OpenSSL::X509::CRL.new(File.read crlfile).to_der  # binary format
+        else
+          not_found # TODO: Multiple Choice, appropriately
+        end
+      else
+        not_found
+      end
+    end
+   
     get '/crypto/ssl/certs/private/:name.key' do
       keyfile = "#{Crypto::SSL::KEYDIR}/#{params[:name]}.key"
       if File.exists? keyfile
@@ -114,17 +137,24 @@ class OnBoard
               params['CRL'][:tempfile].read
           )
           cn = crl.issuer.to_h['CN']
-          fail 'Cannot find subject\'s Common Name' if not cn
+          raise OnBoard::Crypto::SSL::ArgumentError, 'Cannot find subject\'s Common Name' if not cn
           cn_escaped = cn.gsub('/', Crypto::SSL::SLASH_FILENAME_ESCAPE)
+          # NOTE: VERY simple filename/CN match :-P
+          raise OnBoard::Crypto::SSL::Conflict, 'Cannot find matching CA Certificate. You should upload it first.' unless File.exists? "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crt"
           target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crl"
           File.open(target, 'w') do |f|
-            # the same format created by easy-rsa...
+            # Force storage in PEM format, maybe less efficient but
+            # but easier to debug.
+            # It's the same format created by easy-rsa...
             f.write crl.to_text # human readable data
             f.write crl.to_s # the CRL itself between BEGIN-END tags
           end
-        rescue OpenSSL::X509::CRLError
+        rescue OpenSSL::X509::CRLError, OnBoard::Crypto::SSL::ArgumentError
           status(400)
-          msg = {:ok => false, :err => $!}
+          msg = {:ok => false, :err => $!} 
+        rescue OnBoard::Crypto::SSL::Conflict
+          status(409)
+          msg = {:ok => false, :err => $!, :err_html => $!.to_s} 
         end
         params['CRL'][:tempfile].unlink
       else

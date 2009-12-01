@@ -47,7 +47,8 @@
     <th>Issued to:</th>
     <th>Key size (bits)</th>
     <th>Private Key?</th>
-    <th>Cert. Authority?</th> 
+    <th title="Is a Certificate Authority?">CA?</th> 
+    <th title="Certificate Revocation List">CRL</th>
     <th>SSL Server?</th>
   </tr></thead>
   <tbody>
@@ -85,6 +86,16 @@
             <td><%= i18n.no %></td>
           <% end %>
           <td><%= cert['cert']['is_ca']     ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td>
+          <td> 
+            <% if cert['crl'] %>
+              <small>
+              <a title="Download the Certificate Revocation List in PEM format"
+                href="/crypto/ssl/CRLs/<%= cert['crl'] %>.pem">PEM</a>&nbsp;|&nbsp;<a
+                title="Download the Certificate Revocation List in DER format" 
+                href="/crypto/ssl/CRLs/<%= cert['crl'] %>.der">DER</a>
+              </small>
+            <% end %>
+          </td>
           <td><%= cert['cert']['is_server'] ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td>
         <% end %>
       </tr>
@@ -177,8 +188,11 @@
     <li>
       Certificate Revocation List: 
       <% if File.exists? OnBoard::Crypto::EasyRSA::CRL %>
-        <a href="/crypto/easy-rsa/ca/crl.pem">
+        <a title="CRL in PEM format" href="/crypto/easy-rsa/ca/crl.pem">
           <code>crl.pem</code>
+        </a>,
+        <a title="CRL in DER format" href="/crypto/easy-rsa/ca/crl.der">
+          <code>crl.der</code>
         </a>
       <% else %>
         <code class="lowlight" title="No certificate has been revoked.">crl.pem</code>
@@ -311,7 +325,7 @@
     <input type="hidden" name="file_upload" value="yes"/>
     <table>
       <tr>
-        <th scope="row">Certificate Revocation List</th>
+        <th scope="row">Certificate Revocation List<br/>(Import/Update)</th>
         <td><input type="file" name="CRL"/></td>
       </tr>
     </table>

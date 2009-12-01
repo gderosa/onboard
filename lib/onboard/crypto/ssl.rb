@@ -16,6 +16,9 @@ class OnBoard
       @@dh_mutexes = {} unless class_variable_defined? :@@dh_mutexes
       @@our_CA = nil unless class_variable_defined? :@@our_CA
 
+      class ArgumentError < ::ArgumentError; end
+      class Conflict < ::RuntimeError; end
+
       class << self
 
         # Mutual exclusion for threads creating Diffie-Hellman parameters
@@ -56,6 +59,14 @@ class OnBoard
             rescue OpenSSL::X509::CertificateError
               h[name] = {'cert' => {'err' => $!}} 
             end
+
+            # CRL:
+            # very simple match by filename, no OpenSSL check 
+            # (was made at file upload... somewhat :-P) 
+            if File.readable? "#{CERTDIR}/#{name}.crl"
+              h[name]['crl'] = "#{name}.crl"
+            end
+            
             if File.exists? keyfile 
               begin
                 if certobj.check_private_key(
