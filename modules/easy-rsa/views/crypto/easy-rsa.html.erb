@@ -79,7 +79,7 @@
           <% if cert['private_key'] %>
             <% if cert['private_key']['ok'] %>
               <!-- <td><%= "<strong>#{i18n.yes}</strong>" %> <small>[<a href="/crypto/ssl/certs/private/<%= name %>.key">download</a>]</small></td> -->
-              <td style="text-align:center"><a title="Download" href="/crypto/ssl/certs/private/<%= name %>.key"><img style="vertical-align:middle;" alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
+              <td style="text-align:center"><a class="img" title="Download" href="/crypto/ssl/certs/private/<%= name %>.key"><img style="vertical-align:middle;" alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
             <% else %>
               <td class="error"><code><%= html_escape cert['private_key']['err'] %></code></td>
             <% end %>

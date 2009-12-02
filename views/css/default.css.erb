@@ -148,9 +148,13 @@ a {
   font-weight: bold;
 }
 
-a:hover !img {
+a:hover {
   color: white;
   background: <%= highlight %>;
+}
+
+a.img {
+  background: transparent;
 }
 
 a img {
@@ -178,10 +182,14 @@ table tr th {
 table tr th small {
   font-weight: normal;
   margin-left: 0.6em;
+  padding: 0;
 }
+
+/*
 table tr th small a {
   font-weight: normal;
 }
+*/
 
 table tr th[scope="row"] {
   text-align: left;

@@ -34,14 +34,20 @@ class OnBoard::Controller
 
   put '/network/bridges.:format' do
     interfaces = OnBoard::Network::Interface.getAll
-    params['netifs'].each_pair do |ifname, ifhash| # PUT/[POST] params
-      interface = interfaces.detect {|i| i.name == ifname}
-      interface.modify_from_HTTP_request(ifhash)
+    if params['netifs'].respond_to? :each_pair
+      params['netifs'].each_pair do |ifname, ifhash| # PUT/[POST] params
+        interface = interfaces.detect {|i| i.name == ifname}
+        interface.modify_from_HTTP_request(ifhash)
+      end
     end
     # update info
     interfaces = OnBoard::Network::Interface.getAll
     bridges = interfaces.select {|i| i.type == 'bridge'}
     # send response
+    if [nil, false, [], {}].include? params['netifs']
+      status(204)                     # HTTP "No Content"
+      halt
+    end
     status(202)                       # HTTP "Accepted"
     headers(
       "Location"      => request.path_info,
