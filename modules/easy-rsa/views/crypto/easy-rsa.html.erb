@@ -47,7 +47,7 @@
     <th>Issued to:</th>
     <th>Key size (bits)</th>
     <th>Private Key?</th>
-    <th title="Is a Certificate Authority?">CA?</th> 
+    <th title="Is a Certificate Authority?">Cert. Auth.?</th> 
     <th title="Certificate Revocation List">CRL</th>
     <th>SSL Server?</th>
   </tr></thead>
@@ -78,15 +78,22 @@
           <td><%= cert['cert']['key_size'] %></td>
           <% if cert['private_key'] %>
             <% if cert['private_key']['ok'] %>
-              <td><%= "<strong>#{i18n.yes}</strong>" %> <small>[<a href="/crypto/ssl/certs/private/<%= name %>.key">download</a>]</small></td>
+              <!-- <td><%= "<strong>#{i18n.yes}</strong>" %> <small>[<a href="/crypto/ssl/certs/private/<%= name %>.key">download</a>]</small></td> -->
+              <td style="text-align:center"><a title="Download" href="/crypto/ssl/certs/private/<%= name %>.key"><img style="vertical-align:middle;" alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
             <% else %>
               <td class="error"><code><%= html_escape cert['private_key']['err'] %></code></td>
             <% end %>
           <% else %>
-            <td><%= i18n.no %></td>
+            <!-- <td><%= i18n.no %></td> -->
+            <td><!-- nothing --></td>
           <% end %>
-          <td><%= cert['cert']['is_ca']     ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td>
-          <td> 
+          <!-- <td><%= cert['cert']['is_ca']     ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td> -->
+          <td style="text-align:center;">
+            <% if cert['cert']['is_ca'] %>
+              <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
+            <% end %>
+          </td>
+          <td style="text-align:center;"> 
             <% if cert['crl'] %>
               <small>
               <a title="Download the Certificate Revocation List in PEM format"
@@ -96,7 +103,12 @@
               </small>
             <% end %>
           </td>
-          <td><%= cert['cert']['is_server'] ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td>
+          <!-- <td><%= cert['cert']['is_server'] ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td> -->
+          <td style="text-align:center;">
+            <% if cert['cert']['is_server'] %>
+              <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
+            <% end %>
+          </td>
         <% end %>
       </tr>
     <% end %>

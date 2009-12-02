@@ -148,9 +148,13 @@ a {
   font-weight: bold;
 }
 
-a:hover {
+a:hover !img {
   color: white;
   background: <%= highlight %>;
+}
+
+a img {
+  border: none;
 }
 
 div#main div.item {
