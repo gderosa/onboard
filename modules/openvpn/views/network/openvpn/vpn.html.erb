@@ -342,7 +342,7 @@
           <select name="cert">
             <% ssl['certs'].each_pair do |name, h| %>
               <% if (not h['cert']['is_ca']) and h['private_key'] %>
-                <option value="<%= name %>"><%= html_escape name %></option>
+                <option title="<%= 'WARNING: not a server-type certificate! Not recommended.' unless h['cert']['is_server'] %>" class="<%= 'lowlight' unless h['cert']['is_server'] %>" value="<%= name %>"><%= html_escape name %></option>
               <% end %>
             <% end %>
           </select>
@@ -373,7 +373,7 @@
           <input type="text" class="rwtext" name="port" size="4" value="1194"/>
         </td>
         <td>
-          <input type="text" class="rwtext" name="server_network"/>
+          <input title="Suggestion shown is a random private IP network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/>
         </td>
       </tr>
     </tbody>
