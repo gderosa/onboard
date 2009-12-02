@@ -12,6 +12,9 @@
   button {
     display: inline;
   }
+  select {
+    width: 98%; /* 100% breaks borders in (some versions of) Firefox */
+  }
 </style>
 
 <h2>VPN</h2>
@@ -279,7 +282,7 @@
         <select name="ca">
           <% if ssl['ca'] %>
             <% name = ssl['ca']['subject']['CN'] %>
-            <option class="highlight" value="<%= name %>" selected>
+            <option style="font-weight:bold;" class="highlight" value="<%= name %>" selected>
               <%= html_escape name %>
             </option>
           <% end %>
@@ -291,7 +294,7 @@
         </select>
       </td>
       <td>
-        <select name="proto">
+        <select name="proto" style="width:13em;">
           <option selected value="udp">UDP (recommended)</option>
           <option value="tcp-client">TCP - connect to peer</option>
           <option disabled value="tcp-server">TCP - wait for connections</option>
@@ -312,70 +315,67 @@
 </table>
 
 <h3>Create new VPN (server mode)</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th rowspan="3">Add?</th>
-      <th colspan="2">
-        SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
-      </th>
-      <th colspan="3">Real Network</th>
-    </tr>
-    <tr>
-      <th rowspan="2">Certificate (must have Private Key)</th>
-      <th rowspan="2">Trusted Certificate Authority</th>
-      <th rowspan="2">Protocol</th>
-      <th colspan="2">Server</th>
-    </tr>
-    <tr>
-      <th>Host</th>
-      <th>Port</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
-      </td>
-      <td>
-        <select name="cert">
-          <% ssl['certs'].each_pair do |name, h| %>
-            <% if (not h['cert']['is_ca']) and h['private_key'] %>
-              <option value="<%= name %>"><%= html_escape name %></option>
+<form method="POST">
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">Add?</th>
+        <th colspan="2">
+          SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
+        </th>
+        <th colspan="2">Real Network</th>
+        <th colspan="1" rowspan="2">Virtual Network</th>
+      </tr>
+      <tr>
+        <th rowspan="1">Certificate (must have Private Key)</th>
+        <th rowspan="1">Trusted Certificate Authority</th>
+        <th rowspan="1">Protocol</th>
+        <th colspan="1">Local<br/>port</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
+        </td>
+        <td>
+          <select name="cert">
+            <% ssl['certs'].each_pair do |name, h| %>
+              <% if (not h['cert']['is_ca']) and h['private_key'] %>
+                <option value="<%= name %>"><%= html_escape name %></option>
+              <% end %>
             <% end %>
-          <% end %>
-        </select>
-      </td>
-      <td>
-        <select name="ca">
-          <% if ssl['ca'] %>
-            <% name = ssl['ca']['subject']['CN'] %>
-            <option class="highlight" value="<%= name %>" selected>
-              <%= html_escape name %>
-            </option>
-          <% end %>
-          <% ssl['certs'].each_pair do |name, h| %>
-            <% if h['cert']['is_ca'] %>
-              <option value="<%= name %>"><%= html_escape name %></option>
+          </select>
+        </td>
+        <td>
+          <select name="ca">
+            <% if ssl['ca'] %>
+              <% name = ssl['ca']['subject']['CN'] %>
+              <option style="font-weight:bold;" class="highlight" value="<%= name %>" selected>
+                <%= html_escape name %>
+              </option>
             <% end %>
-          <% end %>
-        </select>
-      </td>
-      <td>
-        <select name="proto">
-          <option selected value="udp">UDP (recommended)</option>
-          <option value="tcp-client">TCP - connect to peer</option>
-          <option disabled value="tcp-server">TCP - wait for connections</option>
-        </select>
-      </td>
-      <td>
-        <input type="text" class="rwtext" name="remote_host" style="text-align:right;"/>
-      </td>
-      <td>
-        <input type="text" class="rwtext" name="remote_port" size="4"/>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+            <% ssl['certs'].each_pair do |name, h| %>
+              <% if h['cert']['is_ca'] %>
+                <option value="<%= name %>"><%= html_escape name %></option>
+              <% end %>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <select name="proto">
+            <option selected value="udp">UDP (recommended)</option>
+            <option disabled value="tcp-client">TCP - connect to peer</option>
+            <option value="tcp-server">TCP - wait for connections</option>
+          </select>
+        </td>
+        <td style="text-align:center;"> 
+          <input type="text" class="rwtext" name="port" size="4" value="1194"/>
+        </td>
+        <td>
+          <input type="text" class="rwtext" name="server_network"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>

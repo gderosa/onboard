@@ -2,6 +2,29 @@ require 'ipaddr'
 
 class IPAddr
 
+  class << self
+    def random(first_or_net, last=nil)
+      if first_or_net.kind_of? String
+        first_or_net = IPAddr.new first_or_net
+      end
+      if last.kind_of? String
+        last = IPAddr.new last
+      end
+      af = first_or_net.family # Socket::AF_INET or Socket::AF_INET6
+      if last
+        first = first_or_net
+      else
+        net   = first_or_net
+        first = net.to_range.first
+        last  = net.to_range.last
+      end
+      IPAddr.new(
+        first.to_i + rand(last.to_i - first.to_i),
+        af
+      )
+    end
+  end
+
   def netmask
     IPAddr.new @mask_addr, @family
   end
