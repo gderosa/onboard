@@ -102,14 +102,6 @@ div#main p {
 	margin-top: 0.3em;
 }
 
-/*
-a:hover .menu1 {
-  text-decoration: none;
-  color: <%= highlight %>;
-  background: white;
-  border: 1px <%= highlight %> solid;
-}
-*/
 div#main pre {
   /* font-size: 11pt; */
   color: <%= highlight %>;
@@ -146,7 +138,7 @@ div#main h2:first-child {
 
 a:hover pre {<%= hover %>}
 
-a:hover div.item {<%= hover %>}
+/* a:hover div.item {<%= hover %>} */
 
 p a:hover {<%= hover %> text-decoration: none; }
 
@@ -180,6 +172,10 @@ table tr th {
 }
 
 table tr th small {
+  font-weight: normal;
+  margin-left: 0.6em;
+}
+table tr th small a {
   font-weight: normal;
 }
 

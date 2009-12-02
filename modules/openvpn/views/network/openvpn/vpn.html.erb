@@ -240,10 +240,22 @@
 <table>
   <thead>
     <tr>
-      <th>Add?</th>
-      <th>SSL Certificate <small style="margin-left:1em;">[<a href="/crypto/easy-rsa.html">more info</a>]</small></th>
-      <th>Certificate Authority</th>
-
+      <th rowspan="3">Add?</th>
+      <th colspan="2">
+        SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
+      </th>
+      <th colspan="3">Real Network</th>
+      <th rowspan="3">Demand Server-type Certificate for the Server?</th>
+    </tr>
+    <tr>
+      <th rowspan="2">Our Certificate</th>
+      <th rowspan="2">Trusted Certificate Authority</th>
+      <th rowspan="2">Protocol</th>
+      <th colspan="2">Server</th>
+    </tr>
+    <tr>
+      <th>IP Address</th>
+      <th>Port</th>
     </tr>
   </thead>
   <tbody>
