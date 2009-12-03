@@ -1,4 +1,5 @@
 <%
+  require 'onboard/extensions/hash'
   require 'onboard/extensions/ipaddr'
   require 'onboard/crypto/ssl'
 
@@ -340,11 +341,25 @@
         </td>
         <td>
           <select name="cert">
-            <% ssl['certs'].each_pair do |name, h| %>
-              <% if (not h['cert']['is_ca']) and h['private_key'] %>
-                <option title="<%= 'WARNING: not a server-type certificate! Not recommended.' unless h['cert']['is_server'] %>" class="<%= 'lowlight' unless h['cert']['is_server'] %>" value="<%= name %>"><%= html_escape name %></option>
+            <% 
+              # ruby1.9 only
+            %>
+            <% 
+              selected = ssl['certs'].select do |k,v| 
+                v['private_key'] and !v['cert']['is_ca']
+              end
+              good, bad = selected.partition_hash {|k,v| v['cert']['is_server']}
+            %>
+            <optgroup label="Server Certificates">
+              <%  good.each_pair do |name, h| %>
+                <option value="<%= name %>"><%= html_escape name %></option>
               <% end %>
-            <% end %>
+            </optgroup>
+            <optgroup title="Don't use them if you're not sure what you're doing!" label="Not server-type Certs.">
+              <% bad.each_pair do |name, h| %>
+                <option class="lowlight" value="<%= name %>"><%= html_escape name %></option>
+              <% end %>
+            </optgroup>
           </select>
         </td>
         <td>
