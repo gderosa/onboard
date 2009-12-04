@@ -1,13 +1,14 @@
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
-autoload :OpenSSL,    'openssl'
-autoload :IPAddr,     'ipaddr'
+autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
+
+require 'onboard/extensions/ipaddr'
+require 'onboard/extensions/openssl'
 
 require 'onboard/system/process'
 require 'onboard/network/interface'
 require 'onboard/network/routing/table'
-
 require 'onboard/network/openvpn/process'
 
 class OnBoard
@@ -91,14 +92,13 @@ class OnBoard
         def self.all_cached; @@all_vpn; end
 
         def self.start_from_HTTP_request(params)
-          return
           reserve_a_tcp_port = TCPServer.open('127.0.0.1', 0)
           reserved_tcp_port = reserve_a_tcp_port.addr[1] 
-          wd = '/'
           cmdline = []
           cmdline << 'openvpn'
+          cmdline << '--management' << '127.0.0.1' << reserved_tcp_port.to_s
           cmdline << '--daemon'
-          # cmdline << '--log' << "/var/log/onboard-openvpn-#{id}.log" # TODO
+          cmdline << '--log' << "/var/log/ovpn-#{UUID.generate}.log" # TODO
           cmdline << '--ca' << case params['ca']
               when '__default__'
                 Crypto::SSL::CACERT
@@ -107,11 +107,22 @@ class OnBoard
               end
           cmdline << '--cert' << 
               "'#{Crypto::SSL::CERTDIR}/#{params['cert']}.crt'"
+          keyfile = "#{Crypto::SSL::KEYDIR}/#{params['cert']}.key"
+          key = OpenSSL::PKey::RSA.new File.read keyfile
+          dh = "#{Crypto::SSL::DIR}/dh#{key.size}.pem"
+          cmdline << '--key' << "'#{keyfile}'" 
+          cmdline << '--dev' << 'tun'
           if params['server_net']
-
+            net = IPAddr.new params['server_net']
+            cmdline << '--server' << net.to_s << net.netmask.to_s
+            cmdline << '--port' << params['port'].to_s
+            cmdline << '--dh' << dh # Diffie Hellman params :-)
           end
           reserve_a_tcp_port.close
-          # execute cmdline
+          return System::Command.run <<EOF
+cd /
+sudo -E #{cmdline.join(' ')} # -E is important!
+EOF
         end
 
         def self.modify_from_HTTP_request(params) 
@@ -147,7 +158,7 @@ class OnBoard
           }
           @data = {'running' => h[:running]} 
           @data['portable_id'] = @data_internal['process'].portable_id 
-          parse_conffile()
+          parse_conffile() if File.file? @data_internal['conffile'] # regular
           parse_conffile(:text => cmdline2conf())  
           if @data['server']
             if @data_internal['status'] 
@@ -291,7 +302,7 @@ class OnBoard
             begin
               text = File.read conffile 
             rescue
-              @data['err'] = "couldn't open config file"
+              @data['err'] = "couldn't open config file: '#{conffile}'"
               if @data_internal['conffile'] =~ /\S/
                 @data['err'] << " '#{@data_internal['conffile']}'"
               end

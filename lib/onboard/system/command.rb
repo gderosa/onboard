@@ -8,7 +8,11 @@ class OnBoard
       def self.bgexec(cmd, *opts)
         msg = {:background => true}
         if opts.include? :sudo and ::Process.uid != 0
+          if opts.include? :keepenv
+            cmd_do = 'sudo -E ' + cmd
+          else
             cmd_do = 'sudo ' + cmd
+          end
         else
           cmd_do = cmd
         end
@@ -40,7 +44,11 @@ class OnBoard
 
       def self.run(cmd, *opts)
         if opts.include? :sudo and ::Process.uid != 0
+          if opts.include? :keepenv
+            cmd_do = 'sudo -E ' + cmd
+          else
             cmd_do = 'sudo ' + cmd
+          end
         else
           cmd_do = cmd
         end
