@@ -113,11 +113,20 @@ class OnBoard
           dh = "#{Crypto::SSL::DIR}/dh#{key.size}.pem"
           cmdline << '--key' << "'#{keyfile}'" 
           cmdline << '--dev' << 'tun'
+          cmdline << '--proto' << params['proto']
           if params['server_net']
             net = IPAddr.new params['server_net']
             cmdline << '--server' << net.to_s << net.netmask.to_s
             cmdline << '--port' << params['port'].to_s
+            cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
             cmdline << '--dh' << dh # Diffie Hellman params :-)
+          elsif params['remote_host']
+            cmdline << 
+                '--client' << '--persist-key' << '--persist-tun' << '--nobind'
+            cmdline << 
+                '--remote' << params['remote_host'] << params['remote_port']
+            cmdline << '--ns-cert-type' << 'server' if 
+                params['ns-cert-type_server'] =~ /on|yes|true/
           end
           reserve_a_tcp_port.close
           return System::Command.run <<EOF
