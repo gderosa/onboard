@@ -98,7 +98,8 @@ class OnBoard
           cmdline << 'openvpn'
           cmdline << '--management' << '127.0.0.1' << reserved_tcp_port.to_s
           cmdline << '--daemon'
-          cmdline << '--log' << "/var/log/ovpn-#{UUID.generate}.log" # TODO
+          logfile = "/var/log/ovpn-#{UUID.generate}.log" 
+          cmdline << '--log-append' << logfile
           cmdline << '--ca' << case params['ca']
               when '__default__'
                 Crypto::SSL::CACERT
@@ -120,6 +121,9 @@ class OnBoard
           end
           reserve_a_tcp_port.close
           return System::Command.run <<EOF
+sudo touch #{logfile}
+sudo chown :onboard #{logfile}
+sudo chmod g+r #{logfile}
 cd /
 sudo -E #{cmdline.join(' ')} # -E is important!
 EOF
