@@ -18,6 +18,8 @@
   }
 </style>
 
+<pre><%= html_escape params.pretty_inspect %></pre>
+
 <h2>VPN</h2>
 
   <%=
@@ -366,7 +368,7 @@
           <select name="ca">
             <% if ssl['ca'] %>
               <% name = ssl['ca']['subject']['CN'] %>
-              <option style="font-weight:bold;" class="highlight" value="<%= name %>" selected>
+              <option style="font-weight:bold;" class="highlight" value="__default__" selected>
                 <%= html_escape name %>
               </option>
             <% end %>

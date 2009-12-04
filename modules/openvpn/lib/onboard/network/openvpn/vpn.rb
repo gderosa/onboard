@@ -90,6 +90,30 @@ class OnBoard
 
         def self.all_cached; @@all_vpn; end
 
+        def self.start_from_HTTP_request(params)
+          return
+          reserve_a_tcp_port = TCPServer.open('127.0.0.1', 0)
+          reserved_tcp_port = reserve_a_tcp_port.addr[1] 
+          wd = '/'
+          cmdline = []
+          cmdline << 'openvpn'
+          cmdline << '--daemon'
+          # cmdline << '--log' << "/var/log/onboard-openvpn-#{id}.log" # TODO
+          cmdline << '--ca' << case params['ca']
+              when '__default__'
+                Crypto::SSL::CACERT
+              else
+                "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crt'"
+              end
+          cmdline << '--cert' << 
+              "'#{Crypto::SSL::CERTDIR}/#{params['cert']}.crt'"
+          if params['server_net']
+
+          end
+          reserve_a_tcp_port.close
+          # execute cmdline
+        end
+
         def self.modify_from_HTTP_request(params) 
           vpn = nil
           if    params['portable_id'] and params['portable_id'] =~ /\S/

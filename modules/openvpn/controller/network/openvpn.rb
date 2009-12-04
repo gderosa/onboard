@@ -20,6 +20,17 @@ class OnBoard::Controller < Sinatra::Base
     )
   end
 
+  post '/network/openvpn.:format' do
+    OnBoard::Network::OpenVPN::VPN.start_from_HTTP_request(params)
+    vpns = OnBoard::Network::OpenVPN::VPN.getAll()
+    format(
+      :module => 'openvpn',
+      :path => '/network/openvpn/vpn',
+      :format => params[:format],
+      :objects  => vpns
+    )
+  end
+
   put '/network/openvpn.:format' do
     vpns = OnBoard::Network::OpenVPN::VPN.getAll()
     msg = OnBoard::Network::OpenVPN::VPN.modify_from_HTTP_request(params) 
