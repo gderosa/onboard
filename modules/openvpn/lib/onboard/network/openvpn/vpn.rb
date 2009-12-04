@@ -123,7 +123,7 @@ class OnBoard
           return System::Command.run <<EOF
 sudo touch #{logfile}
 sudo chown :onboard #{logfile}
-sudo chmod g+r #{logfile}
+sudo chmod g+rw #{logfile}
 cd /
 sudo -E #{cmdline.join(' ')} # -E is important!
 EOF
@@ -205,11 +205,19 @@ EOF
           end          
         end
 
-        def stop          
+        def stop(*opts)
           msg = ''
           if @data['running'] # TODO?: these are 'cached' data... "update"?
             msg = System::Command.run(
                "kill #{@data_internal['process'].pid}", :sudo)
+          end
+          if opts.include? :rmlog
+            if @data_internal['log'] and File.exists? @data_internal['log'] 
+              System::Command.run "rm #{@data_internal['log']}", :sudo
+            end
+            if @data_internal['log-append'] and File.exists? @data_internal['log-append']
+              System::Command.run "rm #{@data_internal['log-append']}", :sudo
+            end
           end
           return msg
         end
