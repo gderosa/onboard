@@ -31,11 +31,12 @@ class OnBoard
           'htmldesc'=> "&ldquo;daemon&rdquo; log",
           'category'=> 'os'
         }
-      ]
+      ] unless class_variable_defined? :@@logs
+
       @@categories = {
         'main'      => "Main logs",
         'os'        => "OS logs"
-      }
+      } unless class_variable_defined? :@@categories
 
       def self.getAll
         @@logs
@@ -51,6 +52,14 @@ class OnBoard
       
       def self.data
         {'logs' => @@logs, 'categories' => @@categories} 
+      end
+
+      def self.register(new_h)
+        @@logs << new_h unless @@logs.detect {|h| h['id'] == new_h['id']} 
+      end
+
+      def self.register_category(name, description)
+        @@categories[name] = description
       end
 
       attr_reader :meta
@@ -71,21 +80,7 @@ class OnBoard
         }  
       end
 
-
-=begin
-      # NOTE: Thanks to Brian Campbell for this:
-      #   http://stackoverflow.com/questions/754494/reading-the-last-n-lines-of-a-file-in-ruby/754511#754511
-      def tail(n=Tail_n)
-        (lines.length > n) ? lines[-n..-1] : lines 
-      end
-
-      def lines
-        filename = @meta['path']
-        IO.readlines(filename)
-      end
-=end
-
-      # An alternative solution that aims at not wasting system RAM anymore.
+      # Native Unix tools are faster, so use them!
       def tail(n=Tail_n)
         if File.readable? @meta['path']
           return `tail -n #{n} #{@meta['path']}`
@@ -95,7 +90,7 @@ class OnBoard
       end
 
       # It doesn't make much sense to embed the content of a whole log file
-      # into a JSON or YAML or a web page; an human or a machine may go to 
+      # into JSON, YAML or HTML; a human or a machine may go to 
       # data['content_uri'] and simply download it
 
     end

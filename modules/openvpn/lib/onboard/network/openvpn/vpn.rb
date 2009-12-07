@@ -11,10 +11,14 @@ require 'onboard/network/interface'
 require 'onboard/network/routing/table'
 require 'onboard/network/openvpn/process'
 
+autoload :Log,        'onboard/system/log'
+
 class OnBoard
   module Network
     module OpenVPN
       class VPN
+
+        System::Log.register_category 'openvpn', 'OpenVPN'
 
         def self.save
           @@all_vpn = getAll() unless (
@@ -144,6 +148,11 @@ cd /
 sudo -E #{cmdline.join(' ')} # -E is important!
 EOF
           msg[:log] = logfile
+          System::Log.register({
+            'path'      => logfile,
+            'id'        => (File.basename(logfile)),
+            'category'  => 'openvpn'
+          })
           return msg
         end
 
@@ -230,11 +239,10 @@ EOF
                "kill #{@data_internal['process'].pid}", :sudo)
           end
           if opts.include? :rmlog
-            if @data_internal['log'] and File.exists? @data_internal['log'] 
-              System::Command.run "rm #{@data_internal['log']}", :sudo
-            end
-            if @data_internal['log-append'] and File.exists? @data_internal['log-append']
-              System::Command.run "rm #{@data_internal['log-append']}", :sudo
+            logfile = @data_internal['log'] || @data_internal['log-append']
+            if File.exists? logfile
+              System::Command.run "rm #{logfile}", :sudo
+              System::Log.all.delete_if { |h| h['path'] == logfile }
             end
           end
           return msg
