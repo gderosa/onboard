@@ -112,17 +112,24 @@ class OnBoard
           key = OpenSSL::PKey::RSA.new File.read keyfile
           dh = "#{Crypto::SSL::DIR}/dh#{key.size}.pem"
           cmdline << '--key' << "'#{keyfile}'" 
+          crlfile = case params['ca']
+          when '__default__'
+            Crypto::EasyRSA::CRL
+          else
+            "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crl'"
+          end
+          cmdline << '--crl-verify' << crlfile if File.exists? crlfile
           cmdline << '--dev' << 'tun'
           cmdline << '--proto' << params['proto']
-          if params['server_net']
+          if params['server_net'] # it's a server
             net = IPAddr.new params['server_net']
             cmdline << '--server' << net.to_s << net.netmask.to_s
             cmdline << '--port' << params['port'].to_s
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
             cmdline << '--dh' << dh # Diffie Hellman params :-)
-          elsif params['remote_host']
+          elsif params['remote_host'] # it's a client
             cmdline << 
-                '--client' << '--persist-key' << '--persist-tun' << '--nobind'
+                '--client' << '--persist-tun' << '--nobind'
             cmdline << 
                 '--remote' << params['remote_host'] << params['remote_port']
             cmdline << '--ns-cert-type' << 'server' if 

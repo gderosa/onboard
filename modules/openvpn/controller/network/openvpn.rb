@@ -80,6 +80,7 @@ class OnBoard::Controller < Sinatra::Base
     if vpn 
       vpn.stop(:rmlog) 
       OnBoard::Network::OpenVPN::VPN.all_cached.delete vpn
+      sleep 0.3 # diiirty!
       redirection = "/network/openvpn.#{params[:format]}"
       status(303)                       # HTTP "See Other"
       headers('Location' => redirection)
