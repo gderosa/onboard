@@ -23,6 +23,7 @@ class OnBoard::Controller < Sinatra::Base
   post '/network/openvpn.:format' do
     msg = OnBoard::Network::OpenVPN::VPN.start_from_HTTP_request(params)
     vpns = OnBoard::Network::OpenVPN::VPN.getAll()
+    status(409) unless msg[:ok] # HTTP Conflict
     format(
       :module => 'openvpn',
       :path => '/network/openvpn/vpn',

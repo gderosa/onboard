@@ -129,13 +129,15 @@ class OnBoard
                 params['ns-cert-type_server'] =~ /on|yes|true/
           end
           reserve_a_tcp_port.close
-          return System::Command.run <<EOF
+          msg = System::Command.run <<EOF
 sudo touch #{logfile}
 sudo chown :onboard #{logfile}
 sudo chmod g+rw #{logfile}
 cd /
 sudo -E #{cmdline.join(' ')} # -E is important!
 EOF
+          msg[:log] = logfile
+          return msg
         end
 
         def self.modify_from_HTTP_request(params) 

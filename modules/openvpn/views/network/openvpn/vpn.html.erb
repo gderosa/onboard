@@ -1,9 +1,13 @@
 <%
+  autoload :UUID, 'uuid'
+
   require 'onboard/extensions/hash'
   require 'onboard/extensions/ipaddr'
   require 'onboard/crypto/ssl'
 
   ssl = OnBoard::Crypto::SSL.getAll
+
+
 %>
 
 <style type="text/css">
@@ -14,13 +18,11 @@
     display: inline;
   }
   select {
-    width: 98%; /* 100% breaks borders in (some versions of) Firefox */
+    width: 98%; /* 100% breaks borders in (some versions of?) Firefox */
   }
 </style>
 
-<pre><%= html_escape params.pretty_inspect %></pre>
-
-<h2>VPN</h2>
+<h2>OpenVPN</h2>
 
   <%=
     erb(
@@ -39,6 +41,7 @@
 <%
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
 %>
+<h3>Running VPNs</h3>
 <table>
   <thead>
     <tr>
@@ -79,7 +82,7 @@
       </th>
     </tr>
     <tr>
-      <th>IP Address</th>
+      <th>Host</th>
       <th>Port</th>
     </tr>
   </thead>
@@ -297,8 +300,8 @@
           </select>
         </td>
         <td>
-          <select name="proto" style="width:13em;">
-            <option selected value="udp">UDP (recommended)</option>
+          <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto" style="">
+            <option selected value="udp">UDP</option>
             <option value="tcp-client">TCP - connect to peer</option>
             <option disabled value="tcp-server">TCP - wait for connections</option>
           </select>
@@ -358,7 +361,7 @@
                 <option value="<%= name %>"><%= html_escape name %></option>
               <% end %>
             </optgroup>
-            <optgroup title="Don't use them if you're not sure what you're doing!" label="Not server-type Certs.">
+            <optgroup title="Not recommended for a VPN server!" label="Not server-type Certs.">
               <% bad.each_pair do |name, h| %>
                 <option class="lowlight" value="<%= name %>"><%= html_escape name %></option>
               <% end %>

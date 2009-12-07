@@ -66,8 +66,9 @@ class OnBoard
           # if we know how to safely handle an error, treat errors as 
           # something smaller
           error_as = (opts.include?(:try) ? :warn : :error)
-          LOGGER.method(error_as).call(
-            "Command \"#{cmd}\" failed (#{wait_thr.value})")
+          errmsg = "Command \"#{cmd}\" failed (#{wait_thr.value})"
+          LOGGER.method(error_as).call(errmsg)
+          msg[:err] = errmsg unless opts.include?(:try)
           msg[:stderr].each_line do |line|
             line.strip!
             LOGGER.method(error_as).call line if line =~ /\S/

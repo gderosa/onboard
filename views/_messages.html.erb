@@ -18,7 +18,7 @@
         <pre><%= html_escape msg[:stderr].strip %></pre>
       </div>
     <% elsif not msg[:ok] and msg[:err] =~ /\S/ %>
-     <div class="error"><%= msg[:err] %></div>
+     <pre class="error"><%= html_escape msg[:err] %></pre>
     <% elsif not msg[:ok] and msg[:warn] =~ /\S/ %>
       <div class="warn"><%= msg[:warn] %></div>
     <% end %>
