@@ -415,36 +415,41 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end
 
             %w{ca cert}.each do |optname|
-              if line =~ /^\s*#{optname}\s+(\S+)\s*$/
-                begin
-                  c = OpenSSL::X509::Certificate.new(File.read find_file($1))
-                  @data_internal[optname] = c
+              if line =~ /^\s*#{optname}\s+(\S+)\s*$/ 
+                if file = find_file($1)
+                  begin
+                    c = OpenSSL::X509::Certificate.new(File.read file)
+                    @data_internal[optname] = c
 
-                  # NOTE: this is a 'lossy' conversion (name_val_type[2] is lost)
-                  # I guess we won't need the "type" "field".
-                  #
-                  # c.issuer.to_a and c.subject.to_a are Arrays made up of
-                  # Arrays of three elements each
-                  issuer__to_h = {}
-                  c.issuer.to_a.each do |name_val_type|
-                    issuer__to_h[name_val_type[0]] = name_val_type[1]
+                    # NOTE: this is a 'lossy' conversion (name_val_type[2] is lost)
+                    # I guess we won't need the "type" "field".
+                    #
+                    # c.issuer.to_a and c.subject.to_a are Arrays made up of
+                    # Arrays of three elements each
+                    issuer__to_h = {}
+                    c.issuer.to_a.each do |name_val_type|
+                      issuer__to_h[name_val_type[0]] = name_val_type[1]
+                    end
+                    subject__to_h = {}
+                    c.subject.to_a.each do |name_val_type|
+                      subject__to_h[name_val_type[0]] = name_val_type[1] 
+                    end
+                    @data[optname] = {
+                      'serial'      => c.serial.to_i,
+                      'issuer'      => issuer__to_h,
+                      'subject'     => subject__to_h,
+                      'not_before'  => c.not_before,
+                      'not_after'   => c.not_after
+                    }
+                  rescue OpenSSL::X509::CertificateError
+                    @data_internal[optname] = $!
+                    @data[optname] = {'err' => $!.to_s} 
                   end
-                  subject__to_h = {}
-                  c.subject.to_a.each do |name_val_type|
-                    subject__to_h[name_val_type[0]] = name_val_type[1] 
-                  end
-                  @data[optname] = {
-                    'serial'      => c.serial.to_i,
-                    'issuer'      => issuer__to_h,
-                    'subject'     => subject__to_h,
-                    'not_before'  => c.not_before,
-                    'not_after'   => c.not_after
-                  }
-                rescue OpenSSL::X509::CertificateError
-                  @data_internal[optname] = $!
-                  @data[optname] = {'err' => $!.to_s} 
+                  next
+                else
+                  @data_internal[optname] = Errno::ENOENT
+                  @data[optname] = {'err' => "File not found: #{$1}"}
                 end
-                next
               end
             end
 
