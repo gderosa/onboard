@@ -133,7 +133,7 @@ class OnBoard
             cmdline << '--dh' << dh # Diffie Hellman params :-)
           elsif params['remote_host'] # it's a client
             cmdline << 
-                '--client' << '--persist-tun' << '--nobind'
+                '--client' << '--nobind'
             cmdline << 
                 '--remote' << params['remote_host'] << params['remote_port']
             cmdline << '--ns-cert-type' << 'server' if 
@@ -150,8 +150,8 @@ EOF
           msg[:log] = logfile
           System::Log.register({
             'path'      => logfile,
-            'id'        => (File.basename(logfile)),
-            'category'  => 'openvpn'
+            'category'  => 'openvpn',
+            'hidden'    => true
           })
           return msg
         end
@@ -398,7 +398,14 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             %w{key dh ifconfig-pool-persist status status-version log log-append}.each do |optname|
               if line =~ /^\s*#{optname}\s+(\S+)\s*$/
                 @data_internal[optname] = $1
-                # puts line + '|' + optname + '|' + $1
+                if optname == 'log' or optname == 'log-append'
+                  logfile = find_file $1
+                  System::Log.register({
+                      'path' => logfile, 
+                      'category' => 'openvpn',
+                      'hidden' => false
+                  })
+                end
                 next
               end
             end

@@ -2,13 +2,17 @@
   <h2>Logs</h2>
   <% logs = objects %>
   <% logs.categories.each_pair do |k, v| %>
-    <% ary = logs.all.select {|h| h['category'] == k} %>
-    <h3><%= v %></h3>
-    <ul>
-    <% ary.each do |logh| %>
-      <li><a href="logs/<%= logh['id'] %>.html"><%= logh['path'] %></a></li>
+    <% ary = logs.all.select {|h| h['category'] == k and not h['hidden']} %>
+    <% if ary.length > 0 %>
+      <h3><%= v %></h3>
+      <ul>
+      <% ary.each do |logh| %>
+        <li>
+          <a href="logs/<%= logh['id'] or url_encode(logh['path']) %>.html"><%= logh['path'] %></a>
+        </li>
+      <% end %>
+      </ul>
     <% end %>
-    </ul>
   <% end %>
 
 <% elsif objects.class == OnBoard::System::Log %>
@@ -17,11 +21,11 @@
   <pre class="log"><%= log.data['tail'] %></pre>
   <p>
     <% if log.data['tail'].count("\n") < log.class::Tail_n %>
-      Click <a href="<%= log.data['meta']['id'] %>.raw">here</a> to download
+      Click <a href="<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download
       the file.
     <% else %>
       Only the last <%= log.class::Tail_n.to_s %> lines were shown. Click
-      <a href="<%= log.data['meta']['id'] %>.raw">here</a> to download 
+      <a href="<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download 
       the whole file. 
     <% end %>
   </p>

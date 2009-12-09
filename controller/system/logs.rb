@@ -24,6 +24,7 @@ class OnBoard::Controller
     end
   end
 
+  # by id
   get "/system/logs/:logid.:format" do
     hash = OnBoard::System::Log.getAll.detect {|h| h['id'] == params['logid']}
     not_found if not hash
@@ -33,6 +34,34 @@ class OnBoard::Controller
       :format   => params[:format],
       :objects  => log
     )
+  end
+
+  # by path ## url_encode-ing is suggested to not confuse navbar
+  # example: /system/logs/%2Fvar%2Flog%2Fmessages.html
+  get %r{^/system/logs/(.*)\.([\w\d]+)$} do
+    path, fmt = params[:captures]
+    hash = OnBoard::System::Log.getAll.detect {|h| h['path'] == path}
+    not_found if not hash
+    log = OnBoard::System::Log.new(hash)
+    if fmt == 'raw'
+      attachment(File.basename path)
+      content_type 'text/plain'
+      send_file path
+    else
+      format(
+        :path     => 'system/logs',
+        :format   => fmt,
+        :objects  => log
+      )
+    end
+=begin
+    "
+<pre>
+    \"#{path}\"
+    \"#{fmt}\"
+</pre>
+    "
+=end
   end
 
 end

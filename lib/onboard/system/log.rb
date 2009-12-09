@@ -3,6 +3,10 @@ class OnBoard
     class Log
       Tail_n = 25 # show the last Tail_n number of lines in HTML, JSON, YAML
 
+      # badly designed class, too much hashes...
+      # 'id' is not really an id, just a shortcut. We're moving to
+      # a path-based identification, and now h['id'] may also be nil 
+
       # TODO: do not hardcode
       @@logs = [
         {
@@ -55,7 +59,12 @@ class OnBoard
       end
 
       def self.register(new_h)
-        @@logs << new_h unless @@logs.detect {|h| h['id'] == new_h['id']} 
+        if old_h = @@logs.detect {|h| h['path'] == new_h['path']}
+          pp old_h
+          old_h = new_h # update
+        else
+          @@logs << new_h 
+        end 
       end
 
       def self.register_category(name, description)
