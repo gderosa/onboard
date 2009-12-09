@@ -11,19 +11,23 @@
       <% end %>
     </div>
   <% end %>
-  <% begin %>
-    <% if not msg[:ok] and msg[:stderr] =~ /\S/ %>
+  <% if not msg[:ok] %>
+    <% if msg[:stderr] =~ /\S/ %>
       <div class="error">
         <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
         <pre><%= html_escape msg[:stderr].strip %></pre>
       </div>
-    <% elsif not msg[:ok] and msg[:err] =~ /\S/ %>
-     <pre class="error"><%= html_escape msg[:err] %></pre>
-    <% elsif not msg[:ok] and msg[:warn] =~ /\S/ %>
+    <% elsif msg[:log] %>
+      <div class="error">
+        Something went wrong. 
+<a href="/system/logs/<%= url_encode msg[:log] %>.html">Check the log</a> 
+        for more details.
+      </div>
+    <% elsif msg[:err] =~ /\S/ %>
+      <pre class="error"><%= html_escape msg[:err] %></pre>
+    <% elsif msg[:warn] =~ /\S/ %>
       <div class="warn"><%= msg[:warn] %></div>
     <% end %>
-  <% rescue %>
-    <% pp msg %>
   <% end %>
 <% end %>
 

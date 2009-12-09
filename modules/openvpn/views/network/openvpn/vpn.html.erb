@@ -22,19 +22,18 @@
 
 <h2>OpenVPN</h2>
 
-  <%=
-    erb(
-      :"/_messages.html",
-      {
-        :layout => false,
-        :locals => {
-          :msg => msg,
-          :status => status
-        }
+<%=
+  erb(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg => msg,
+        :status => status
       }
-    )
-  %>
-
+    }
+  )
+%>
 
 <%
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
