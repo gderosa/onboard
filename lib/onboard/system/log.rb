@@ -59,12 +59,14 @@ class OnBoard
       end
 
       def self.register(new_h)
-        if old_h = @@logs.detect {|h| h['path'] == new_h['path']}
-          pp old_h
-          old_h = new_h # update
-        else
-          @@logs << new_h 
-        end 
+        # "create or replace"
+        @@logs.each_with_index do |old_h, i| 
+          if old_h['path'] == new_h['path']
+            @@logs[i] = new_h
+            return
+          end
+        end
+        @@logs << new_h
       end
 
       def self.register_category(name, description)
