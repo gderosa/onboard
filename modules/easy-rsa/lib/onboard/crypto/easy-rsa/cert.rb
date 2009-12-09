@@ -55,7 +55,7 @@ cd #{SCRIPTDIR}
 export CACERT=#{SSL::CACERT}
 export CAKEY=#{SSL::CAKEY}
 export KEY_SIZE=#{params['key_size']}
-export CA_EXPIRE=#{params['days']}
+export KEY_EXPIRE=#{params['days']}
 export KEY_COUNTRY="#{params['C']}"
 export KEY_PROVINCE="#{params['ST']}"
 export KEY_CITY="#{params['L']}"
