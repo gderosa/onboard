@@ -90,6 +90,9 @@ class OnBoard
               :running  => true
             ).add_to_the_pool
           end
+          @@all_vpn.each_with_index do |vpn,i|
+            vpn.data['human_index'] = i + 1
+          end
           return @@all_vpn
         end
 
@@ -181,6 +184,7 @@ EOF
         end
 
         attr_reader :data
+        attr_writer :data
 
         def initialize(h) 
           @data_internal = {

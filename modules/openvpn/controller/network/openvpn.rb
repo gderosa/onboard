@@ -70,6 +70,36 @@ class OnBoard
     # (though converted to a String) while the latter is a longer string
     # (hex md5 hash).
     #
+    get '/network/openvpn/vpn/:vpn_identifier.:format' do
+      vpn = nil
+      human_index = nil
+      all = OnBoard::Network::OpenVPN::VPN.getAll()
+      # Lookup: 
+      vpn = all.detect {|x| 
+        x.data['portable_id'] == params[:vpn_identifier] or
+        x.data['human_index'].to_s == params[:vpn_identifier]
+      } 
+      # 
+      if vpn 
+        format(
+          :module   => 'openvpn',
+          :path     => '/network/openvpn/vpn/advanced',
+          :format   => params[:format],
+          :objects  => vpn
+        )      
+      else
+        not_found
+      end
+    end
+
+    # :vpnid may be an incremental index (@@all_vpn array index +1) 
+    # OR
+    # a "portable_id" (a more robust way to identify a VPN) 
+    #
+    # There shouldn't be collisions since the former is a very short integer
+    # (though converted to a String) while the latter is a longer string
+    # (hex md5 hash).
+    #
     delete '/network/openvpn/vpn/:vpn_identifier.:format' do
       vpn = nil
       all = OnBoard::Network::OpenVPN::VPN.getAll()
