@@ -1,4 +1,8 @@
 <% 
+  # not just DNAT, also REDIRECT target
+%>
+
+<% 
   require 'pp'
 
   require 'onboard/network/interface'
@@ -16,7 +20,7 @@
     text-align: center;
   }
 </style>
-<h2>Port Forwarding/&ldquo;Virtual Server&rdquo;</h2>
+<h2>Port Forwarding</h2>
 
   <%=
     erb(
@@ -187,11 +191,18 @@
       </tr>
     </tbody>
   </table>
+  <h4>Action</h4>
+  <fieldset>
+    <input type="radio" name="target" value="DNAT" selected>
+      DNAT (Virtual Server)
+    <input type="radio" name="target" value="REDIRECT"/>
+      REDIRECT (Transparent Proxy)
+  </fieldset>
   <h4>Forward to:</h4>
   <table>
     <thead>
       <tr>
-        <th>Address</th>
+        <th>Address (DNAT only)</th>
         <th>Port</th>
       </tr>
     </thead>

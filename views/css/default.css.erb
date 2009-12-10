@@ -64,6 +64,10 @@ div#main input.rotext {
   background: <%= lightbg %>;
 }
 
+input[type="radio"] {
+  vertical-align: bottom;
+}
+
 code {
   font-family: monospace;
   font-style: normal;
@@ -175,11 +179,19 @@ table {
 
 table tr th {
   border:0; 
-  font-weight: bold; 
-  font-size:80%; 
   text-align: center;
-  background: <%= lightbg %>;
   padding: 0 1em;
+}
+
+table tr th, fieldset {
+  font-size:80%;
+  font-weight: bold;
+  background: <%= lightbg %>;
+}
+
+fieldset {
+  border: none;
+  display: inline;
 }
 
 table tr th small {
@@ -218,4 +230,5 @@ ul li ul li {
   /* font-style: italic; */
   font-size: 92%;
 }
+
 
