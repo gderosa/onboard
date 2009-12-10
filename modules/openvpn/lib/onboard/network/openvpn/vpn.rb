@@ -448,7 +448,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   next
                 else
                   @data_internal[optname] = Errno::ENOENT
-                  @data[optname] = {'err' => "File not found: #{$1}"}
+                  @data[optname] = {'err' => "File not found or not readable: #{$1}"}
                 end
               end
             end
