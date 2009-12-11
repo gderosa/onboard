@@ -161,7 +161,6 @@
           </select>
         </td>
         <input type="hidden" name="chain" value="PREROUTING"/>
-        <input type="hidden" name="jump-target" value="DNAT"/>
         <td>
           <select name="input_iface">
             <option value=""></option>
@@ -193,9 +192,9 @@
   </table>
   <h4>Action</h4>
   <fieldset>
-    <input type="radio" name="target" value="DNAT" checked />
+    <input type="radio" name="jump-target" value="DNAT" checked />
       <span style="vertical-align:middle;">DNAT (Virtual Server)</span>
-    <input type="radio" name="target" value="REDIRECT"/>
+    <input type="radio" name="jump-target" value="REDIRECT"/>
       <span style="vertical-align:middle;">REDIRECT (Transparent Proxy)</span>
   </fieldset>
   <h4>Forward to:</h4>

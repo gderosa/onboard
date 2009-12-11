@@ -44,12 +44,16 @@ class OnBoard
             params["mac_source"]    =~ /\S/             
         str << "-m state --state "    << params["state"].join(",")  << ' ' if
             params["state"].respond_to? :join and params["state"].length > 0
-        if params['to-destination_addr'] =~ /\S/
-          str << "--to-destination " << params['to-destination_addr']
-          if params['to-destination_port'] =~ /\S/
-            str << ':' << params['to-destination_port']
-          else
-            str << ' '
+        if params['jump-target'] == 'REDIRECT'
+          str << "--to-ports " << params['to-destination_port']
+        else
+          if params['to-destination_addr'] =~ /\S/ or params['to-destination_port'] =~ /\S/
+            str << "--to-destination " << params['to-destination_addr'].strip
+            if params['to-destination_port'] =~ /\S/
+              str << ':' << params['to-destination_port']
+            else
+              str << ' '
+            end
           end
         end
         msg = OnBoard::System::Command.run str, :sudo
