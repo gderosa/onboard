@@ -18,15 +18,7 @@
 <% elsif objects.class == OnBoard::System::Log %>
   <% log = objects %>
   <h2>Log: <%= log.data['meta']['path'] %></h2>
-  <pre class="log"><%= log.data['tail'] %></pre>
-  <p>
-    <% if log.data['tail'].count("\n") < log.class::Tail_n %>
-      Click <a href="<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download
-      the file.
-    <% else %>
-      Only the last <%= log.class::Tail_n.to_s %> lines were shown. Click
-      <a href="<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download 
-      the whole file. 
-    <% end %>
-  </p>
+  <%= 
+      erb(:"system/_log.html", :layout => false, :locals => {:log => log})  
+  %>
 <% end %>
