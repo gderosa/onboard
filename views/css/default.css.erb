@@ -38,6 +38,7 @@ div#sidebar ul {
 
 div#navbar {
   font-style: italic;
+  margin-top: 0.3em;
 }
 
 div#main {
@@ -65,12 +66,16 @@ div#main input.rotext {
 }
 
 input[type="radio"] {
-  vertical-align: bottom;
+  vertical-align: middle; 
 }
 
 code {
   font-family: monospace;
   font-style: normal;
+}
+
+em {
+  margin-right: 0.3ex;
 }
 
 div#main .error, div#main .warn, div#main .info {
@@ -95,8 +100,6 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 .error  {border: 1px red dashed;}
 .warn   {border: 1px yellow solid;}
 .info   {border: 1px #4b0 dotted;}
-
-
 
 strong {
   font-size: 107%;
@@ -160,10 +163,6 @@ a:hover {
   background: <%= highlight %>;
 }
 
-a.img {
-  background: transparent;
-}
-
 a img {
   border: none;
 }
@@ -200,12 +199,6 @@ table tr th small {
   padding: 0;
 }
 
-/*
-table tr th small a {
-  font-weight: normal;
-}
-*/
-
 table tr th[scope="row"] {
   text-align: left;
 }
@@ -227,7 +220,6 @@ table tr td button img {
 }
 
 ul li ul li {
-  /* font-style: italic; */
   font-size: 92%;
 }
 

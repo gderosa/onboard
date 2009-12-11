@@ -74,7 +74,8 @@ class OnBoard
               params['certificate'][:tempfile].read
           )
           cn = cert.to_h['subject']['CN']
-          fail 'Cannot find subject\'s Common Name' if not cn
+          raise Crypto::SSL::ArgumentError,
+              'Cannot find subject\'s Common Name' if not cn
           cn_escaped = cn.gsub('/', Crypto::SSL::SLASH_FILENAME_ESCAPE)
           target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crt"
           if File.readable? target # already exists
@@ -99,7 +100,7 @@ class OnBoard
               f.write cert.to_s # the certificate itself between BEGIN-END tags
             end
           end
-        rescue OpenSSL::X509::CertificateError
+        rescue OpenSSL::X509::CertificateError, Crypto::SSL::ArgumentError
           status(400)
           msg = {:ok => false, :err => $!}
         end
