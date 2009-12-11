@@ -4,8 +4,8 @@
   vpn = objects
   log = OnBoard::System::Log.new({'path' => vpn.logfile}) 
 %>
-<h2>VPN details</h2>
-<h3>VPN log</h3>
+<h2>VPN<%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details</h2>
+<h3><span class="product-name">OpenVPN</span> log</h3>
 <%=
   erb(:"system/_log.html", :layout => false, :locals => {:log => log})
 %>

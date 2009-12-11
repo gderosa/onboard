@@ -99,14 +99,17 @@ class OnBoard
         def self.all_cached; @@all_vpn; end
 
         def self.start_from_HTTP_request(params)
+          uuid = UUID.generate
           reserve_a_tcp_port = TCPServer.open('127.0.0.1', 0)
           reserved_tcp_port = reserve_a_tcp_port.addr[1] 
           cmdline = []
           cmdline << 'openvpn'
           cmdline << '--management' << '127.0.0.1' << reserved_tcp_port.to_s
           cmdline << '--daemon'
-          logfile = "/var/log/ovpn-#{UUID.generate}.log" 
+          logfile = "/var/log/ovpn-#{uuid}.log" 
           cmdline << '--log-append' << logfile
+          cmdline << '--status' << "/var/run/ovpn-#{uuid}.status"
+          cmdline << '--status-version' << '2'
           cmdline << '--ca' << case params['ca']
               when '__default__'
                 Crypto::SSL::CACERT
@@ -197,7 +200,7 @@ EOF
           parse_conffile(:text => cmdline2conf())  
           if @data['server']
             if @data_internal['status'] 
-              parse_status() 
+              parse_status() # TODO: TCP management interface, not just file
               set_portable_client_list_from_status_data()
               # TODO?: get client info (and certificate info) 
               # through --client-connect ?
@@ -530,9 +533,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           got_routing_table_header  = false
           got_global_stats_header   = false
           client_list_fields        = []
-          routing_table_fields     = []
+          routing_table_fields      = []
 
-          File.foreach(status_file) do |line|
+          # File.foreach(status_file) do |line| # permission problems...
+          `sudo cat #{status_file}`.each_line do |line|
             line.strip!
 
             where = :client_list    if line =~ /OpenVPN CLIENT LIST/
@@ -585,7 +589,8 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
         def parse_status_v2(status_file) # TODO: DRY
           headers = {}
-          File.foreach(status_file) do |line|
+          # File.foreach(status_file) do |line| # permission problems? use sudo!
+          `sudo cat #{status_file}`.each_line do |line|
             line.strip!
 
             if line =~ /TIME,([^,]+)/
@@ -747,7 +752,9 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           end
 
           attempts.each do |attempt|
-            return attempt if File.readable? attempt
+            return attempt if File.exists? attempt 
+              # it may be root:root -rw-------, but still good: will be
+              # read with "sudo cat"
           end
 
           return false

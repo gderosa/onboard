@@ -94,12 +94,12 @@
             <input type="hidden" name="_method" value="put"/>
             <input type="hidden" name="portable_id" value="<%= vpn.data['portable_id'] if vpn.data['portable_id'] %>"/>
             <% if vpn.data['running'] %>
-              <button type="submit" name="stop" value="<%= vpnid %>" title="Stop the VPN connection">
-                <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_disconnect.png'%>" alt="Stop!"/>
+              <button type="submit" name="stop" value="<%= vpnid %>" title="Disconnect VPN">
+                <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_disconnect.png'%>" alt="Disconnect!"/>
               </button>
             <% else %>
-              <button type="submit" name="start" value="<%= vpnid %>" title="Start the VPN connection">
-                <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_connect.png'%>" alt="Start!"/>
+              <button type="submit" name="start" value="<%= vpnid %>" title="Connect VPN">
+                <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_connect.png'%>" alt="Connect!"/>
               </button>
             <% end %>
           </form>
@@ -307,7 +307,7 @@
           <input type="text" class="rwtext" name="remote_host" style="text-align:right;"/>
         </td>
         <td>
-          <input type="text" class="rwtext" name="remote_port" size="4"/>
+          <input type="text" class="rwtext" name="remote_port" size="4" value="1194"/>
         </td>
         <td style="text-align:center;">
           <input type="checkbox" name="ns-cert-type_server" checked/><br/>
