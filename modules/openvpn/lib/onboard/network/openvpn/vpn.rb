@@ -16,6 +16,9 @@ autoload :Log,        'onboard/system/log'
 class OnBoard
   module Network
     module OpenVPN
+
+      STATUS_UPDATE_INTERVAL = 60 # seconds # 'status' file
+
       class VPN
 
         System::Log.register_category 'openvpn', 'OpenVPN'
@@ -108,7 +111,8 @@ class OnBoard
           cmdline << '--daemon'
           logfile = "/var/log/ovpn-#{uuid}.log" 
           cmdline << '--log-append' << logfile
-          cmdline << '--status' << "/var/run/ovpn-#{uuid}.status"
+          cmdline << '--status' << "/var/run/ovpn-#{uuid}.status" <<
+              OpenVPN::STATUS_UPDATE_INTERVAL
           cmdline << '--status-version' << '2'
           cmdline << '--ca' << case params['ca']
               when '__default__'
@@ -460,6 +464,9 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             if line =~ /^\s*status\s+(\S+)\s+(\S+)\s*$/
               @data_internal['status'] = $1
               @data_internal['status_update_seconds'] = $2
+              @data['status_update_seconds'] = 
+                  @data_internal['status_update_seconds']
+                      # keep also in @data_internal for compatibility
               next
             elsif line =~ /^\s*keepalive\s+(\S+)\s+(\S+)\s*$/
               @data_internal['keepalive'] = {

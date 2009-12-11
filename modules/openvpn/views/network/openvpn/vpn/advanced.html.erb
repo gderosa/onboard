@@ -4,12 +4,44 @@
   vpn = objects
   log = OnBoard::System::Log.new({'path' => vpn.logfile}) 
 %>
+<style type="text/css">
+  table tr td {
+    padding: 2px;
+  }
+</style>
 <h2>VPN<%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details</h2>
 <h3><span class="product-name">OpenVPN</span> log</h3>
 <%=
   erb(:"system/_log.html", :layout => false, :locals => {:log => log})
 %>
-<% if params['debug'] %>
-  <h3>Debug</h3>
-  <pre><%= html_escape vpn.pretty_inspect %></pre>
+
+<% if vpn.data['clients'] %><!-- It's a server -->
+  <h3>Connected clients</h3>
+  <% if vpn.data['status_update_seconds'] %>
+    <p class="optinfo">List updated every <%= vpn.data['status_update_seconds'] %> seconds.</p>
+  <% end %>
+  <table>
+    <thead>
+      <tr>
+        <th>&ldquo;Common Name&rdquo;</th>
+        <th>Real Address/Port</th>
+        <th>Virtual Address</th>
+        <th>Bytes Received</th>
+        <th>Bytes Sent</th>
+        <th>Connected Since</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% vpn.data['clients'].each do |client| %>
+        <tr>
+          <td><code><%= client['Common Name'] %></code></td>
+          <td><%= client['Real Address'] %></td>
+          <td><%= client['Virtual Address'] %></td>
+          <td><%= client['Bytes Received'] %></td>
+          <td><%= client['Bytes Sent'] %></td>
+          <td><%= client['Connected Since'] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>
