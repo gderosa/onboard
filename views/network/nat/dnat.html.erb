@@ -87,18 +87,15 @@
           </td>
           <td>
             <% 
-              unless rule[0] == 1 # first rule in the chain, so cannot move up
+              # first rule in the chain, so cannot move up? => disable button!
             %>
-              <button type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
-            <% end %>
+            <button <%= 'disabled' if rule[0] == 1 %> type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
           </td>
           <td>
             <% 
-              unless rule[0] == chain.rules.length 
-                # last rule in the chain, so cannot move down
+              # last rule in the chain, so cannot move down? => disable button!
             %>
-              <button type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
-            <% end %>
+            <button <%= 'disabled' if rule[0] == chain.rules.length %> type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
           </td>           
           <% rule[1..-2].each do |value| %>
             <td><%= value %></td>
@@ -116,9 +113,7 @@
     <% end %>
   </tbody>
 </table>
-<!-- <pre><%= 
-  # html_escape params.pretty_inspect 
-%></pre>  -->
+
 <h3>Add a new rule</h3>
 <h4>Incoming packets:</h4>
 <form method="POST">
@@ -192,10 +187,14 @@
   </table>
   <h4>Action</h4>
   <fieldset>
-    <input type="radio" name="jump-target" value="DNAT" checked />
-      <span style="vertical-align:middle;">DNAT (Virtual Server)</span>
-    <input type="radio" name="jump-target" value="REDIRECT"/>
-      <span style="vertical-align:middle;">REDIRECT (Transparent Proxy)</span>
+    <span title="Tipically on external interface.">
+      <input type="radio" name="jump-target" value="DNAT" checked />
+      <span style="vertical-align: middle;">DNAT (Virtual Server)</span>
+    </span>
+    <span title="Tipically on internal interface (useful for content filtering and so on).">
+      <input type="radio" name="jump-target" value="REDIRECT"/>
+      <span style="vertical-align: middle;">REDIRECT (Transparent Proxy)</span>
+    </span>
   </fieldset>
   <h4>Forward to:</h4>
   <table>

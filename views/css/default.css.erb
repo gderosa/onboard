@@ -1,6 +1,7 @@
 <% superhighlight = "#080" %>
 <% highlight = "#44b" %>
 <% lowlight = "#777" %>
+<% superlowlight = "#bbb" %>
 <% hover = "color: white; background: #{highlight};" %>
 <% lightbg = "#edd" %>
 
@@ -214,9 +215,23 @@ table tr td ul, table tr th ul {
   padding: 0 0 0 1.15em;
 }
 
+table tr td button {
+  padding: 1px;
+}
+
 table tr td button img {
-  height: 1em; 
   vertical-align: middle;
+  margin: 0;
+}
+
+button[disabled] {
+  background: transparent;
+  border: 1px <%= superlowlight %> solid;
+}
+
+button[disabled] img { /* CSS3 */ 
+  opacity:0.4; /* Firefox */
+  filter:alpha(opacity=40); /* MSIE */
 }
 
 ul li ul li {

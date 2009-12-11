@@ -83,18 +83,15 @@
           </td>
           <td>
             <% 
-              unless rule[0] == 1 # first rule in the chain, so cannot move up
+              # first rule in the chain, so cannot move up? Disable button!
             %>
-              <button type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
-            <% end %>
+            <button <%= 'disabled' if rule[0] == 1 %> type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
           </td>
           <td>
             <% 
-              unless rule[0] == chain.rules.length 
-                # last rule in the chain, so cannot move down
+              # last rule in the chain, so cannot move down? Disable button!
             %>
-              <button type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
-            <% end %>
+            <button <%= 'disabled' if rule[0] == chain.rules.length %> type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
           </td>           
           <% rule[1..-2].each do |value| %>
             <td><%= value %></td>
