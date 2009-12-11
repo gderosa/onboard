@@ -718,6 +718,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           }
         end
 
+        def logfile
+          find_file(@data_internal['log'] || @data_internal['log-append'])
+        end
+
         protected
 
         def data_internal

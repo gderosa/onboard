@@ -1,2 +1,15 @@
+<% 
+  require 'onboard/system/log'
+
+  vpn = objects
+  log = OnBoard::System::Log.new({'path' => vpn.logfile}) 
+%>
 <h2>VPN details</h2>
-<pre><%= html_escape objects.pretty_inspect %></pre>
+<h3>VPN log</h3>
+<%=
+  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
+%>
+<% if params['debug'] %>
+  <h3>Debug</h3>
+  <pre><%= html_escape vpn.pretty_inspect %></pre>
+<% end %>
