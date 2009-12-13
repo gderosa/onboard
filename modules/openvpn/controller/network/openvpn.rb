@@ -33,33 +33,41 @@ class OnBoard
     post '/network/openvpn.:format' do
       msg = {:ok => true}
       vpns = OnBoard::Network::OpenVPN::VPN.getAll()
-      # The following check should be done by openvpn, which should exit
-      # with a non-zero status... unfortunately it isn't, and you end with
-      # two tun interface with same IP addresses! So, a validation is necessary.
-      vpns.each do |vpn|
-        certfile = "#{Crypto::SSL::CERTDIR}/#{params['cert']}.crt"
-        certobj = OpenSSL::X509::Certificate.new(File.read certfile)
-          # TODO: handle CertificateError at this stage!
+      certfile = "#{Crypto::SSL::CERTDIR}/#{params['cert']}.crt"
+
+      begin
+        certobj = OpenSSL::X509::Certificate.new(File.read certfile) 
         requested_cn = certobj.to_h['subject']['CN']
-        if
-            vpn.data['remote'].respond_to? :[]      and
+        # The following check should be done by openvpn, which should exit
+        # with a non-zero status... unfortunately it isn't, and you end with
+        # two tun interface with same IP addresses! So, a validation is necessary.
+        vpns.each do |vpn|
+          if
+              vpn.data['remote'].respond_to? :[]      and
 
-            vpn.data['remote']['address'].strip == 
-                params['remote_host'].strip         and
-                  # TODO: use gethostbyname when useful?
-                  # NOTE: the two values compared may be IP addresses as well
-                  # as DNS host names.       
-            vpn.data['remote']['port'].strip    == 
-                params['remote_port'].strip         and
+              vpn.data['remote']['address'].strip == 
+                  params['remote_host'].strip         and
+                    # TODO: use gethostbyname when useful?
+                    # NOTE: the two values compared may be IP addresses as well
+                    # as DNS host names.       
+              vpn.data['remote']['port'].strip    == 
+                  params['remote_port'].strip         and
 
-            vpn.data['cert']['subject']['CN']   == 
-                requested_cn
-          msg = {
-              :ok => false,
-              :err => 'A client VPN connection to the same server/port and with the same SSL "Common Name" is already running!'
-          }
-          break
+              vpn.data['cert']['subject']['CN']   == 
+                  requested_cn
+            msg = {
+                :ok => false,
+                :err => 'A client VPN connection to the same server/port and with the same SSL "Common Name" is already running!'
+            }
+            break
+          end
         end
+      rescue OpenSSL::X509::CertificateError
+        msg = {
+            :ok => false, 
+            :err => "#{$!.class.name}: #{$!.to_s}", 
+            :err_html => "OpenSSL Certificate error: &ldquo;<code>#{html_escape $!.to_s}</code>&rdquo;"
+        }
       end
       if msg[:ok]
         msg = OnBoard::Network::OpenVPN::VPN.start_from_HTTP_request(params)
