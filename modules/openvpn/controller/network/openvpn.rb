@@ -68,6 +68,12 @@ class OnBoard
             :err => "#{$!.class.name}: #{$!.to_s}", 
             :err_html => "OpenSSL Certificate error: &ldquo;<code>#{html_escape $!.to_s}</code>&rdquo;"
         }
+      rescue Errno::ENOENT
+        msg = {
+          :ok => false,
+          :err => "No Certificate file!",
+          :status_http => 400 # Bad Request
+        }
       end
       if msg[:ok]
         msg = OnBoard::Network::OpenVPN::VPN.start_from_HTTP_request(params)
