@@ -423,7 +423,8 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end
 
             %w{ca cert}.each do |optname|
-              if line =~ /^\s*#{optname}\s+(\S+)\s*$/ 
+              if line =~ /^\s*#{optname}\s+(\S.*\S)\s*$/ 
+                  # match filenames containing spaces  
                 if file = find_file($1)
                   begin
                     c = OpenSSL::X509::Certificate.new(File.read file)
