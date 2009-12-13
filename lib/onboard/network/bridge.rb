@@ -17,12 +17,16 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
         end if h[command].respond_to? :each_pair
       end  
       if h['addbr']
+        h['addbr'].sub! /\s.*$/, '' # truncate anything after a space (if any),
+            # to avoid command injection
         Command.run "brctl addbr #{h['addbr']}", :sudo 
         Command.run "ip link set #{h['addbr']} up", :sudo
       end
       if h['delbr']
-         Command.run "ip link set #{h['delbr']} down", :sudo
-         Command.run "brctl delbr #{h['delbr']}", :sudo
+        h['delbr'].sub! /\s.*$/, '' # truncate anything after a space (if any),
+            # to avoid command injection
+        Command.run "ip link set #{h['delbr']} down", :sudo
+        Command.run "brctl delbr #{h['delbr']}", :sudo
       end
     end
 
