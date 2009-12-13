@@ -1,6 +1,12 @@
 require 'sinatra/base'
 
+require 'onboard/extensions/openssl'
+
 class OnBoard
+
+  module Crypto
+    autoload :SSL, 'onboard/crypto/ssl'
+  end
 
   module System
     autoload :Log, 'onboard/system/log'
@@ -25,9 +31,41 @@ class OnBoard
     end
 
     post '/network/openvpn.:format' do
-      msg = OnBoard::Network::OpenVPN::VPN.start_from_HTTP_request(params)
+      msg = {:ok => true}
       vpns = OnBoard::Network::OpenVPN::VPN.getAll()
+      # The following check should be done by openvpn, which should exit
+      # with a non-zero status... unfortunately it isn't, and you end with
+      # two tun interface with same IP addresses! So, a validation is necessary.
+      vpns.each do |vpn|
+        certfile = "#{Crypto::SSL::CERTDIR}/#{params['cert']}.crt"
+        certobj = OpenSSL::X509::Certificate.new(File.read certfile)
+          # TODO: handle CertificateError at this stage!
+        requested_cn = certobj.to_h['subject']['CN']
+        if
+            vpn.data['remote'].respond_to? :[]      and
+
+            vpn.data['remote']['address'].strip == 
+                params['remote_host'].strip         and
+                  # TODO: use gethostbyname when useful?
+                  # NOTE: the two values compared may be IP addresses as well
+                  # as DNS host names.       
+            vpn.data['remote']['port'].strip    == 
+                params['remote_port'].strip         and
+
+            vpn.data['cert']['subject']['CN']   == 
+                requested_cn
+          msg = {
+              :ok => false,
+              :err => 'A client VPN connection to the same server/port and with the same SSL "Common Name" is already running!'
+          }
+          break
+        end
+      end
       if msg[:ok]
+        msg = OnBoard::Network::OpenVPN::VPN.start_from_HTTP_request(params)
+      end
+      if msg[:ok]
+        vpns = OnBoard::Network::OpenVPN::VPN.getAll()
         status(201) # HTTP Created
       else
         status(409) # HTTP Conflict

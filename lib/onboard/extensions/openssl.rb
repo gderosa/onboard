@@ -13,7 +13,7 @@ module OpenSSL
       #     crl.issuer == cacert.subject #=> true or false
       #
       def ==(other)
-        #self.hash == other.hash # other methods: to_a, to_s, to_der
+        self.hash == other.hash # other methods: to_a, to_s, to_der
       end 
 
       def to_h
