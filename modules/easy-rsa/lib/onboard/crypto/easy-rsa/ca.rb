@@ -48,13 +48,21 @@ export KEY_OU="#{params['OU']}"
 export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool --initca
 EOF
-          if msg[:ok] 
-            begin
-              FileUtils.chown nil, 'onboard', SSL::CAKEY
-              FileUtils.chmod 0640, SSL::CAKEY
-            rescue
-              FileUtils.chmod 0600, SSL::CAKEY
+          if msg[:ok]
+            [SSL::CAKEY, "#{KEYDIR}/index.txt", "#{KEYDIR}/serial"].each do |f| 
+              begin
+                FileUtils.chown nil, 'onboard', f
+                FileUtils.chmod 0640, f
+              rescue
+                FileUtils.chmod 0600, f
+              end
             end
+          end
+          begin
+            FileUtils.chown nil, 'onboard', EasyRSA::KEYDIR
+            FileUtils.chmod 0750, EasyRSA::KEYDIR
+          rescue
+            FileUtils.chmod 0700, EasyRSA::KEYDIR
           end
           return msg
         end
