@@ -149,6 +149,7 @@ class OnBoard
             cmdline << '--ns-cert-type' << 'server' if 
                 params['ns-cert-type_server'] =~ /on|yes|true/
           end
+          cmdline << '--comp-lzo' if params['comp-lzo'] =~ /on|yes|true/
           reserve_a_tcp_port.close
           msg = System::Command.run <<EOF
 sudo touch #{logfile}
@@ -370,7 +371,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             line.sub! /\s+[;#].*$/, '' 
 
             # "public" options with no arguments ("boolean" options)
-            %w{duplicate-cn client-to-client client}.each do |optname|
+            %w{duplicate-cn client-to-client client comp-lzo}.each do |optname|
               if line =~ /^\s*#{optname}\s*$/
                 @data[optname] = true
                 next
@@ -378,7 +379,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end 
 
             # "public" options with 1 argument 
-            %w{port proto dev max-clients local}.each do |optname|
+            %w{port proto dev max-clients local comp-lzo}.each do |optname|
               if line =~ /^\s*#{optname}\s+(.*)\s*$/ 
                 @data[optname] = $1
                 next
