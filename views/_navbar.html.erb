@@ -9,7 +9,7 @@
   names.each do |name|
     basepath = (basepath + "/" + name).gsub /\/{2,}/, "/" 
     path = basepath + ".html"
-    links << {:name => name, :path => path}  
+    links << {:name => Rack::Utils::unescape(name), :path => path}  
   end
 %>
 
