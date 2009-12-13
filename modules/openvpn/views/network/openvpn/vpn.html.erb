@@ -15,9 +15,6 @@
   button {
     display: inline;
   }
-  select {
-    width: 98%; /* 100% breaks borders in (some versions of?) Firefox */
-  }
 </style>
 
 <h2>OpenVPN</h2>
@@ -280,12 +277,27 @@
         <td>
           <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
         </td>
+        <%
+          candidates = ssl['certs'].select do |k, v| # 1.9 only
+            (not v['cert']['is_ca']) and v['private_key']
+          end
+          bad, good = candidates.partition_hash do |k, v|
+            v['cert']['err'] or v['private_key']['err']
+          end
+          server, nonserver = good.partition_hash do |k, v|
+            v['cert']['is_server']
+          end
+        %>
         <td>
           <select name="cert">
-            <% ssl['certs'].each_pair do |name, h| %>
-              <% if (not h['cert']['is_ca']) and h['private_key'] %>
-                <option value="<%= name %>"><%= html_escape name %></option>
-              <% end %>
+            <% nonserver.each_pair do |name, h| %>
+              <option value="<%= name %>"><%= html_escape name %></option>
+            <% end %>
+            <% server.each_pair do |name, h| %>
+              <option class="lowlight" value="<%= name %>"><%= html_escape name %></option>
+            <% end %>
+            <% bad.each_pair do |name, h| %>
+              <option title="Certificate with errors!" class="error" disabled><%= html_escape name %></option>
             <% end %>
           </select>
         </td>
