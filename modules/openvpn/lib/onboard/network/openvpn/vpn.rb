@@ -135,19 +135,25 @@ class OnBoard
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
           cmdline << '--dev' << 'tun'
           cmdline << '--proto' << params['proto']
-          if params['server_net'] # it's a server
+          if params['server_net'] =~ /\S/ # it's a server
             net = IPAddr.new params['server_net']
             cmdline << '--server' << net.to_s << net.netmask.to_s
             cmdline << '--port' << params['port'].to_s
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
             cmdline << '--dh' << dh # Diffie Hellman params :-)
-          elsif params['remote_host'] # it's a client
+          elsif params['remote_host'] =~ /\S/ # it's a client
             cmdline << 
                 '--client' << '--nobind'
             cmdline << 
                 '--remote' << params['remote_host'] << params['remote_port']
             cmdline << '--ns-cert-type' << 'server' if 
                 params['ns-cert-type_server'] =~ /on|yes|true/
+          else
+            return {
+              :ok => false,
+              :err => "You must either specify a virtual network (for a server) or a remote host (for a client).",
+              :status_http => 400 # Bad request
+            }
           end
           cmdline << '--comp-lzo' if params['comp-lzo'] =~ /on|yes|true/
           reserve_a_tcp_port.close

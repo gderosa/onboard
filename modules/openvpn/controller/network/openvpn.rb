@@ -75,8 +75,10 @@ class OnBoard
       if msg[:ok]
         vpns = OnBoard::Network::OpenVPN::VPN.getAll()
         status(201) # HTTP Created
+      elsif msg[:status_http]
+        status msg[:status_http]
       else
-        status(409) # HTTP Conflict
+        status(409) # HTTP Conflict by default
       end
       format(
         :module => 'openvpn',
