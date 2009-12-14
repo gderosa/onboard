@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'set'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/network/routing/route'
@@ -9,10 +10,11 @@ class OnBoard
     class Routing
       class Table
 
-        @@static_routes = [] unless class_variable_defined? :@@static_routes
+        @@static_routes = [] unless 
+            class_variable_defined? :@@static_routes
 
         def self.getCurrent
-          pp @@static_routes
+          puts @@static_routes.length
 
           ary = []
 
@@ -67,9 +69,9 @@ class OnBoard
               ) 
             end
           when Socket::AF_INET6 # IPv6
-            if line =~ /^(\S+)\s+via\s+(\S+)\s+dev\s+(\S+)/ 
+            if line =~ /^(\S+)\s+via\s+(\S+)(\s+dev\s+(\S+))?/ 
               gw = IPAddr.new($2)
-              dev = $3
+              dev = $4
               if $1 == "default"
                 dest = IPAddr.new("::/0")
                 rawline = line.sub('default', '::/0').strip
@@ -77,7 +79,7 @@ class OnBoard
                 dest = IPAddr.new($1)
                 rawline = line.strip
               end
-              ary << Route.new( 
+              return Route.new( 
                 :dest => dest,
                 :gw   => gw,
                 :dev  => dev,
@@ -105,7 +107,38 @@ class OnBoard
        
         
         def self.ip_route_del(str)
-          OnBoard::System::Command.run "ip route del #{str}", :sudo
+          routeobj = rawline2routeobj(str) 
+          msg = OnBoard::System::Command.run "ip route del #{str}", :sudo
+          if msg[:ok]
+            delete_from_static_routes routeobj
+          end
+          return msg
+        end
+
+        def self.delete_from_static_routes(other_sr)
+          idx = nil
+          @@static_routes.each_with_index do |sr, i|
+            if sr.rawline.strip == other_sr.rawline.strip
+              idx = i
+              break
+            end
+            if !sr.dev or !other_sr.dev
+              if sr.dest == other_sr.dest and sr.gw == other_sr.gw
+                idx = i
+                break
+              end
+            end
+            if 
+                sr.dest == other_sr.dest  and 
+                sr.gw   == other_sr.gw    and 
+                sr.dev  == other_sr.dev
+              idx = i
+              break
+            end
+          end
+          if idx
+            @@static_routes.delete_at idx
+          end
         end
 
         def self.ip_route_add(str, *opts) # opts may include :try
@@ -131,6 +164,8 @@ class OnBoard
               str << params['ip'] << '/0 '
             elsif params['ip'] =~ /^[^\w\d]*(default)?[^\w\d]*$/ 
               str << "default "
+            else
+              str << params['ip'] << " "
             end
           else # a prefix length in CIDR notation has been provided
             str << params['ip'] << '/' << params['prefixlen'] << ' '
@@ -148,7 +183,11 @@ class OnBoard
             end
           end
           if result[:ok]
-            @@static_routes << rawline2routeobj(str)
+            @@static_routes << (
+                rawline2routeobj(str) or 
+                rawline2routeobj(str, Socket::AF_INET6) or
+                str
+            )
           end
           return result
         end
