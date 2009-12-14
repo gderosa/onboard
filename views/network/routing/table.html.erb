@@ -48,7 +48,7 @@
     <% 
       next if 
           route.dest.family == Socket::AF_INET6 and
-          route.dest.link_local? and
+          (route.dest.link_local? or route.dest.multicast?) and
           not params['view'] == 'all'
     %>
     <tr>
@@ -90,11 +90,8 @@
   <% end %>
 </table>
 
-<!-- While it's not obvious that IPv4 link-local addresses and routes are 
-configured on a given system, IPv6 link-local are always present, and showing
-them adds too much verbosity without giving really significant information -->
 (<a href="<%= request.fullpath %>">Refresh</a>)
-<% showhide = 'IPv6 link-local routes' %>
+<% showhide = 'IPv6 link-local and multicast routes' %>
 <% if params['view'] == 'all' %>
   (<a title="Hide <%= showhide %>" 
     href="<%= request.path_info %>">Compact view</a>)

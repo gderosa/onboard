@@ -9,14 +9,22 @@ class OnBoard
     class Routing
       class Table
 
+        @@static_routes = [] unless class_variable_defined? :@@static_routes
+
         def self.getCurrent
+          pp @@static_routes
+
           ary = []
 
           # IPv4
-          `ip -f inet route`.each_line {|line| ary << rawline2routeobj(line)}
+          `ip -f inet route`.each_line do |line| 
+            ary << rawline2routeobj(line, Socket::AF_INET)
+          end
 
           # IPv6
-          `ip -f inet6 route`.each_line {|line| ary << rawline2routeobj(line)}
+          `ip -f inet6 route`.each_line do |line| 
+            ary << rawline2routeobj(line, Socket::AF_INET6)
+          end
 
           return self.new(ary)
         end
@@ -41,17 +49,20 @@ class OnBoard
                 :rawline  => rawline
               )
             elsif line =~ /^(\S+)\s+dev\s+(\S+)/
-              if $1 == "default"
+              deststr = $1
+              dev = $2
+              if deststr.strip == "default"
                 dest = IPAddr.new("0.0.0.0/0")
                 rawline = line.sub('default', '0.0.0.0/0').strip
+                deststr = "0.0.0.0/0"
               else
-                dest = IPAddr.new($1)
+                dest = IPAddr.new(deststr)
                 rawline = line.strip
               end
               return Route.new( 
-                :dest => IPAddr.new($1),
+                :dest => IPAddr.new(deststr),
                 :gw   => IPAddr.new("0.0.0.0"),
-                :dev  => $2, # keep as a string
+                :dev  => dev,
                 :rawline  => rawline
               ) 
             end
@@ -80,7 +91,7 @@ class OnBoard
                 dest = IPAddr.new($1)
                 rawline = line.strip
               end
-              ary << Route.new(
+              return Route.new(
                 :dest => dest,
                 :gw   => IPAddr.new("::"),
                 :dev  => $2, # keep as a string
@@ -135,6 +146,9 @@ class OnBoard
               LOGGER.error \
                   "Couldn't add route as requested (see messages above)"
             end
+          end
+          if result[:ok]
+            @@static_routes << rawline2routeobj(str)
           end
           return result
         end
