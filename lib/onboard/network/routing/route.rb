@@ -6,10 +6,10 @@ class OnBoard
       class Route
         attr_reader :dest, :gw, :dev, :rawline
         def initialize(h)
-          @dest       = h[:dest]  
-          @gw         = h[:gw]
-          @dev        = h[:dev]
-          @rawline    = h[:rawline] 
+          @dest       = h[:dest]    # IPAddr object
+          @gw         = h[:gw]      # IPAddr object
+          @dev        = h[:dev]     # String
+          @rawline    = h[:rawline] # String
         end
         def data
           {

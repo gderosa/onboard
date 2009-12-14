@@ -9,7 +9,12 @@ class OnBoard
     class Routing
       class Table
 
+        @@static_routes = [] unless class_variable_defined? :@@static_routes 
+
         def self.getCurrent
+
+          pp @@static_routes
+
           ary = []
           # FIXME: DRY
 
@@ -106,19 +111,29 @@ class OnBoard
 
         def self.route_from_HTTP_request(params) # create new or change
           str = ""
+          deststr = ""; dest = nil
+          gwstr = ""; gw = nil
           if params['prefixlen'] =~ /^\s*$/
             if params['ip'] =~ /\//
-              str << params['ip'] << ' '
+              deststr << params['ip'] << ' '
             elsif params['ip'] =~ /^\s*(0\.0\.0\.0|::)\s*$/
-              str << params['ip'] << '/0 '
+              deststr << params['ip'] << '/0 '
             elsif params['ip'] =~ /^[^\w\d]*(default)?[^\w\d]*$/ 
-              str << "default "
+              deststr << "0.0.0.0/0 " # defaults to IPv4
             end
           else # a prefix length in CIDR notation has been provided
-            str << params['ip'] << '/' << params['prefixlen'] << ' '
+            deststr << params['ip'] << '/' << params['prefixlen'] 
           end
-          str << "via #{params['gw']} "   if params['gw']   =~ /[\da-f:]/i
-          str << "dev #{params['dev']} "  if params['dev']  =~ /\S/
+          dest = IPAddr.new deststr
+          str << deststr << ' '
+          if params['gw']   =~ /[\da-f:]/i 
+            gwstr = "via #{params['gw']} " 
+            gw = IPAddr.new params['gw']
+            str << gwstr
+          end
+          if params['dev']  =~ /\S/
+            str << "dev #{params['dev']} "
+          end
           result = self.ip_route_add(str.strip, :try)
           if not result[:ok] 
             if result[:stderr] =~ /file exists/i
@@ -129,8 +144,16 @@ class OnBoard
                   "Couldn't add route as requested (see messages above)"
             end
           end
+          static_route = Route.new(
+            :dest     => dest,
+            :gw       => gw,
+            :dev      => params['dev'].strip,
+            :rawline  => str
+          )
+          @@static_routes << static_route
           return result
         end
+
 
         attr_reader :routes
 
