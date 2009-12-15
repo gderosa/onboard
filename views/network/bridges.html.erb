@@ -1,13 +1,26 @@
 <% 
   # bridges.html.erb -- Modeled on interfaces.html.erb
-%>
-<% 
+ 
   require "pp"
   require "onboard/extensions/string"
   require "onboard/network/interface"
 %>
 
   <h2>Network bridges</h2>
+
+<%= 
+  erb(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg    => msg,
+        :status => status
+      }
+    }
+  )
+%>
+
   <% fieldnames = %w{Bridge Interfaces Active/State MTU MAC\ Address IP\ Addresses Method} %>
   <% colspans = [1, 1, 2, 1, 1, 1, 1, 1] %>
   <form method="post"> 

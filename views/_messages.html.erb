@@ -27,9 +27,10 @@
       <div class="error"><%= msg[:err_html] %></div>
     <% elsif msg[:err].to_s =~ /\S/ %>
       <pre class="error"><%= html_escape msg[:err].to_s %></pre>
-    <% elsif msg[:warn] =~ /\S/ %>
-      <div class="warn"><%= msg[:warn] %></div>
     <% end %>
+  <% end %>
+  <% if msg[:warn] =~ /\S/ %>
+    <pre class="warn"><%= msg[:warn] %></pre>
   <% end %>
 <% end %>
 

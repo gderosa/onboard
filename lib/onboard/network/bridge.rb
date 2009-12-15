@@ -7,22 +7,38 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     include OnBoard::System
 
     def brctl(h)
-      return false unless h.respond_to? :[]
+      msg = {}
+      unless h.respond_to? :[]
+        {
+            :ok => false,
+            :err => 'No valid data provided'
+        }
+      end
       ['addif', 'delif'].each do |command|
         h[command].each_pair do |bridgename, ifh|
           ifh.each_pair do |ifname, value| 
             Command.run "brctl #{command} #{bridgename} #{ifname}", :sudo if 
                 value and not [0, "0", "no", "false", "off"].include? value
           end
-        end if h[command].respond_to? :each_pair
+        end if h.respond_to? :[] and h[command].respond_to? :each_pair
       end  
-      if h['addbr']
-        h['addbr'].sub! /\s.*$/, '' # truncate anything after a space (if any),
-            # to avoid command injection
-        Command.run "brctl addbr #{h['addbr']}", :sudo 
-        Command.run "ip link set #{h['addbr']} up", :sudo
+      if h.respond_to? :[] and h['addbr']
+        substitution = h['addbr'].sub! /\s.*$/, '' 
+            # truncate anything after a space (if any), to avoid command 
+            # injection
+        if substitution 
+          msg[:warn] = 'Bridge name has been truncated'
+        end
+        unless h['addbr'] =~ /\S/
+          return {:ok => false, :err => 'No valid bridge name!'}
+        end
+        msg.merge! Command.run "brctl addbr #{h['addbr']}", :sudo 
+        if msg[:ok]
+          msg.merge! Command.run "ip link set #{h['addbr']} up", :sudo
+        end
+        return msg
       end
-      if h['delbr']
+      if h.respond_to? :[] and h['delbr']
         h['delbr'].sub! /\s.*$/, '' # truncate anything after a space (if any),
             # to avoid command injection
         Command.run "ip link set #{h['delbr']} down", :sudo

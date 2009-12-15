@@ -18,6 +18,7 @@
       <% netif = objects[:bridge] %>
       <tr>
       <form method="POST">
+        <button style="display:none;" type="submit">Change</button> <!-- default button -->
         <input type="hidden" name="_method" value="delete"/>
         <td>
           <button type="submit" title="Delete this bridge!"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="delete"/></button>
@@ -103,6 +104,7 @@
         </td>
       </tr>
   <form method="post"> 
+    <button style="display:none;" type="submit">Change</button> <!-- default button -->
     <input type="hidden" name="_method" value="put"/>
       <tr>
         <% fieldnames.each_index do |i| %>

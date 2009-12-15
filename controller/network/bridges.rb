@@ -17,8 +17,8 @@ class OnBoard::Controller
   end
 
   post "/network/bridges.:format" do
-    OnBoard::Network::Bridge.brctl(params['brctl']) 
-    status(201)
+    msg = OnBoard::Network::Bridge.brctl(params['brctl']) 
+    msg[:ok] ? status(201) : status(400)
     headers(
       'Location:' => 
           "/network/bridges/#{params['brctl']['addbr']}.#{params['format']}"  
@@ -28,7 +28,8 @@ class OnBoard::Controller
     format(
       :path     => 'network/bridges',
       :format   => params[:format],
-      :objects  => bridges
+      :objects  => bridges,
+      :msg      => msg
     )
   end
 
