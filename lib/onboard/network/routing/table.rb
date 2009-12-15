@@ -131,21 +131,13 @@ class OnBoard
           return msg
         end
 
-        def self.delete_from_static_routes(other_sr)
-          idx = nil
-          @@static_routes.each_with_index do |sr, i|
-            if sr === other_sr
-              idx = i
-              break
-            end
-          end
-          if idx
-            @@static_routes.delete_at idx
-            save_current_static_routes
-          end
+        def self.delete_from_static_routes(static_route)
+          @@static_routes = @@static_routes.reject {|sr| sr === static_route} 
+          save_current_static_routes
         end
 
-        def self.ip_route_add(str, *opts) # opts may include :try
+        def self.ip_route_add(route, *opts) 
+          str = route.to_s # so Route and String are both ok
           if opts.include? :try
             return \
                 OnBoard::System::Command.run "ip route add #{str}", :sudo, :try
@@ -155,7 +147,8 @@ class OnBoard
           end
         end
 
-        def self.ip_route_change(str)
+        def self.ip_route_change(route)
+          str = route.to_s # so Route and String are both ok
           OnBoard::System::Command.run "ip route change #{str}", :sudo
         end
 
@@ -190,7 +183,7 @@ class OnBoard
             @@static_routes << (
                 rawline2routeobj(str) or 
                 rawline2routeobj(str, Socket::AF_INET6) 
-            )
+            ) 
             save_current_static_routes
           end
           return result
@@ -210,7 +203,12 @@ class OnBoard
         end
         def self.restore_static_routes
           @@static_routes = Marshal.load File.read STATIC_ROUTES_FILE
-          # TODO: actually add them  to the OS routing table!!
+          @@static_routes.each do |static_route|
+            msg = ip_route_add static_route, :try
+            unless msg[:ok]
+              ip_route_change static_route
+            end
+          end
         end
         def self.restore; restore_static_routes; end
 

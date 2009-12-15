@@ -24,6 +24,14 @@ class OnBoard
           }
         end
 
+        def to_s
+          s = "#{@dest.to_cidr}"
+          s << " via #{@gw.to_s}" if (@gw and @gw.to_i > 0) # exclude 0.0.0.0/*
+          s << " dev #{@dev}" if @dev
+          return s
+        end
+        alias :to_rawline :to_s
+
         def static?
           return true if Table::static_routes.detect {|sr| sr === self}
         end

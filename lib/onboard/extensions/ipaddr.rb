@@ -36,6 +36,10 @@ class IPAddr
     @mask_addr.to_s(2).gsub('0','').length
   end
 
+  def to_cidr
+    "#{self.to_s}/#{self.prefixlen}"
+  end
+
   # for JSON export etc.
   def data
     {
