@@ -10,10 +10,18 @@ class OnBoard
     class Routing
       class Table
 
+        # Persistance across Ruby restarts but not machine reboot
         CURRENT_STATIC_ROUTES_FILE = 
           File.join CONFDIR, 'network/static_routes.dat.new'
+        
+        # "Real" persistance, i.e. across system reboots too
+        STATIC_ROUTES_FILE = 
+          File.join CONFDIR, 'network/static_routes.dat'
 
-        unless class_variable_defined? :@@static_routes
+        unless ( 
+            class_variable_defined? :@@static_routes or 
+            $static_routes_restore
+        )
           if File.readable? CURRENT_STATIC_ROUTES_FILE
             @@static_routes = Marshal.load File.read CURRENT_STATIC_ROUTES_FILE
           else
@@ -24,8 +32,6 @@ class OnBoard
         def self.static_routes; @@static_routes; end
 
         def self.getCurrent
-          puts @@static_routes.length
-
           ary = []
 
           # IPv4
@@ -196,6 +202,17 @@ class OnBoard
             f.write Marshal.dump @@static_routes
           end
         end
+
+        # Peristance across system reboots
+        def self.save_static_routes
+          # TODO? is it enough?
+          FileUtils.cp CURRENT_STATIC_ROUTES_FILE, STATIC_ROUTES_FILE
+        end
+        def self.restore_static_routes
+          @@static_routes = Marshal.load File.read STATIC_ROUTES_FILE
+          # TODO: actually add them  to the OS routing table!!
+        end
+        def self.restore; restore_static_routes; end
 
         attr_reader :routes
 
