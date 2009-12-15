@@ -91,18 +91,20 @@ class OnBoard
       def country_codes_by_name
         countries.keys.sort_by {|x| countries[x]}
       end
-      #def i18n_yesno(obj, *opts)
-      #  if obj
-      #    if opts.include? :strong
-      #      "<strong>#{i18n.yes}</strong>"
-      #    else
-      #      i18n.yes
-      #    end
-      #  else
-      #    i18n.no
-      #  end
-      #end
 
+      # Icons
+      def yes_no_icon(object, *opts)
+        if object
+          "<img alt=\"#{i18n.yes}\" src=\"#{IconDir}/#{IconSize}/emblems/emblem-default.png\"/>"
+        else
+          if opts.include? :print_no
+            "<span class=\"lowlight\">#{i18n.no}</span>"
+          else
+            ""
+          end
+        end
+      end
+    
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
         if h[:module] 

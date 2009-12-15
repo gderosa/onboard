@@ -3,14 +3,17 @@
   require 'ipaddr'
 
   require 'onboard/extensions/ipaddr'
+
+  routing_table = objects
+
 %>
 
 <h2>Routing Table</h2>
 
-<% routing_table = objects %>
-
-<% fieldnames = %w{Delete?  Destination Device  Gateway Type} %>
-<% colspans   =   [1,         1,          1,      1,      1] %>
+<% 
+  fieldnames = %w{Delete?  Destination Device  Gateway Type Statically\ added?} 
+  colspans   =   [1,         1,          1,      1,      1,  1                ]
+%>
 
 <% 
   # if not msg or not msg[:stderr] =~ /\S/ 
@@ -49,7 +52,8 @@
       next if 
           route.dest.family == Socket::AF_INET6 and
           (route.dest.link_local? or route.dest.multicast?) and
-          not params['view'] == 'all'
+          not params['view'] == 'all' and
+          not route.static?
     %>
     <tr>
       <form method="POST">
@@ -84,6 +88,9 @@
             str << "multicast"  if route.dest.multicast?
           %>
           <%= str %>
+        </td>
+        <td style="text-align: center;">
+          <%= yes_no_icon(route.static?, :print_no) %>
         </td>
       </form>
     </tr>

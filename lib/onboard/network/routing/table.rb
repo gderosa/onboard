@@ -10,8 +10,18 @@ class OnBoard
     class Routing
       class Table
 
-        @@static_routes = [] unless 
-            class_variable_defined? :@@static_routes
+        CURRENT_STATIC_ROUTES_FILE = 
+          File.join CONFDIR, 'network/static_routes.dat.new'
+
+        unless class_variable_defined? :@@static_routes
+          if File.readable? CURRENT_STATIC_ROUTES_FILE
+            @@static_routes = Marshal.load File.read CURRENT_STATIC_ROUTES_FILE
+          else
+            @@static_routes = []
+          end
+        end
+
+        def self.static_routes; @@static_routes; end
 
         def self.getCurrent
           puts @@static_routes.length
@@ -118,26 +128,14 @@ class OnBoard
         def self.delete_from_static_routes(other_sr)
           idx = nil
           @@static_routes.each_with_index do |sr, i|
-            if sr.rawline.strip == other_sr.rawline.strip
-              idx = i
-              break
-            end
-            if !sr.dev or !other_sr.dev
-              if sr.dest == other_sr.dest and sr.gw == other_sr.gw
-                idx = i
-                break
-              end
-            end
-            if 
-                sr.dest == other_sr.dest  and 
-                sr.gw   == other_sr.gw    and 
-                sr.dev  == other_sr.dev
+            if sr === other_sr
               idx = i
               break
             end
           end
           if idx
             @@static_routes.delete_at idx
+            save_current_static_routes
           end
         end
 
@@ -185,11 +183,18 @@ class OnBoard
           if result[:ok]
             @@static_routes << (
                 rawline2routeobj(str) or 
-                rawline2routeobj(str, Socket::AF_INET6) or
-                str
+                rawline2routeobj(str, Socket::AF_INET6) 
             )
+            save_current_static_routes
           end
           return result
+        end
+
+        # Peristance across Ruby restarts, not system reboots
+        def self.save_current_static_routes
+          File.open(CURRENT_STATIC_ROUTES_FILE, 'w') do |f| 
+            f.write Marshal.dump @@static_routes
+          end
         end
 
         attr_reader :routes
