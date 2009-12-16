@@ -61,6 +61,7 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     @members = members
   end
 
+  # *current* mmebers
   def members
     if Dir.exists? @bridgeifdir
       @members = 
@@ -69,6 +70,11 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
       @members = []
     end
     return @members
+  end
+
+  # useful for restore
+  def members_saved
+    @members
   end
 
   # Override the @ip accessor, adding the IP objects of the bridged interfaces

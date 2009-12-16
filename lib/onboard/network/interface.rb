@@ -199,6 +199,7 @@ class OnBoard
               if saved_iface.type == 'bridge'
                 # bridge saved, not currently present: create it!
                 Bridge.brctl 'addbr' => saved_iface.name
+                current_ifaces = getAll
                 redo
               else
                 next
@@ -208,6 +209,26 @@ class OnBoard
               current_iface.ip_link_set_up
             elsif !saved_iface.active and current_iface.active
               current_iface.ip_link_set_down
+            end
+            if saved_iface.type == 'bridge' and current_iface.type == 'bridge'
+              to_add    = saved_iface.members_saved - current_iface.members
+              to_remove = current_iface.members - saved_iface.members_saved
+              # Bridge.brctl was meant to get HTTP POST/PUT params,
+              # hence its strange syntax.
+              to_add.each do |member_if| 
+                Bridge.brctl({
+                    'addif' => {
+                        current_iface.name => {member_if => true}
+                    } 
+                })
+              end
+              to_remove.each do |member_if| 
+                Bridge.brctl({
+                    'delif' => {
+                        current_iface.name => {member_if => true}
+                    } 
+                })
+              end             
             end
             if saved_iface.active
               if saved_iface.ipassign[:method] == :static and 
