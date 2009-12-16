@@ -4,431 +4,441 @@ require 'onboard/network/bridge'
 require 'onboard/hardware/lspci'
 require 'onboard/extensions/array.rb'
 
-class OnBoard::Network::Interface
+class OnBoard
+  module Network
+    class Interface
 
-  # Constants
+      # Constants
 
-  TYPES_HUMAN_READABLE = {
-    'ether'       => 'Ethernet',
-    'P-t-P'       => 'Point-to-Point',
-    'virtual'     => 'Virtual Ethernet',
-    'wi-fi'       => 'Wireless IEEE 802.11',
-    'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;',
-    'bridge'      => 'Bridge',
-    'loopback'    => 'Loopback'
-  }
+      TYPES_HUMAN_READABLE = {
+        'ether'       => 'Ethernet',
+        'P-t-P'       => 'Point-to-Point',
+        'virtual'     => 'Virtual Ethernet',
+        'wi-fi'       => 'Wireless IEEE 802.11',
+        'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;',
+        'bridge'      => 'Bridge',
+        'loopback'    => 'Loopback'
+      }
 
-  # Class methods.
+      # Class methods.
 
-  class << self
-    
-    def getAll
-      @@all_layer2 = getAll_layer2()
-      @@all_layer3 = all_layer3(@@all_layer2) 
-      ary = []
-      ary += @@all_layer3
-      @@all_layer2.each do |netif|
-        ary << netif unless ary.detect {|x| x.name == netif.name} 
-      end
-      return @@all = ary
-    end
-    
-    def getAll_layer3
-      return all_layer3(getAll_layer2()) 
-    end
-    
-    def getAll_layer2 
-      ary = []
-      netif_h = nil
-
-      `ip addr show`.each_line do |line|
-        if line =~ /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+) state ([^: ]+)/
-          if netif_h                    # from the previous "parsing cycle"
-            ary << self.new(netif_h)
-            netif_h = nil
+      class << self
+        
+        def getAll
+          @@all_layer2 = getAll_layer2()
+          @@all_layer3 = all_layer3(@@all_layer2) 
+          ary = []
+          ary += @@all_layer3
+          @@all_layer2.each do |netif|
+            ary << netif unless ary.detect {|x| x.name == netif.name} 
           end
-          netif_h = {
-            :n          => $1,
-            :name       => $2,
-            :misc       => $3.split(','), # es. %w{BROADCAST MULTICAST UP}
-            :mtu        => $4,
-            :qdisc      => $5,
-            :state      => $6 
-          }
-          if netif_h[:state] == "UNKNOWN" 
-            if netif_h[:misc].include? "UP"
-              netif_h[:state] = "UP"
-            elsif netif_h[:misc].include? "DOWN"
-              netif_h[:state] = "DOWN"
-            end
-          end
-          if netif_h[:misc].include_ary? %w{UP NO-CARRIER}
-            netif_h[:state] = "NO-CARRIER"
-          end
-          if netif_h[:misc].include? "UP" or netif_h[:state] == "UP"
-            netif_h[:active] = true
-          else 
-            netif_h[:active] = false
-          end
+          return @@all = ary
         end
-        if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})?/ 
-          netif_h[:type]  = $1
-          netif_h[:mac]   = MAC.new $2 if $2
+        
+        def getAll_layer3
+          return all_layer3(getAll_layer2()) 
         end
-        if line =~ /inet6? ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i 
-          # prepare the array of IP(v4/v6) addresses, if not present
-          netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
-          netif_h[:ip] << IP.new( 
-            :addr       => $1,
-            :prefixlen  => $2, # do not convert to_i
-            :scope      => $3
-          )
-        elsif line =~ # Point-to-Point interface # TODO: or just TUN? Check!
-            /inet6? ([0-9a-f\.:]+) peer ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i
-          netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
-          netif_h[:ip] << IP.new(
-            :addr       => $1,
-            :scope      => $4,
-            :peer       => IP.new(
-              :addr       => $2,
-              :prefixlen  => $3,
-              :scope      => $4  
-            )
-          )
-        end
+        
+        def getAll_layer2 
+          ary = []
+          netif_h = nil
 
-        netif_h[:type] = "P-t-P" if netif_h[:misc].include? "POINTOPOINT" 
-
-      end
-      ary << self.new(netif_h) if netif_h # fill in the last element
-      # Now detect ip assigment method for each interface
-      `ps -e -o pid,cmd`.each_line do |line|
-        if line =~ /^\s*(\d+)\s+(\S*(dhclient|dhcpcd|pump|udhcpc)[^\/\s]*)\s+(.*)$/
-          pid             = $1
-          cmd             = $2
-          args            = $4.strip
-          iface           = ary.detect {|i| args.include? i.name}
-          iface.ipassign  = {
-            :method         => :dhcp,
-            :pid            => pid,
-            :cmd            => cmd,
-            :args           => args
-          }
-        end
-      end   
-      
-      return @@all_layer2 = ary
-    end
-
-    def all_layer3(all_layer2=@@all_layer2)
-      ary = []
-      bridges, nonbridges = all_layer2.partition {|x| x.is_bridge?} 
-
-      (nonbridges.select {|x| x.type == 'wi-fi'}).each do |wifi|
-        wifi.wifi_properties = {} unless wifi.wifi_properties
-        # Prefer pciid over MAC addr to determine whether two 
-        # interfaces have the same underlying hardware
-        wifi.wifi_properties['master'] = nonbridges.detect do |x|
-          x.pciid == wifi.pciid and 
-          x.pciid =~ /\S/ and
-          x.type == 'ieee802.11'
-        end
-      end
-
-      ary += nonbridges.reject do |x| 
-        ['ieee802.11'].include? x.type or
-        x.bridged_to # "bridged to anyone"
-      end
-      ary += bridges.map do |x|
-        # create Bridge objects using generic Interface objects as templates 
-        br = OnBoard::Network::Bridge.new(x)
-        # if one of the children interfaces is configured via DHCP, then
-        # consider the bridge itself configured via DHCP and grab all the info
-        if br.ipassign[:method] == :static
-          br.members.each do |member_name|
-            # NOTE: assumption: no more than ONE bridged iface has a dhcp (etc.)
-            # client running.
-            member = all_layer2.detect {|i| i.name == member_name} 
-            if member.ipassign[:method] != :static
-              br.ipassign = member.ipassign
-              break 
-            end
-          end
-        end 
-        br
-      end
-      return ary
-    end
-
-    def all_layer2
-      begin 
-        if [ nil, false, [] ].include? @@all_layer2
-          @@all_layer2 = getAll_layer2
-        end
-        return @@all_layer2
-      rescue NameError
-        return getAll_layer2
-      end
-    end
-
-    def save
-      self_getAll = self.getAll
-      File.open(OnBoard::CONFDIR + '/network/interfaces.dat', 'w') do |f|
-        Marshal.dump self_getAll, f
-      end
-      #File.open(OnBoard::CONFDIR + '/network/interfaces.dbg.yaml', 'w') do |f|
-      #  YAML.dump self_getAll, f
-      #end
-    end
-
-    def restore
-      saved_ifaces = [] 
-      begin
-        File.open(OnBoard::CONFDIR + '/network/interfaces.dat', 'r') do |f|
-          saved_ifaces =  Marshal.load f
-        end
-      rescue # invalid or non-existent dat file? skip!
-        return
-      end
-      current_ifaces = getAll
-      saved_ifaces.each do |saved_iface|
-        current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
-        next unless current_iface # avoid NoMethodError if iface no longer 
-            # exists
-        if saved_iface.active and not current_iface.active
-          current_iface.ip_link_set_up
-        elsif !saved_iface.active and current_iface.active
-          current_iface.ip_link_set_down
-        end
-        if saved_iface.active
-          if saved_iface.ipassign[:method] == :static and 
-              current_iface.ipassign[:method] == :dhcp
-            current_iface.stop_dhcp_client
-          elsif current_iface.ipassign[:method] == :static and
-              saved_iface.ipassign[:method] == :dhcp
-            current_iface.start_dhcp_client
-          end
-        end
-      end
-      # update our knowledge of IP addresses, after some interfaces may
-      # have been brought up/down
-      current_ifaces = getAll
-      saved_ifaces.each do |saved_iface|
-        current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
-        next unless current_iface # avoid NoMethodError if iface no longer 
-            # exists       
-        if saved_iface.ipassign[:method] == :static
-          current_iface.assign_static_ips saved_iface.ip
-        end
-      end
-    end
-  
-
-  end
-
-  # Instance methods and attributes.
-
-  attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :vendor, :model, :desc, :pciid
-  attr_accessor :ipassign, :type, :wifi_properties
-
-  include OnBoard::System
-
-  def initialize(hash)
-    %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
-      eval "@#{property} = hash[:#{property}]"
-    end
-    set_pciid_from_sysfs
-    lspci_by_id = OnBoard::Hardware::LSPCI.by_id
-    if @pciid 
-      @desc = lspci_by_id[@pciid][:desc]
-      @vendor =lspci_by_id[@pciid][:vendor]
-      @model = lspci_by_id[@pciid][:model]
-    elsif @type == 'ether' # ether ifaces w/o pciid are likely tun/tap etc.
-      @type = 'virtual'
-    end
-    if @type == 'P-t-P'
-      @ipassign = {:method => :pointopoint} 
-    elsif @type == 'ieee802.11' # wireless 'masters' don't get IP
-       @ipassign = {:method => :none} 
-    elsif [nil, false, '', 0].include? @ipassign
-      @ipassign = {:method => :static}
-    end
-    if @type == 'ether' and ( 
-        File.exists? "/sys/class/net/#{@name}/phy80211" or
-        File.exists? "/sys/class/net/#{@name}/wireless")
-      @type = 'wi-fi'
-    end
-  end
-
-  def is_bridge?
-    bridgedir = "/sys/class/net/#{@name}/bridge"
-    if Dir.exists? bridgedir
-      @type = 'bridge'
-      return true
-    else
-      return false
-    end    
-  end
-
-  def bridged_to
-    bridgelink = "/sys/class/net/#@name/brport/bridge"
-    if File.symlink? bridgelink
-      return File.basename( File.readlink(bridgelink) )
-    elsif File.exists? bridgelink
-      raise RuntimeError, "#{bridgelink} should be a symlink!"
-    else
-      return nil
-    end
-  end
-
-  alias bridged?    bridged_to
-  alias is_bridged? bridged_to
-
-  def data
-    h = {}
-    %w{name misc qdisc state type vendor model}.each do |property|
-      h[property] = eval "@#{property}" if eval "@#{property}"
-    end
-    h['active']   = @active   # may be true or false
-    %w{n mtu}.each do |property|
-      h[property] = (eval "@#{property}").to_i
-    end
-    %w{mac}.each do |property|
-      h[property] = (eval "@#{property}").data if eval "@#{property}"
-    end
-    h['ip'] = case @ip
-              when Array
-                @ip.map {|ip| ip.data} 
-              else
-                nil
+          `ip addr show`.each_line do |line|
+            if line =~ /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+) state ([^: ]+)/
+              if netif_h                    # from the previous "parsing cycle"
+                ary << self.new(netif_h)
+                netif_h = nil
               end
-    h['ipassign'] = {
-      'method'      => @ipassign[:method].to_s,
-      'pid'         => @ipassign[:pid].to_i,
-      'cmd'         => @ipassign[:cmd],
-      'args'        => @ipassign[:args] 
-    }
-    h['wifi_properties'] = @wifi_properties
-    return h
-  end
+              netif_h = {
+                :n          => $1,
+                :name       => $2,
+                :misc       => $3.split(','), # es. %w{BROADCAST MULTICAST UP}
+                :mtu        => $4,
+                :qdisc      => $5,
+                :state      => $6 
+              }
+              if netif_h[:state] == "UNKNOWN" 
+                if netif_h[:misc].include? "UP"
+                  netif_h[:state] = "UP"
+                elsif netif_h[:misc].include? "DOWN"
+                  netif_h[:state] = "DOWN"
+                end
+              end
+              if netif_h[:misc].include_ary? %w{UP NO-CARRIER}
+                netif_h[:state] = "NO-CARRIER"
+              end
+              if netif_h[:misc].include? "UP" or netif_h[:state] == "UP"
+                netif_h[:active] = true
+              else 
+                netif_h[:active] = false
+              end
+            end
+            if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})?/ 
+              netif_h[:type]  = $1
+              netif_h[:mac]   = MAC.new $2 if $2
+            end
+            if line =~ /inet6? ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i 
+              # prepare the array of IP(v4/v6) addresses, if not present
+              netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
+              netif_h[:ip] << IP.new( 
+                :addr       => $1,
+                :prefixlen  => $2, # do not convert to_i
+                :scope      => $3
+              )
+            elsif line =~ # Point-to-Point interface # TODO: or just TUN? Check!
+                /inet6? ([0-9a-f\.:]+) peer ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i
+              netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
+              netif_h[:ip] << IP.new(
+                :addr       => $1,
+                :scope      => $4,
+                :peer       => IP.new(
+                  :addr       => $2,
+                  :prefixlen  => $3,
+                  :scope      => $4  
+                )
+              )
+            end
 
-  def modify_from_HTTP_request(h)
-    if h['active'] =~ /on|yes|1/
-      #Command.run "ip link set #{@name} up", :sudo unless @active # DRY!
-      ip_link_set_up unless @active
-      if @ipassign[:method] == :static and h['ipassign']['method'] == 'dhcp'
-        start_dhcp_client
-      elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'static'
-        stop_dhcp_client h['ipassign']['pid'] 
-        assign_static_ips h['ip']
-      elsif
-          @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
-        assign_static_ips h['ip']
-      end # if was dhcp and shall be dhcp... simply do nothing :-)
-    elsif @active
-      stop_dhcp_client h['ipassign']['pid'] if h['ipassign']['pid'] =~ /\d+/
-      #flush_ip
-      #Command.run "ip link set #{@name} down", :sudo # DRY!
-      ip_link_set_down
-    end
-    if @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
-        assign_static_ips h['ip']
-    end 
-    # if was dhcp and shall be dhcp... simply do nothing :-)
-  end
+            netif_h[:type] = "P-t-P" if netif_h[:misc].include? "POINTOPOINT" 
 
-  def has_ip?(ipobj)
-      @ip ? (@ip.detect {|x| x == ipobj}) : nil 
-  end
-
-  def ip_addr_add(ip)
-    return false if @ipassign[:method] != :static
-    Command.run "ip addr add #{ip.addr.to_s}/#{ip.prefixlen} dev #@name", :sudo
-  end
-
-  def ip_addr_del(ip)
-    return false if @ipassign[:method] != :static
-    Command.run "ip addr del #{ip.addr.to_s}/#{ip.prefixlen} dev #@name", :sudo
-  end
-
-  def ip_link_set_up
-    return false if not [:static, :dhcp].include? @ipassign[:method]
-    Command.run "ip link set #{@name} up", :sudo 
-  end
-
-  def ip_link_set_down
-    return false if not [:static, :dhcp].include? @ipassign[:method]
-    Command.run "ip link set #{@name} down", :sudo 
-  end
-
-  def flush_ip
-    return false if not [:static, :dhcp].include? @ipassign[:method]
-    Command.run("ip addr flush dev #{@name}", :sudo) if 
-        @ip.respond_to? :[] and @ip.length > 0
-  end
-
-  def start_dhcp_client
-    success = Command.bgexec "dhcpcd #{@name}", :sudo
-    sleep(0.1) # so the new running process will be detected
-    return success
-  end
-
-  def stop_dhcp_client(pid=@ipassign[:pid])
-    Command.run "kill #{pid}", :sudo # apparently dhcpcd --release #{@name} is useless...
-  end
-
-  def assign_static_ips(ipStringHash_or_ipObjArray)
-    ipStringHash = case ipStringHash_or_ipObjArray
-                   when Hash
-                     ipStringHash_or_ipObjArray
-                   when Array
-                     IP.ary_to_StringHash(ipStringHash_or_ipObjArray)
-                   else
-                     nil
-                   end
-    return unless ipStringHash
-    oldIPs = ip() ? ip() : [] 
-    newIPs = []
-    ipStringHash.each_value do |ipString|  
-      begin
-        newIPs << self.class::IP.new(ipString) 
-      rescue ArgumentError
-      end
-    end   
-    oldIPs.each do |oldip|
-      unless newIPs.find {|newip| newip == oldip}
-        ip_addr_del(oldip)
-      end
-    end
-    newIPs.each do |newip|
-      unless oldIPs.find {|oldip| oldip == newip}
-        ip_addr_add(newip)
-      end
-    end
-  end
-
-  def type_hr
-    TYPES_HUMAN_READABLE[@type] or @type
-  end
-
-  private
-
-  def set_pciid_from_sysfs
-    ["/sys/class/net/#@name", "/sys/class/net/#@name/device"].each do |path|
-      if File.symlink? path
-        if File.readlink(path) =~ 
-            /devices\/pci....:..\/.*:(..:..\..)/ 
-            # matches something like: 
-            # ../../devices/pci0000:00/0000:00:1e.0/0000:02:0e.0/ssb0:0/net/eth0
-            # capturing "02:0e.0"                        ^^^^^^^
-          @pciid = $1
+          end
+          ary << self.new(netif_h) if netif_h # fill in the last element
+          # Now detect ip assigment method for each interface
+          `ps -e -o pid,cmd`.each_line do |line|
+            if line =~ /^\s*(\d+)\s+(\S*(dhclient|dhcpcd|pump|udhcpc)[^\/\s]*)\s+(.*)$/
+              pid             = $1
+              cmd             = $2
+              args            = $4.strip
+              iface           = ary.detect {|i| args.include? i.name}
+              iface.ipassign  = {
+                :method         => :dhcp,
+                :pid            => pid,
+                :cmd            => cmd,
+                :args           => args
+              }
+            end
+          end   
+          
+          return @@all_layer2 = ary
         end
-      else
-        @pciid = nil
+
+        def all_layer3(all_layer2=@@all_layer2)
+          ary = []
+          bridges, nonbridges = all_layer2.partition {|x| x.is_bridge?} 
+
+          (nonbridges.select {|x| x.type == 'wi-fi'}).each do |wifi|
+            wifi.wifi_properties = {} unless wifi.wifi_properties
+            # Prefer pciid over MAC addr to determine whether two 
+            # interfaces have the same underlying hardware
+            wifi.wifi_properties['master'] = nonbridges.detect do |x|
+              x.pciid == wifi.pciid and 
+              x.pciid =~ /\S/ and
+              x.type == 'ieee802.11'
+            end
+          end
+
+          ary += nonbridges.reject do |x| 
+            ['ieee802.11'].include? x.type or
+            x.bridged_to # "bridged to anyone"
+          end
+          ary += bridges.map do |x|
+            # create Bridge objects using generic Interface objects as templates 
+            br = OnBoard::Network::Bridge.new(x)
+            # if one of the children interfaces is configured via DHCP, then
+            # consider the bridge itself configured via DHCP and grab all the info
+            if br.ipassign[:method] == :static
+              br.members.each do |member_name|
+                # NOTE: assumption: no more than ONE bridged iface has a dhcp (etc.)
+                # client running.
+                member = all_layer2.detect {|i| i.name == member_name} 
+                if member.ipassign[:method] != :static
+                  br.ipassign = member.ipassign
+                  break 
+                end
+              end
+            end 
+            br
+          end
+          return ary
+        end
+
+        def all_layer2
+          begin 
+            if [ nil, false, [] ].include? @@all_layer2
+              @@all_layer2 = getAll_layer2
+            end
+            return @@all_layer2
+          rescue NameError
+            return getAll_layer2
+          end
+        end
+
+        def save
+          self_getAll = self.getAll
+          File.open(OnBoard::CONFDIR + '/network/interfaces.dat', 'w') do |f|
+            Marshal.dump self_getAll, f
+          end
+          #File.open(OnBoard::CONFDIR + '/network/interfaces.dbg.yaml', 'w') do |f|
+          #  YAML.dump self_getAll, f
+          #end
+        end
+
+        def restore
+          saved_ifaces = [] 
+          begin
+            File.open(OnBoard::CONFDIR + '/network/interfaces.dat', 'r') do |f|
+              saved_ifaces =  Marshal.load f
+            end
+          rescue # invalid or non-existent dat file? skip!
+            return
+          end
+          current_ifaces = getAll
+          saved_ifaces.each do |saved_iface|
+            current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
+            unless current_iface
+              if saved_iface.type == 'bridge'
+                # bridge saved, not currently present: create it!
+                Bridge.brctl 'addbr' => saved_iface.name
+                redo
+              else
+                next
+              end
+            end
+            if saved_iface.active and not current_iface.active
+              current_iface.ip_link_set_up
+            elsif !saved_iface.active and current_iface.active
+              current_iface.ip_link_set_down
+            end
+            if saved_iface.active
+              if saved_iface.ipassign[:method] == :static and 
+                  current_iface.ipassign[:method] == :dhcp
+                current_iface.stop_dhcp_client
+              elsif current_iface.ipassign[:method] == :static and
+                  saved_iface.ipassign[:method] == :dhcp
+                current_iface.start_dhcp_client
+              end
+            end
+          end
+          # update our knowledge of IP addresses, after some interfaces may
+          # have been brought up/down
+          current_ifaces = getAll
+          saved_ifaces.each do |saved_iface|
+            current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
+            next unless current_iface # avoid NoMethodError if iface no longer 
+                # exists       
+            if saved_iface.ipassign[:method] == :static
+              current_iface.assign_static_ips saved_iface.ip
+            end
+          end
+        end
+      
+
       end
+
+      # Instance methods and attributes.
+
+      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :vendor, :model, :desc, :pciid
+      attr_accessor :ipassign, :type, :wifi_properties
+
+      include OnBoard::System
+
+      def initialize(hash)
+        %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
+          eval "@#{property} = hash[:#{property}]"
+        end
+        set_pciid_from_sysfs
+        lspci_by_id = OnBoard::Hardware::LSPCI.by_id
+        if @pciid 
+          @desc = lspci_by_id[@pciid][:desc]
+          @vendor =lspci_by_id[@pciid][:vendor]
+          @model = lspci_by_id[@pciid][:model]
+        elsif @type == 'ether' # ether ifaces w/o pciid are likely tun/tap etc.
+          @type = 'virtual'
+        end
+        if @type == 'P-t-P'
+          @ipassign = {:method => :pointopoint} 
+        elsif @type == 'ieee802.11' # wireless 'masters' don't get IP
+           @ipassign = {:method => :none} 
+        elsif [nil, false, '', 0].include? @ipassign
+          @ipassign = {:method => :static}
+        end
+        if @type == 'ether' and ( 
+            File.exists? "/sys/class/net/#{@name}/phy80211" or
+            File.exists? "/sys/class/net/#{@name}/wireless")
+          @type = 'wi-fi'
+        end
+      end
+
+      def is_bridge?
+        bridgedir = "/sys/class/net/#{@name}/bridge"
+        if Dir.exists? bridgedir
+          @type = 'bridge'
+          return true
+        else
+          return false
+        end    
+      end
+
+      def bridged_to
+        bridgelink = "/sys/class/net/#@name/brport/bridge"
+        if File.symlink? bridgelink
+          return File.basename( File.readlink(bridgelink) )
+        elsif File.exists? bridgelink
+          raise RuntimeError, "#{bridgelink} should be a symlink!"
+        else
+          return nil
+        end
+      end
+
+      alias bridged?    bridged_to
+      alias is_bridged? bridged_to
+
+      def data
+        h = {}
+        %w{name misc qdisc state type vendor model}.each do |property|
+          h[property] = eval "@#{property}" if eval "@#{property}"
+        end
+        h['active']   = @active   # may be true or false
+        %w{n mtu}.each do |property|
+          h[property] = (eval "@#{property}").to_i
+        end
+        %w{mac}.each do |property|
+          h[property] = (eval "@#{property}").data if eval "@#{property}"
+        end
+        h['ip'] = case @ip
+                  when Array
+                    @ip.map {|ip| ip.data} 
+                  else
+                    nil
+                  end
+        h['ipassign'] = {
+          'method'      => @ipassign[:method].to_s,
+          'pid'         => @ipassign[:pid].to_i,
+          'cmd'         => @ipassign[:cmd],
+          'args'        => @ipassign[:args] 
+        }
+        h['wifi_properties'] = @wifi_properties
+        return h
+      end
+
+      def modify_from_HTTP_request(h)
+        if h['active'] =~ /on|yes|1/
+          #Command.run "ip link set #{@name} up", :sudo unless @active # DRY!
+          ip_link_set_up unless @active
+          if @ipassign[:method] == :static and h['ipassign']['method'] == 'dhcp'
+            start_dhcp_client
+          elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'static'
+            stop_dhcp_client h['ipassign']['pid'] 
+            assign_static_ips h['ip']
+          elsif
+              @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
+            assign_static_ips h['ip']
+          end # if was dhcp and shall be dhcp... simply do nothing :-)
+        elsif @active
+          stop_dhcp_client h['ipassign']['pid'] if h['ipassign']['pid'] =~ /\d+/
+          #flush_ip
+          #Command.run "ip link set #{@name} down", :sudo # DRY!
+          ip_link_set_down
+        end
+        if @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
+            assign_static_ips h['ip']
+        end 
+        # if was dhcp and shall be dhcp... simply do nothing :-)
+      end
+
+      def has_ip?(ipobj)
+          @ip ? (@ip.detect {|x| x == ipobj}) : nil 
+      end
+
+      def ip_addr_add(ip)
+        return false if @ipassign[:method] != :static
+        Command.run "ip addr add #{ip.addr.to_s}/#{ip.prefixlen} dev #@name", :sudo
+      end
+
+      def ip_addr_del(ip)
+        return false if @ipassign[:method] != :static
+        Command.run "ip addr del #{ip.addr.to_s}/#{ip.prefixlen} dev #@name", :sudo
+      end
+
+      def ip_link_set_up
+        return false if not [:static, :dhcp].include? @ipassign[:method]
+        Command.run "ip link set #{@name} up", :sudo 
+      end
+
+      def ip_link_set_down
+        return false if not [:static, :dhcp].include? @ipassign[:method]
+        Command.run "ip link set #{@name} down", :sudo 
+      end
+
+      def flush_ip
+        return false if not [:static, :dhcp].include? @ipassign[:method]
+        Command.run("ip addr flush dev #{@name}", :sudo) if 
+            @ip.respond_to? :[] and @ip.length > 0
+      end
+
+      def start_dhcp_client
+        success = Command.bgexec "dhcpcd #{@name}", :sudo
+        sleep(0.1) # so the new running process will be detected
+        return success
+      end
+
+      def stop_dhcp_client(pid=@ipassign[:pid])
+        Command.run "kill #{pid}", :sudo # apparently dhcpcd --release #{@name} is useless...
+      end
+
+      def assign_static_ips(ipStringHash_or_ipObjArray)
+        ipStringHash = case ipStringHash_or_ipObjArray
+                       when Hash
+                         ipStringHash_or_ipObjArray
+                       when Array
+                         IP.ary_to_StringHash(ipStringHash_or_ipObjArray)
+                       else
+                         nil
+                       end
+        return unless ipStringHash
+        oldIPs = ip() ? ip() : [] 
+        newIPs = []
+        ipStringHash.each_value do |ipString|  
+          begin
+            newIPs << self.class::IP.new(ipString) 
+          rescue ArgumentError
+          end
+        end   
+        oldIPs.each do |oldip|
+          unless newIPs.find {|newip| newip == oldip}
+            ip_addr_del(oldip)
+          end
+        end
+        newIPs.each do |newip|
+          unless oldIPs.find {|oldip| oldip == newip}
+            ip_addr_add(newip)
+          end
+        end
+      end
+
+      def type_hr
+        TYPES_HUMAN_READABLE[@type] or @type
+      end
+
+      private
+
+      def set_pciid_from_sysfs
+        ["/sys/class/net/#@name", "/sys/class/net/#@name/device"].each do |path|
+          if File.symlink? path
+            if File.readlink(path) =~ 
+                /devices\/pci....:..\/.*:(..:..\..)/ 
+                # matches something like: 
+                # ../../devices/pci0000:00/0000:00:1e.0/0000:02:0e.0/ssb0:0/net/eth0
+                # capturing "02:0e.0"                        ^^^^^^^
+              @pciid = $1
+            end
+          else
+            @pciid = nil
+          end
+        end
+      end
+
     end
   end
-
 end
-
 
