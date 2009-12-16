@@ -3,6 +3,7 @@ require 'sinatra/base'
 
 require 'onboard/network/interface'
 require 'onboard/network/bridge'
+require 'onboard/extensions/string'
 
 class OnBoard::Controller
 
@@ -64,8 +65,8 @@ class OnBoard::Controller
 
   get "/network/bridges/:brname.:format" do
     interfaces  = OnBoard::Network::Interface.getAll
-    bridge      = interfaces.find do |netif| 
-      netif.name == params['brname'] and netif.type == 'bridge'
+    bridge      = interfaces.find do |netif|
+      netif.type == 'bridge' and netif.name == params['brname']
     end
     raise Sinatra::NotFound unless bridge
     format(
