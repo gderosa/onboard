@@ -43,6 +43,7 @@ class OnBoard
     include ERB::Util
 
     @@formats = %w{html json yaml} # order matters
+    @@formats << 'rb' if development?
 
     not_found do
       ## Commented out since it breaks any explicit call to not_found

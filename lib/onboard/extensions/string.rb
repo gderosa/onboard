@@ -45,7 +45,7 @@ class String
 
     else
 
-      return other.== self # NOTE: order is important!! 
+      return self.oldeq other
 
     end
 
