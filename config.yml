@@ -1,9 +1,9 @@
 ---
   environment: production 
   #chdir: 
-  address: 0.0.0.0
-  #user: gd
-  #group: gd
+  address: 127.0.0.1
+  user: onboard
+  group: onboard
   port: 4567
   pid: thin.pid
   rackup: config.ru
