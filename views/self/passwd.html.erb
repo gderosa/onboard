@@ -1,0 +1,27 @@
+<h2>Users and Passwords</h2>
+<h3>Admin’s password</h3>
+<div class="warn">
+  Leave “New password” blank to disable password check (not recommended!).
+</div>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <tr>
+      <td><input type="text" readonly value="admin"/></td>
+      <th scope="row">Username</th>
+    </tr>
+    <tr>
+      <td><input type="password" name="oldpasswd"/></td>
+      <th scope="row">Old password</th>
+    </tr>
+    <tr>
+      <td><input type="password" name="newpasswd"/></td>
+      <th scope="row">New password</th>
+    </tr>
+    <tr>
+      <td><input type="password" name="newpasswd2"/></td>
+      <th scope="row">New password (confirm)</th>
+    </tr>
+  </table>
+  <button type="submit">Change!</button>
+</form>

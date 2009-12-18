@@ -56,6 +56,11 @@ div#main input.rotext, div#main input.rwtext {
   /* font-size: 130%; */
 }
 
+div#main input[type="text"][readonly] {
+  background: transparent;
+  color: <%= lowlight %>;
+}
+
 div#main input.rwtext {
   color: <%= highlight %>;
   background: white;
