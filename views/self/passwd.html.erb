@@ -1,8 +1,23 @@
 <h2>Users and Passwords</h2>
-<h3>Admin’s password</h3>
-<div class="warn">
-  Leave “New password” blank to disable password check (not recommended!).
-</div>
+<h3>Administrator’s password</h3>
+<%= 
+  erb(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg => msg,
+        :status => status
+      }
+    }
+  )
+%>
+<% if request.env['REQUEST_METHOD'] == 'GET' %>
+  <div class="warn">
+    After a successful password change, you will be authenticated again for the 
+    new credentials.
+  </div>
+<% end %>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <table>
@@ -23,5 +38,5 @@
       <th scope="row">New password (confirm)</th>
     </tr>
   </table>
-  <button type="submit">Change!</button>
+  <button type="submit">Save!</button>
 </form>

@@ -13,6 +13,7 @@ require 'pp'
 require 'onboard/extensions/object'
 require 'onboard/extensions/sinatra/base'
 require 'onboard/menu/node'
+require 'onboard/passwd'
 
 class OnBoard
   class Controller < ::Sinatra::Base
@@ -28,13 +29,10 @@ class OnBoard
 
     Thread.abort_on_exception = true if environment == :development
 
-    # TODO: do not hardcode, make it configurable
-    # NOTE: and, until then, comment it out ;-)
-=begin    
     use Rack::Auth::Basic do |username, password|
-      [username, password] == ['admin', 'admin']
+      username == 'admin' and
+      Passwd.check_admin_pass password 
     end  
-=end
 
     # TODO: do not hardcode, make it themable :-)
     IconDir = '/icons/gnome/gnome-icon-theme-2.18.0'

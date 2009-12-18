@@ -8,7 +8,7 @@ class String
   def to_dir
     sub /(\.[^\.]+$)/, ''
   end
-  
+
   alias :oldeq :==
 
   # Handle the much common case when one of the two compared Strings

@@ -1,14 +1,15 @@
 <% if msg and msg.kind_of? Hash %>
-  <% if status == 202 and msg[:ok] %>
-    <div class="info" style="">
-      <% if msg[:info] and msg[:info] =~ /\S/ %>
-        <%= msg[:info] %>
-      <% else %>
-        Your request has been queued. You may check <a href="">this</a> 
-        or other pages later
-        to get updated informations. A look at the 
-        <a href="/system/logs.html">system logs</a> may be helpful too. 
-      <% end %>
+  <% if status == 202 and msg[:ok] and not (msg[:info] =~ /\S/) %>
+    <div class="info">
+      Your request has been queued. You may check <a href="">this</a> 
+      or other pages later
+      to get updated informations. A look at the 
+      <a href="/system/logs.html">system logs</a> may be helpful too. 
+    </div>
+  <% end %>
+  <% if msg[:ok] and msg[:info] =~ /\S/ %>
+    <div class="info">
+      <%= msg[:info] %>
     </div>
   <% end %>
   <% if not msg[:ok] %>
