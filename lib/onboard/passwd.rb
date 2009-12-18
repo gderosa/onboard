@@ -7,6 +7,8 @@ class OnBoard
 
     PASSWD_DIR = OnBoard::CONFDIR + '/self/passwd'
     ADMIN_PASSWD_FILE = PASSWD_DIR + '/admin.md5.dat'
+    DEFAULT_ADMIN_USERNAME = 'admin'
+    DEFAULT_ADMIN_PASSWD = 'admin'
 
     def self.change_from_HTTP_request(params)
       unless self.check_pass(params['oldpasswd'])
@@ -30,7 +32,11 @@ class OnBoard
     end
 
     def self.check_pass(passwd)
-      Digest::MD5.digest(passwd) == File.read(ADMIN_PASSWD_FILE)
+      if File.exists? ADMIN_PASSWD_FILE
+        Digest::MD5.digest(passwd) == File.read(ADMIN_PASSWD_FILE)
+      else
+        passwd == 'admin'
+      end
     end
     
     # An alias, until other users will exist

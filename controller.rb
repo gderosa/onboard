@@ -30,8 +30,10 @@ class OnBoard
     Thread.abort_on_exception = true if environment == :development
 
     use Rack::Auth::Basic do |username, password|
-      username == 'admin' and
-      Passwd.check_admin_pass password 
+      (File.exists? OnBoard::Passwd::ADMIN_PASSWD_FILE) ?
+          (username == 'admin' and Passwd.check_admin_pass password)
+      :
+          (username == 'admin' and password == 'admin')
     end  
 
     # TODO: do not hardcode, make it themable :-)

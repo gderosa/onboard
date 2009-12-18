@@ -25,10 +25,12 @@
       <td><input type="text" readonly value="admin"/></td>
       <th scope="row">Username</th>
     </tr>
-    <tr>
-      <td><input type="password" name="oldpasswd"/></td>
-      <th scope="row">Old password</th>
-    </tr>
+    <% unless params['mode'] =~ /^init/ %>
+      <tr>
+        <td><input type="password" name="oldpasswd"/></td>
+        <th scope="row">Old password</th>
+      </tr>
+    <% end %>
     <tr>
       <td><input type="password" name="newpasswd"/></td>
       <th scope="row">New password</th>
