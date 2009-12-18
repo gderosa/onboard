@@ -35,7 +35,7 @@ class OnBoard
       if File.exists? ADMIN_PASSWD_FILE
         Digest::MD5.digest(passwd) == File.read(ADMIN_PASSWD_FILE)
       else
-        passwd == 'admin'
+        passwd == DEFAULT_ADMIN_PASSWD
       end
     end
     
