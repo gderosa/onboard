@@ -48,10 +48,6 @@ Gems:
 # gem install thin 
 # gem install r18n-core
 # gem install r18n-sinatra
-  ## NOTE: if you want Italian support, until next release, you have to 
-  ## get the latest development snapshot (and build the gem by yourself):
-  ##
-  ## git clone git://github.com/ai/r18n.git
 
 --
 
