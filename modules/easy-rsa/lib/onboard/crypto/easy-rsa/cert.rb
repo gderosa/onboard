@@ -89,10 +89,15 @@ EOF
                 )              
                 begin
                   FileUtils.chown nil, 'onboard', destkey
+                  FileUtils.chown nil, 'onboard', destcert
                   FileUtils.chmod 0640, destkey
+                  FileUtils.chmod 0644, destcert
                 rescue
                   FileUtils.chmod 0600, destkey
+                  FileUtils.chmod 0644, destcert
                 end
+
+
               rescue
                 msg[:ok] = false
                 msg[:err] = $!
