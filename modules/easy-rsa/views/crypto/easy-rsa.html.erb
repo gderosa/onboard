@@ -134,9 +134,21 @@
       <tr>
         <th scope="row">Validity</th>
         <td>
-          <%= i18n.l(objects['ca']['not_before'].to_date, :full) %>
+          <%= 
+            begin
+              i18n.l(objects['ca']['not_before'].to_date, :full) 
+            rescue 
+              objects['ca']['not_before'].to_date
+            end
+          %>
           -      
-          <%= i18n.l(objects['ca']['not_after'].to_date, :full)  %>
+          <%= 
+            begin
+              i18n.l(objects['ca']['not_after'].to_date, :full)  
+            rescue
+              objects['ca']['not_after'].to_date
+            end
+          %>
         </td>
       </tr>
       <tr>
