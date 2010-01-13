@@ -28,6 +28,8 @@ PIDFILE=/home/$USER/dev/$NAME/thin.pid
 SCRIPTNAME=/etc/init.d/$NAME
 CHDIR=/home/$USER/dev/$NAME
 
+export LANG="en_US.UTF-8"
+
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
 
