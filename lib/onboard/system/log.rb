@@ -93,6 +93,7 @@ class OnBoard
 
       # Native Unix tools are faster, so use them!
       def tail(n=Tail_n)
+        return nil unless @meta['path']
         if File.readable? @meta['path']
           return `tail -n #{n} #{@meta['path']}`
         else

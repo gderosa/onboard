@@ -752,12 +752,15 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
         # Find out the right path to config files, status logs etc.
         def find_file(name)
+          
+          return false unless name
+
           attempts = []
           attempts << name
           attempts << File.join(
               @data_internal['process'].env['PWD'], 
               name
-          ) if @data_internal['process'].env['PWD']
+          ) if @data_internal['process'].env['PWD'] and name
           
           unless @data_internal['conffile'].strip == name.strip
             attempts << File.join(

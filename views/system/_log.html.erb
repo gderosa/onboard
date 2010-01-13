@@ -1,3 +1,4 @@
+<% if log.data['tail'] %>
   <pre class="log"><%= log.data['tail'] %></pre>
   <p>
     <% if log.data['tail'].count("\n") < log.class::Tail_n %>
@@ -8,4 +9,7 @@
       <a href="/system/logs/<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download 
       the whole file. 
     <% end %>
-  </p>
+    </p>
+<% else %>
+  <div class="warn" style="font-style:italic;">No log file</div>
+<% end %>
