@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'rubygems'
 require 'thin' # we need to explicit the server, for some reason... :-?
 require 'sinatra/base'
