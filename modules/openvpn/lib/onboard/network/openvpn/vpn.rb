@@ -258,7 +258,7 @@ EOF
           end
           if opts.include? :rmlog
             logfile = @data_internal['log'] || @data_internal['log-append']
-            if File.exists? logfile
+            if logfile and File.exists? logfile
               System::Command.run "rm #{logfile}", :sudo
               System::Log.all.delete_if { |h| h['path'] == logfile }
             end

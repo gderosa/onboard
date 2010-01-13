@@ -202,8 +202,12 @@ class OnBoard
           FileUtils.cp CURRENT_STATIC_ROUTES_FILE, STATIC_ROUTES_FILE
         end
         def self.restore_static_routes
-          @@static_routes = Marshal.load File.read STATIC_ROUTES_FILE
-          FileUtils.cp STATIC_ROUTES_FILE, CURRENT_STATIC_ROUTES_FILE
+          if File.exists? STATIC_ROUTES_FILE
+            @@static_routes = Marshal.load File.read STATIC_ROUTES_FILE
+            FileUtils.cp STATIC_ROUTES_FILE, CURRENT_STATIC_ROUTES_FILE
+          else
+            @@static_routes = []
+          end
           @@static_routes.each do |static_route|
             msg = ip_route_add static_route, :try
             unless msg[:ok]
