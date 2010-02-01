@@ -89,7 +89,7 @@ class OnBoard
         @@countries[current_language_code] = 
             I18nData.countries current_language_code unless 
                 @@countries[current_language_code]
-        @@countries[current_language_code]
+       @@countries[current_language_code]
       end
       def country_codes_by_name
         countries.keys.sort_by {|x| countries[x]}
