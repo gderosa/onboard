@@ -81,6 +81,7 @@ do_start () {
 	chown dansguardian /var/log/dansguardian
 	mkdir -p /var/log/polipo
 	chown proxy /var/log/polipo
+	mkdir -p /var/run/dnsmasq
 }
 
 case "$1" in
