@@ -199,7 +199,7 @@ class OnBoard
         # Peristance across system reboots
         def self.save_static_routes
           # TODO? is it enough?
-          FileUtils.cp CURRENT_STATIC_ROUTES_FILE, STATIC_ROUTES_FILE
+          FileUtils.cp CURRENT_STATIC_ROUTES_FILE, STATIC_ROUTES_FILE if File.exists? CURRENT_STATIC_ROUTES_FILE
         end
         def self.restore_static_routes
           if File.exists? STATIC_ROUTES_FILE
