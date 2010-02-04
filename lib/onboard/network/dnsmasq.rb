@@ -14,9 +14,15 @@ class OnBoard
         end
       end
 
+      # "#{CONFDIR}"            # saved configuration
+      # "#{CONFDIR}/new"        # current configuration
+      # "#{CONFDIR}/defaults"   # "factory" defaults
       def self.restore
         OnBoard::System::Command.run "mkdir -p #{CONFDIR}/new"
         %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
+          unless File.exists? "#{CONFDIR}/#{file}"
+            FileUtils.copy "#{CONFDIR}/defaults/#{file}", "#{CONFDIR}/"
+          end
           FileUtils.copy "#{CONFDIR}/#{file}", "#{CONFDIR}/new/#{file}"
         end
         # 'new' subdirectory is always the current config dir
