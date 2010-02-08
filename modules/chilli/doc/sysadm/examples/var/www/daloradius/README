@@ -1,0 +1,10 @@
+Based on daloRADIUS - http://www.daloradius.com/ ,
+
+basically for the login page 
+contrib/chilli/portal2/hotspotlogin/hotspotlogin.php ,
+which "Just Works".
+
+Also daloRADIUS (which is written in PHP) will be probably a source of 
+inspiration to write a Ruby/RADIUS/MySQL module for OnBoard.
+
+
