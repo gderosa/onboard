@@ -116,10 +116,10 @@ class OnBoard
 
       def self.restore
         ['iptables', 'ip6tables'].each do |ipt| 
+          file = OnBoard::CONFDIR + '/network/' + ipt + '.save'
           cmdstr = ''
-          cmdstr << ipt << '-restore < ' << OnBoard::CONFDIR << '/network/' <<
-              ipt << '.save'
-          OnBoard::System::Command.run cmdstr, :sudo
+          cmdstr << ipt << '-restore < ' << file
+          OnBoard::System::Command.run cmdstr, :sudo if File.exists? file
         end
       end
 
