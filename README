@@ -34,7 +34,9 @@ for module-specific, additional requirements):
 * bridge-utils (brctl)
 * pciutils (lspci command)
 * dhcpcd
-* dnsmasq
+* dnsmasq >= 2.46 
+  ## removed ISC-style leasefile format, which is assumed when no
+  ## dhcp-range is provided -- and leads to troubles
 * locales 
   ## and generate (UTF8) locales for languages/countries you want to support
 
