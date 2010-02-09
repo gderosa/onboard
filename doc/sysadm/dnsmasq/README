@@ -16,3 +16,14 @@ Providing DHCP an DNS services to the local network.
    /etc/dnsmasq.conf will be read anyway, so we need to avoid 
    conficts/duplicates  
 
+* Debian lenny uses an old version of Dnsmasq: compile from sources the latest,
+  but keep the /etc/init.d/dnsmasq script provided by the deb, just changing 
+
+DAEMON=/usr/sbin/dnsmasq
+
+  to: 
+
+DAEMON=/usr/local/sbin/dnsmasq
+
+  (this won't be necessary when dnsmasq.rb becomes distro-independent, 
+  one day... ;-) 
