@@ -32,6 +32,7 @@ for module-specific, additional requirements):
 * iproute2
 * iptables (with proper kernel support)
 * bridge-utils (brctl)
+* pciutils (lspci command)
 * dhcpcd
 * dnsmasq
 * locales 
