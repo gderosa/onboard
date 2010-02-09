@@ -35,7 +35,7 @@
   <table>
     <thead>
       <tr>
-        <th>IP address</th>
+        <th>IP address[#port]</th>
         <th>Comment</th>
       </tr>
     </thead>
@@ -57,7 +57,11 @@
         %>
         <tr>
           <td>
-            <input type="text" class="rwtext" name="nameservers[][ip]" value="<%= nsh['ip'] %>"/>
+            <% if nsh['port'] %>
+              <input type="text" class="rwtext" name="nameservers[][ip]" value="<%= nsh['ip'] %>#<%= nsh['port'] %>"/> 
+            <% else %>
+              <input type="text" class="rwtext" name="nameservers[][ip]" value="<%= nsh['ip'] %>"/>
+            <% end %>
           </td>
           <td>
             <input type="text" size="48" class="humantext" name="nameservers[][comment]" value="<%= nsh['comment'] %>"/>
