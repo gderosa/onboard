@@ -48,7 +48,9 @@ class OnBoard
                 "</a>"
             elsif content[:name]
               s << 
-                  '<span title="' << (content[:desc] or '') << '">' << 
+                  '<span title="' << (content[:desc] or '') << '"' << 
+                  (hasChildren? ? '' : ' class="lowlight"' ) << 
+                  '>' << 
                     content[:name] << 
                   '</span>'
             end
