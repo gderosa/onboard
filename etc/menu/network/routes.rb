@@ -3,6 +3,6 @@ class OnBoard
     :href => '/network/routes',
     :name => 'Routes',
     :desc => 'Where the IP packets go, according to destination address and other criteria',
-    :n    => -10
+    :n    => 0
   })
 end

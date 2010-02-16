@@ -4,6 +4,6 @@ class OnBoard
     :href => '/network/firewall/ipv4',
     :name => 'Linux Firewall',
     :desc => 'Filter Internet traffic (IPv4)',
-    :n    => -3
+    :n    => 0
   })
 end

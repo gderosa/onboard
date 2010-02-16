@@ -3,6 +3,6 @@ class OnBoard
     :href => '/network/openvpn',
     :name => 'OpenVPN',
     :desc => 'Virtual Private Networks',
-    :n    => 2
+    :n    => 0
   })
 end

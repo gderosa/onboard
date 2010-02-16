@@ -3,6 +3,6 @@ class OnBoard
     :href => '/network/nat/dnat',
     :name => 'Port Forwarding',
     :desc => 'Help some network application to work behind this router',
-    :n    => 1
+    :n    => 0
   })
 end
