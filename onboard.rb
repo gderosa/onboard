@@ -42,8 +42,11 @@ class OnBoard
     # sort to resamble /etc/rc*.d/* or run-parts behavior
     Find.find(dir).sort.each do |file|
       if file =~ /\.rb$/
+        print "loading: #{file}... "
+        STDOUT.flush
         if load file
-          puts "loaded: #{file}"
+          print "OK\n"
+          STDOUT.flush
         end
       end
     end
@@ -77,8 +80,9 @@ class OnBoard
       # modules/my_module_1/etc/restore/70my_module_1.rb
       # i.e. sort by basename
       module_restore.keys.sort.each do |script_basename|
-        load module_restore[script_basename]
-        puts "loaded: #{module_restore[script_basename]}" 
+        print "loading: #{module_restore[script_basename]}... "
+        STDOUT.flush
+        load module_restore[script_basename] and puts "OK" 
       end
     end
 
