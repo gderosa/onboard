@@ -46,15 +46,9 @@ Gems:
 C/C++ build environment; and, if you installed a pre-packaged ruby, you
 will need header files from a package named ruby-dev or something alike)
 
-# gem source --add http://gemcutter.org
+gem source --add http://gemcutter.org
 
-# gem install rubytree
-# gem install sinatra
-# gem install i18n_data
-# gem install locale
-# gem install thin 
-# gem install r18n-core
-# gem install sinatra-r18n
+gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape
 
 --
 
