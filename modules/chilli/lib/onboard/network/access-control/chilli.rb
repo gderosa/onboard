@@ -1,7 +1,10 @@
 class OnBoard
   module Network
     module AccessControl
-      module Chilli
+      class Chilli
+        def self.getAll
+          [] 
+        end
       end
     end
   end

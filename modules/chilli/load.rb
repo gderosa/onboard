@@ -1,7 +1,7 @@
 class OnBoard
   module Network
     module AccessControl
-      module Chilli
+      class Chilli
         ROOTDIR = File.dirname(__FILE__)
         $LOAD_PATH.unshift  ROOTDIR + '/lib'
         OnBoard.find_n_load ROOTDIR + '/etc/menu'
