@@ -2,6 +2,7 @@ autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
+autoload :Escape,     'escape'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/extensions/openssl'
@@ -241,7 +242,7 @@ EOF
             return {:err => 'Already started.'}
           else
             pwd = @data_internal['process'].env['PWD']
-            cmd = @data_internal['process'].cmdline.join(' ')
+            cmd = Escape.shell_command(@data_internal['process'].cmdline)
             cmd += ' --daemon' unless @data_internal['daemon']
             msg = System::Command.bgexec ("cd #{pwd} && sudo -E #{cmd}") 
             msg[:ok] = true
