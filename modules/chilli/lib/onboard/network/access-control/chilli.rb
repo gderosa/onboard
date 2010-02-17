@@ -32,7 +32,7 @@ class OnBoard
               if arg == "" # NOTE: necessary ?
                 arg = true
               end
-            elsif line =~ /(\S+)\s*$/
+            elsif line =~ /^\s*(\S+)\s*$/
               opt, arg = $1, true
             else
               next
