@@ -11,6 +11,15 @@ class OnBoard
         @cmdline  = @cmdline_raw.split("\0")
         @env      = getenv()
       end
+      def data
+        {
+          'pid'     => @pid,
+          'cwd'     => @cwd,
+          'exe'     => @exe,
+          'cmdline' => @cmdline,
+          'env'     => @env
+        }
+      end
       def getenv
         env = {}
         ary = `sudo cat /proc/#{@pid}/environ`.split("\0")

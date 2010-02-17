@@ -1,15 +1,15 @@
 # network
-net		192.168.203.128/25
-uamlisten	192.168.203.129
-dhcpif		eth3
+net		192.168.202.128/25
+uamlisten	192.168.202.129
+dhcpif		eth2
 dhcpstart 10
 dhcpend  20 
 
-uamallowed	"192.168.203.129" 
+uamallowed	"192.168.202.129" 
 
 # dns
 domain "localdomain" 
-dns1 "192.168.203.129" 
+dns1 "192.168.202.129" 
 
 # radius
 radiusserver1	"localhost" 
@@ -19,25 +19,29 @@ radiusauthport  1812
 radiusacctport  1813 
 # radiusnasid	"nas01" 
 uamsecret "uamsecret" 
-coaport 1700
+coaport 1702
 coanoipcheck
 
 # std/defaults
-uamport         3990 
-uamhomepage http://192.168.203.129:3990/www/coova.html
+uamport         3990
+uamhomepage http://192.168.202.129:3990/www/coova.html
 wwwdir /etc/chilli/www 
 wwwbin /etc/chilli/wwwsh 
 uamuiport 4990 
 
 # to be calculated automatically
-cmdsocket       /var/run/chilli.sock 
-pidfile         /var/run/chilli.pid 
+cmdsocket       /var/run/chilli/eth2/chilli.sock 
+pidfile         /var/run/chilli/eth2/chilli.pid 
+statedir 	/var/run/chilli/eth2 # for chilli.ipc
 
 # Advanced
 #statip 192.168.57.1/255.255.255.255 
 #uamserver "http://192.168.203.1:4990/www/login.chi" # requires haserl
-uamserver     "https://192.168.203.129/hotspotlogin.php" 
+uamserver     "https://192.168.202.129/hotspotlogin.php" 
 #uamserver     "https://192.168.203.1/daloradius/contrib/chilli/portal2/hotspotlogin/hotspotlogin.php"
+#
+
+
 
 
 # Unused?
