@@ -60,7 +60,12 @@ class OnBoard
     Dir.foreach(ROOTDIR + '/modules') do |dir|
       dir_fullpath = ROOTDIR + '/modules/' + dir
       if File.directory? dir_fullpath and not dir =~ /^\./
-        load dir_fullpath + '/load.rb'
+        file = dir_fullpath + '/load.rb'
+        if File.readable? file
+          load dir_fullpath + '/load.rb'
+        else
+          STDERR.puts "Warning: Couldn't load modules/#{dir}/load.rb: Skipped!"
+        end
       end 
     end
 
