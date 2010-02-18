@@ -42,7 +42,7 @@ class OnBoard
           return h
         end
 
-        attr_reader :data        
+        attr_reader :data, :conf        
         
         def initialize(h)
           @process = h[:process]
