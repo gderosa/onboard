@@ -44,18 +44,18 @@ class OnBoard
           return h
         end
 
-        attr_reader :data, :conf        
+        attr_reader :data, :conf, :managed
         
         def initialize(h)
           @process = h[:process]
           @conffile = conffile()
-          @managed = managed()
+          @managed = managed?
           @conf = self.class.parse_conffile(@conffile)
         end
 
         # true if the config file is a subdirectory of 
         # OnBoard::Network::AccessControl::Chilli::CONFDIR
-        def managed
+        def managed?
           return true if @conffile[CONFDIR] 
           return false
         end
