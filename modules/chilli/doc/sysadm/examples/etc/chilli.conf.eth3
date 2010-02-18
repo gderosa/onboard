@@ -33,6 +33,7 @@ uamuiport 4990
 cmdsocket       /var/run/chilli/eth3/chilli.sock 
 pidfile         /var/run/chilli/eth3/chilli.pid 
 statedir 	/var/run/chilli/eth3 # for chilli.ipc
+tundev		chilli_eth3
 
 # Advanced
 #statip 192.168.57.1/255.255.255.255 

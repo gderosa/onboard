@@ -14,12 +14,12 @@
     </tr>
   </thead>
   <tbody>
-    <% objects.each do |chilli| %>
+    <% objects.sort{|x, y| x.conf['dhcpif'] <=> y.conf['dhcpif']}.each do |chilli| %>
       <tr>
         <td><%= chilli.conf['dhcpif'] %></td>
         <td><%= chilli.conf['net'] %></td>
         <td><%= chilli.conf['uamlisten'] %></td>
-        <td class="lowlight">DHCP range</td>
+        <td><%= chilli.dhcp_range.first.to_s %> - <%= chilli.dhcp_range.last.to_s %></td>
       </tr>
     <% end %>
   </tbody>

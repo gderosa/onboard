@@ -1,3 +1,5 @@
+autoload :IPAddr, 'onboard/extensions/ipaddr'
+
 class OnBoard
 
   module System
@@ -81,6 +83,25 @@ class OnBoard
           return @conffile
         end
 
+        def dhcp_range
+          ip_net = IPAddr.new @conf['net']
+          ip_uamlisten = IPAddr.new @conf['uamlisten']
+          if conf['dhcpstart']
+            ip_dhcpstart = ip_net + @conf['dhcpstart']
+          else
+            ip_dhcpstart = ip_net + 1
+            if ip_dhcpstart == ip_uamlisten
+              ip_dhcpstart += 1
+            end
+          end
+          if conf['dhcpend']
+            ip_dhcpend = ip_net + @conf['dhcpend'] 
+          else
+            ip_dhcpend = ip_net.to_range.last - 1
+          end
+          return (ip_dhcpstart..ip_dhcpend) 
+        end
+
         def data
           {
             'process'   => {
@@ -89,7 +110,11 @@ class OnBoard
               'cwd'       => @process.cwd
             },
             'conffile'  => conffile(),
-            'conf'      => @conf
+            'conf'      => @conf,
+            'dhcprange' => {
+              'start'     => dhcp_range.first.to_s,
+              'end'       => dhcp_range.last.to_s
+            }
           }
         end
 

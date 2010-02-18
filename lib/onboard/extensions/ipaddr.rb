@@ -25,6 +25,14 @@ class IPAddr
     end
   end
 
+  def +(other)
+    IPAddr.new(self.to_i + other.to_i, self.family) 
+  end
+
+  def -(other)
+    +(-(other.to_i)) 
+  end
+
   def netmask
     IPAddr.new @mask_addr, @family
   end
