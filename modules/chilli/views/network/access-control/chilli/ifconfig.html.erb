@@ -1,0 +1,17 @@
+<% chilli = objects %>
+<h2>Captive Portal configuration (on interface: <%= chilli.conf['dhcpif'] %>)</h2>
+<p class="credits">Based on <a href="http://coova.org/CoovaChilli">CoovaChilli</a>.</p>
+
+<table>
+  <thead></thead>
+  <tbody>
+    <% chilli.conf.each_pair do |option, value| %>
+      <tr>
+        <th scope="row"><%= option %></th>
+        <td><input type="text" name="conf[<%= option %>]" value="<%= value %>"/></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+

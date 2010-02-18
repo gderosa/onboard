@@ -23,9 +23,9 @@
         <td><%= chilli.dhcp_range.first.to_s %> - <%= chilli.dhcp_range.last.to_s %></td>
         <td>
           <% if chilli.managed %>
-            <a href="chilli/<%= chilli.conf['dhcpif'] %>">View/Edit</a>
+            <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">View/Edit</a>
           <% else %>
-            <a href="chilli/<%= chilli.conf['dhcpif'] %>">View</a> <span class="warn">(not managed)</span>
+            <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">View</a> <span class="warn">(not managed)</span>
           <% end %>
         </td>
       </tr>
