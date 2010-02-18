@@ -30,7 +30,7 @@ class IPAddr
   end
 
   def -(other)
-    +(-(other.to_i)) 
+    self.+(-(other.to_i)) 
   end
 
   def netmask
