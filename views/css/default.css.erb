@@ -67,7 +67,6 @@ form {
 
 div#main input.rotext, div#main input.rwtext {
   font-family: monospace;
-  /* font-size: 130%; */
 }
 
 div#main input[type="text"][readonly] {
@@ -80,9 +79,10 @@ div#main input.rwtext {
   background: white;
 }
 
-div#main input.rotext {
+div#main input.rotext, div#main input[readonly] {
   color: <%= lowlight %>;
   background: <%= lightbg %>;
+  font-family: monospace;
 }
 
 input[type="radio"] {
