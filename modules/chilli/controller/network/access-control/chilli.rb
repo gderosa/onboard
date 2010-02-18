@@ -18,12 +18,17 @@ class OnBoard
 
     get '/network/access-control/chilli/:ifname.:format' do
       all = OnBoard::Network::AccessControl::Chilli.getAll()
-      format(
-        :module => 'chilli',
-        :path => '/network/access-control/chilli/ifconfig',
-        :format => params[:format],
-        :objects  => all.detect{|x| x.conf['dhcpif'] == params[:ifname]} 
-      )
+      chilli_object = all.detect{|x| x.conf['dhcpif'] == params[:ifname]}
+      if chilli_object
+        format(
+          :module => 'chilli',
+          :path => '/network/access-control/chilli/ifconfig',
+          :format => params[:format],
+          :objects  => chilli_object 
+        )
+      else
+        not_found
+      end
     end
    
   end

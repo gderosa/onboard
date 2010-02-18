@@ -227,7 +227,7 @@ table tr th small {
   padding: 0;
 }
 
-table tr th[scope="row"] {
+table tr th[scope="row"], table tr th[scope="rowgroup"] {
   text-align: left;
 }
 
@@ -235,6 +235,12 @@ table tr td {
   border: 0;
   background: <%= lightbg %>;
   padding: 0 0.4em;
+}
+
+table tr td.separator {
+  background: transparent;
+  border: 0;
+  height: 0.3em;
 }
 
 table tr td ul, table tr th ul {
@@ -249,6 +255,11 @@ table tr td button {
 table tr td button img {
   vertical-align: middle;
   margin: 0;
+}
+
+tbody {
+  margin: 10px;
+  border: 2px black solid;
 }
 
 button[disabled] {
