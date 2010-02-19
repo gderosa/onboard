@@ -9,7 +9,7 @@ class OnBoard
   module Network
     module AccessControl
       class Chilli
-        DEFAULT_CONF_FILE = '/etc/chilli.conf'
+        DEFAULT_SYS_CONF_FILE = '/etc/chilli.conf'
         DEFAULT_NEW_CONF_FILE = "#{CONFDIR}/defaults/chilli.conf"
 
         def self.getAll
@@ -51,7 +51,15 @@ class OnBoard
           return h
         end
 
-        attr_reader :data, :conf, :managed
+        def self.create_from_HTTP_request(params) 
+          chilli_new = new(:conffile => DEFAULT_NEW_CONF_FILE)
+          chilli_new.conf.merge! params['conf'] 
+          return chilli_new
+        end
+
+        attr_reader :data, :conf, :managed 
+            # no :conffile getter : there's already an explicit method
+        attr_writer :conf, :conffile
         
         def initialize(h)
           if h[:process] 
@@ -80,6 +88,19 @@ class OnBoard
         end
 
         def write_conffile
+          File.open @conffile, 'w' do |f|
+            @conf.each_pair do |key, value|
+              if value == true
+                f.write "#{key}\n"
+              elsif value.respond_to? :strip! # String-like
+                value.strip!
+                if value =~ /\s/
+                  value = "\"#{value}\"" 
+                end
+                f.write "#{key}\t#{value}\n"
+              end
+            end
+          end
         end
 
         # true if the config file is a subdirectory of 
@@ -97,7 +118,7 @@ class OnBoard
           cmdline = @process.cmdline # Array, like in ARGV ...
           index = cmdline.index('--conf') 
           unless index # --conf option not found
-            @conffile = DEFAULT_CONF_FILE
+            @conffile = DEFAULT_SYS_CONF_FILE
             return @conffile 
           end
           argument = cmdline[index + 1] 

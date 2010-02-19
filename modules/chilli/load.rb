@@ -10,6 +10,8 @@ class OnBoard
       end
     end
   end
+
+  CHILLI_CLASS = Network::AccessControl::Chilli # a shortcut
 end
 
 

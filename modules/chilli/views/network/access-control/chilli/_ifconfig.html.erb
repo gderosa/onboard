@@ -15,6 +15,8 @@
   other parameters will undergo some processing.
   -->
 
+<pre><%= params.pretty_inspect %></pre>
+
 <h4>Network</h4>
 <table>
   <thead></thead>
@@ -41,7 +43,7 @@
     </tr>
     <tr>
       <th scope="row">Listen address</th>
-      <td><input type="text" name="conf[net]" value="<%= chilli.conf['uamlisten'] if chilli %>" class="rwtext"/></td>
+      <td><input type="text" name="conf[uamlisten]" value="<%= chilli.conf['uamlisten'] if chilli %>" class="rwtext"/></td>
     </tr>
     <tr>
       <th scope="row">DHCP range</th>
