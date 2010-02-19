@@ -1,13 +1,18 @@
 <% 
-  # Used both for captive portals creation and editing
-%>
+  require 'onboard/network/interface'
 
-<% chilli = objects %>
+  # Used both for captive portals creation and editing
+
+  chilli = objects 
+
+  interfaces = OnBoard::Network::Interface.getAll() 
+
+%>
 
 <!-- 
   conf[] form params will be written dirctly in the chilli config file ;
   other parameters will undergo some processing.
--->
+  -->
 
 <h4>Network</h4>
 <table>
@@ -19,9 +24,11 @@
         <% if chilli and chilli.conf['dhcpif'] =~ /\S/ %>
           <input type="text" name="conf[dhcpif]" value="<%= chilli.conf['dhcpif'] %>" readonly />
         <% else %>
-          <select>
-            <option>option one</option>
-            <option>option two</option>
+          <select name="conf[dhcpif]"> 
+            <% interfaces.each do |iface| %>
+              <% next unless ['ether', 'wi-fi'].include? iface.type %>
+              <option value="<%= iface.name %>"><%= iface.name %> (<%= iface.type_hr %>)</option>
+            <% end %>
           </select>
         <% end %>
       </td>

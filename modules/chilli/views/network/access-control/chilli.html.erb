@@ -38,13 +38,17 @@
 
 <h3>Create New</h3>
 
-<%=
-  format(
-    :module => 'chilli',
-    :path => '/network/access-control/chilli/_ifconfig',
-    :partial => true,
-    :objects => nil,
-    :format => 'html'
-  )
-%>
-
+<form method="POST">
+  <%=
+    format(
+      :module => 'chilli',
+      :path => '/network/access-control/chilli/_ifconfig',
+      :partial => true,
+      :objects => nil,
+      :format => 'html'
+    )
+  %>
+  <div style="margin-top:1em;">
+    <button type="submit">Create!</button>
+  </div>
+</form>
