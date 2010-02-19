@@ -16,19 +16,27 @@ class OnBoard
     end
 
     post '/network/access-control/chilli.:format' do
-      chilli = CHILLI_CLASS.create_from_HTTP_request(params)
-      chilli.conffile = "#{CHILLI_CLASS::CONFDIR}/current/chilli.conf.#{chilli.conf['dhcpif']}"
-      chilli.write_conffile
-      status(201) # HTTP Created
-      headers(
-          'Location' => 
-"#{request.scheme}://#{request.host}:#{request.port}/network/access-control/chilli/#{chilli.conf['dhcpif']}.#{params[:format]}" 
-      )
+      msg = {}
+      begin
+        chilli = CHILLI_CLASS.create_from_HTTP_request(params)
+        chilli.conffile = "#{CHILLI_CLASS::CONFDIR}/current/chilli.conf.#{chilli.conf['dhcpif']}"
+        chilli.write_conffile
+        status(201) # HTTP Created
+        headers(
+            'Location' => 
+  "#{request.scheme}://#{request.host}:#{request.port}/network/access-control/chilli/#{chilli.conf['dhcpif']}.#{params[:format]}" 
+        )
+        msg = {:ok => true}
+      rescue CHILLI_CLASS::BadRequest
+        msg = {:err => $!}
+      end
+      pp msg
       format(
         :module => 'chilli',
         :path => '/network/access-control/chilli',
         :format => params[:format],
-        :objects  => CHILLI_CLASS.getAll()  
+        :objects  => CHILLI_CLASS.getAll(),
+        :msg => msg
       )
     end
 

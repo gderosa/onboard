@@ -16,6 +16,7 @@
   -->
 
 <pre><%= params.pretty_inspect %></pre>
+<pre><%= msg.pretty_inspect %></pre>
 
 <h4>Network</h4>
 <table>
@@ -87,7 +88,7 @@
       <th scope="row">Accounting port</th>
       <td><input type="text" name="conf[radiusacctport]" value="<%= chilli.conf['radiusacctport'] if chilli %>" class="rwtext"/></td>
     </tr>
-    <tr>
+    <tr title="<%= 'Empty to leave unchanged' if chilli and chilli.conf['radsecret'] %>">
       <th scope="row">RADIUS password</th>
       <td><input type="password" name="conf[radsecret]" class="rwtext"/></td>
     </tr>
@@ -102,12 +103,18 @@
       <th scope="row">Login page URL</th>
       <td><input type="text" name="conf[uamserver]" value="<%= chilli.conf['uamserver'] if chilli %>" class="rwtext" size="64"/></td>
     </tr>
+    <% if chilli and chilli.conf['uamsecret'] %>
+      <tr>
+        <th scope="row">&ldquo;UAM secret&rdquo; (old password)</th>
+        <td><input type="password" name="old_conf[uamsecret]" class="rwtext"/></td>
+      </tr>
+    <% end %>
     <tr title="Leave empty to not use a shared secret">
-      <th scope="row">&ldquo;UAM secret&rdquo; (a password shared with the login page)</th>
+      <th scope="row">&ldquo;UAM secret&rdquo; (new password)</th>
       <td><input type="password" name="conf[uamsecret]" class="rwtext"/></td>
     </tr>   
     <tr title="Leave empty to not use a shared secret">
-      <th scope="row">&ldquo;UAM secret&rdquo; (verify)</th>
+      <th scope="row">&ldquo;UAM secret&rdquo; (new password, type again)</th>
       <td><input type="password" name="verify_conf[uamsecret]" class="rwtext"/></td>
     </tr>    
   </tbody>

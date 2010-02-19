@@ -7,10 +7,15 @@ class OnBoard
   end
 
   module Network
+    
+    autoload :Interface, 'onboard/network/interface'
+
     module AccessControl
       class Chilli
         DEFAULT_SYS_CONF_FILE = '/etc/chilli.conf'
         DEFAULT_NEW_CONF_FILE = "#{CONFDIR}/defaults/chilli.conf"
+
+        class BadRequest < RuntimeError; end
 
         def self.getAll
           ary = []
@@ -21,7 +26,7 @@ class OnBoard
             )
           end
           # may be not running, but a configuration files exists
-          Dir.glob("#{CONFDIR}/current/chilli.conf.*").each do |conffile|
+          Dir.glob("#{CONFDIR}/current/chilli.conf.?*").each do |conffile|
             chilli = new(:conffile => conffile) 
             ary << chilli unless ary.detect{|x| x.conffile == conffile}
           end
@@ -46,15 +51,22 @@ class OnBoard
             else
               next
             end
-            h[opt] = arg unless opt =~ /secret/ # do no export passwords
+            h[opt] = arg
           end
           return h
         end
 
         def self.create_from_HTTP_request(params) 
+          validate_HTTP_creation(params)
           chilli_new = new(:conffile => DEFAULT_NEW_CONF_FILE)
           chilli_new.conf.merge! params['conf'] 
           return chilli_new
+        end
+
+        def self.validate_HTTP_creation(params)
+          unless params['conf']['dhcpif'] and params['conf']['dhcpif'] =~ /\S/
+            raise BadRequest, "No network interface provided!"
+          end
         end
 
         attr_reader :data, :conf, :managed 
@@ -160,7 +172,8 @@ class OnBoard
               'cwd'       => @process.cwd
             },
             'conffile'  => conffile(),
-            'conf'      => @conf,
+            'conf'      => @conf.remove{|key,val| key =~ /secret/}, 
+                # do not export passwords
             'dhcprange' => {
               'start'     => dhcp_range.first.to_s,
               'end'       => dhcp_range.last.to_s
