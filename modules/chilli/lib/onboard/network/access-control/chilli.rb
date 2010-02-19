@@ -13,10 +13,16 @@ class OnBoard
 
         def self.getAll
           ary = []
+          # running processes
           `pidof chilli`.split.each do |pid|
-            ary << new(
+            ary << new( # new Chilli object
               :process => OnBoard::System::Process.new(pid)
             )
+          end
+          # may be not running, but a configuration files exists
+          Dir.glob("#{CONFDIR}/current/chilli.conf.*").each do |conffile|
+            chilli = new(:conffile => conffile) 
+            ary << chilli unless ary.detect{|x| x.conffile == conffile}
           end
           return ary
         end
@@ -47,10 +53,32 @@ class OnBoard
         attr_reader :data, :conf, :managed
         
         def initialize(h)
-          @process = h[:process]
-          @conffile = conffile()
-          @managed = managed?
-          @conf = self.class.parse_conffile(@conffile)
+          if h[:process] 
+              # Running Chilli instance
+            @process = h[:process]
+            @conffile = conffile()
+            @conf = self.class.parse_conffile(@conffile)
+            @managed = managed?
+          elsif h[:conffile] and not h[:conf] 
+              # Not running, but a configuration file exists
+            @process = nil
+            @conffile = h[:conffile]
+            @conf = self.class.parse_conffile(@conffile) 
+            @managed = managed?
+          elsif h[:conffile] and h[:conf] 
+              # We will have to write a configuration file
+            @conffile = h[:conffile]
+            @managed = true
+            @conf = h[:conf] 
+          end
+        end
+
+        def running?
+          return true if @process
+          return false
+        end
+
+        def write_conffile
         end
 
         # true if the config file is a subdirectory of 

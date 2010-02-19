@@ -11,6 +11,7 @@
       <th>Network</th>
       <th>Listen address</th>
       <th>DHCP range</th>
+      <th>Running?</th>
       <th>Configuration</th>
     </tr>
   </thead>
@@ -21,6 +22,7 @@
         <td><%= chilli.conf['net'] %></td>
         <td><%= chilli.conf['uamlisten'] %></td>
         <td><%= chilli.dhcp_range.first.to_s %> - <%= chilli.dhcp_range.last.to_s %></td>
+        <td style="text-align: center;"><%= yes_no_icon(chilli.running?, :print_no) %></td>
         <td>
           <% if chilli.managed %>
             <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">View/Edit</a>
