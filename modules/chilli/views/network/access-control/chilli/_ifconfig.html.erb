@@ -5,7 +5,8 @@
 
   chilli = objects 
 
-  interfaces = OnBoard::Network::Interface.getAll() 
+  interfaces = 
+      OnBoard::Network::Interface.getAll().sort{|x,y| x.name <=> y.name} 
 
 %>
 
@@ -25,6 +26,7 @@
           <input type="text" name="conf[dhcpif]" value="<%= chilli.conf['dhcpif'] %>" readonly />
         <% else %>
           <select name="conf[dhcpif]"> 
+            <option value="" class="lowlight">[choose one]</option>
             <% interfaces.each do |iface| %>
               <% next unless ['ether', 'wi-fi'].include? iface.type %>
               <option value="<%= iface.name %>"><%= iface.name %> (<%= iface.type_hr %>)</option>
@@ -43,7 +45,7 @@
     </tr>
     <tr>
       <th scope="row">DHCP range</th>
-      <td><input type="text" name="dhcp_start" value="<%= chilli.dhcp_range.first if chilli %>" class="rwtext"/> - <input type="text" name="dhcp_end" value="<%= chilli.dhcp_range.last if chilli %>" class="rwtext"/></td>
+      <td><input type="text" name="dhcp_start" value="<%= chilli.dhcp_range.first if chilli and chilli.conf['net'] %>" class="rwtext"/> - <input type="text" name="dhcp_end" value="<%= chilli.dhcp_range.last if chilli and chilli.conf['net'] %>" class="rwtext"/></td>
     </tr>
   </tbody>
 </table>

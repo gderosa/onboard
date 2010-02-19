@@ -10,6 +10,7 @@ class OnBoard
     module AccessControl
       class Chilli
         DEFAULT_CONF_FILE = '/etc/chilli.conf'
+        DEFAULT_NEW_CONF_FILE = "#{CONFDIR}/defaults/chilli.conf"
 
         def self.getAll
           ary = []

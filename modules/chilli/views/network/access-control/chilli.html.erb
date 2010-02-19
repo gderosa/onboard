@@ -1,3 +1,11 @@
+<% 
+  require 'onboard/network/access-control/chilli'
+
+  new_default_chilli = OnBoard::Network::AccessControl::Chilli.new(
+    :conffile => OnBoard::Network::AccessControl::Chilli::DEFAULT_NEW_CONF_FILE
+  )
+%>
+
 <h2>Captive Portal</h2>
 <p class="credits">Based on <a href="http://coova.org/CoovaChilli">CoovaChilli</a>.</p>
 
@@ -44,7 +52,7 @@
       :module => 'chilli',
       :path => '/network/access-control/chilli/_ifconfig',
       :partial => true,
-      :objects => nil,
+      :objects => new_default_chilli,
       :format => 'html'
     )
   %>
