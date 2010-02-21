@@ -9,6 +9,20 @@
 <h2>Captive Portal</h2>
 <p class="credits">Based on <a href="http://coova.org/CoovaChilli">CoovaChilli</a>.</p>
 
+  <%=
+    erb(
+      :"/_messages.html",
+      {
+        :layout => false,
+        :locals => {
+          :msg => msg,
+          :status => status
+        }
+      }
+    )
+  %>
+
+
 <h3>Configured and/or running Captive Portal instances</h3>
 
 <table>
@@ -53,7 +67,8 @@
       :path => '/network/access-control/chilli/_ifconfig',
       :partial => true,
       :objects => new_default_chilli,
-      :format => 'html'
+      :format => 'html',
+      :msg => msg
     )
   %>
   <div style="margin-top:1em;">

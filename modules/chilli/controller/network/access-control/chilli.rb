@@ -28,6 +28,7 @@ class OnBoard
         )
         msg = {:ok => true}
       rescue CHILLI_CLASS::BadRequest
+        status 400
         msg = {:err => $!}
       end
       pp msg
