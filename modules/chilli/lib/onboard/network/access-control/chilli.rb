@@ -58,6 +58,7 @@ class OnBoard
           validate_HTTP_creation(params)
           chilli_new = new(:conffile => DEFAULT_NEW_CONF_FILE)
           chilli_new.conf.merge! params['conf'] 
+          chilli_new.set_dhcp_range(params['dhcp_start'], params['dhcp_end'])
           return chilli_new
         end
 
@@ -101,26 +102,11 @@ class OnBoard
               end
             end
           end # if blank, will defaults to the first address of the network...
-          if dhcp_start =~ /\S/ and dhcp_end =~ /\S/
-            if  Interface::IP.valid_address? dhcp_start and
-                Interface::IP.valid_address? dhcp_end
-              ip_dhcp_start = IPAddr.new dhcp_start
-              ip_dhcp_end   = IPAddr.new dhcp_end
-              if ip_net.include? ip_dhcp_start and ip_net.include? ip_dhcp_end
-                if ip_dhcp_start > ip_dhcp_end
-                  raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
-                end
-              else
-                raise BadRequest, "Interval \"#{dhcp_start}\"..\"#{dhcp_end}\" is outside network #{net} !" 
-              end
-            else
-              raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
-            end                
-          end
           if params['conf']['uamsecret'].length > 0 and 
               params['conf']['uamsecret'] != params['verify_conf']['uamsecret']
             raise BadRequest, "UAM passwords do not match!"
           end
+          return true
         end
 
         attr_reader :data, :conf, :managed 
@@ -128,6 +114,10 @@ class OnBoard
         attr_writer :conf, :conffile
         
         def initialize(h)
+          # TODO? It would probably be more efficient to store IP address
+          # objects as instance variables instead of just storing Strings
+          # (and create IPAddr or Interface::IP objects each time 
+          # we need to perform some computation...)
           if h[:process] 
               # Running Chilli instance
             @process = h[:process]
@@ -156,6 +146,32 @@ class OnBoard
             LOGGER.error "Found an invalid Chilli configuration file: #{@conffile}"
             return false
           end
+        end
+
+        def set_dhcp_range(dhcp_start, dhcp_end)
+          ip_net = IPAddr.new @conf['net']
+
+          # validation and conversion code
+          if dhcp_start =~ /\S/ and dhcp_end =~ /\S/
+            if  Interface::IP.valid_address? dhcp_start and
+                Interface::IP.valid_address? dhcp_end
+              ip_dhcp_start = IPAddr.new dhcp_start
+              ip_dhcp_end   = IPAddr.new dhcp_end
+              if ip_net.include? ip_dhcp_start and ip_net.include? ip_dhcp_end
+                if ip_dhcp_start > ip_dhcp_end
+                  raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
+                end
+              else
+                raise BadRequest, "Interval \"#{dhcp_start}\"..\"#{dhcp_end}\" is outside network #{net} !" 
+              end
+            else
+              raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
+            end                
+          end
+
+          # actual set of @conf['dhcpstart'] and @conf['dhcpend']
+          @conf['dhcpstart']  = (ip_dhcp_start - ip_net).to_i.to_s
+          @conf['dhcpend']    = (ip_dhcp_end   - ip_net).to_i.to_s
         end
 
         def running?
