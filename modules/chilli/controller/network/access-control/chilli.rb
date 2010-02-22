@@ -31,7 +31,6 @@ class OnBoard
         status 400
         msg = {:err => $!}
       end
-      pp msg
       format(
         :module => 'chilli',
         :path => '/network/access-control/chilli',

@@ -85,9 +85,9 @@
       <th scope="row">Accounting port</th>
       <td><input type="text" name="conf[radiusacctport]" value="<%= chilli.conf['radiusacctport'] if chilli %>" class="rwtext"/></td>
     </tr>
-    <tr title="<%= 'Empty to leave unchanged' if chilli and chilli.conf['radsecret'] %>">
+    <tr title="<%= 'Empty to leave unchanged' if chilli and chilli.conf['radiussecret'] %>">
       <th scope="row">RADIUS password</th>
-      <td><input type="password" name="conf[radsecret]" class="rwtext"/></td>
+      <td><input type="password" name="conf[radiussecret]" class="rwtext"/></td>
     </tr>
    
   </tbody>

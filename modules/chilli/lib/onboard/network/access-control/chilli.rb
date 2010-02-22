@@ -28,7 +28,9 @@ class OnBoard
           # may be not running, but a configuration files exists
           Dir.glob("#{CONFDIR}/current/chilli.conf.?*").each do |conffile|
             chilli = new(:conffile => conffile) 
-            ary << chilli unless ary.detect{|x| x.conffile == conffile}
+            ary << chilli unless 
+                ary.detect{|x| x.conffile == conffile} or
+                !chilli.validate_conffile
           end
           return ary
         end
@@ -94,6 +96,16 @@ class OnBoard
           end
         end
 
+        def validate_conffile # based on chilli_opt(1) 
+          msg = System::Command.run "chilli_opt --conf #{@conffile}", :sudo
+          if msg[:ok]
+            return true
+          else
+            LOGGER.error "Found an invalid Chilli configuration file: #{@conffile}"
+            return false
+          end
+        end
+
         def running?
           return true if @process
           return false
@@ -146,7 +158,11 @@ class OnBoard
         end
 
         def dhcp_range
-          ip_net = IPAddr.new @conf['net']
+          begin
+            ip_net = IPAddr.new @conf['net']
+          rescue
+            return nil
+          end
           ip_uamlisten = IPAddr.new @conf['uamlisten']
           if conf['dhcpstart']
             ip_dhcpstart = ip_net + @conf['dhcpstart']
