@@ -21,6 +21,7 @@ class OnBoard
         chilli = CHILLI_CLASS.create_from_HTTP_request(params)
         chilli.conffile = "#{CHILLI_CLASS::CONFDIR}/current/chilli.conf.#{chilli.conf['dhcpif']}"
         chilli.write_conffile
+        raise CHILLI_CLASS::BadRequest, 'Invalid configuration!' unless chilli.validate_conffile # for whatever is not already checked by Chilli::validate_HTTP_creation
         status(201) # HTTP Created
         headers(
             'Location' => 

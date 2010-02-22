@@ -1,17 +1,13 @@
-autoload :IPAddr, 'onboard/extensions/ipaddr'
+require 'onboard/extensions/ipaddr'
+require 'onboard/system/process'
+require 'onboard/network/interface'
+require 'onboard/network/interface/ip'
 
 class OnBoard
-
-  module System
-    autoload :Process, 'onboard/system/process'
-  end
-
   module Network
-    
-    autoload :Interface, 'onboard/network/interface'
-
     module AccessControl
       class Chilli
+
         DEFAULT_SYS_CONF_FILE = '/etc/chilli.conf'
         DEFAULT_NEW_CONF_FILE = "#{CONFDIR}/defaults/chilli.conf"
 
@@ -66,9 +62,41 @@ class OnBoard
         end
 
         def self.validate_HTTP_creation(params)
-          unless params['conf']['dhcpif'] and params['conf']['dhcpif'] =~ /\S/
-            raise BadRequest, "No network interface provided!"
+          dhcpif        = params['conf']['dhcpif']
+          net           = params['conf']['net']
+          ip_net        = nil
+          uamlisten     = params['conf']['uamlisten']
+          ip_uamlisten  = nil
+
+          if dhcpif =~ /\S/
+            unless Interface.getAll.detect{|netif| netif.name == dhcpif} 
+              raise BadRequest, "Network interface #{dhcpif} does not exist"
+            end
+          else
+            raise BadRequest, "No network interface provided!" 
           end
+          if net =~ /\S/
+            begin
+              ip_net = IPAddr.new net
+              unless net =~ /\//
+                raise BadRequest, "\"#{net}\" is not a valid network: maybe you forgot to specify a netmask/prefixlen?"
+              end
+            rescue ArgumentError
+              raise BadRequest, "\"#{net}\" is not a valid network!"
+            end
+          else
+            raise BadRequest, "No network specified!" 
+          end
+          if uamlisten =~ /\S/
+            unless Interface::IP.valid_address? uamlisten
+              raise BadRequest, "\"#{uamlisten}\" is not a valid listen address!"
+            else 
+              unless ip_net.include? IPAddr.new uamlisten
+                raise BadRequest, "#{uamlisten} is outside network #{net} !"
+              end
+            end
+          end # if blank, will defaults to the first address of the network...
+          
         end
 
         attr_reader :data, :conf, :managed 
