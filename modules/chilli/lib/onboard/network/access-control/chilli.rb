@@ -64,9 +64,14 @@ class OnBoard
         def self.validate_HTTP_creation(params)
           dhcpif        = params['conf']['dhcpif']
           net           = params['conf']['net']
-          ip_net        = nil
           uamlisten     = params['conf']['uamlisten']
+          dhcp_start    = params['dhcp_start']
+          dhcp_end      = params['dhcp_end']
+
+          ip_net        = nil
           ip_uamlisten  = nil
+          ip_dhcp_start = nil
+          ip_dhcp_end   = nil
 
           if dhcpif =~ /\S/
             unless Interface.getAll.detect{|netif| netif.name == dhcpif} 
@@ -92,11 +97,26 @@ class OnBoard
               raise BadRequest, "\"#{uamlisten}\" is not a valid listen address!"
             else 
               unless ip_net.include? IPAddr.new uamlisten
-                raise BadRequest, "#{uamlisten} is outside network #{net} !"
+                raise BadRequest, "Listen address #{uamlisten} is outside network #{net} !"
               end
             end
           end # if blank, will defaults to the first address of the network...
-          
+          if dhcp_start =~ /\S/ and dhcp_end =~ /\S/
+            if  Interface::IP.valid_address? dhcp_start and
+                Interface::IP.valid_address? dhcp_end
+              ip_dhcp_start = IPAddr.new dhcp_start
+              ip_dhcp_end   = IPAddr.new dhcp_end
+              if ip_net.include? ip_dhcp_start and ip_net.include? ip_dhcp_end
+                if ip_dhcp_start > ip_dhcp_end
+                  raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
+                end
+              else
+                raise BadRequest, "Interval \"#{dhcp_start}\"..\"#{dhcp_end}\" is outside network #{net} !" 
+              end
+            else
+              raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
+            end                
+          end
         end
 
         attr_reader :data, :conf, :managed 
