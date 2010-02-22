@@ -124,6 +124,10 @@
       <th scope="row">Resources accessible without authorization</th>
       <td><input type="text" name="conf[uamallowed]" value="<%= chilli.conf['uamallowed'] if chilli %>" class="rwtext" size="64"/></td>
     </tr>
+    <tr>
+      <th scope="row">Change-of-Authorization UDP port</th>
+      <td><input type="text" name="conf[coaport]" size="5" class="rwtext" value="<%= chilli.conf['coaport'] %>"/></td>
+    </tr>
   </tbody> 
 </table>
 

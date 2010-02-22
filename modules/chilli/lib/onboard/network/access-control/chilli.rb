@@ -10,6 +10,7 @@ class OnBoard
 
         DEFAULT_SYS_CONF_FILE = '/etc/chilli.conf'
         DEFAULT_NEW_CONF_FILE = "#{CONFDIR}/defaults/chilli.conf"
+        DEFAULT_COAPORT       = 3779
 
         class BadRequest < RuntimeError; end
 
@@ -119,6 +120,7 @@ class OnBoard
           # objects as instance variables instead of just storing Strings
           # (and create IPAddr or Interface::IP objects each time 
           # we need to perform some computation...)
+          # NOTE: apparently, performance is pretty good, anyway.
           if h[:process] 
               # Running Chilli instance
             @process = h[:process]
@@ -131,11 +133,13 @@ class OnBoard
             @conffile = h[:conffile]
             @conf = self.class.parse_conffile(@conffile) 
             @managed = managed?
+            dynaconf_coaport unless @conf['coaport'].to_i > 0
           elsif h[:conffile] and h[:conf] 
-              # We will have to write a configuration file
+              # We will have to (over-)write a configuration file
             @conffile = h[:conffile]
             @managed = true
             @conf = h[:conf] 
+            dynaconf_coaport unless @conf['coaport'].to_i > 0 # useless?
           end
         end
 
@@ -183,6 +187,18 @@ class OnBoard
           @conf['pidfile']    = "/var/run/chilli/#{@conf['dhcpif']}/chilli.pid"
           @conf['statedir']   = "/var/run/chilli/#{@conf['dhcpif']}" 
           @conf['tundev']     = "chilli_#{@conf['dhcpif']}"
+        end
+
+        def dynaconf_coaport
+          all_except_self = self.class.getAll.reject do |x| 
+            x.conf['dhcpif'] == self.conf['dhcpif']
+          end
+          forbidden_coaports = all_except_self.map{|x| x.conf['coaport']} 
+          coaport = DEFAULT_COAPORT
+          while forbidden_coaports.include? coaport.to_s
+            coaport += 1
+          end
+          @conf['coaport'] = coaport
         end
 
         def running?
