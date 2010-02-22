@@ -59,6 +59,7 @@ class OnBoard
           chilli_new = new(:conffile => DEFAULT_NEW_CONF_FILE)
           chilli_new.conf.merge! params['conf'] 
           chilli_new.set_dhcp_range(params['dhcp_start'], params['dhcp_end'])
+          chilli_new.dynaconf # set temporary dirs, ipc, etc.
           return chilli_new
         end
 
@@ -172,6 +173,16 @@ class OnBoard
           # actual set of @conf['dhcpstart'] and @conf['dhcpend']
           @conf['dhcpstart']  = (ip_dhcp_start - ip_net).to_i.to_s
           @conf['dhcpend']    = (ip_dhcp_end   - ip_net).to_i.to_s
+        end
+
+        def dynaconf
+          System::Command.run(
+              "mkdir -p /var/run/chilli/#{@conf['dhcpif']}", :sudo
+          )
+          @conf['cmdsocket']  = "/var/run/chilli/#{@conf['dhcpif']}/chilli.sock"
+          @conf['pidfile']    = "/var/run/chilli/#{@conf['dhcpif']}/chilli.pid"
+          @conf['statedir']   = "/var/run/chilli/#{@conf['dhcpif']}" 
+          @conf['tundev']     = "chilli_#{@conf['dhcpif']}"
         end
 
         def running?
