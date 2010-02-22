@@ -117,6 +117,10 @@ class OnBoard
               raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
             end                
           end
+          if params['conf']['uamsecret'].length > 0 and 
+              params['conf']['uamsecret'] != params['verify_conf']['uamsecret']
+            raise BadRequest, "UAM passwords do not match!"
+          end
         end
 
         attr_reader :data, :conf, :managed 
@@ -164,10 +168,11 @@ class OnBoard
             @conf.each_pair do |key, value|
               if value == true
                 f.write "#{key}\n"
-              elsif value.respond_to? :strip! # String-like
+              elsif value.respond_to? :strip! and value =~ /\S/ 
+                  # String-like, non-blank
                 value.strip!
                 if value =~ /\s/
-                  value = "\"#{value}\"" 
+                  value = "\"#{value}\"" # protect with double-quotes
                 end
                 f.write "#{key}\t#{value}\n"
               end
