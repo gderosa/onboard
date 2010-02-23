@@ -19,14 +19,14 @@ class OnBoard
       if params['stop'] =~ /\S/
         iface = params['stop'].strip
         chilli = CHILLI_CLASS.getAll().detect do |x| 
-          x.conf['dhcpif'] == iface and x.running?
+          x.conf['dhcpif'] == iface and x.running? and x.managed?
         end
         msg = chilli.stop if chilli
         sleep 1 # diiiirty!
       elsif params['start'] =~ /\S/
         iface = params['start'].strip
         chilli = CHILLI_CLASS.getAll().detect do |x| 
-          x.conf['dhcpif'] == iface and not x.running?
+          x.conf['dhcpif'] == iface and (not x.running?) and x.managed?
         end
         msg = chilli.start if chilli
       end
@@ -75,6 +75,47 @@ class OnBoard
           :format => params[:format],
           :objects  => chilli_object 
         )
+      else
+        not_found
+      end
+    end
+
+    delete '/network/access-control/chilli/:ifname.:format' do
+      params[:ifname].strip!
+      msg = {}
+      chilli = CHILLI_CLASS.getAll.detect do |x|
+        x.conf['dhcpif'].strip == params[:ifname] 
+      end 
+      if chilli
+        if chilli.managed?
+          msg = chilli.stop
+          if msg[:ok]
+            # we should have file permission...
+            if FileUtils.rm chilli.conffile 
+              status 200 # OK (do nothing)
+              redirection = "/network/access-control/chilli.#{params[:format]}"
+              status(303)                       # HTTP "See Other"
+              headers('Location' => redirection)
+              # altough the client will move, an entity-body is always returned
+              format(
+                :path     => '/303',
+                :format   => params[:format],
+                :objects  => redirection
+              )
+            else 
+              status 500 # internal Server Error
+              msg[:err] = $! 
+              msg[:ok] = false
+              format(
+                :path     => '/500',
+                :format   => params[:format],
+                :msg      => msg
+            end
+          end
+        else
+          status 403 # Forbidden
+
+        end
       else
         not_found
       end
