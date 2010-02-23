@@ -79,6 +79,37 @@ class OnBoard
       end
     end
 
+    put '/network/access-control/chilli/:ifname.:format' do
+      all = CHILLI_CLASS.getAll()
+      chilli = all.detect{|x| x.conf['dhcpif'] == params[:ifname]}
+      chilli_new = nil
+      msg = {}
+      if chilli
+        begin
+          chilli_new = CHILLI_CLASS.create_from_HTTP_request(params)
+          chilli_new.conf.each_pair do |key, val|
+            chilli.conf[key] = val unless key =~ /secret/
+          end
+          # passwords are treated differently
+          msg = chilli.write_conffile
+        rescue CHILLI_CLASS::BadRequest
+          status 400 
+          msg[:err] = $!
+          msg[:ok] = false
+        end
+        format(
+          :module => 'chilli',
+          :path => '/network/access-control/chilli/ifconfig',
+          :format => params[:format],
+          :objects  => chilli,
+          :msg => msg
+        )
+      else
+        not_found
+      end
+    end
+   
+
     delete '/network/access-control/chilli/:ifname.:format' do
       params[:ifname].strip!
       msg = {}

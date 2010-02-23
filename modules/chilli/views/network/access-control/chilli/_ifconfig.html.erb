@@ -37,15 +37,15 @@
     </tr>
     <tr>
       <th scope="row">Network</th>
-      <td><input type="text" name="conf[net]" value="<%= chilli.conf['net'] if chilli %>" class="rwtext"/></td>
+      <td><input type="text" name="conf[net]" value="<%= chilli.conf['net'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr>
       <th scope="row">Listen address</th>
-      <td><input type="text" name="conf[uamlisten]" value="<%= chilli.conf['uamlisten'] if chilli %>" class="rwtext"/></td>
+    <td><input type="text" name="conf[uamlisten]" value="<%= chilli.conf['uamlisten'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr>
       <th scope="row">DHCP range</th>
-      <td><input type="text" name="dhcp_start" value="<%= chilli.dhcp_range.first if chilli and chilli.conf['net'] %>" class="rwtext"/> - <input type="text" name="dhcp_end" value="<%= chilli.dhcp_range.last if chilli and chilli.conf['net'] %>" class="rwtext"/></td>
+      <td><input type="text" name="dhcp_start" value="<%= chilli.dhcp_range.first if chilli and chilli.conf['net'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/> - <input type="text" name="dhcp_end" value="<%= chilli.dhcp_range.last if chilli and chilli.conf['net'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
   </tbody>
 </table>
@@ -55,14 +55,14 @@
   <tbody>
     <tr>
       <th scope="row">Domain</th>
-      <td><input type="text" name="conf[domain]" value="<%= chilli.conf['domain'] if chilli %>" class="rwtext"/></td>
+    <td><input type="text" name="conf[domain]" value="<%= chilli.conf['domain'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr>
       <th scope="rowgroup" rowspan="2">Name Servers</th>
-      <td><input type="text" name="conf[dns1]" value="<%= chilli.conf['dns1'] if chilli %>" class="rwtext"/></td>
+    <td><input type="text" name="conf[dns1]" value="<%= chilli.conf['dns1'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr>
-      <td><input type="text" name="conf[dns2]" value="<%= chilli.conf['dns2'] if chilli %>" class="rwtext"/></td>
+      <td><input type="text" name="conf[dns2]" value="<%= chilli.conf['dns2'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
   </tbody>
 </table>
@@ -72,22 +72,22 @@
   <tbody>
     <tr>
       <th scope="rowgroup" rowspan="2">RADIUS Servers</th>
-      <td><input type="text" name="conf[radiusserver1]" value="<%= chilli.conf['radiusserver1'] if chilli %>" class="rwtext"/></td>
+      <td><input type="text" name="conf[radiusserver1]" value="<%= chilli.conf['radiusserver1'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr>
-      <td><input type="text" name="conf[radiusserver2]" value="<%= chilli.conf['radiusserver2'] if chilli %>" class="rwtext"/></td>
+    <td><input type="text" name="conf[radiusserver2]" value="<%= chilli.conf['radiusserver2'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr>
       <th scope="row">Authentication port</th>
-      <td><input type="text" name="conf[radiusauthport]" value="<%= chilli.conf['radiusauthport'] if chilli %>" class="rwtext"/></td>
+      <td><input type="text" name="conf[radiusauthport]" value="<%= chilli.conf['radiusauthport'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr>
       <th scope="row">Accounting port</th>
-      <td><input type="text" name="conf[radiusacctport]" value="<%= chilli.conf['radiusacctport'] if chilli %>" class="rwtext"/></td>
+      <td><input type="text" name="conf[radiusacctport]" value="<%= chilli.conf['radiusacctport'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
     <tr title="<%= 'Empty to leave unchanged' if chilli and chilli.conf['radiussecret'] %>">
       <th scope="row">RADIUS password</th>
-      <td><input type="password" name="conf[radiussecret]" class="rwtext"/></td>
+      <td><input type="password" name="conf[radiussecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
    
   </tbody>
@@ -98,21 +98,21 @@
   <tbody>
     <tr>
       <th scope="row">Login page URL</th>
-      <td><input type="text" name="conf[uamserver]" value="<%= chilli.conf['uamserver'] if chilli %>" class="rwtext" size="64"/></td>
+      <td><input type="text" name="conf[uamserver]" value="<%= chilli.conf['uamserver'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="64"/></td>
     </tr>
     <% if chilli and chilli.conf['uamsecret'] %>
       <tr>
         <th scope="row">&ldquo;UAM secret&rdquo; (old password)</th>
-        <td><input type="password" name="old_conf[uamsecret]" class="rwtext"/></td>
+        <td><input type="password" name="old_conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
       </tr>
     <% end %>
     <tr title="Leave empty to not use a shared secret">
       <th scope="row">&ldquo;UAM secret&rdquo; (new password)</th>
-      <td><input type="password" name="conf[uamsecret]" class="rwtext"/></td>
+      <td><input type="password" name="conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>   
     <tr title="Leave empty to not use a shared secret">
       <th scope="row">&ldquo;UAM secret&rdquo; (new password, type again)</th>
-      <td><input type="password" name="verify_conf[uamsecret]" class="rwtext"/></td>
+      <td><input type="password" name="verify_conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>    
   </tbody>
 </table>
@@ -122,11 +122,11 @@
   <tbody>   
     <tr title="Comma-separated list of IP addresses, domain names or network segments">
       <th scope="row">Resources accessible without authorization</th>
-      <td><input type="text" name="conf[uamallowed]" value="<%= chilli.conf['uamallowed'] if chilli %>" class="rwtext" size="64"/></td>
+      <td><input type="text" name="conf[uamallowed]" value="<%= chilli.conf['uamallowed'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="64"/></td>
     </tr>
     <tr>
       <th scope="row">Change-of-Authorization UDP port</th>
-      <td><input type="text" name="conf[coaport]" size="5" class="rwtext" value="<%= chilli.conf['coaport'] %>"/></td>
+      <td><input type="text" name="conf[coaport]" size="5" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> value="<%= chilli.conf['coaport'] %>"/></td>
     </tr>
   </tbody> 
 </table>
