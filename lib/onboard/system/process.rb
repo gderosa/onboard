@@ -20,6 +20,15 @@ class OnBoard
           'env'     => @env
         }
       end
+      def kill(opt_h)
+        opt_ary = []
+        opt_ary << :sudo if opt_h[:sudo]
+        msg = System::Command.run "kill #{@pid}", *opt_ary
+        if opt_h[:wait]
+          sleep 0.1 while File.exists? "/proc/#{@pid}"
+        end
+        return msg
+      end
       def getenv
         env = {}
         ary = `sudo cat /proc/#{@pid}/environ`.split("\0")

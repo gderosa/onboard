@@ -22,7 +22,6 @@ class OnBoard
           x.conf['dhcpif'] == iface and x.running? and x.managed?
         end
         msg = chilli.stop if chilli
-        sleep 1 # diiiirty!
       elsif params['start'] =~ /\S/
         iface = params['start'].strip
         chilli = CHILLI_CLASS.getAll().detect do |x| 
@@ -88,10 +87,14 @@ class OnBoard
       end 
       if chilli
         if chilli.managed?
-          msg = chilli.stop
+          if chilli.running? 
+            msg = chilli.stop
+          else
+            msg[:ok] = true
+          end
           if msg[:ok]
             # we should have file permission...
-            if FileUtils.rm chilli.conffile 
+            if (FileUtils.rm chilli.conffile)
               status 200 # OK (do nothing)
               redirection = "/network/access-control/chilli.#{params[:format]}"
               status(303)                       # HTTP "See Other"
@@ -110,6 +113,7 @@ class OnBoard
                 :path     => '/500',
                 :format   => params[:format],
                 :msg      => msg
+              )
             end
           end
         else

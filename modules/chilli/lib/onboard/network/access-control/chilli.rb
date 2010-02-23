@@ -34,6 +34,7 @@ class OnBoard
 
         def self.parse_conffile(filename)
           h = {}
+          return h unless File.exists? filename
           File.foreach(filename) do |line|
             line.sub! /#.*$/, ''
             if line =~ /(\S+)\s+(.*)\s*$/  
@@ -277,7 +278,7 @@ class OnBoard
         end
 
         def stop
-          System::Command.run "kill #{@process.pid}", :sudo 
+          @process.kill(:wait => true, :sudo => true)  
         end
 
         def start

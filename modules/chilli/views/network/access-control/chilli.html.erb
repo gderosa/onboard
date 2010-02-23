@@ -66,11 +66,14 @@
           </a>
         </td>
         <td style="text-align: center;">
-          <% if chilli.managed? %>
-            <button type="submit" title="Delete!"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
-          <% else %>
-            <button type="submit" title="Delete!" disabled><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
-          <% end %>
+          <form method="POST" action="chilli/<%= chilli.conf['dhcpif'] %>.html">
+            <input type="hidden" name="_method" value="delete">
+            <% if chilli.managed? %>
+              <button type="submit" title="Delete!"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
+            <% else %>
+              <button type="submit" title="Delete!" disabled><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
+            <% end %>
+          </form>
         </td>
       </tr>
     <% end %>
