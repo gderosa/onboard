@@ -15,6 +15,30 @@ class OnBoard
       )
     end
 
+    put '/network/access-control/chilli.:format' do
+      if params['stop'] =~ /\S/
+        iface = params['stop'].strip
+        chilli = CHILLI_CLASS.getAll().detect do |x| 
+          x.conf['dhcpif'] == iface and x.running?
+        end
+        msg = chilli.stop if chilli
+        sleep 1 # diiiirty!
+      elsif params['start'] =~ /\S/
+        iface = params['start'].strip
+        chilli = CHILLI_CLASS.getAll().detect do |x| 
+          x.conf['dhcpif'] == iface and not x.running?
+        end
+        msg = chilli.start if chilli
+      end
+      format(
+        :module   => 'chilli',
+        :path     => '/network/access-control/chilli',
+        :format   => params[:format],
+        :objects  => CHILLI_CLASS.getAll(),
+        :msg      => msg
+      )
+    end
+
     post '/network/access-control/chilli.:format' do
       msg = {}
       begin

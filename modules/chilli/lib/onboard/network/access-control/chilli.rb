@@ -276,6 +276,14 @@ class OnBoard
           return (ip_dhcpstart..ip_dhcpend) 
         end
 
+        def stop
+          System::Command.run "kill #{@process.pid}", :sudo 
+        end
+
+        def start
+          System::Command.run "chilli --conf #{@conffile}", :sudo
+        end
+
         def data
           {
             'process'   => {
