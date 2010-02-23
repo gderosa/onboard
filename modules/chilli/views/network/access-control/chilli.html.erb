@@ -45,17 +45,20 @@
         <td><%= chilli.conf['uamlisten'] %></td>
         <td><% if chilli.dhcp_range %><%= chilli.dhcp_range.first.to_s %> - <%= chilli.dhcp_range.last.to_s %><% end %></td>
         <td style="text-align: center;"><%= yes_no_icon(chilli.running?, :print_no) %></td>
-
+        <!-- Actions -->
         <td style="text-align: center;">
-          <% if chilli.running? %>
-            <button type="submit" title="Stop!" <% unless chilli.managed? %>disabled<% end %>>
-              <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-stop.png'%>" alt="Stop"/>
-            </button>
-          <% else %>
-          <button type="submit" title="Start!" <% unless chilli.managed? %>disabled<% end %>>
-              <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-start.png'%>" alt="Start"/>
-            </button>
-          <% end %>
+          <form method="POST">
+            <input type="hidden" name="_method" value="put"/>
+            <% if chilli.running? %>
+              <button name="stop" value="<%= chilli.conf['dhcpif'] %>" type="submit" title="Stop!" <% unless chilli.managed? %>disabled<% end %>>
+                <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-stop.png'%>" alt="Stop"/>
+              </button>
+            <% else %>
+              <button name="start" value="<%= chilli.conf['dhcpif'] %>" type="submit" title="Start!" <% unless chilli.managed? %>disabled<% end %>>
+                <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-start.png'%>" alt="Start"/>
+              </button>
+            <% end %>
+          </form>
         </td>
         <td style="text-align: center;">
           <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">

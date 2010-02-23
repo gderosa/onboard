@@ -284,7 +284,7 @@ class OnBoard
               'cwd'       => @process.cwd
             },
             'conffile'  => conffile(),
-            'conf'      => @conf.remove{|key,val| key =~ /secret/}, 
+            'conf'      => @conf.delete_if{|key,val| key =~ /secret/}, 
                 # do not export passwords
             'dhcprange' => {
               'start'     => dhcp_range.first.to_s,
