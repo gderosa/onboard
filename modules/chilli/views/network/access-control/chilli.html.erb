@@ -34,7 +34,7 @@
       <th>Listen address</th>
       <th>DHCP range</th>
       <th>Running?</th>
-      <th>Configuration</th>
+      <th colspan="3">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -45,11 +45,28 @@
         <td><%= chilli.conf['uamlisten'] %></td>
         <td><% if chilli.dhcp_range %><%= chilli.dhcp_range.first.to_s %> - <%= chilli.dhcp_range.last.to_s %><% end %></td>
         <td style="text-align: center;"><%= yes_no_icon(chilli.running?, :print_no) %></td>
-        <td>
-          <% if chilli.managed %>
-            <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">View/Edit</a>
+
+        <td style="text-align: center;">
+          <% if chilli.running? %>
+            <button type="submit" title="Stop!" <% unless chilli.managed? %>disabled<% end %>>
+              <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-stop.png'%>" alt="Stop"/>
+            </button>
           <% else %>
-            <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">View</a> <span class="warn">(not managed)</span>
+          <button type="submit" title="Start!" <% unless chilli.managed? %>disabled<% end %>>
+              <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-start.png'%>" alt="Start"/>
+            </button>
+          <% end %>
+        </td>
+        <td style="text-align: center;">
+          <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">
+            <button title="View<% if chilli.managed? %>/Edit<% end %> Configuration"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="Configuration"/></button> 
+          </a>
+        </td>
+        <td style="text-align: center;">
+          <% if chilli.managed? %>
+            <button type="submit" title="Delete!"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
+          <% else %>
+            <button type="submit" title="Delete!" disabled><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
           <% end %>
         </td>
       </tr>
