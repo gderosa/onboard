@@ -7,6 +7,18 @@
 
 <% if chilli.managed? %><form method="POST"><% end %>
   <input type="hidden" name="_method" value="put"/>
+<!--
+  <table>
+    <tr>
+      <th scope="row">
+        Do not restart (configuration changes will take effect later)
+      </th>
+      <td>
+        <input type="checkbox" name="do_not_restart" checked/>
+      </td>
+    </tr>
+  </table>
+  -->
   <%=
     format(
       :module   => 'chilli',
@@ -17,9 +29,10 @@
       :msg      => msg
     )
   %>
-<% if chilli.managed? %>  
-    <div style="margin-top:1em;">
+  <% if chilli.managed? %>  
+    <div style="margin-top: 1em;">
       <button type="submit">Change!</button>
+      <span style="font-style:italic;">(<input type="checkbox" name="do_not_restart" checked/> Do not restart &mdash; configuration changes will take effect later)</span>
     </div>
   </form>
 <% end %>
