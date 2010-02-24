@@ -32,7 +32,9 @@
   <% if chilli.managed? %>  
     <div style="margin-top: 1em;">
       <button type="submit">Change!</button>
-      <span style="font-style:italic;">(<input type="checkbox" name="do_not_restart" checked/> Do not restart &mdash; configuration changes will take effect later)</span>
+      <% if chilli.running? %>
+        <span style="font-style:italic;">(<input type="checkbox" name="do_not_restart" checked/> Do not restart &mdash; configuration changes will take effect later)</span>
+      <% end %>
     </div>
   </form>
 <% end %>

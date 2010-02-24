@@ -288,6 +288,14 @@ class OnBoard
           System::Command.run "chilli --conf #{@conffile}", :sudo
         end
 
+        def restart
+          msg = self.stop
+          if msg[:ok]
+            msg = self.start
+          end
+          return msg
+        end
+
         def data
           {
             'process'   => {

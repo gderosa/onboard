@@ -35,12 +35,7 @@ class OnBoard
         chilli = CHILLI_CLASS.getAll().detect do |x|
           x.conf['dhcpif'] == iface and x.running? and x.managed?
         end
-        if chilli
-          msg = chilli.stop
-          if msg[:ok]
-            msg = chilli.start
-          end
-        end
+        msg = chilli.restart if chilli
       end
       unless msg
         msg = {
@@ -110,7 +105,8 @@ class OnBoard
             chilli.conf[key] = val unless key =~ /secret/
           end
           # passwords are treated differently
-          msg = chilli.write_conffile
+          chilli.write_conffile
+          chilli.restart unless params['do_not_restart'] == 'on'
         rescue CHILLI_CLASS::BadRequest
           status 400 
           msg[:err] = $!
