@@ -16,6 +16,8 @@ class OnBoard
     end
 
     put '/network/access-control/chilli.:format' do
+      # NOTE: asumption: one operation at a time
+      # TODO: DRY
       if params['stop'] =~ /\S/
         iface = params['stop'].strip
         chilli = CHILLI_CLASS.getAll().detect do |x| 
@@ -28,6 +30,23 @@ class OnBoard
           x.conf['dhcpif'] == iface and (not x.running?) and x.managed?
         end
         msg = chilli.start if chilli
+      elsif params['restart'] =~ /\S/
+        iface = params['restart'].strip
+        chilli = CHILLI_CLASS.getAll().detect do |x|
+          x.conf['dhcpif'] == iface and x.running? and x.managed?
+        end
+        if chilli
+          msg = chilli.stop
+          if msg[:ok]
+            msg = chilli.start
+          end
+        end
+      end
+      unless msg
+        msg = {
+          :ok => true,
+          :warn => 'nothing done'
+        }
       end
       format(
         :module   => 'chilli',

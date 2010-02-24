@@ -34,7 +34,7 @@
       <th>Listen address</th>
       <th>DHCP range</th>
       <th>Running?</th>
-      <th colspan="3">Actions</th>
+      <th colspan="4">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -58,6 +58,14 @@
                 <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-start.png'%>" alt="Start"/>
               </button>
             <% end %>
+          </form>
+        </td>
+        <td style="text-align: center;">
+          <form method="POST">
+            <input type="hidden" name="_method" value="put"/>
+            <button name="restart" value="<%= chilli.conf['dhcpif'] %>" type="submit" title="Restart!" <% unless chilli.managed? && chilli.running? %>disabled<% end %>>
+              <img src="<%= icondir + '/' + iconsize + '/actions/reload.png'%>" alt="Reload"/>
+            </button>
           </form>
         </td>
         <td style="text-align: center;">

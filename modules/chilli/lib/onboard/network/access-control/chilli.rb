@@ -278,7 +278,10 @@ class OnBoard
         end
 
         def stop
-          @process.kill(:wait => true, :sudo => true)  
+          msg = @process.kill(:wait => true, :sudo => true)  
+          @process = nil if msg[:ok]
+          sleep 1
+          return msg
         end
 
         def start

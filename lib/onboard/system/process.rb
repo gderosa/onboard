@@ -21,11 +21,16 @@ class OnBoard
         }
       end
       def kill(opt_h)
+        # TODO: manage non-kilable processes by switching to kill -9
+        # TODO: timeout
         opt_ary = []
         opt_ary << :sudo if opt_h[:sudo]
         msg = System::Command.run "kill #{@pid}", *opt_ary
         if opt_h[:wait]
-          sleep 0.1 while File.exists? "/proc/#{@pid}"
+          sleep 0.1 while 
+              File.exists? "/proc/#{@pid}" or
+              `pidof #{@cmdline[0]}`.split.include? @pid.to_s
+              # be sure that pidof #{command_name} output is up-to-date
         end
         return msg
       end
