@@ -104,14 +104,39 @@ class OnBoard
           chilli_new.conf.each_pair do |key, val|
             chilli.conf[key] = val unless key =~ /secret/
           end
+
           # passwords are treated differently
+          if params['conf']['radiussecret'].length > 0
+            chilli.conf['radiussecret'] = params['conf']['radiussecret']
+          end
+
+          if 
+              !chilli.conf['uamsecret'] or
+              chilli.conf['uamsecret'].length == 0 or
+              (chilli.conf['uamsecret'] == params['old_conf']['uamsecret']) 
+            if  params['verify_conf']['uamsecret'] == 
+                params['conf']['uamsecret']
+              chilli.conf['uamsecret'] = params['conf']['uamsecret']
+            else
+              raise CHILLI_CLASS::BadRequest, "UAM passwords do not match!"
+            end
+          else
+            raise CHILLI_CLASS::BadRequest, "Wrong UAM password!"
+          end
+          # ########
+
           chilli.write_conffile
-          chilli.restart unless params['do_not_restart'] == 'on'
+          chilli.restart if chilli.running? and params['do_not_restart'] != 'on'
         rescue CHILLI_CLASS::BadRequest
           status 400 
           msg[:err] = $!
           msg[:ok] = false
         end
+
+        # refresh
+        all = CHILLI_CLASS.getAll()
+        chilli = all.detect{|x| x.conf['dhcpif'] == params[:ifname]}
+
         format(
           :module => 'chilli',
           :path => '/network/access-control/chilli/ifconfig',
