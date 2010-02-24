@@ -121,10 +121,12 @@ class OnBoard
               raise CHILLI_CLASS::BadRequest, "UAM passwords do not match!"
             end
           else
-            raise CHILLI_CLASS::BadRequest, "Wrong UAM password!"
+            raise CHILLI_CLASS::BadRequest, "Wrong UAM password!" unless
+                params['conf']['uamsecret'].length == 0 and
+                params['verify_conf']['uamsecret'].length == 0
           end
           # ########
-
+          chilli.write_tmp_conffile_and_validate(:raise_exception => true) 
           chilli.write_conffile
           chilli.restart if chilli.running? and params['do_not_restart'] != 'on'
         rescue CHILLI_CLASS::BadRequest

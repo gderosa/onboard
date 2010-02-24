@@ -112,6 +112,19 @@ class OnBoard
           return true
         end
 
+        def self.validate_conffile(h) # based on chilli_opt(1) 
+          msg = System::Command.run "chilli_opt --conf #{h[:file]}", :sudo
+          if msg[:ok]
+            return true
+          else
+            LOGGER.error "Found an invalid Chilli configuration file: #{@conffile}: #{msg[:stderr]}"
+            if h[:raise_exception]
+              raise BadRequest, "Invalid configuration! #{msg[:stderr]}"
+            end
+            return false
+          end
+        end
+
         attr_reader :data, :conf, :managed 
             # no :conffile getter : there's already an explicit method
         attr_writer :conf, :conffile
@@ -144,14 +157,16 @@ class OnBoard
           end
         end
 
-        def validate_conffile # based on chilli_opt(1) 
-          msg = System::Command.run "chilli_opt --conf #{@conffile}", :sudo
-          if msg[:ok]
-            return true
-          else
-            LOGGER.error "Found an invalid Chilli configuration file: #{@conffile}"
-            return false
-          end
+        def validate_conffile  
+          self.class.validate_conffile(:file => @conffile)
+        end
+
+        def write_tmp_conffile_and_validate(opt_h={}) 
+          write_conffile(
+            :tmp => true, 
+            :check => true,
+            :raise_exception => opt_h[:raise_exception]
+          )  
         end
 
         def set_dhcp_range(dhcp_start, dhcp_end)
@@ -207,20 +222,30 @@ class OnBoard
           return false
         end
 
-        def write_conffile
-          File.open @conffile, 'w' do |f|
-            @conf.each_pair do |key, value|
-              if value == true
-                f.write "#{key}\n"
-              elsif value.respond_to? :strip! and value =~ /\S/ 
-                  # String-like, non-blank
-                value.strip!
-                if value =~ /\s/
-                  value = "\"#{value}\"" # protect with double-quotes
-                end
-                f.write "#{key}\t#{value}\n"
+        def write_conffile(opt_h={})  
+          if opt_h[:tmp] 
+            f = Tempfile.new 'chilli-test'
+          else
+            f = File.open @conffile, 'w'
+          end
+          @conf.each_pair do |key, value|
+            if value == true
+              f.write "#{key}\n"
+            elsif value.respond_to? :strip! and value =~ /\S/ 
+                # String-like, non-blank
+              value.strip!
+              if value =~ /\s/
+                value = "\"#{value}\"" # protect with double-quotes
               end
+              f.write "#{key}\t#{value}\n"
             end
+          end
+          f.close
+          if opt_h[:validate] or opt_h[:check] 
+            return self.class.validate_conffile(
+              :file => f.path,
+              :raise_exception => opt_h[:raise_exception]
+            )
           end
         end
 
