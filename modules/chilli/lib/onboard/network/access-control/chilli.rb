@@ -152,10 +152,6 @@ class OnBoard
               # We will have to (over-)write a configuration file
             @conffile = h[:conffile]
             @managed = true
-            #@conf = {} 
-            #h[:conf].each_pair do |key, val|
-            #  @conf[key] = val unless val == ''
-            #end
             @conf = h[:conf]
             dynaconf_coaport unless @conf['coaport'].to_i > 0 # useless?
           end
@@ -229,7 +225,6 @@ class OnBoard
         def write_conffile(opt_h={})  
           if opt_h[:tmp] 
             f = Tempfile.new 'chilli-test'
-            #f = File.open '/tmp/chilli-test', 'w'
           else
             f = File.open @conffile, 'w'
           end
@@ -332,11 +327,12 @@ class OnBoard
 
         def data
           {
-            'process'   => {
-              'pid'       => @process.pid,
-              'cmdline'   => @process.cmdline,
-              'cwd'       => @process.cwd
-            },
+            'process'   => @process ? 
+              {
+                'pid'       => @process.pid,
+                'cmdline'   => @process.cmdline,
+                'cwd'       => @process.cwd
+              } : nil,
             'conffile'  => conffile(),
             'conf'      => @conf.delete_if{|key,val| key =~ /secret/}, 
                 # do not export passwords
