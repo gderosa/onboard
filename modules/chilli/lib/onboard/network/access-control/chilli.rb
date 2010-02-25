@@ -152,7 +152,11 @@ class OnBoard
               # We will have to (over-)write a configuration file
             @conffile = h[:conffile]
             @managed = true
-            @conf = h[:conf] 
+            #@conf = {} 
+            #h[:conf].each_pair do |key, val|
+            #  @conf[key] = val unless val == ''
+            #end
+            @conf = h[:conf]
             dynaconf_coaport unless @conf['coaport'].to_i > 0 # useless?
           end
         end
@@ -225,6 +229,7 @@ class OnBoard
         def write_conffile(opt_h={})  
           if opt_h[:tmp] 
             f = Tempfile.new 'chilli-test'
+            #f = File.open '/tmp/chilli-test', 'w'
           else
             f = File.open @conffile, 'w'
           end
@@ -240,7 +245,11 @@ class OnBoard
               f.write "#{key}\t#{value}\n"
             end
           end
-          f.close
+          f.close 
+          FileUtils.cp f.path "#{f.path}.debug" if 
+            opt_h[:tmp] and opt_h[:debug] # keep a copy: the temp file
+                # will be removed when f object is finalized
+                # (if f is a Tempfile object)  
           if opt_h[:validate] or opt_h[:check] 
             return self.class.validate_conffile(
               :file => f.path,
