@@ -367,6 +367,8 @@ class OnBoard
             netif.ip_addr_flush
           end
 
+          dynaconf # create socket dir...
+
           System::Command.run "chilli --conf #{@conffile}", :sudo
         end
 
