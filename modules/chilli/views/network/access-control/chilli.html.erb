@@ -50,10 +50,12 @@
           <form method="POST">
             <input type="hidden" name="_method" value="put"/>
             <% if chilli.running? %>
+              <input type="hidden" name="restore_interface" value="on"/><!-- this could easily become a checkbox -->
               <button name="stop" value="<%= chilli.conf['dhcpif'] %>" type="submit" title="Stop!" <% unless chilli.managed? %>disabled<% end %>>
                 <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-stop.png'%>" alt="Stop"/>
               </button>
             <% else %>
+              <input type="hidden" name="save_interface" value="on"/><!-- this could easily become a checkbox -->
               <button name="start" value="<%= chilli.conf['dhcpif'] %>" type="submit" title="Start!" <% unless chilli.managed? %>disabled<% end %>>
                 <img src="<%= icondir + '/' + iconsize + '/actions/media-playback-start.png'%>" alt="Start"/>
               </button>

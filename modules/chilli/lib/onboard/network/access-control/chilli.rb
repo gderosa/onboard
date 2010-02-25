@@ -306,26 +306,46 @@ class OnBoard
           return (ip_dhcpstart..ip_dhcpend) 
         end
 
-        def stop
+        def stop(opt_h={})   
           msg = @process.kill(:wait => true, :sudo => true)  
-          @process = nil #if msg[:ok]
-          #sleep 1
+          if msg[:ok]
+            @process = nil 
+
+            #restore previous IP configuration of the interface
+            netif = Interface.getAll.detect{|x| x.name == @conf['dhcpif']}
+            # do not perform the restore if the interface has got some
+            # non-linklocal IP address
+            if opt_h[:restore] and netif and 
+                File.exists? "#{CONFDIR}/current/#{netif.name}.dat" and (
+                    !netif.ip or
+                    netif.ip.reject{|i| i.addr.link_local?}.length == 0 
+                )
+              saved_netif = Marshal.load File.read(
+                  "#{CONFDIR}/current/#{netif.name}.dat"
+              )
+              case netif.ipassign[:method]
+              when :dhcp
+                netif.start_dhcp_client
+              when :static
+                netif.assign_static_ips saved_netif.ip
+              end
+            end
+          end
           return msg
         end
 
-        def start 
+        def start(opt_h={})
           netif = Interface.getAll.detect{|x| x.name == @conf['dhcpif']}
 
           # save previous IP configuration before flushing it
-          if 
-              netif.ip and 
-              netif.ip.length > 0 and 
-              netif.ipassign[:method] == :static
-
-            File.open "#{CONFDIR}/current/#{netif.name}.dat", 'w' do |f|
-              f.write Marshal.dump netif.ip
+          if opt_h[:save] and netif and netif.ip 
+            if (netif.ipassign[:method] == :static and netif.ip.length > 0) or
+                netif.ipassign[:method] == :dhcp
+              File.open "#{CONFDIR}/current/#{netif.name}.dat", 'w' do |f|
+                f.write Marshal.dump netif
+              end
             end
-
+            netif.stop_dhcp_client if netif.ipassign[:method] == :dhcp
             netif.ip_addr_flush
           end
 

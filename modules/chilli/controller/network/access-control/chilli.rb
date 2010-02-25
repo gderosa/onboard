@@ -23,13 +23,25 @@ class OnBoard
         chilli = CHILLI_CLASS.getAll().detect do |x| 
           x.conf['dhcpif'] == iface and x.running? and x.managed?
         end
-        msg = chilli.stop if chilli
+        if chilli
+          if params['restore_interface'] == 'on'
+            msg = chilli.stop(:restore => true) 
+          else
+            msg = chilli.stop
+          end
+        end
       elsif params['start'] =~ /\S/
         iface = params['start'].strip
         chilli = CHILLI_CLASS.getAll().detect do |x| 
           x.conf['dhcpif'] == iface and (not x.running?) and x.managed?
         end
-        msg = chilli.start if chilli
+        if chilli
+          if params['save_interface'] == 'on'
+            msg = chilli.start(:save => true) 
+          else
+            msg = chilli.start
+          end
+        end
       elsif params['restart'] =~ /\S/
         iface = params['restart'].strip
         chilli = CHILLI_CLASS.getAll().detect do |x|
