@@ -1,3 +1,5 @@
+require 'fileutils'
+
 require 'onboard/extensions/ipaddr'
 require 'onboard/system/process'
 require 'onboard/network/interface'
@@ -10,9 +12,25 @@ class OnBoard
 
         DEFAULT_SYS_CONF_FILE = '/etc/chilli.conf'
         DEFAULT_NEW_CONF_FILE = "#{CONFDIR}/defaults/chilli.conf"
+        CURRENT_CONF_GLOB     = "#{CONFDIR}/current/chilli.conf.?*"
+        SAVED_DAT_FILE        = "#{CONFDIR}/saved/chilli.dat"
         DEFAULT_COAPORT       = 3779
 
         class BadRequest < RuntimeError; end
+
+        def self.save
+          all = getAll
+          File.open SAVED_DAT_FILE, 'w' do |f|
+            f.write Marshal.dump(getAll) 
+          end
+        end
+
+        def self.restore
+          if File.exists? SAVED_DAT_FILE
+            all_saved = Marshal.load File.read SAVED_DAT_FILE
+            all_saved.map{|chilli| chilli.start if chilli.running?}
+          end
+        end
 
         def self.getAll
           ary = []
@@ -23,7 +41,7 @@ class OnBoard
             )
           end
           # may be not running, but a configuration files exists
-          Dir.glob("#{CONFDIR}/current/chilli.conf.?*").each do |conffile|
+          Dir.glob(CURRENT_CONF_GLOB).each do |conffile|
             chilli = new(:conffile => conffile) 
             ary << chilli unless 
                 ary.detect{|x| x.conffile == conffile} or

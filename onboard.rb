@@ -99,7 +99,7 @@ class OnBoard
 
     # modules
     Dir.glob(ROOTDIR + '/modules/*/etc/save/*.rb').each do |script| 
-      puts "loading: #{script}... " and STDOUT.flush
+      print "loading: #{script}... " and STDOUT.flush
       load script and puts ' OK'
     end
   end
