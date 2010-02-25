@@ -77,6 +77,7 @@ class OnBoard
   "#{request.scheme}://#{request.host}:#{request.port}/network/access-control/chilli/#{chilli.conf['dhcpif']}.#{params[:format]}" 
         )
         msg = {:ok => true}
+        chilli.start if params['start_now'] == 'on'
       rescue CHILLI_CLASS::BadRequest
         status 400
         msg = {:err => $!}
