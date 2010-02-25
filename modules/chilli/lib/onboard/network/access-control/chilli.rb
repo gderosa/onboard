@@ -308,12 +308,27 @@ class OnBoard
 
         def stop
           msg = @process.kill(:wait => true, :sudo => true)  
-          @process = nil if msg[:ok]
-          sleep 1
+          @process = nil #if msg[:ok]
+          #sleep 1
           return msg
         end
 
-        def start
+        def start 
+          netif = Interface.getAll.detect{|x| x.name == @conf['dhcpif']}
+
+          # save previous IP configuration before flushing it
+          if 
+              netif.ip and 
+              netif.ip.length > 0 and 
+              netif.ipassign[:method] == :static
+
+            File.open "#{CONFDIR}/current/#{netif.name}.dat", 'w' do |f|
+              f.write Marshal.dump netif.ip
+            end
+
+            netif.ip_addr_flush
+          end
+
           System::Command.run "chilli --conf #{@conffile}", :sudo
         end
 

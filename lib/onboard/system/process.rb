@@ -27,10 +27,23 @@ class OnBoard
         opt_ary << :sudo if opt_h[:sudo]
         msg = System::Command.run "kill #{@pid}", *opt_ary
         if opt_h[:wait]
-          sleep 0.1 while 
-              File.exists? "/proc/#{@pid}" or
-              `pidof #{@cmdline[0]}`.split.include? @pid.to_s
-              # be sure that pidof #{command_name} output is up-to-date
+          #while 
+          #    File.exists? "/proc/#{@pid}" or
+          #    `pidof #{@cmdline[0]}`.split.include? @pid.to_s
+          #    # be sure that pidof #{command_name} output is up-to-date
+          #  pp @cmdline
+          #  pp `pidof #{@cmdline[0]}`.split
+          #  pp @pid
+          #  sleep 0.1
+          #end
+
+          loop do
+            sleep 0.1
+            redo if File.exists? "/proc/#{@pid}"
+            redo if `pidof #{@cmdline[0]}`.split.include?(@pid.to_s)
+            break
+          end
+          sleep 0.1
         end
         return msg
       end

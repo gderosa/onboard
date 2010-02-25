@@ -396,6 +396,7 @@ class OnBoard
         Command.run("ip addr flush dev #{@name}", :sudo) if 
             @ip.respond_to? :[] and @ip.length > 0
       end
+      alias ip_addr_flush flush_ip
 
       def start_dhcp_client
         success = Command.bgexec "dhcpcd #{@name}", :sudo

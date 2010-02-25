@@ -16,7 +16,7 @@ class OnBoard
     end
 
     put '/network/access-control/chilli.:format' do
-      # NOTE: asumption: one operation at a time
+      # NOTE: assumption: one operation at a time
       # TODO: DRY
       if params['stop'] =~ /\S/
         iface = params['stop'].strip
