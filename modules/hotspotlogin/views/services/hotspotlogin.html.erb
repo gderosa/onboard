@@ -10,6 +10,19 @@
 
 <pre><%= html_escape params.pretty_inspect %></pre>
 
+<%=
+  erb(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg => msg,
+        :status => status
+      }
+    }
+  )
+%>
+
 <p>
   Based on <em>hotspotlogin.rb</em> 
   [<a href="http://rubygems.org/gems/hotspotlogin">1</a>, 
@@ -29,7 +42,10 @@
     </tr>
   </tbody>
 </table>
+</form>
 
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
 <h3>Configuration</h3>
 <table>
   <tbody>
@@ -59,7 +75,6 @@
   </tbody>
 </table>
 <button type="submit" name="change" value="change">Change</button>
-
 </form>
 
 
