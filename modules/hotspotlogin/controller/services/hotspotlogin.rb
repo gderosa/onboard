@@ -17,6 +17,12 @@ class OnBoard
     end
 
     put '/services/hotspotlogin.:format' do
+      if params['change']
+        Service::HotSpotLogin.change_from_HTTP_request!(params)
+      elsif params['start']
+      elsif params['stop']
+      elsif (params['reload'] or params['restart'])
+      end
       format(
         :module => 'hotspotlogin',
         :path => '/services/hotspotlogin',
