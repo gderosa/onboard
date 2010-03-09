@@ -1,3 +1,10 @@
+<% 
+  hslogin       = objects 
+  running       = hslogin['running']
+  userpassword  = hslogin['conf']['userpassword']
+  port          = hslogin['conf']['port']
+%>
+
 <h2>HotSpot Login page</h2>
 
 <pre><%= html_escape params.pretty_inspect %></pre>
@@ -15,8 +22,8 @@
   <tbody>
     <tr>
       <th scope="row">Running?</th>
-      <td><%= yes_no_icon false, :print_no %></td>
-      <td><%= action_button :start %></td>
+      <td><%= yes_no_icon hslogin['running'], :print_no %></td>
+      <td><%= action_button(running ? :stop : :start) %></td>
       <td><%= action_button :reload %></td>
     </tr>
   </tbody>
@@ -27,7 +34,7 @@
   <tbody>
     <tr>
       <th scope="row">TCP port</th>
-      <td><input class="rwtext" type="text" name="port" value="4990" size="4"/></td>
+      <td><input class="rwtext" type="text" name="port" value="<%= port %>" size="4"/></td>
     </tr>
     <tr>
       <th scope="row">&ldquo;UAM secret&rdquo; <div class="optinfo">password shared with <a href="/network/access-control/chilli.html">Chilli server</a> (if any)</div></th>
@@ -35,11 +42,11 @@
     </tr>
     <tr>
       <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. don&apos;t use <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (since it&apos;s less secure, you must set a UAM shared secret in this case)</div></th>
-      <td><input type="checkbox" name="userpassword" checked/></td>
+    <td><input type="checkbox" name="userpassword" <% if userpassword %>checked<% end %>/></td>
     </tr>
   </tbody>
 </table>
-<button type="submit" name="change_config" value="change_config">Change</button>
+<button type="submit" name="change" value="change">Change</button>
 
 </form>
 

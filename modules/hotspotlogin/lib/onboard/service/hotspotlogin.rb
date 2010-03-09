@@ -1,28 +1,26 @@
+autoload :YAML, 'yaml'
+
 require 'onboard/system/process'
 
 class OnBoard
   module Service
     class HotSpotLogin
 
+      CONFFILE = File.join CONFDIR, 'current/hotspotlogin.conf.yaml'
+      DEFAULT_CONFFILE = File.join CONFDIR, 'defaults/hotspotlogin.conf.yaml'
+
+      # this OnBoard module cannot handle more than one process
       class MultipleInstances < RuntimeError; end
 
-      def self.getAll
-        all = []
-        `pidof hotspotlogin.rb`.split.each do |pid|
-          all << new(:process => System::Process.new(pid)) 
-        end
-        raise MultipleInstances, 'More than one hotspotlogin process is running, this situation is unhandled!' if all.length > 1
-        return all
+      def self.running?
+        true
       end
 
-      def self.getAll!; @@all = getAll(); end
-
-      def initialize(h)
-        @process = h[:process] 
-      end
-
-      def data
-        @process.data
+      def self.data
+        {
+          'conf' => YAML.load(File.read(CONFFILE)),
+          'running' => running?
+        }
       end
 
     end

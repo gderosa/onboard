@@ -1,3 +1,4 @@
+require 'yaml'
 require 'sinatra/base'
 
 require 'onboard/service/hotspotlogin'
@@ -11,7 +12,7 @@ class OnBoard
         :module => 'hotspotlogin',
         :path => '/services/hotspotlogin',
         :format => params[:format],
-        :objects  => Service::HotSpotLogin.getAll()
+        :objects  => Service::HotSpotLogin.data
       )
     end
 
@@ -20,7 +21,7 @@ class OnBoard
         :module => 'hotspotlogin',
         :path => '/services/hotspotlogin',
         :format => params[:format],
-        :objects  => Service::HotSpotLogin.getAll()
+        :objects  => Service::HotSpotLogin.data
       )
     end
 

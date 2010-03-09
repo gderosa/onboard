@@ -1,3 +1,5 @@
+require 'fileutils'
+
 class OnBoard
   module Service
     class HotSpotLogin
@@ -6,6 +8,10 @@ class OnBoard
       $LOAD_PATH.unshift  ROOTDIR + '/lib'
       OnBoard.find_n_load ROOTDIR + '/etc/menu'
       OnBoard.find_n_load ROOTDIR + '/controller'
+
+      unless File.exists? CONFFILE
+        FileUtils.cp DEFAULT_CONFFILE, CONFFILE
+      end
     end
   end
 end
