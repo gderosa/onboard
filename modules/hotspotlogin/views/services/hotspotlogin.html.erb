@@ -3,6 +3,7 @@
   running       = hslogin['running']
   userpassword  = hslogin['conf']['userpassword']
   port          = hslogin['conf']['port']
+  uamsecret     = hslogin['conf']['uamsecret']
 %>
 
 <h2>HotSpot Login page</h2>
@@ -36,12 +37,23 @@
       <th scope="row">TCP port</th>
       <td><input class="rwtext" type="text" name="port" value="<%= port %>" size="4"/></td>
     </tr>
-    <tr>
-      <th scope="row">&ldquo;UAM secret&rdquo; <div class="optinfo">password shared with <a href="/network/access-control/chilli.html">Chilli server</a> (if any)</div></th>
+    <% if uamsecret and uamsecret.length > 0 %>
+      <tr>
+        <th scope="row">&ldquo;UAM secret&rdquo; (old password)<div class="optinfo">password shared with <a href="/network/access-control/chilli.html">Chilli server</a></div></th>
+        <td><input class="rwtext" type="password" name="uamsecret_old" size="12"/></td>
+      </tr>
+    <% end %>
+    <tr title="Leave empty to not use a shared secret">
+      <th scope="row">&ldquo;UAM secret&rdquo; (new password)<% unless uamsecret and uamsecret.length > 0 %><div class="optinfo">password shared with <a href="/network/access-control/chilli.html">Chilli server</a> (if any)</div><% end %></th>
       <td><input class="rwtext" type="password" name="uamsecret" size="12"/></td>
     </tr>
+    <tr title="Leave empty to not use a shared secret">
+      <th scope="row">&ldquo;UAM secret&rdquo; (type again)</th>
+      <td><input class="rwtext" type="password" name="uamsecret_verify" size="12"/></td>
+    </tr>
+   
     <tr>
-      <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. don&apos;t use <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (since it&apos;s less secure, you must set a UAM shared secret in this case)</div></th>
+      <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. use <a href="http://en.wikipedia.org/wiki/Password_authentication_protocol">PAP</a> instead of <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (since PAP it&apos;s less secure, you <strong>must</strong> set a UAM shared secret in this case)</div></th>
     <td><input type="checkbox" name="userpassword" <% if userpassword %>checked<% end %>/></td>
     </tr>
   </tbody>
