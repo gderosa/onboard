@@ -5,6 +5,8 @@
     <a href="http://github.com/gderosa/hotspotlogin.rb">2</a>] 
 </p>
 
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
 <h3>Current status</h3>
 <table>
   <tbody>
@@ -16,4 +18,26 @@
     </tr>
   </tbody>
 </table>
+
+<h3>Configuration</h3>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">TCP port</th>
+      <td><input class="rwtext" type="text" name="port" value="4990" size="4"/></td>
+    </tr>
+    <tr>
+      <th scope="row">&ldquo;UAM secret&rdquo; <div class="optinfo">password shared with <a href="/network/access-control/chilli.html">Chilli server</a> (if any)</div></th>
+      <td><input class="rwtext" type="password" name="uamsecret" size="12"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. don&apos;t use <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (since it&apos;s less secure, you must set a UAM shared secret in this case)</div></th>
+      <td><input type="checkbox" name="userpassword" checked/></td>
+    </tr>
+  </tbody>
+</table>
+<button type="submit" name="change_config" value="change_config">Change</button>
+
+</form>
+
 
