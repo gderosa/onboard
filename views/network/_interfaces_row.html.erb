@@ -51,9 +51,9 @@
               <% if netif.type == "P-t-P" %>
                 <% netif.ip.each_with_index do |ip, ip_n| %>
                   <% begin %>
-                    <span class="lowlight"><%= ip.addr.to_s + ' --> ' + ip.peer.addr.to_s + '/' + ip.peer.prefixlen.to_s %></span>
+                    <span class="lowlight"><%= ip.addr.to_s + ' -->&nbsp;' + ip.peer.addr.to_s + '/' + ip.peer.prefixlen.to_s %></span>
                   <% rescue NoMethodError %>
-                    <span class="lowlight"><%= ip.addr.to_s + ' --> ' %></span>
+                    <span class="lowlight"><%= ip.addr.to_s %></span>
                   <% end %>
                   <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
                   <% some_ip_printed = true %>

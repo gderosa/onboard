@@ -1,4 +1,4 @@
-Ruby OnBoard -- http://dev.vemarsas.it/onboard/ .
+ruby OnBoard -- http://dev.vemarsas.it/onboard/ .
 
 Except where otherwise stated, this work is
 Copyright 2009 Guido De Rosa <guido.derosa at vemarsas.it>
@@ -42,15 +42,13 @@ for module-specific, additional requirements):
 
 Gems:
 
-# gem source --add http://gemcutter.org
+(some gems are written in C or C++ , so you need a reasonably complete 
+C/C++ build environment; and, if you installed a pre-packaged ruby, you
+will need header files from a package named ruby-dev or something alike)
 
-# gem install rubytree
-# gem install sinatra
-# gem install i18n_data
-# gem install locale
-# gem install thin 
-# gem install r18n-core
-# gem install r18n-sinatra
+gem source --add http://gemcutter.org
+
+gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape
 
 --
 
