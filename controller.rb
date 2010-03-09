@@ -117,10 +117,11 @@ class OnBoard
         when :config
           'button'
         end
-        name = h[:name] || h[:start_stop].to_s 
+        name = h[:name] || action.to_s 
         value = h[:value] || name
         disabled = h[:disabled] ? 'disabled' : ''
         title = h[:title] || name
+        title.capitalize!
         alt = h[:alt] || title
         image = case action
                 when :start
