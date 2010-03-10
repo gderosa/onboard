@@ -6,7 +6,7 @@ require 'onboard/system/process'
 
 class OnBoard
   module Service
-    class HotSpotLogin
+    class HotSpotLogin # TODO: should be a module... no instances...
 
       CONFFILE = File.join CONFDIR, 'current/hotspotlogin.conf.yaml'
       DEFAULT_CONFFILE = File.join CONFDIR, 'defaults/hotspotlogin.conf.yaml'
@@ -14,16 +14,36 @@ class OnBoard
       VARLOG = File.join ROOTDIR, 'var/log'
       PIDFILE = File.join VARRUN, 'hotspotlogin.pid'
       LOGFILE = File.join VARLOG, 'hotspotlogin.log'
+      SAVEFILE = "#{CONFDIR}/saved/hotspotlogin.yaml"
 
       class BadRequest < ArgumentError; end
       class AlreadyRunning < RuntimeError; end
 
       class << self
+        
+        def save # use YAML, not Marshal, this time
+          File.open SAVEFILE, 'w' do |f|
+            f.write data.to_yaml
+          end
+        end
+
+        def restore
+          if File.readable? SAVEFILE
+            saved_data = YAML.load(File.read SAVEFILE)
+            File.open CONFFILE, 'w' do |f|
+              f.write saved_data['conf'].to_yaml
+            end
+            if saved_data['running'] and not running?
+              start!
+            end
+          end
+        end
+
         def running?
           return false unless File.exists? PIDFILE
           pid = File.read(PIDFILE).to_i
           return false unless Dir.exists? "/proc/#{pid}"
-begin # THIS IS DIIIIIRTY!         
+begin # THIS IS DIIIIIRTY! # TODO? use OnBoard::System::Process#kill stop!()
           process = System::Process.new File.read(PIDFILE).to_i
           return true if 
               process.cmdline[0] and
