@@ -54,6 +54,11 @@ end
           Process.kill 'TERM', File.read(PIDFILE).to_i
         end
 
+        def restart!
+          stop! if running?
+          start!
+        end
+
         def read_conf
           YAML.load(File.read(CONFFILE))
         end
