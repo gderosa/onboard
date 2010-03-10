@@ -1,5 +1,7 @@
-autoload :YAML, 'yaml'
+require 'yaml'
+require 'hotspotlogin' # http://rubygems.org/gems/hotspotlogin
 
+require 'onboard/system/command'
 require 'onboard/system/process'
 
 class OnBoard
@@ -8,15 +10,31 @@ class OnBoard
 
       CONFFILE = File.join CONFDIR, 'current/hotspotlogin.conf.yaml'
       DEFAULT_CONFFILE = File.join CONFDIR, 'defaults/hotspotlogin.conf.yaml'
-
-      # this OnBoard module cannot handle more than one process
-      class MultipleInstances < RuntimeError; end
+      VARRUN = File.join ROOTDIR, 'var/run'
+      VARLOG = File.join ROOTDIR, 'var/log'
+      PIDFILE = File.join VARRUN, 'hotspotlogin.pid'
+      LOGFILE = File.join VARLOG, 'hotspotlogin.log'
 
       class BadRequest < ArgumentError; end
+      class AlreadyRunning < RuntimeError; end
 
       class << self
         def running?
-          true
+          return false unless File.exists? PIDFILE
+          pid = File.read(PIDFILE).to_i
+          return false unless Dir.exists? "/proc/#{pid}"
+begin # THIS IS DIIIIIRTY!         
+          process = System::Process.new File.read(PIDFILE).to_i
+          return true if 
+              process.cmdline[0] and
+              (File.basename(process.cmdline[0]) =~ /^hotspotlogin(\.rb)?$/)
+          return true if
+              process.cmdline[1] and
+              (File.basename(process.cmdline[1]) =~ /^hotspotlogin(\.rb)?$/)
+          return false
+rescue
+  return false
+end
         end
 
         def data
@@ -24,6 +42,16 @@ class OnBoard
             'conf' => read_conf,
             'running' => running?
           }
+        end
+
+        def start!
+          raise AlreadyRunning if running?
+          msg = System::Command.run "hotspotlogin --daemon --conf #{CONFFILE} --pid #{PIDFILE} --log #{LOGFILE}"
+          return msg
+        end
+
+        def stop!
+          Process.kill 'TERM', File.read(PIDFILE).to_i
         end
 
         def read_conf

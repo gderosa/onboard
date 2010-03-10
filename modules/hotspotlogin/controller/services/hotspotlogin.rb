@@ -22,7 +22,9 @@ class OnBoard
         if params['change']
           Service::HotSpotLogin.change_from_HTTP_request!(params)
         elsif params['start']
+          Service::HotSpotLogin.start!
         elsif params['stop']
+          Service::HotSpotLogin.stop!
         elsif (params['reload'] or params['restart'])
         end
       rescue Service::HotSpotLogin::BadRequest

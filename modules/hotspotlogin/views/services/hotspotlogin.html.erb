@@ -32,9 +32,9 @@
   <tbody>
     <tr>
       <th scope="row">Running?</th>
-      <td><%= yes_no_icon hslogin['running'], :print_no %></td>
+      <td><%= yes_no_icon running, :print_no %></td>
       <td><%= action_button(running ? :stop : :start) %></td>
-      <td><%= action_button :reload %></td>
+      <td><%= action_button :reload, {:disabled => !running} %></td>
     </tr>
   </tbody>
 </table>
