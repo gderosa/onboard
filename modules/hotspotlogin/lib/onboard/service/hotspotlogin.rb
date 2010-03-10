@@ -38,15 +38,26 @@ class OnBoard
               conf_h['uamsecret'] and 
               conf_h['uamsecret'].length > 0 and
               conf_h['uamsecret'] != params['uamsecret_old'] and
-              params['uamsecret'].length > 0 
+              ( 
+                params['uamsecret'].length > 0 or
+                params['uamsecret_verify'].length > 0
+              )
             raise BadRequest, 'Wrong UAM password!'
           elsif params['uamsecret'] != params['uamsecret_verify']
             raise BadRequest, 'UAM passwords do not match!'
           end
           if params['uamsecret'].length > 0
             conf_h['uamsecret'] = params['uamsecret']
-          else
-            conf_h['uamsecret'] = nil
+          else 
+            # extra check of the old password (if any): BadRequest was not 
+            # raised in this case
+            if conf_h['uamsecret'] and conf_h['uamsecret'].length > 0
+              if conf_h['uamsecret'] == params['uamsecret_old']
+                conf_h['uamsecret'] = nil
+              end
+            else
+              conf_h['uamsecret'] = nil
+            end
           end
           
           conf_h['userpassword'] = (params['userpassword'] == 'on')
