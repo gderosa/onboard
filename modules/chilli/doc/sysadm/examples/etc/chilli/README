@@ -1,7 +1,0 @@
-Based on CoovaChilli http://www.coova.org (as in Debian Lenny package),
-with some edits.
-
-"testing123" is assumed as RADIUS password
-"uamsecret" is assumed as NAS password
-
-
