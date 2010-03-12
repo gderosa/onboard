@@ -12,10 +12,19 @@
 # application layer only.
 
 class OnBoard
+
   MENU_ROOT.add_path('/network/access-control/radius', {
-    :href => '/services/radius',
-    :name => 'RADIUS Authentication, Authorization and Accounting',
+    #:href => '/services/radius', # nil
+    :name => 'RADIUS server',
+    :desc => 'Authentication, Authorization and Accounting',
+    :n    => 0
+  })
+  MENU_ROOT.add_path('/network/access-control/radius/config', {
+    :href => '/services/radius/config', 
+    :name => 'Configuration',
     #:desc => '',
     :n    => 0
   })
+
 end
+
