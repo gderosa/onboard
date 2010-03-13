@@ -4,7 +4,6 @@ require 'sinatra/base'
 require 'onboard/service/radius'
 
 class OnBoard
-
   class Controller < Sinatra::Base
 
     get '/services/radius/config.:format' do
@@ -12,28 +11,25 @@ class OnBoard
         :module => 'radius',
         :path => '/services/radius/config',
         :format => params[:format],
-        :objects  => []
+        :objects  => Service::RADIUS.read_conf
       )
     end
 
     put '/services/radius/config.:format' do
-      h = {}
-      %w{dbhost dbname dbuser dbpass}.each do |key|
+      h = Service::RADIUS.read_conf
+      %w{dbhost dbname dbuser}.each do |key|
         h[key] = params[key]
       end
-      File.open \
-          "#{Service::RADIUS::CONFFILE}", 'w' do |f|
-        f.write h.to_yaml
-      end
+      h['dbpass'] = params['dbpass'] if params['dbpass'].length > 0
+          # empty password field means 'unchanged'
+      Service::RADIUS.write_conf h
       format(
         :module => 'radius',
         :path => '/services/radius/config',
         :format => params[:format],
-        :objects  => []
+        :objects  => h
       )
     end
 
-
   end
-
 end

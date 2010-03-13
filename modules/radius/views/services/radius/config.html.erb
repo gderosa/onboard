@@ -1,18 +1,7 @@
+<% config = objects %>
+
 <h2>RADIUS management and accounting</h2>
 <h3><a href="http://www.freeradius.org/">FreeRADIUS</a> / <a href="http://www.mysql.com/">MySQL</a> database</h3>
-
-<%=
-  erb(
-    :"/_messages.html",
-    {
-      :layout => false,
-      :locals => {
-        :msg => msg,
-        :status => status
-      }
-    }
-  )
-%>
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
@@ -21,19 +10,19 @@
   <tbody>
     <tr>
       <th scope="row">Database host or IP address</th>
-      <td><input class="rwtext" type="text" name="dbhost" value="localhost"/></td>
+      <td><input class="rwtext" type="text" name="dbhost" value="<%= config['dbhost'] %>"/></td>
     </tr>
     <tr>
       <th scope="row">Database name</th>
-      <td><input class="rwtext" type="text" name="dbname" value="radius"/></td>
+      <td><input class="rwtext" type="text" name="dbname" value="<%= config['dbname'] %>"/></td>
     </tr>
     <tr>
       <th scope="row">Database user</th>
-      <td><input class="rwtext" type="text" name="dbuser"/></td>
+      <td><input class="rwtext" type="text" name="dbuser" value="<%= config['dbuser'] %>"/></td>
     </tr>
     <tr>
       <th scope="row">Database password</th>
-      <td><input class="rwtext" type="password" name="dbpass"/></td>
+      <td title="Empty to leave unchanged"><input class="rwtext" type="password" name="dbpass"/></td>
     </tr>
   </tbody>
 </table>
