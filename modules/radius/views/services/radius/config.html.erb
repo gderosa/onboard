@@ -1,2 +1,43 @@
 <h2>RADIUS management and accounting</h2>
-<h3>FreeRADIUS/MySQL database</h3>
+<h3><a href="http://www.freeradius.org/">FreeRADIUS</a>/<a href="http://www.mysql.com/">MySQL</a> database</h3>
+
+<%=
+  erb(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg => msg,
+        :status => status
+      }
+    }
+  )
+%>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+<h3>Configuration</h3>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">Database host or IP address</th>
+      <td><input class="rwtext" type="text" name="dbhost" value="localhost"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Database name</th>
+      <td><input class="rwtext" type="text" name="dbname" value="radius"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Database user</th>
+      <td><input class="rwtext" type="text" name="dbuser"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Database password</th>
+      <td><input class="rwtext" type="password" name="dbpass"/></td>
+    </tr>
+  </tbody>
+</table>
+<button type="submit" name="change" value="change">Change</button>
+</form>
+
+
