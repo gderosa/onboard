@@ -32,6 +32,8 @@ class OnBoard
     end
 
     get '/services/radius/accounting.:format' do
+      params[:page] = 1 unless params[:page]
+      params[:per_page] = 10 unless params[:per_page] # TODO: use a constant
       format(
         :module => 'radius',
         :path => '/services/radius/accounting',

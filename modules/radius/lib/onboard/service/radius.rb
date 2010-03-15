@@ -1,4 +1,4 @@
-autoload :Sequel, 'sequel'
+require 'sequel'
 
 class OnBoard
   module Service

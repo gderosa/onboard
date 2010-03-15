@@ -1,3 +1,5 @@
+require 'sequel'
+require 'sequel/extensions/pagination'
 
 class OnBoard
   module Service
@@ -7,7 +9,9 @@ class OnBoard
         class << self
         
           def get(params)
-            RADIUS.db[:radacct].to_a
+            page      = params[:page].to_i
+            per_page  = params[:per_page].to_i
+            RADIUS.db[:radacct].paginate(page, per_page).to_a
           end
 
         end
