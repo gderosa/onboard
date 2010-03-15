@@ -4,4 +4,8 @@ inspired to the PHP project DaloRADIUS ( http://daloradius.com/ ).
 it may also manage a remote radius server, even non-FreeRADIUS (at least
 theoretically, if the SQL table conventions are the same...)
 
+DEPENDENCIES:
+# gem install sequel mysql
+
+
 

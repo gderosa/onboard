@@ -19,11 +19,19 @@ class OnBoard
     :desc => 'Authentication, Authorization and Accounting',
     :n    => 0
   })
+
   MENU_ROOT.add_path('/network/access-control/radius/config', {
     :href => '/services/radius/config', 
     :name => 'Configuration',
     #:desc => '',
     :n    => 0
+  })
+
+  MENU_ROOT.add_path('/network/access-control/radius/accounting', {
+    :href => '/services/radius/accounting', 
+    :name => 'Accounting',
+    :desc => 'Track users consumption of network resources',
+    :n    => 10
   })
 
 end

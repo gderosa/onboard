@@ -31,5 +31,14 @@ class OnBoard
       )
     end
 
+    get '/services/radius/accounting.:format' do
+      format(
+        :module => 'radius',
+        :path => '/services/radius/accounting',
+        :format => params[:format],
+        :objects  => Service::RADIUS::Accounting.get(params) 
+      )
+    end
+
   end
 end
