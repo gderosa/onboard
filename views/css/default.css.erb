@@ -3,7 +3,7 @@
 <% lowlight = "#777" %>
 <% superlowlight = "#bbb" %>
 <% hover = "color: white; background: #{highlight};" %>
-<% lightbg = "#dda" %>
+<% lightbg = "#ffeedd" %>
 
 body {
   overflow: auto;
@@ -272,8 +272,8 @@ button[disabled] {
 }
 
 button[disabled] img { /* CSS3 */ 
-  opacity:0.4; /* Firefox */
-  filter:alpha(opacity=40); /* MSIE */
+  opacity: 0.4; /* Firefox */
+  filter: alpha(opacity=40); /* MSIE */
 }
 
 ul li ul li {
@@ -282,4 +282,10 @@ ul li ul li {
   margin-top: 0.3em; 
 }
 
+ul li ul li ul li {
+  font-size: 95%;
+}
 
+ul li ul li ul li ul li {
+  font-size: 101%;
+}

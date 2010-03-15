@@ -11,7 +11,7 @@ class OnBoard
         end
       end
 
-      def write_conf(h)
+      def self.write_conf(h)
         File.open CONFFILE, 'w' do |f|
           f.write h.to_yaml
         end
