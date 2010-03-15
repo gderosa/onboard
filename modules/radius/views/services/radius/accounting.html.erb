@@ -1,2 +1,22 @@
+<% rows = objects %>
+<% columns = rows[0].keys %>
 <h2>RADIUS Accounting</h2>
-<pre><%= html_escape objects.pretty_inspect %></pre>
+
+<table>
+  <thead>
+    <tr>
+      <% columns.each do |column| %>
+        <th><%= column.to_s.capitalize %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% rows.each do |row| %>
+      <tr>
+        <% columns.each do |column| %>
+          <td><%= row[column] %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

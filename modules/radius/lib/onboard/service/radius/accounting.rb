@@ -7,7 +7,7 @@ class OnBoard
         class << self
         
           def get(params)
-            RADIUS.db[:radacct]
+            RADIUS.db[:radacct].to_a
           end
 
         end
