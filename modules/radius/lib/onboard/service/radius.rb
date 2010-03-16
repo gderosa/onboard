@@ -22,17 +22,25 @@ class OnBoard
         end
       end
 
-      def self.connect_db
+      def self.db
+        @@db = db_connect unless 
+            class_variable_defined? :@@db
+        return @@db
+      end
+
+      def self.db_connect
         conf = read_conf
         @@db = Sequel.connect( "mysql://#{conf['dbhost']}/#{conf['dbname']}",
           :user     => conf['dbuser'],
           :password => conf['dbpass']
-        ) unless class_variable_defined? :@@db
+        ) 
       end
 
-      def self.db
-        @@db = connect_db unless class_variable_defined? :@@db
-        return @@db
+      def self.db_disconnect; @@db.disconnect; end
+
+      def self.db_reconnect
+        db_disconnect
+        db_connect
       end
 
     end
