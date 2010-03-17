@@ -45,6 +45,8 @@ class OnBoard
           if
               vpn.data['remote'].respond_to? :[]      and
 
+              params['remote_host']                   and
+
               vpn.data['remote']['address'].strip == 
                   params['remote_host'].strip         and
                     # TODO: use gethostbyname when useful?
