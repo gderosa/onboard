@@ -172,7 +172,7 @@ class OnBoard
       end
       # 
       if vpn 
-        vpn.stop(:rmlog) 
+        vpn.stop(:rmlog, :rmconf) 
         OnBoard::Network::OpenVPN::VPN.all_cached.delete vpn
         sleep 0.3 # diiirty!
         redirection = "/network/openvpn.#{params[:format]}"

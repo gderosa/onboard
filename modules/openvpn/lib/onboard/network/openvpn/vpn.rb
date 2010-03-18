@@ -14,6 +14,10 @@ require 'onboard/network/openvpn/process'
 
 autoload :Log,        'onboard/system/log'
 
+# TODO TODO TODO
+# too many way to dentify a VPN: array_index, protable_id, uuid...
+# switch everything to uuid ?
+
 class OnBoard
   module Network
     module OpenVPN
@@ -171,7 +175,7 @@ sudo touch #{logfile}
 sudo chown :onboard #{logfile}
 sudo chmod g+rw #{logfile}
 cd /
-sudo -E #{cmdline.join(' ')} # -E is important!
+UUID=#{uuid} sudo -E #{cmdline.join(' ')} # -E is important!
 EOF
           msg[:log] = logfile
           System::Log.register({
@@ -216,6 +220,7 @@ EOF
           }
           @data = {'running' => h[:running]} 
           @data['portable_id'] = @data_internal['process'].portable_id 
+          @data['uuid'] = uuid unless @data['uuid']
           parse_conffile() if File.file? @data_internal['conffile'] # regular
           parse_conffile(:text => cmdline2conf())  
           if @data['server']
@@ -245,6 +250,17 @@ EOF
           find_routes()
         end
 
+        def uuid
+          unless @data['uuid']
+            if @data_internal['process'].env['UUID']
+              @data['uuid'] = @data_internal['process'].env['UUID']
+            else
+              @data['uuid'] = UUID.generate
+            end
+          end
+          return @data['uuid']
+        end
+
         def start
           if @data['running'] # TODO?: these are 'cached' data... "update"?
             return {:err => 'Already started.'}
@@ -252,7 +268,7 @@ EOF
             pwd = @data_internal['process'].env['PWD']
             cmd = Escape.shell_command(@data_internal['process'].cmdline)
             cmd += ' --daemon' unless @data_internal['daemon']
-            msg = System::Command.bgexec ("cd #{pwd} && sudo -E #{cmd}") 
+            msg = System::Command.bgexec ("cd #{pwd} && UUID=#{uuid} sudo -E #{cmd}") 
             msg[:ok] = true
             msg[:info] = 'Request accepted. You may check <a href="">this page</a> again to get updated info for the active VPNs. You may also check the <a href="/system/logs.html">logs</a>.'
             return msg
@@ -272,7 +288,12 @@ EOF
               System::Log.all.delete_if { |h| h['path'] == logfile }
             end
           end
+          FileUtils.rm_rf config_dir if config_dir and Dir.exists? config_dir
           return msg
+        end
+
+        def config_dir
+          uuid ? "#{CONFDIR}/#{uuid}" : nil
         end
        
         def set_not_running
