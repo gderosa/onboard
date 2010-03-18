@@ -21,6 +21,7 @@ class OnBoard
       STATUS_UPDATE_INTERVAL = 60 # seconds # 'status' file
 
       class VPN
+        CONFDIR = ROOTDIR + '/etc/config/network/openvpn/vpn'
 
         System::Log.register_category 'openvpn', 'OpenVPN'
 
@@ -28,7 +29,7 @@ class OnBoard
           @@all_vpn = getAll() unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
           File.open(
-              ROOTDIR + '/etc/config/network/openvpn/vpn/vpn.dat', 
+              CONFDIR + '/vpn.dat', 
               'w'
           ) do |f|
             f.write(
@@ -103,7 +104,11 @@ class OnBoard
         def self.all_cached; @@all_vpn; end
 
         def self.start_from_HTTP_request(params)
+          # TODO: there's a dirtyness/inconsitence: all config is done via 
+          # command line, EXCEPT per-client config for servers, which is 
+          # stored in files
           uuid = UUID.generate
+          config_dir = "#{CONFDIR}/#{uuid}"
           reserve_a_tcp_port = TCPServer.open('127.0.0.1', 0)
           reserved_tcp_port = reserve_a_tcp_port.addr[1] 
           cmdline = []
@@ -137,11 +142,14 @@ class OnBoard
           cmdline << '--dev' << 'tun'
           cmdline << '--proto' << params['proto']
           if params['server_net'] =~ /\S/ # it's a server
+            client_config_dir = config_dir + '/clients'
             net = IPAddr.new params['server_net']
             cmdline << '--server' << net.to_s << net.netmask.to_s
             cmdline << '--port' << params['port'].to_s
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
             cmdline << '--dh' << dh # Diffie Hellman params :-)
+            cmdline << '--client-config-dir' << client_config_dir
+            FileUtils.mkdir_p client_config_dir
           elsif params['remote_host'] =~ /\S/ # it's a client
             cmdline << 
                 '--client' << '--nobind'
