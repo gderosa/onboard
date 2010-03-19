@@ -10,6 +10,15 @@
   }
 </style>
 <h2>VPN<%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details</h2>
+<!-- 
+  As usual, maybe we are not strictly ReSTful, but we find it convenient
+  to PUT/GET the whole set of configured clients, instead of 
+  POST/DELETE/PUT/GET for single ones. Moreover, HTML doesn't allow nested 
+  forms.
+
+  This doesn't scale, but it it's unlikely that an OpenVPN server connects
+  hundreds of clients (each one with an entire LAN behind it).
+-->
 <% if vpn.data['server'] %>
   <h3>Advanced, per-client configuration</h3>
   <table>
@@ -66,6 +75,7 @@
   </table>
   <button>Change!</button>
 <% end %>
+
 <% if vpn.data['clients'] %><!-- It's a server -->
   <h3>Connected clients</h3>
   <% if vpn.data['status_update_seconds'] %>
@@ -96,6 +106,7 @@
     </tbody>
   </table>
 <% end %>
+
 <h3><span class="product-name">OpenVPN</span> log</h3>
 <%=
   erb(:"system/_log.html", :layout => false, :locals => {:log => log})

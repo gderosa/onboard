@@ -55,19 +55,16 @@ gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape
 Optional add-ons:
 
 You can get pretty-printed JSON output via JsonPrinter 
-by Mark McGranaghan. To get it, change to the lib/ directory, then:
+by Mark McGranaghan. To get it, change to the lib/ directory (or your
+system's site_ruby dir), then:
 
 git clone git://github.com/techcrunch/json_printer.git
 
 You can also take advantage of Ya2YAML by Akira FUNAI to get native 
 UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
-and encode them in base64). Change to lib/, then:
+and encode them in base64). 
 
-wget http://rubyforge.org/frs/download.php/51481/ya2yaml-0.29.tar.gz
-tar xvzf ya2yaml-0.29.tar.gz
-
-(This manual install will not be required when ya2yaml >= 0.29 becomes 
-available as a gem. Check http://rubyforge.org/frs/?group_id=2206 for updates).
+gem install kch-ya2yaml
 
 ---
 
