@@ -6,7 +6,7 @@
 %>
 <style type="text/css">
   table tr td {
-    padding: 2px;
+    padding: 0.5em;
   }
 </style>
 <h2>VPN<%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details</h2>
@@ -15,16 +15,57 @@
   <table>
     <thead>
       <tr>
-        <th></th>
+        <th>
+          &ldquo;Common Name&rdquo;
+        </th>
+        <th>
+          Route networks
+          <div class="optinfo">  
+            List of networks, one per line, which are behind the client and
+            you want to make securely accessible through the VPN.
+          </div>
+        </th>
+        <th>
+          Push routes
+          <div class="optinfo">  
+            List of networks, one per line, which are behind this server
+            and you want to make securely accessible from the client.
+          </div>
+        </th>
+        <th>
+          Delete?
+        </th>
       </tr>
     </thead>
+    <tbody>
+      <tr>
+        <td><code>example_CN</code></td>
+        <td>
+          <textarea cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
+        </td>
+        <td>
+          <textarea cols=16 rows=2 wrap=off>192.168.35.0/24
+192.168.36.0/24</textarea>
+        </td>
+        <td style="text-align: center;">
+          <button><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button> 
+        </td>
+      </tr>
+      <tr>
+        <td><input type="text" class="rwtext"/></td>
+        <td>
+          <textarea cols=16 rows=2 wrap=off></textarea> 
+        </td>
+        <td>
+          <textarea cols=16 rows=2 wrap=off></textarea>
+        </td>
+        <td style="text-align: center;">
+        </td>
+      </tr>
+    </tbody>
   </table>
+  <button>Change!</button>
 <% end %>
-<h3><span class="product-name">OpenVPN</span> log</h3>
-<%=
-  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
-%>
-
 <% if vpn.data['clients'] %><!-- It's a server -->
   <h3>Connected clients</h3>
   <% if vpn.data['status_update_seconds'] %>
@@ -55,3 +96,9 @@
     </tbody>
   </table>
 <% end %>
+<h3><span class="product-name">OpenVPN</span> log</h3>
+<%=
+  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
+%>
+
+
