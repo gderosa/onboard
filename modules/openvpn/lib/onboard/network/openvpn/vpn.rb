@@ -257,7 +257,7 @@ EOF
             parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
           elsif @data['client'] 
             @data['client'] = {} unless @data['client'].respond_to? :[]
-            if @data_internal['management']
+            if @data_internal['management'] and @data['running']
               begin
                 Timeout::timeout(3) do # three seconds should be fair
                   get_client_info_from_management_interface()
@@ -272,6 +272,41 @@ EOF
           find_virtual_address()
           find_interface()
           find_routes()
+        end
+
+        def modify_from_HTTP_request(params)
+          if @data['server'] and @data_internal['client-config-dir']
+            FileUtils.mkdir_p @data_internal['client-config-dir'] unless
+                Dir.exists?   @data_internal['client-config-dir']
+            params['clients'].each_pair do |cn, h|
+              routes      = h['routes'].lines.map{|x| x.strip}
+              push_routes = h['push_routes'].lines.map{|x| x.strip}
+              File.open(
+"#{@data_internal['client-config-dir']}/#{cn.gsub(' ', '_')}", 'w' ) do |f|
+                routes.each do |route|
+                  # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
+                  begin
+                    ip = IPAddr.new(route)
+                  rescue ArgumentError
+                    next
+                  end
+                  f.puts "route  #{ip} #{ip.netmask}"
+                  f.puts "iroute #{ip} #{ip.netmask}"
+                end
+                push_routes.each do |push_route|
+                  # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
+                  begin
+                    ip = IPAddr.new(push_route)
+                  rescue ArgumentError
+                    next
+                  end
+                  f.puts %Q{push "route #{ip} #{ip.netmask}"}  
+                end
+              end
+            end
+            #stop
+            #start
+          end
         end
 
         def uuid
@@ -312,7 +347,8 @@ EOF
               System::Log.all.delete_if { |h| h['path'] == logfile }
             end
           end
-          FileUtils.rm_rf config_dir if config_dir and Dir.exists? config_dir
+          FileUtils.rm_rf config_dir if 
+              config_dir and Dir.exists? config_dir and opts.include? :rmconf
           return msg
         end
 
@@ -467,7 +503,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end 
 
             # "private" options with 1 argument
-            %w{key dh ifconfig-pool-persist status status-version log log-append}.each do |optname|
+            %w{key dh ifconfig-pool-persist status status-version log log-append client-config-dir}.each do |optname|
               if line =~ /^\s*#{optname}\s+(\S+)\s*$/
                 @data_internal[optname] = $1
                 if optname == 'log' or optname == 'log-append'
@@ -560,13 +596,17 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
             # TODO or not TODO
             # TODO? server-bridge
-            # TODO? push routes
-            # TODO? client-config-dir, route
             # TODO? push "redirect-gateway def1 bypass-dhcp"
 
           end
           if @data_internal['status'] and not @data_internal['status-version']
             @data_internal['status-version'] = '1'
+          end
+        end
+
+        def parse_client_config
+          if Dir.exists? @data_internal['client-config-dir']
+            # TODO
           end
         end
 

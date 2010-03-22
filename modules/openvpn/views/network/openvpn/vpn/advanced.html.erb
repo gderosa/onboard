@@ -54,14 +54,14 @@
         <tr>
           <td><code>example_CN</code></td>
           <td>
-            <textarea name="clients[example_CN][route]" cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
+            <textarea name="clients[example_CN][routes]" cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
           </td>
           <td>
-            <textarea name="clients[example_CN][pushroute]" cols=16 rows=2 wrap=off>192.168.35.0/24
+            <textarea name="clients[example_CN][push_routes]" cols=16 rows=2 wrap=off>192.168.35.0/24
 192.168.36.0/24</textarea>
           </td>
           <td style="text-align: center;">
-            <button><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button> 
+            <input type="checkbox" name="clients[example_CN][delete]"/> 
           </td>
         </tr>
         <tr>

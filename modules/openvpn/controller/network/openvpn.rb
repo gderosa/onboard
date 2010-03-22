@@ -143,11 +143,13 @@ class OnBoard
         :any => params[:vpn_identifier]
       ) 
       if vpn 
+        msg = vpn.modify_from_HTTP_request(params)
         format(
           :module   => 'openvpn',
           :path     => '/network/openvpn/vpn/advanced',
           :format   => params[:format],
-          :objects  => vpn
+          :objects  => vpn,
+          :msg      => msg
         )      
       else
         not_found
