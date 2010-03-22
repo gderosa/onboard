@@ -217,7 +217,7 @@ class OnBoard
                 Thread.new do
                   # useful on OpenVPN startup, when ifaces/addresses not ready
                   # TODO/coming_soon: such services manage their own routes
-                  sleep 60 # dirty?
+                  sleep 30 # dirty?
                   msg = ip_route_add static_route, :try
                   if msg[:ok]
                     msg = ip_route_change static_route
