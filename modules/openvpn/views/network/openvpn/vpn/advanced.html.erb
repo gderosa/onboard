@@ -13,12 +13,14 @@
 <!-- 
   As usual, maybe we are not strictly ReSTful, but we find it convenient
   to PUT/GET the whole set of configured clients, instead of 
-  POST/DELETE/PUT/GET for single ones. Moreover, HTML doesn't allow nested 
+  POST/DELETE/PUT/GET single ones. Moreover, HTML doesn't allow nested 
   forms.
 
   This doesn't scale, but it it's unlikely that an OpenVPN server connects
   hundreds of clients (each one with an entire LAN behind it).
 -->
+<pre><%= html_escape params.pretty_inspect %></pre>
+
 <% if vpn.data['server'] %>
   <h3>Advanced, per-client configuration</h3>
   <form method="POST">
@@ -52,10 +54,10 @@
         <tr>
           <td><code>example_CN</code></td>
           <td>
-            <textarea cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
+            <textarea name="clients[example_CN][route]" cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
           </td>
           <td>
-            <textarea cols=16 rows=2 wrap=off>192.168.35.0/24
+            <textarea name="clients[example_CN][pushroute]" cols=16 rows=2 wrap=off>192.168.35.0/24
 192.168.36.0/24</textarea>
           </td>
           <td style="text-align: center;">

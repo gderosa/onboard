@@ -122,16 +122,6 @@ class OnBoard
       )
     end
 
-    # :vpnid may be an incremental index (@@all_vpn array index +1) 
-    # OR
-    # a "portable_id" (a md5 hash of command line etc..) 
-    # OR
-    # 'uuid'.
-    #
-    # There shouldn't be collisions because of different formats.
-    #
-    # TODO: get rid of 'portable_id' / switch to uuid?
-    #
     get '/network/openvpn/vpn/:vpn_identifier.:format' do
       vpn = OnBoard::Network::OpenVPN::VPN.lookup(
         :any => params[:vpn_identifier]
@@ -148,6 +138,22 @@ class OnBoard
       end
     end
 
+    put '/network/openvpn/vpn/:vpn_identifier.:format' do
+      vpn = OnBoard::Network::OpenVPN::VPN.lookup(
+        :any => params[:vpn_identifier]
+      ) 
+      if vpn 
+        format(
+          :module   => 'openvpn',
+          :path     => '/network/openvpn/vpn/advanced',
+          :format   => params[:format],
+          :objects  => vpn
+        )      
+      else
+        not_found
+      end
+    end
+   
     delete '/network/openvpn/vpn/:vpn_identifier.:format' do
       vpn = OnBoard::Network::OpenVPN::VPN.lookup(
         :any => params[:vpn_identifier]
