@@ -136,8 +136,9 @@ class OnBoard
       all = OnBoard::Network::OpenVPN::VPN.getAll()
       # Lookup: 
       vpn = all.detect {|x| 
-        x.data['portable_id'] == params[:vpn_identifier] or
-        x.data['human_index'].to_s == params[:vpn_identifier]
+        x.data['human_index'].to_s == params[:vpn_identifier] or
+        x.data['uuid'].to_s == params[:vpn_identifier] or
+        x.data['portable_id'] == params[:vpn_identifier]
       } 
       # 
       if vpn 
