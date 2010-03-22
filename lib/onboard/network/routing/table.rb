@@ -147,9 +147,10 @@ class OnBoard
           end
         end
 
-        def self.ip_route_change(route)
+        def self.ip_route_change(route, *opts)
           str = route.to_s # so Route and String are both ok
-          OnBoard::System::Command.run "ip route change #{str}", :sudo
+          opts << :sudo
+          OnBoard::System::Command.run "ip route change #{str}", *opts
         end
 
         def self.route_from_HTTP_request(params) # create new or change
@@ -211,7 +212,19 @@ class OnBoard
           @@static_routes.each do |static_route|
             msg = ip_route_add static_route, :try
             unless msg[:ok]
-              ip_route_change static_route
+              msg = ip_route_change static_route, :try
+              unless msg[:ok]
+                Thread.new do
+                  # useful on OpenVPN startup, when ifaces/addresses not ready
+                  # TODO/coming_soon: such services manage their own routes
+                  sleep 60 # dirty?
+                  msg = ip_route_add static_route, :try
+                  if msg[:ok]
+                    msg = ip_route_change static_route
+                  end
+                end
+              end
+              LOGGER.warn "Setup of static route '#{static_route}' delayed!"
             end
           end
         end
