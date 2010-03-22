@@ -106,6 +106,30 @@ class OnBoard
         end
 
         def self.all_cached; @@all_vpn; end
+        
+        # TODO: get rid of portable_id, because you cannot foresee it before
+        # starting the openvpn process (i.e. on creation)
+        # 
+        def self.lookup(h)
+          h[:all] ||= getAll 
+          if h[:any] 
+            return (
+              lookup(:all => h[:all], :human_index  => h[:any]) or
+              lookup(:all => h[:all], :uuid         => h[:any]) or
+              lookup(:all => h[:all], :portable_id  => h[:any])
+            )
+          elsif h[:human_index]
+            return h[:all][h[:human_index].to_i - 1]
+          elsif h[:uuid]
+            return h[:all].detect {|x| 
+              x.data['uuid']            == h[:uuid]}
+          elsif h[:portable_id]
+            return h[:all].detect {|x| 
+              x.data['portable_id']     == h[:portable_id]}
+          else
+            return nil
+          end
+        end
 
         def self.start_from_HTTP_request(params)
           # TODO: there's a dirtyness/inconsitence: all config is done via 
