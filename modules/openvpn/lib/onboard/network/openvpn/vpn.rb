@@ -602,30 +602,36 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           if @data_internal['status'] and not @data_internal['status-version']
             @data_internal['status-version'] = '1'
           end
+          parse_client_config
         end
 
         def parse_client_config
+          return false unless @data_internal['client-config-dir']
           @data['client-config'] = {}
           if Dir.exists? @data_internal['client-config-dir']
             Dir.foreach @data_internal['client-config-dir'] do |cn|
+              next if cn =~ /^\./ # skip directories and hidden files
               @data['client-config'][cn] = {
                 'routes'      => [],
                 'iroutes'     => [],
-                'push'        => {}
+                'push'        => {
+                  'routes'      => []
+                }
               }
               File.foreach "#{@data_internal['client-config-dir']}/#{cn}" do |l|
                 l.sub! /#.*$/, '' # remove comments
                 case l
-                when /iroute\s+(\S+)\s+(\S+)/
+                when /^\s*iroute\s+(\S+)\s+(\S+)/
                   @data['client-config'][cn]['iroutes'] <<
                       {'net' => $1, 'mask' => $2}  
                   next
-                when /route\s+(\S+)\s+(\S+)/
+                when /^\s*route\s+(\S+)\s+(\S+)/
                   @data['client-config'][cn]['routes'] <<
                       {'net' => $1, 'mask' => $2}
                   next
-                # when
-
+                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
+                  @data['client-config'][cn]['push']['routes'] <<
+                      {'net' => $1, 'mask' => $2}
                 end
               end
             end
