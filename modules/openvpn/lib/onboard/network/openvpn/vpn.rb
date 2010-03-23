@@ -605,8 +605,30 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
         end
 
         def parse_client_config
+          @data['client-config'] = {}
           if Dir.exists? @data_internal['client-config-dir']
-            # TODO
+            Dir.foreach @data_internal['client-config-dir'] do |cn|
+              @data['client-config'][cn] = {
+                'routes'      => [],
+                'iroutes'     => [],
+                'push'        => {}
+              }
+              File.foreach "#{@data_internal['client-config-dir']}/#{cn}" do |l|
+                l.sub! /#.*$/, '' # remove comments
+                case l
+                when /iroute\s+(\S+)\s+(\S+)/
+                  @data['client-config'][cn]['iroutes'] <<
+                      {'net' => $1, 'mask' => $2}  
+                  next
+                when /route\s+(\S+)\s+(\S+)/
+                  @data['client-config'][cn]['routes'] <<
+                      {'net' => $1, 'mask' => $2}
+                  next
+                # when
+
+                end
+              end
+            end
           end
         end
 
