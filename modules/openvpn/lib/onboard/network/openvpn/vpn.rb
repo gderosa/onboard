@@ -278,11 +278,13 @@ EOF
           if @data['server'] and @data_internal['client-config-dir']
             FileUtils.mkdir_p @data_internal['client-config-dir'] unless
                 Dir.exists?   @data_internal['client-config-dir']
-            params['clients'].each_pair do |cn, h|
-              routes      = h['routes'].lines.map{|x| x.strip}
-              push_routes = h['push_routes'].lines.map{|x| x.strip}
-              File.open(
-"#{@data_internal['client-config-dir']}/#{cn.gsub(' ', '_')}", 'w' ) do |f|
+            params['clients'].each do |client|
+              routes      = client['routes'].lines.map{|x| x.strip}
+              push_routes = client['push_routes'].lines.map{|x| x.strip}
+              next unless client['CN'] =~ /\S/
+              file = 
+"#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
+              File.open(file, 'w') do |f|
                 routes.each do |route|
                   # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
                   begin
@@ -304,8 +306,8 @@ EOF
                 end
               end
             end
-            #stop
-            #start
+            System::Command.run(
+                "kill -HUP #{@data_internal['process'].pid}", :sudo)
           end
         end
 

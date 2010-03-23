@@ -53,24 +53,25 @@
       <tbody>
         <tr>
           <td><code>example_CN</code></td>
+          <input type="hidden" name="clients[][CN]" value="example_CN">
           <td>
-            <textarea name="clients[example_CN][routes]" cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
+            <textarea name="clients[][routes]" cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
           </td>
           <td>
-            <textarea name="clients[example_CN][push_routes]" cols=16 rows=2 wrap=off>192.168.35.0/24
+            <textarea name="clients[][push_routes]" cols=16 rows=2 wrap=off>192.168.35.0/24
 192.168.36.0/24</textarea>
           </td>
           <td style="text-align: center;">
-            <input type="checkbox" name="clients[example_CN][delete]"/> 
+            <input type="checkbox" name="clients[][delete]"/> 
           </td>
         </tr>
         <tr>
-          <td><input type="text" class="rwtext"/></td>
+          <td><input name="clients[][CN]" type="text" class="rwtext"/></td>
           <td>
-            <textarea cols=16 rows=2 wrap=off></textarea> 
+            <textarea name="clients[][routes]" cols=16 rows=2 wrap=off></textarea> 
           </td>
           <td>
-            <textarea cols=16 rows=2 wrap=off></textarea>
+            <textarea name="clients[][push_routes]" cols=16 rows=2 wrap=off></textarea>
           </td>
           <td style="text-align: center;">
           </td>
