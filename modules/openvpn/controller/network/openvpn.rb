@@ -144,6 +144,8 @@ class OnBoard
       ) 
       if vpn 
         msg = vpn.modify_from_HTTP_request(params)
+        vpn = OnBoard::Network::OpenVPN::VPN.lookup(
+          :any => params[:vpn_identifier]) # update
         format(
           :module   => 'openvpn',
           :path     => '/network/openvpn/vpn/advanced',

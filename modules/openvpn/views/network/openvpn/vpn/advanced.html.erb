@@ -34,15 +34,25 @@
           <th>
             Route networks
             <div class="optinfo">  
-              List of networks, one per line, which are behind the client and
-              you want to make securely accessible through the VPN.
+              <p>
+                List of networks, one per line, which are behind the client and
+                you want to make securely accessible through the VPN.
+              </p>
+              <p>
+                You can either use <a href="http://en.wikipedia.org/wiki/Subnet_mask">netmask</a> or <a href="http://en.wikipedia.org/wiki/CIDR_notation">CIDR notation</a>.
+              </p>
             </div>
           </th>
           <th>
             Push routes
             <div class="optinfo">  
-              List of networks, one per line, which are behind this server
-              and you want to make securely accessible from the client.
+              <p>
+                List of networks, one per line, which are behind this server
+                and you want to make securely accessible from the client.
+              </p>
+              <p>
+                You can either use <a href="http://en.wikipedia.org/wiki/Subnet_mask">netmask</a> or <a href="http://en.wikipedia.org/wiki/CIDR_notation">CIDR notation</a>.
+              </p>
             </div>
           </th>
           <th>
@@ -50,28 +60,43 @@
           </th>
         </tr>
       </thead>
+      <% network_textarea_columns = 26 %>
+      <% cols = network_textarea_columns %>
       <tbody>
-        <tr>
-          <td><code>example_CN</code></td>
-          <input type="hidden" name="clients[][CN]" value="example_CN">
-          <td>
-            <textarea name="clients[][routes]" cols=16 rows=2 wrap=off>192.168.33.0/24</textarea> 
-          </td>
-          <td>
-            <textarea name="clients[][push_routes]" cols=16 rows=2 wrap=off>192.168.35.0/24
-192.168.36.0/24</textarea>
-          </td>
-          <td style="text-align: center;">
-            <input type="checkbox" name="clients[][delete]"/> 
-          </td>
-        </tr>
+        <% vpn.data['client-config'].each_pair do |cn, h| %>
+          <tr>
+            <td><code><%= cn %></code></td>
+            <input type="hidden" name="clients[][CN]" value="<%= cn %>">
+            <td>
+              <%
+                text = ''
+                h['iroutes'].each do |route|
+                  text << "#{route['net']}/#{route['mask']}\n"
+                end
+              %>
+              <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea> 
+            </td>
+            <td>
+              <% 
+                text = ''
+                h['push']['routes'].each do |route|
+                  text << "#{route['net']}/#{route['mask']}\n"
+                end
+              %>
+              <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea>
+            </td>
+            <td style="text-align: center;">
+              <input type="checkbox" name="clients[][delete]"/> 
+            </td>
+          </tr>
+        <% end %>
         <tr>
           <td><input name="clients[][CN]" type="text" class="rwtext"/></td>
           <td>
-            <textarea name="clients[][routes]" cols=16 rows=2 wrap=off></textarea> 
+            <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off></textarea> 
           </td>
           <td>
-            <textarea name="clients[][push_routes]" cols=16 rows=2 wrap=off></textarea>
+            <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off></textarea>
           </td>
           <td style="text-align: center;">
           </td>

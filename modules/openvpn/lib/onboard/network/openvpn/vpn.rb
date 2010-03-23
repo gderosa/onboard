@@ -279,9 +279,15 @@ EOF
             FileUtils.mkdir_p @data_internal['client-config-dir'] unless
                 Dir.exists?   @data_internal['client-config-dir']
             params['clients'].each do |client|
+              next unless client['CN'] =~ /\S/
+              if 
+                  client['delete'] == 'on' and 
+                  File.exists? "#{@data_internal['client-config-dir']}/#{client['CN']}"
+                FileUtils.rm "#{@data_internal['client-config-dir']}/#{client['CN']}" 
+                next
+              end
               routes      = client['routes'].lines.map{|x| x.strip}
               push_routes = client['push_routes'].lines.map{|x| x.strip}
-              next unless client['CN'] =~ /\S/
               file = 
 "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
               File.open(file, 'w') do |f|
@@ -306,6 +312,7 @@ EOF
                 end
               end
             end
+            # TODO: do not hardcode, improve System::Process
             System::Command.run(
                 "kill -HUP #{@data_internal['process'].pid}", :sudo)
           end
