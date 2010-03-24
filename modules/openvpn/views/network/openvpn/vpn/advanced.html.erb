@@ -19,18 +19,15 @@
   This doesn't scale, but it it's unlikely that an OpenVPN server connects
   hundreds of clients (each one with an entire LAN behind it).
 -->
-<pre><%= html_escape params.pretty_inspect %></pre>
 
 <% if vpn.data['server'] %>
-  <h3>Advanced, per-client configuration</h3>
+  <h3>Advanced clients configuration</h3>
   <form method="POST">
     <input type="hidden" name="_method" value="put">
     <table>
       <thead>
         <tr>
-          <th>
-            &ldquo;Common Name&rdquo;
-          </th>
+          <th>Client’s &ldquo;Common Name&rdquo;</th>
           <th>
             Route networks
             <div class="optinfo">  
@@ -100,6 +97,15 @@
           </td>
           <td style="text-align: center;">
           </td>
+        </tr>
+      </tbody>
+    </table>
+    <h4>Options</h4>
+    <table style="margin-bottom: 1em;">
+      <tbody>
+        <tr>
+          <th scope="row">Allow client-to-client communication</th>
+          <td><input type="checkbox" name="client_to_client" <%= 'checked' if vpn.data['client-to-client'] %>/></td>
         </tr>
       </tbody>
     </table>

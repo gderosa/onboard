@@ -362,14 +362,17 @@ EOF
 
             # now edit the vpn server config file
             text = ''
-            # remove old routes
+            # remove old configuration we want to change
             File.foreach(@data_internal['conffile']) do |line|
-              text << line unless line =~ /^\s*route\s+(\S+)\s+(\S)/
+              text << line unless 
+                  line =~ /^\s*route\s+(\S+)\s+(\S)/ or
+                  line =~ /^\s*client-to-client\s*$/
             end
-            # add new ones
+            # add new one
             @data['explicitly_configured_routes'].each do |route_h|
               text << "route #{route_h['net']} #{route_h['mask']}\n"
             end
+            text << "client-to-client\n" if params['client_to_client'] == 'on'
             File.open @data_internal['conffile'], 'w' do |f|
               f.write text
             end
