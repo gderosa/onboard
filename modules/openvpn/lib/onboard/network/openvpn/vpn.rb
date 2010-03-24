@@ -316,8 +316,12 @@ EOF
 
         def modify_from_HTTP_request(params)
           if @data['server'] and @data_internal['client-config-dir']
+
             FileUtils.mkdir_p @data_internal['client-config-dir'] unless
                 Dir.exists?   @data_internal['client-config-dir']
+
+            @data['explicitly_configured_routes'] = []
+
             params['clients'].each do |client|
               next unless client['CN'] =~ /\S/
               if 
@@ -328,9 +332,10 @@ EOF
               end
               routes      = client['routes'].lines.map{|x| x.strip}
               push_routes = client['push_routes'].lines.map{|x| x.strip}
-              file = 
+
+              client_config_file = 
 "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
-              File.open(file, 'w') do |f|
+              File.open(client_config_file, 'w') do |f|
                 routes.each do |route|
                   # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
                   begin
@@ -338,8 +343,10 @@ EOF
                   rescue ArgumentError
                     next
                   end
-                  f.puts "route  #{ip} #{ip.netmask}"
                   f.puts "iroute #{ip} #{ip.netmask}"
+                  h = {'net' => ip.to_s, 'mask' => ip.netmask.to_s}
+                  @data['explicitly_configured_routes'] << h unless
+                      @data['explicitly_configured_routes'].include? h
                 end
                 push_routes.each do |push_route|
                   # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
@@ -352,6 +359,22 @@ EOF
                 end
               end
             end
+
+            # now edit the vpn server config file
+            text = ''
+            # remove old routes
+            File.foreach(@data_internal['conffile']) do |line|
+              text << line unless line =~ /^\s*route\s+(\S+)\s+(\S)/
+            end
+            # add new ones
+            @data['explicitly_configured_routes'].each do |route_h|
+              text << "route #{route_h['net']} #{route_h['mask']}\n"
+            end
+            File.open @data_internal['conffile'], 'w' do |f|
+              f.write text
+            end
+
+            # Reload openvpn configuration and restart connections
             # TODO: do not hardcode, improve System::Process
             System::Command.run(
                 "kill -HUP #{@data_internal['process'].pid}", :sudo)
@@ -474,8 +497,8 @@ EOF
         end
 
         def parse_conffile(opts={})  
-          @data['explicitely_configured_routes'] = [] unless
-            @data['explicitely_configured_routes'].respond_to? :[]
+          @data['explicitly_configured_routes'] = [] unless
+            @data['explicitly_configured_routes'].respond_to? :[]
 
           text = nil
           if opts[:text]
@@ -538,8 +561,8 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             # "public" options with more arguments, multiple times
             if line =~ /^\s*route\s+(\S+)\s+(\S+)/
               h = {'net' => $1, 'mask' => $2} # TODO? 'gateway', 'metric' (RTFM)
-              @data['explicitely_configured_routes'] << h unless
-                  @data['explicitely_configured_routes'].include? h
+              @data['explicitly_configured_routes'] << h unless
+                  @data['explicitly_configured_routes'].include? h
             end
 
             # "private" options with no args
