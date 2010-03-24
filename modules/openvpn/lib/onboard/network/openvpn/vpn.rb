@@ -474,6 +474,9 @@ EOF
         end
 
         def parse_conffile(opts={})  
+          @data['explicitely_configured_routes'] = [] unless
+            @data['explicitely_configured_routes'].respond_to? :[]
+
           text = nil
           if opts[:text]
             text = opts[:text]
@@ -530,6 +533,13 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               @data['remote']['address']  = $1
               @data['remote']['port']     = $2
               next
+            end
+
+            # "public" options with more arguments, multiple times
+            if line =~ /^\s*route\s+(\S+)\s+(\S+)/
+              h = {'net' => $1, 'mask' => $2} # TODO? 'gateway', 'metric' (RTFM)
+              @data['explicitely_configured_routes'] << h unless
+                  @data['explicitely_configured_routes'].include? h
             end
 
             # "private" options with no args
