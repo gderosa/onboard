@@ -219,8 +219,9 @@
         </td>
         <td>
           <%= 
-            str = '<div style="margin:0.3em 0;">'
+            str = ''
             vpn.data['routes'].each do |route| 
+              str << '<div style="margin:0.3em 0;">'
               addr      = route['dest']['addr'] 
               prefixlen = route['dest']['prefixlen'] 
               af        = route['dest']['af']
@@ -232,8 +233,8 @@
                 str << '/'
                 str << prefixlen.to_s
               end
-              str << "<span class=\"lowlight\"> (via #{gw}) </span>" unless %w{0.0.0.0 ::}.include? gw
-              str << '</div>' 
+              # str << "<span class=\"lowlight\"> (via #{gw}) </span>" unless %w{0.0.0.0 ::}.include? gw # it wastes space...
+              str << '</div> ' 
             end 
             str
           %>

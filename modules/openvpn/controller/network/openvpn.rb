@@ -122,24 +122,10 @@ class OnBoard
       )
     end
 
-    # :vpnid may be an incremental index (@@all_vpn array index +1) 
-    # OR
-    # a "portable_id" (a more robust way to identify a VPN) 
-    #
-    # There shouldn't be collisions since the former is a very short integer
-    # (though converted to a String) while the latter is a longer string
-    # (hex md5 hash).
-    #
     get '/network/openvpn/vpn/:vpn_identifier.:format' do
-      vpn = nil
-      human_index = nil
-      all = OnBoard::Network::OpenVPN::VPN.getAll()
-      # Lookup: 
-      vpn = all.detect {|x| 
-        x.data['portable_id'] == params[:vpn_identifier] or
-        x.data['human_index'].to_s == params[:vpn_identifier]
-      } 
-      # 
+      vpn = OnBoard::Network::OpenVPN::VPN.lookup(
+        :any => params[:vpn_identifier]
+      ) 
       if vpn 
         format(
           :module   => 'openvpn',
@@ -152,27 +138,32 @@ class OnBoard
       end
     end
 
-    # :vpnid may be an incremental index (@@all_vpn array index +1) 
-    # OR
-    # a "portable_id" (a more robust way to identify a VPN) 
-    #
-    # There shouldn't be collisions since the former is a very short integer
-    # (though converted to a String) while the latter is a longer string
-    # (hex md5 hash).
-    #
-    delete '/network/openvpn/vpn/:vpn_identifier.:format' do
-      vpn = nil
-      all = OnBoard::Network::OpenVPN::VPN.getAll()
-      # Lookup: first try by portable_id:
-      vpn = all.detect {|x| x.data['portable_id'] == params[:vpn_identifier]} 
-      # Then try by array index ("old" method)
-      unless vpn 
-        ary_index = params[:vpn_identifier].to_i - 1
-        vpn = OnBoard::Network::OpenVPN::VPN.getAll[ary_index]
-      end
-      # 
+    put '/network/openvpn/vpn/:vpn_identifier.:format' do
+      vpn = OnBoard::Network::OpenVPN::VPN.lookup(
+        :any => params[:vpn_identifier]
+      ) 
       if vpn 
-        vpn.stop(:rmlog) 
+        msg = vpn.modify_from_HTTP_request(params)
+        vpn = OnBoard::Network::OpenVPN::VPN.lookup(
+          :any => params[:vpn_identifier]) # update
+        format(
+          :module   => 'openvpn',
+          :path     => '/network/openvpn/vpn/advanced',
+          :format   => params[:format],
+          :objects  => vpn,
+          :msg      => msg
+        )      
+      else
+        not_found
+      end
+    end
+   
+    delete '/network/openvpn/vpn/:vpn_identifier.:format' do
+      vpn = OnBoard::Network::OpenVPN::VPN.lookup(
+        :any => params[:vpn_identifier]
+      ) 
+      if vpn 
+        vpn.stop(:rmlog, :rmconf) 
         OnBoard::Network::OpenVPN::VPN.all_cached.delete vpn
         sleep 0.3 # diiirty!
         redirection = "/network/openvpn.#{params[:format]}"

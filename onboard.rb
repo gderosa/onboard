@@ -72,22 +72,16 @@ class OnBoard
       end 
     end
 
-    # restore scripts
-    unless ARGV.include? '--no-restore'      
-      find_n_load ROOTDIR + '/etc/restore/'
-      # module restore scripts
-      module_restore = {}
-      Dir.glob(ROOTDIR + '/modules/*/etc/restore/*.rb').each do |script|
-        module_restore[File.basename script] = script
-      end
-      # modules/my_module_2/etc/restore/60my_module_2.rb 
-      # must be executed *before* 
-      # modules/my_module_1/etc/restore/70my_module_1.rb
-      # i.e. sort by basename
-      module_restore.keys.sort.each do |script_basename|
-        print "loading: #{module_restore[script_basename]}... "
+    # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
+    unless ARGV.include? '--no-restore'
+      restore_scripts = 
+          Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           +
+          Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
+      restore_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
+      restore_scripts.each do |script|
+        print "loading: #{script}... "
         STDOUT.flush
-        load module_restore[script_basename] and puts "OK" 
+        load script and puts "OK"
       end
     end
 

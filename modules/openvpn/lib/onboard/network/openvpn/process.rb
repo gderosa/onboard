@@ -1,5 +1,7 @@
 require 'digest/md5' 
 
+# TODO: get rid of this class i.e. get rid of portable_id
+
 class OnBoard
   module Network
     module OpenVPN
