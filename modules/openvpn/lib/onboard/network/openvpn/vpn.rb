@@ -189,12 +189,18 @@ class OnBoard
                 '--remote' << params['remote_host'] << params['remote_port'] << params['proto']
             cmdline << '--ns-cert-type' << 'server' if 
                 params['ns-cert-type_server'] == 'on'
-          elsif params['remote_host'].respond_to? :each_index
+          elsif params['remote_host'].respond_to? :each_index and
+              params['remote_host'].detect{|x| x =~ /\S/} 
               # client -> multiple server (for redundancy)
             cmdline << '--client' << '--nobind'
             cmdline << '--ns-cert-type' << 'server' if
                 params['ns-cert-type_server'] == 'on'
             params['remote_host'].each_index do |i|
+              next unless params['remote_host'][i] =~ /\S/
+              params['proto'][i] = 'udp'        unless 
+                  params['proto'][i] =~ /\S/
+              params['remote_port'][i] = '1194' unless 
+                  params['remote_port'][i] =~ /\S/
               cmdline << '--remote' << 
                   params['remote_host'][i] << 
                   params['remote_port'][i] <<

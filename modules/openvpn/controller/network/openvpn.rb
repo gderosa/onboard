@@ -42,26 +42,29 @@ class OnBoard
         # with a non-zero status... unfortunately it isn't, and you end with
         # two tun interface with same IP addresses! So, a validation is necessary.
         vpns.each do |vpn|
-          if
-              vpn.data['remote'].respond_to? :[]      and
+          if vpn.data['remote'].respond_to? :each
+            vpn.data['remote'].each do |remote|
+              if
+                  remote.respond_to? :[]                              and
+                  params['remote_host'].respond_to? :[]               and
+                  params['remote_host'].map{|x| x.strip}.include?(
+                      remote['address'].strip
+                  )                                                   and
+                  # TODO: use gethostbyname when useful?
+                  # NOTE: the two values compared may be IP addresses as well
+                  # as DNS host names.       
+                  params['remote_port'].map{|x| x.strip}.include?(
+                      remote['port'].strip
+                  )                                                   and
+                  vpn.data['cert']['subject']['CN']   == requested_cn
 
-              params['remote_host']                   and
-
-              vpn.data['remote']['address'].strip == 
-                  params['remote_host'].strip         and
-                    # TODO: use gethostbyname when useful?
-                    # NOTE: the two values compared may be IP addresses as well
-                    # as DNS host names.       
-              vpn.data['remote']['port'].strip    == 
-                  params['remote_port'].strip         and
-
-              vpn.data['cert']['subject']['CN']   == 
-                  requested_cn
-            msg = {
-                :ok => false,
-                :err => 'A client VPN connection to the same server/port and with the same SSL "Common Name" is already running!'
-            }
-            break
+                msg = {
+                    :ok => false,
+                    :err => 'A client VPN connection to the same server/port and with the same SSL "Common Name" is already running!'
+                }
+                break
+              end
+            end
           end
         end
       rescue OpenSSL::X509::CertificateError
