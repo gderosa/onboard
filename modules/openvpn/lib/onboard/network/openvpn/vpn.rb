@@ -168,8 +168,9 @@ class OnBoard
             "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crl'"
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
-          cmdline << '--dev' << 'tun'
-          cmdline << '--proto' << params['proto']
+          cmdline << '--dev-type' << 'tun'
+          cmdline << '--dev' << "ovpn#{@@all_vpn.length}"
+          #cmdline << '--proto' << params['proto']
           if params['server_net'] =~ /\S/ # it's a server
             client_config_dir = config_dir + '/clients'
             net = IPAddr.new params['server_net']
@@ -179,13 +180,25 @@ class OnBoard
             cmdline << '--dh' << dh # Diffie Hellman params :-)
             cmdline << '--client-config-dir' << client_config_dir
             FileUtils.mkdir_p client_config_dir
-          elsif params['remote_host'] =~ /\S/ # it's a client
+          elsif params['remote_host'] =~ /\S/ 
+              # it's a client, one server (old API)
             cmdline << 
                 '--client' << '--nobind'
             cmdline << 
                 '--remote' << params['remote_host'] << params['remote_port']
             cmdline << '--ns-cert-type' << 'server' if 
-                params['ns-cert-type_server'] =~ /on|yes|true/
+                params['ns-cert-type_server'] == 'on'
+          elsif params['remote_host'].respond_to? :each_index
+              # client -> multiple server (for redundancy)
+            cmdline << '--client' << '--nobind'
+            cmdline << '--ns-cert-type' << 'server' if
+                params['ns-cert-type_server'] == 'on'
+            params['remote_host'].each_index do |i|
+              cmdline << '--remote' << 
+                  params['remote_host'][i] << 
+                  params['remote_port'][i] <<
+                  params['proto'][i]
+            end
           else
             return {
               :ok => false,
