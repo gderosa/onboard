@@ -277,7 +277,8 @@
     </thead>
     <tbody>
       <tr>
-        <td>
+        <% rowspan = (params['failover'] || 1).to_i %>
+        <td rowspan="<%= rowspan %>">
           <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
         </td>
         <%
@@ -291,7 +292,7 @@
             v['cert']['is_server']
           end
         %>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <select name="cert">
             <% nonserver.each_pair do |name, h| %>
               <option value="<%= name %>"><%= html_escape name %></option>
@@ -304,7 +305,7 @@
             <% end %>
           </select>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <select name="ca">
             <% if ssl['ca'] %>
               <% name = ssl['ca']['subject']['CN'] %>
@@ -320,25 +321,49 @@
           </select>
         </td>
         <td>
-          <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto" style="">
+          <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto[]" style="">
             <option selected value="udp">UDP</option>
             <option value="tcp-client">TCP - connect to peer</option>
             <option disabled value="tcp-server">TCP - wait for connections</option>
           </select>
         </td>
         <td>
-          <input type="text" class="rwtext" name="remote_host" style="text-align:right;"/>
+          <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
         </td>
         <td>
-          <input type="text" class="rwtext" name="remote_port" size="4" value="1194"/>
+          <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
         </td>
-        <td style="text-align:center;">
+        <td rowspan="<%= rowspan %>" style="text-align:center;">
           <input type="checkbox" name="ns-cert-type_server" checked/><br/>
           <em>(recommended)</em>
         </td>
-        <td style="text-align: center;">
+        <td rowspan="<%= rowspan %>" style="text-align: center;">
           <input type="checkbox" checked name="comp-lzo"/>
         </td>
+      </tr>
+      <% (rowspan - 1).times do %>
+        <tr>
+          <td>
+            <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto[]" style="">
+              <option selected value="udp">UDP</option>
+              <option value="tcp-client">TCP - connect to peer</option>
+              <option disabled value="tcp-server">TCP - wait for connections</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
+          </td>
+          <td>
+            <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
+          </td>
+        </tr>
+      <% end %>
+      <tr> <!-- a row to add more server -->
+        <td></td><td></td><td></td>
+        <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy/failover">
+          (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
+        </td>
+        <td></td><td></td>
       </tr>
     </tbody>
   </table>
