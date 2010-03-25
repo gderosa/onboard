@@ -88,10 +88,15 @@
   <tbody> 
     <% objects.each_with_index do |vpn, vpn_i| %>
       <%
-       vpnid = vpn_i + 1 # users prefer starting from 1, not 0 
+        vpnid = vpn_i + 1 # users prefer starting from 1, not 0
+        if vpn.data['remote'].respond_to? :length
+          rowspan = vpn.data['remote'].length
+        else
+          rowspan = 1
+        end
       %>
       <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
-        <td style="text-align:center;">
+        <td rowspan="<%= rowspan %>" style="text-align:center;">
           <form method="POST">
             <input type="hidden" name="_method" value="put"/>
             <input type="hidden" name="portable_id" value="<%= vpn.data['portable_id'] if vpn.data['portable_id'] %>"/>
@@ -106,10 +111,10 @@
             <% end %>
           </form>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <a href="openvpn/vpn/<%= vpnid %>.html" title="View Advanced VPN details" style="border:0;"><button><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button></a>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <% 
             if vpn.data['running']
               str = 'Stop the VPN and remove from the list'
@@ -126,7 +131,7 @@
             <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
           </form>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <%= 
             if vpn.data['client']
               "Client"
@@ -157,10 +162,11 @@
             end
           end
         %>
-        <td class="<%= cssclass %>"><span class="<%= cssclass2 %>">
+        <!-- SSL CN -->
+        <td rowspan="<%= rowspan %>" class="<%= cssclass %>"><span class="<%= cssclass2 %>">
           <%= errortext %><code><%= text %></code>
         </span></td>
-        <td>
+        <td rowspan="<%= rowspan %>"> <!-- *local* port -->
           <%= 
             if vpn.data['port']
               vpn.data['port']
@@ -171,8 +177,8 @@
         </td>
         <td> 
           <%=
-            if vpn.data['remote'] and vpn.data['remote']['address']
-              vpn.data['remote']['address']
+            if vpn.data['remote'] and vpn.data['remote'][0]['address']
+              vpn.data['remote'][0]['address']
             elsif vpn.data['server']
               '<div class="lowlight" style="text-align:center;">*</div>'
             end
@@ -180,15 +186,22 @@
         </td>
         <td> 
           <%=
-            if vpn.data['remote'] and vpn.data['remote']['port']
-              vpn.data['remote']['port']
+            if vpn.data['remote'] and vpn.data['remote'][0]['port']
+              vpn.data['remote'][0]['port']
             elsif vpn.data['server']
               '<div class="lowlight" style="text-align:center;">*</div>'
             end
           %>
         </td>
         <td><%= 
-          begin; vpn.data['proto'].upcase; rescue; end
+          begin
+            vpn.data['remote'][0]['proto'].upcase
+          rescue
+            begin
+              vpn.data['proto'].upcase
+            rescue
+            end
+          end
         %></td>
         <% 
           cssclass = ''; cssclass2 = ''; text = ''; errortext = ''
@@ -213,12 +226,12 @@
             text = ip.to_range.to_a[1].to_s + '/' + ip.prefixlen.to_s
           end
         %>
-        <td class="<%= cssclass %>">
+        <td rowspan="<%= rowspan %>" class="<%= cssclass %>">
           <span class="<%= cssclass2 %>">
             <%= errortext %><code><%= html_escape text %></code>
           </span>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <%= 
             str = ''
             vpn.data['routes'].each do |route| 
@@ -240,13 +253,22 @@
             str
           %>
         </td>
-        <td><code><%= vpn.data['interface'] %></code></td>
-        <td style="text-align: center;">
+        <td rowspan="<%= rowspan %>"><code><%= vpn.data['interface'] %></code></td>
+        <td rowspan="<%= rowspan %>" style="text-align: center;">
           <% if vpn.data['comp-lzo'] %>
             <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
           <% end %>
         </td>
       </tr>
+      <% if vpn.data['remote'].respond_to? :length %>
+        <% 1.upto (vpn.data['remote'].length - 1) do |i| %>
+          <tr>
+            <td><%= vpn.data['remote'][i]['address'] %></td>
+            <td><%= vpn.data['remote'][i]['port'] %></td>
+            <td><%= vpn.data['remote'][i]['proto'].upcase %></td>
+          </tr>
+        <% end %>
+      <% end %>
     <% end %>
   </tbody>
 </table>

@@ -169,13 +169,14 @@ class OnBoard
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
           cmdline << '--dev-type' << 'tun'
-          cmdline << '--dev' << "ovpn#{@@all_vpn.length}"
+          cmdline << '--dev' << "ovpn_#{uuid[0..7]}" 
           #cmdline << '--proto' << params['proto']
           if params['server_net'] =~ /\S/ # it's a server
             client_config_dir = config_dir + '/clients'
             net = IPAddr.new params['server_net']
             cmdline << '--server' << net.to_s << net.netmask.to_s
             cmdline << '--port' << params['port'].to_s
+            cmdline << '--proto' << params['proto']
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
             cmdline << '--dh' << dh # Diffie Hellman params :-)
             cmdline << '--client-config-dir' << client_config_dir
@@ -185,7 +186,7 @@ class OnBoard
             cmdline << 
                 '--client' << '--nobind'
             cmdline << 
-                '--remote' << params['remote_host'] << params['remote_port']
+                '--remote' << params['remote_host'] << params['remote_port'] << params['proto']
             cmdline << '--ns-cert-type' << 'server' if 
                 params['ns-cert-type_server'] == 'on'
           elsif params['remote_host'].respond_to? :each_index
@@ -570,11 +571,20 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               @data['server']             = $1
               @data['netmask']            = $2
               next
-            elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)/
-              @data['remote']             = {}
-              @data['remote']['address']  = $1
-              @data['remote']['port']     = $2
+            elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)\s*$/
+              @data['remote']             ||= []
+              @data['remote'] << {
+                'address' => $1,
+                'port'    => $2
+              }
               next
+            elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)\s+(\S+)\s*$/
+              @data['remote']             ||= []
+              @data['remote'] << {
+                'address' => $1,
+                'port'    => $2,
+                'proto'   => $3
+              }
             end
 
             # "public" options with more arguments, multiple times
