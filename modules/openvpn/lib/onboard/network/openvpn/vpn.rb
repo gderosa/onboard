@@ -11,6 +11,7 @@ require 'onboard/system/process'
 require 'onboard/network/interface'
 require 'onboard/network/routing/table'
 require 'onboard/network/openvpn/process'
+require 'onboard/network/openvpn/interface/name'
 
 autoload :Log,        'onboard/system/log'
 
@@ -169,7 +170,7 @@ class OnBoard
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
           cmdline << '--dev-type' << 'tun'
-          cmdline << '--dev' << "ovpn_#{uuid[0..7]}" 
+          cmdline << '--dev' << OpenVPN::Interface::Name.generate 
           #cmdline << '--proto' << params['proto']
           if params['server_net'] =~ /\S/ # it's a server
             client_config_dir = config_dir + '/clients'

@@ -193,14 +193,11 @@
             end
           %>
         </td>
-        <td><%= 
+        <td style="font-variant: small-caps;"><%= 
           begin
-            vpn.data['remote'][0]['proto'].upcase
+            vpn.data['remote'][0]['proto']
           rescue
-            begin
-              vpn.data['proto'].upcase
-            rescue
-            end
+            vpn.data['proto']
           end
         %></td>
         <% 
@@ -265,7 +262,7 @@
           <tr>
             <td><%= vpn.data['remote'][i]['address'] %></td>
             <td><%= vpn.data['remote'][i]['port'] %></td>
-            <td><%= vpn.data['remote'][i]['proto'].upcase %></td>
+            <td style="font-variant: small-caps;"><%= vpn.data['remote'][i]['proto'] %></td>
           </tr>
         <% end %>
       <% end %>
