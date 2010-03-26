@@ -60,13 +60,13 @@
       <th rowspan="3">LZO<br/>Compression?</th>
     </tr>
     <tr>
-      <th rowspan="2">
+      <!-- <th rowspan="2">
         Protocol
-      </th>
+      </th> -->
       <th rowspan="2">
         Local Port
       </th>
-      <th colspan="2">
+      <th colspan="3">
         Remote 
       </th>     
       <th rowspan="2">
@@ -82,15 +82,21 @@
     <tr>
       <th>Host</th>
       <th>Port</th>
+      <th>Protocol</th>
     </tr>
   </thead>
   <tbody> 
     <% objects.each_with_index do |vpn, vpn_i| %>
       <%
-       vpnid = vpn_i + 1 # users prefer starting from 1, not 0 
+        vpnid = vpn_i + 1 # users prefer starting from 1, not 0
+        if vpn.data['remote'].respond_to? :length
+          rowspan = vpn.data['remote'].length
+        else
+          rowspan = 1
+        end
       %>
       <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
-        <td style="text-align:center;">
+        <td rowspan="<%= rowspan %>" style="text-align:center;">
           <form method="POST">
             <input type="hidden" name="_method" value="put"/>
             <input type="hidden" name="portable_id" value="<%= vpn.data['portable_id'] if vpn.data['portable_id'] %>"/>
@@ -105,10 +111,10 @@
             <% end %>
           </form>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <a href="openvpn/vpn/<%= vpnid %>.html" title="View Advanced VPN details" style="border:0;"><button><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button></a>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <% 
             if vpn.data['running']
               str = 'Stop the VPN and remove from the list'
@@ -125,7 +131,7 @@
             <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
           </form>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <%= 
             if vpn.data['client']
               "Client"
@@ -156,13 +162,11 @@
             end
           end
         %>
-        <td class="<%= cssclass %>"><span class="<%= cssclass2 %>">
+        <!-- SSL CN -->
+        <td rowspan="<%= rowspan %>" class="<%= cssclass %>"><span class="<%= cssclass2 %>">
           <%= errortext %><code><%= text %></code>
         </span></td>
-        <td><%= 
-          begin; vpn.data['proto'].upcase; rescue; end
-        %></td>
-        <td>
+        <td rowspan="<%= rowspan %>"> <!-- *local* port -->
           <%= 
             if vpn.data['port']
               vpn.data['port']
@@ -173,8 +177,8 @@
         </td>
         <td> 
           <%=
-            if vpn.data['remote'] and vpn.data['remote']['address']
-              vpn.data['remote']['address']
+            if vpn.data['remote'] and vpn.data['remote'][0]['address']
+              vpn.data['remote'][0]['address']
             elsif vpn.data['server']
               '<div class="lowlight" style="text-align:center;">*</div>'
             end
@@ -182,13 +186,20 @@
         </td>
         <td> 
           <%=
-            if vpn.data['remote'] and vpn.data['remote']['port']
-              vpn.data['remote']['port']
+            if vpn.data['remote'] and vpn.data['remote'][0]['port']
+              vpn.data['remote'][0]['port']
             elsif vpn.data['server']
               '<div class="lowlight" style="text-align:center;">*</div>'
             end
           %>
         </td>
+        <td style="font-variant: small-caps;"><%= 
+          begin
+            vpn.data['remote'][0]['proto']
+          rescue
+            vpn.data['proto']
+          end
+        %></td>
         <% 
           cssclass = ''; cssclass2 = ''; text = ''; errortext = ''
           if vpn.data['client'] and vpn.data['client'].respond_to? :[] 
@@ -212,12 +223,12 @@
             text = ip.to_range.to_a[1].to_s + '/' + ip.prefixlen.to_s
           end
         %>
-        <td class="<%= cssclass %>">
+        <td rowspan="<%= rowspan %>" class="<%= cssclass %>">
           <span class="<%= cssclass2 %>">
             <%= errortext %><code><%= html_escape text %></code>
           </span>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <%= 
             str = ''
             vpn.data['routes'].each do |route| 
@@ -239,13 +250,22 @@
             str
           %>
         </td>
-        <td><code><%= vpn.data['interface'] %></code></td>
-        <td style="text-align: center;">
+        <td rowspan="<%= rowspan %>"><code><%= vpn.data['interface'] %></code></td>
+        <td rowspan="<%= rowspan %>" style="text-align: center;">
           <% if vpn.data['comp-lzo'] %>
             <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
           <% end %>
         </td>
       </tr>
+      <% if vpn.data['remote'].respond_to? :length %>
+        <% 1.upto (vpn.data['remote'].length - 1) do |i| %>
+          <tr>
+            <td><%= vpn.data['remote'][i]['address'] %></td>
+            <td><%= vpn.data['remote'][i]['port'] %></td>
+            <td style="font-variant: small-caps;"><%= vpn.data['remote'][i]['proto'] %></td>
+          </tr>
+        <% end %>
+      <% end %>
     <% end %>
   </tbody>
 </table>
@@ -277,7 +297,8 @@
     </thead>
     <tbody>
       <tr>
-        <td>
+        <% rowspan = (params['failover'] || 1).to_i %>
+        <td rowspan="<%= rowspan %>">
           <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
         </td>
         <%
@@ -291,7 +312,7 @@
             v['cert']['is_server']
           end
         %>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <select name="cert">
             <% nonserver.each_pair do |name, h| %>
               <option value="<%= name %>"><%= html_escape name %></option>
@@ -304,7 +325,7 @@
             <% end %>
           </select>
         </td>
-        <td>
+        <td rowspan="<%= rowspan %>">
           <select name="ca">
             <% if ssl['ca'] %>
               <% name = ssl['ca']['subject']['CN'] %>
@@ -320,25 +341,49 @@
           </select>
         </td>
         <td>
-          <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto" style="">
+          <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto[]" style="">
             <option selected value="udp">UDP</option>
             <option value="tcp-client">TCP - connect to peer</option>
             <option disabled value="tcp-server">TCP - wait for connections</option>
           </select>
         </td>
         <td>
-          <input type="text" class="rwtext" name="remote_host" style="text-align:right;"/>
+          <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
         </td>
         <td>
-          <input type="text" class="rwtext" name="remote_port" size="4" value="1194"/>
+          <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
         </td>
-        <td style="text-align:center;">
+        <td rowspan="<%= rowspan %>" style="text-align:center;">
           <input type="checkbox" name="ns-cert-type_server" checked/><br/>
           <em>(recommended)</em>
         </td>
-        <td style="text-align: center;">
+        <td rowspan="<%= rowspan %>" style="text-align: center;">
           <input type="checkbox" checked name="comp-lzo"/>
         </td>
+      </tr>
+      <% (rowspan - 1).times do %>
+        <tr>
+          <td>
+            <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto[]" style="">
+              <option selected value="udp">UDP</option>
+              <option value="tcp-client">TCP - connect to peer</option>
+              <option disabled value="tcp-server">TCP - wait for connections</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
+          </td>
+          <td>
+            <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
+          </td>
+        </tr>
+      <% end %>
+      <tr> <!-- a row to add more server -->
+        <td></td><td></td><td></td>
+        <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
+          (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
+        </td>
+        <td></td><td></td>
       </tr>
     </tbody>
   </table>

@@ -11,6 +11,7 @@ require 'onboard/system/process'
 require 'onboard/network/interface'
 require 'onboard/network/routing/table'
 require 'onboard/network/openvpn/process'
+require 'onboard/network/openvpn/interface/name'
 
 autoload :Log,        'onboard/system/log'
 
@@ -168,24 +169,44 @@ class OnBoard
             "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crl'"
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
-          cmdline << '--dev' << 'tun'
-          cmdline << '--proto' << params['proto']
+          cmdline << '--dev-type' << 'tun'
+          cmdline << '--dev' << OpenVPN::Interface::Name.generate 
+          #cmdline << '--proto' << params['proto']
           if params['server_net'] =~ /\S/ # it's a server
             client_config_dir = config_dir + '/clients'
             net = IPAddr.new params['server_net']
             cmdline << '--server' << net.to_s << net.netmask.to_s
             cmdline << '--port' << params['port'].to_s
+            cmdline << '--proto' << params['proto']
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
             cmdline << '--dh' << dh # Diffie Hellman params :-)
             cmdline << '--client-config-dir' << client_config_dir
             FileUtils.mkdir_p client_config_dir
-          elsif params['remote_host'] =~ /\S/ # it's a client
+          elsif params['remote_host'] =~ /\S/ 
+              # it's a client, one server (old API)
             cmdline << 
                 '--client' << '--nobind'
             cmdline << 
-                '--remote' << params['remote_host'] << params['remote_port']
+                '--remote' << params['remote_host'] << params['remote_port'] << params['proto']
             cmdline << '--ns-cert-type' << 'server' if 
-                params['ns-cert-type_server'] =~ /on|yes|true/
+                params['ns-cert-type_server'] == 'on'
+          elsif params['remote_host'].respond_to? :each_index and
+              params['remote_host'].detect{|x| x =~ /\S/} 
+              # client -> multiple server (for redundancy)
+            cmdline << '--client' << '--nobind'
+            cmdline << '--ns-cert-type' << 'server' if
+                params['ns-cert-type_server'] == 'on'
+            params['remote_host'].each_index do |i|
+              next unless params['remote_host'][i] =~ /\S/
+              params['proto'][i] = 'udp'        unless 
+                  params['proto'][i] =~ /\S/
+              params['remote_port'][i] = '1194' unless 
+                  params['remote_port'][i] =~ /\S/
+              cmdline << '--remote' << 
+                  params['remote_host'][i] << 
+                  params['remote_port'][i] <<
+                  params['proto'][i]
+            end
           else
             return {
               :ok => false,
@@ -557,11 +578,20 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               @data['server']             = $1
               @data['netmask']            = $2
               next
-            elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)/
-              @data['remote']             = {}
-              @data['remote']['address']  = $1
-              @data['remote']['port']     = $2
+            elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)\s*$/
+              @data['remote']             ||= []
+              @data['remote'] << {
+                'address' => $1,
+                'port'    => $2
+              }
               next
+            elsif line =~ /^\s*remote\s+(\S+)\s+(\S+)\s+(\S+)\s*$/
+              @data['remote']             ||= []
+              @data['remote'] << {
+                'address' => $1,
+                'port'    => $2,
+                'proto'   => $3
+              }
             end
 
             # "public" options with more arguments, multiple times
