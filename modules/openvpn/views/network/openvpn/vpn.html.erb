@@ -380,7 +380,7 @@
       <% end %>
       <tr> <!-- a row to add more server -->
         <td></td><td></td><td></td>
-        <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy/failover">
+        <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
           (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
         </td>
         <td></td><td></td>
