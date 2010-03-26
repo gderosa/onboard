@@ -259,7 +259,7 @@
       </tr>
       <% if vpn.data['remote'].respond_to? :length %>
         <% 1.upto (vpn.data['remote'].length - 1) do |i| %>
-          <tr>
+          <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
             <td><%= vpn.data['remote'][i]['address'] %></td>
             <td><%= vpn.data['remote'][i]['port'] %></td>
             <td style="font-variant: small-caps;"><%= vpn.data['remote'][i]['proto'] %></td>
