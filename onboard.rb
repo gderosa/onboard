@@ -102,7 +102,7 @@ exit if ARGV.include? '--restore-only'
 require OnBoard::ROOTDIR + '/controller.rb'
 
 if $0 == __FILE__
-  OnBoard::Controller.run!
+  OnBoard::Controller.run!(:host => '::')
 end
 
 
