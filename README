@@ -29,6 +29,7 @@ Software requirements for "core" (check individual directories under modules/
 for module-specific, additional requirements): 
 
 * ruby 1.9 (preferably >=1.9.1)
+* sudo
 * iproute2
 * iptables (with proper kernel support)
 * bridge-utils (brctl)
@@ -45,8 +46,6 @@ Gems:
 (some gems are written in C or C++ , so you need a reasonably complete 
 C/C++ build environment; and, if you installed a pre-packaged ruby, you
 will need header files from a package named ruby-dev or something alike)
-
-gem source --add http://gemcutter.org
 
 gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape
 
