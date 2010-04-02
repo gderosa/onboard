@@ -169,7 +169,13 @@ class OnBoard
             "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crl'"
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
-          cmdline << '--dev-type' << 'tun'
+          if params['dev-type'] =~ /^\s*(tun|tap)\s*$/
+            cmdline << '--dev-type' << $1
+          elsif params['dev'] =~ /^\s*(tun|tap)/
+            cmdline << '--dev-type' << $1
+          else
+            cmdline << '--dev-type' << 'tun'
+          end
           cmdline << '--dev' << OpenVPN::Interface::Name.generate 
           #cmdline << '--proto' << params['proto']
           if params['server_net'] =~ /\S/ # it's a server

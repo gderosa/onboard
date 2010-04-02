@@ -202,11 +202,13 @@
         <% 
           cssclass = ''; cssclass2 = ''; text = ''; errortext = ''
           if vpn.data['dev-type'] == 'tap' or vpn.data['dev'] =~ /^tap/
-            text = (
-              vpn.data['virtual_addresses'].select do |x| 
-                x['scope'] == 'global'
-              end
-            ).map{|y| "#{y['addr']}/#{y['prefixlen']}"}
+            if vpn.data['virtual_addresses'].respond_to? :select
+              text = (
+                vpn.data['virtual_addresses'].select do |x| 
+                  x['scope'] == 'global'
+                end
+              ).map{|y| "#{y['addr']}/#{y['prefixlen']}"}
+            end
           elsif vpn.data['client'] and vpn.data['client'].respond_to? :[] 
             if vpn.data['client']['Virtual Address'] and
                 vpn.data['client']['Virtual Address'] =~ /\S/
@@ -296,6 +298,7 @@
           SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
         </th>
         <th colspan="3">Real Network</th>
+        <th>Virtual Interface</th>
         <th colspan="2">Options</th>
       </tr>
       <tr>
@@ -303,6 +306,7 @@
         <th rowspan="2">Trusted Certificate Authority</th>
         <th rowspan="2">Protocol</th>
         <th colspan="2">Server</th>
+        <th rowspan="2">Type</th>
         <th rowspan="2">Demand Server-type Certificate for the Server?</th>
         <th rowspan="2">LZO Compression?</th>
       </tr>
@@ -369,6 +373,12 @@
         <td>
           <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
         </td>
+        <td>
+          <select style="width:9em;" name="dev-type">
+            <option title="Recommended for IPv4, routed VPNs" value="tun">Point-to-Point</option>
+            <option title="Useful for IPv6 and/or bridged VPNs" value="tap">Virtual Ethernet</option>
+          </select>
+        </td>
         <td rowspan="<%= rowspan %>" style="text-align:center;">
           <input type="checkbox" name="ns-cert-type_server" checked/><br/>
           <em>(recommended)</em>
@@ -399,7 +409,7 @@
         <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
           (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
         </td>
-        <td></td><td></td>
+        <td></td><td></td><td></td>
       </tr>
     </tbody>
   </table>
