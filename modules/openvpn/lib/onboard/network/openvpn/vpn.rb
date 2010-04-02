@@ -485,20 +485,32 @@ EOF
         end
 
         def find_interface
-          interface = @@all_interfaces.detect do |iface|
-            if iface.ip
-              iface.ip.detect do |ip|
-                ip.addr.to_s == @data['virtual_address']
+          case @data['dev']
+          when 'tun', 'tap', /^\s*$/, nil, false
+            interface = @@all_interfaces.detect do |iface|
+              if iface.ip
+                iface.ip.detect do |ip|
+                  ip.addr.to_s == @data['virtual_address']
+                end
+              else
+                nil
               end
-            else
-              nil
             end
-          end
-          @data['interface'] = interface.name if interface
+            @data['interface'] = interface.name if interface
+          else
+            @data['interface'] = @data['dev']
+          end          
         end
 
         def find_virtual_address
-          if @data['client']
+          @@all_interfaces ||= Network::Interface.getAll()
+          iface = @@all_interfaces.detect do |x| 
+            x.name == @data['interface'] or
+            x.name == @data['dev'] 
+          end
+          if @data['dev-type'] == 'tap' or @data['dev'] =~ /^tap/
+            @data['virtual_addresses'] = iface.data['ip'] if iface
+          elsif @data['client']
             begin
               @data['virtual_address'] = @data['client']['Virtual Address']
             rescue NoMethodError, TypeError
@@ -566,7 +578,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end 
 
             # "public" options with 1 argument 
-            %w{port proto dev max-clients local comp-lzo}.each do |optname|
+            %w{port proto dev dev-type max-clients local comp-lzo}.each do |optname|
               if line =~ /^\s*#{optname}\s+(.*)\s*$/ 
                 @data[optname] = $1
                 next

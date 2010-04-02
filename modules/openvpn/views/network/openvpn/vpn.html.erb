@@ -5,7 +5,6 @@
 
   ssl = OnBoard::Crypto::SSL.getAll
 
-
 %>
 
 <style type="text/css">
@@ -202,7 +201,13 @@
         %></td>
         <% 
           cssclass = ''; cssclass2 = ''; text = ''; errortext = ''
-          if vpn.data['client'] and vpn.data['client'].respond_to? :[] 
+          if vpn.data['dev-type'] == 'tap' or vpn.data['dev'] =~ /^tap/
+            text = (
+              vpn.data['virtual_addresses'].select do |x| 
+                x['scope'] == 'global'
+              end
+            ).map{|y| "#{y['addr']}/#{y['prefixlen']}"}
+          elsif vpn.data['client'] and vpn.data['client'].respond_to? :[] 
             if vpn.data['client']['Virtual Address'] and
                 vpn.data['client']['Virtual Address'] =~ /\S/
               text = vpn.data['client']['Virtual Address']
@@ -225,20 +230,31 @@
         %>
         <td rowspan="<%= rowspan %>" class="<%= cssclass %>">
           <span class="<%= cssclass2 %>">
-            <%= errortext %><code><%= html_escape text %></code>
+            <%= errortext %>
+            <% if text.respond_to? :each %>
+              <% text.each do |t| %>
+                <div><%= html_escape t %></div>
+              <% end %>
+            <% else %>
+              <%= html_escape text %>
+            <% end %>
           </span>
         </td>
         <td rowspan="<%= rowspan %>">
           <%= 
             str = ''
-            vpn.data['routes'].each do |route| 
-              str << '<div style="margin:0.3em 0;">'
+            vpn.data['routes'].each do |route|
+                            
               addr      = route['dest']['addr'] 
               prefixlen = route['dest']['prefixlen'] 
               af        = route['dest']['af']
               gw        = route['gw']['addr']
 
+              next if addr == 'fe80::' # skip ipv6 link-local
+
+              str << '<div>'
               str       << addr
+
               unless  (af=='inet'   and prefixlen==32) or 
                       (af=='inet6'  and prefixlen==128)
                 str << '/'
