@@ -35,6 +35,27 @@ class OnBoard
 
         def self.getCurrent; get('main'); end # wrapper compatibility method
 
+        def self.getAllIDs
+          all = []
+          File.foreach '/etc/iproute2/rt_tables' do |line|
+            line.sub! /#.*$/, ''
+            if line =~ /(\d+)\s+(\S+)/  
+              all[$1.to_i] = $2
+            end
+          end
+          `ip rule show`.each_line do |line|
+            if line =~ /from \S+ lookup (\d+)/
+              all[$1.to_i] = :noname
+            end
+          end
+          `ip route show table 0`.each_line do |line|
+            if line =~ /table (\d+)/
+              all[$1.to_i] = :noname
+            end
+          end
+          return all
+        end
+
         def self.get(table='main')
           ary = []
 
