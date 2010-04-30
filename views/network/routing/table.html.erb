@@ -42,7 +42,7 @@
 <table>
   <tr>
     <%  fieldnames.each_index do |i| %>
-      <th colspan="<%= colspans[i] %>">
+      <th colspan="<%= colspans[i] %>" style="<%= 'display: none;' if params['view'] != 'all' and fieldnames[i] == 'Route Type' %>">
         <%= fieldnames[i] %>
       </th>
     <% end %>
@@ -95,7 +95,7 @@
           %>
           <%= str %>
         </td>
-        <td>
+        <td style="<%= 'display: none;' unless params['view'] == 'all' %>">
           <code><%= route.route_type %></code>
         </td>
         <td style="text-align: center;">
