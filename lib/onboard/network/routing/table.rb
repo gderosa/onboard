@@ -31,6 +31,8 @@ class OnBoard
 
         def self.static_routes; @@static_routes; end
 
+        def self.getCurrent; get('main'); end # wrapper compatibility method
+
         def self.get(table='main')
           ary = []
 
