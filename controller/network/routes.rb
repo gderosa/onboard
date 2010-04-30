@@ -9,11 +9,15 @@ class OnBoard::Controller
   end
 
   get "/network/routing/tables/:table.:format" do
-    format(
-      :path     => 'network/routing/table',
-      :format   => params[:format],
-      :objects  => OnBoard::Network::Routing::Table.get(params[:table]) 
-    )
+    begin
+      format(
+        :path     => 'network/routing/table',
+        :format   => params[:format],
+        :objects  => OnBoard::Network::Routing::Table.get(params[:table])
+      )
+    rescue OnBoard::Network::Routing::Table::NotFound
+      raise Sinatra::NotFound
+    end
   end
 
   # Instead of CREATEing or DELETEing ip routes, we UPDATE the ip routing 

@@ -10,6 +10,8 @@ class OnBoard
     class Routing
       class Table
 
+        class NotFound < NameError; end
+
         # Persistance across Ruby restarts but not machine reboot
         CURRENT_STATIC_ROUTES_FILE = 
           File.join CONFDIR, 'network/static_routes.dat.new'
@@ -41,10 +43,14 @@ class OnBoard
             ary << rawline2routeobj(line, Socket::AF_INET)
           end
 
+          raise NotFound if ary.length == 0 and $?.exitstatus != 0
+
           # IPv6
           `ip -f inet6 route show table #{table}`.each_line do |line| 
             ary << rawline2routeobj(line, Socket::AF_INET6)
           end
+
+          raise NotFound if ary.length == 0 and $?.exitstatus != 0
 
           return self.new(ary)
         end
