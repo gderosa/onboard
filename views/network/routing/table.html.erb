@@ -11,8 +11,8 @@
 <h2>Routing Table</h2>
 
 <% 
-  fieldnames = %w{Delete?  Destination Device  Gateway Type Statically\ added?} 
-  colspans   =   [1,         1,          1,      1,      1,  1                ]
+  fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Statically\ added?} 
+  colspans   =   [1, 1, 1, 1, 1,  1, 1]
 %>
 
 <% 
@@ -50,11 +50,16 @@
   <% routing_table.each_route do |route| %>
     <%
       next unless route 
-      next if 
-          route.dest.family == Socket::AF_INET6 and
-          (route.dest.link_local? or route.dest.multicast?) and
-          not params['view'] == 'all' and
-          not route.static?
+      if params['view'] != 'all' and not route.static?
+        next if 
+            route.dest.family == Socket::AF_INET6 and
+            (
+                route.dest.link_local? or 
+                route.dest.multicast? 
+            ) 
+
+        next unless route.route_type == 'unicast'
+      end
     %>
     <tr>
       <form method="POST">
@@ -79,16 +84,19 @@
             str << "IPv4"       if route.dest.family == Socket::AF_INET
             str << "IPv6"       if route.dest.family == Socket::AF_INET6
             str << " "
-            str << "default gateway" \
-                                if [
-                                  IPAddr.new('::/0'), 
-                                  IPAddr.new('0.0.0.0/0')
-                                ].include? route.dest
+            str << "default gateway" if
+                [
+                    IPAddr.new('::/0'), 
+                    IPAddr.new('0.0.0.0/0')
+                ].include? route.dest and route.route_type == 'unicast'
             str << "loopback"   if route.dest.loopback?
             str << "link-local" if route.dest.link_local?
             str << "multicast"  if route.dest.multicast?
           %>
           <%= str %>
+        </td>
+        <td>
+          <code><%= route.route_type %></code>
         </td>
         <td style="text-align: center;">
           <%= yes_no_icon(route.static?, :print_no) %>
@@ -99,7 +107,7 @@
 </table>
 
 (<a href="<%= request.fullpath %>">Refresh</a>)
-<% showhide = 'IPv6 link-local and multicast routes' %>
+<% showhide = 'IPv6 link-local and non-unicast routes' %>
 <% if params['view'] == 'all' %>
   (<a title="Hide <%= showhide %>" 
     href="<%= request.path_info %>">Compact view</a>)
