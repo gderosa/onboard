@@ -52,10 +52,11 @@ class OnBoard
         def self.rawline2routeobj(line, af=Socket::AF_INET)
           case af
           when Socket::AF_INET # IPv4
-            if line =~ /^(\S+)\s+via\s+(\S+)\s+dev\s+(\S+)/
-              gw = IPAddr.new($2) # for some reasons global captures disappear
-              dev = $3 # keep as a string
-              if $1 == "default"  
+            if line =~ /^((\S+)\s+)?(\S+)\s+via\s+(\S+)\s+dev\s+(\S+)/
+              route_type = $2
+              gw = IPAddr.new($4) # for some reasons global captures disappear
+              dev = $5 # keep as a string
+              if $3 == "default"  
                 dest = IPAddr.new("0.0.0.0/0")
                 rawline = line.sub('default', '0.0.0.0/0').strip
               else
@@ -63,14 +64,16 @@ class OnBoard
                 rawline = line.strip
               end
               return Route.new( 
-                :dest     => dest,
-                :gw       => gw,
-                :dev      => dev,
-                :rawline  => rawline
+                :dest       => dest,
+                :gw         => gw,
+                :dev        => dev,
+                :rawline    => rawline,
+                :route_type => route_type 
               )
-            elsif line =~ /^(\S+)\s+dev\s+(\S+)/
-              deststr = $1
-              dev = $2
+            elsif line =~ /^((\S+)\s+)?(\S+)\s+dev\s+(\S+)/
+              route_type = $2
+              deststr = $3
+              dev = $4
               if deststr.strip == "default"
                 dest = IPAddr.new("0.0.0.0/0")
                 rawline = line.sub('default', '0.0.0.0/0').strip
@@ -83,39 +86,44 @@ class OnBoard
                 :dest => IPAddr.new(deststr),
                 :gw   => IPAddr.new("0.0.0.0"),
                 :dev  => dev,
-                :rawline  => rawline
+                :rawline  => rawline,
+                :route_type => route_type
               ) 
             end
           when Socket::AF_INET6 # IPv6
-            if line =~ /^(\S+)\s+via\s+(\S+)(\s+dev\s+(\S+))?/ 
-              gw = IPAddr.new($2)
-              dev = $4
-              if $1 == "default"
+            if line =~ /^((\S+)\s+)?(\S+)\s+via\s+(\S+)(\s+dev\s+(\S+))?/ 
+              route_type = $2
+              gw = IPAddr.new($4)
+              dev = $6
+              if $3 == "default"
                 dest = IPAddr.new("::/0")
                 rawline = line.sub('default', '::/0').strip
               else
-                dest = IPAddr.new($1)
+                dest = IPAddr.new($3)
                 rawline = line.strip
               end
               return Route.new( 
                 :dest => dest,
                 :gw   => gw,
                 :dev  => dev,
-                :rawline  => rawline
+                :rawline  => rawline,
+                :route_type => route_type
               )
-            elsif line =~ /^(\S+)\s+dev\s+(\S+)/
-              if $1 == "default"
+            elsif line =~ /^((\S+)\s+)?(\S+)\s+dev\s+(\S+)/
+              route_type = $2
+              if $3 == "default"
                 dest = IPAddr.new("::/0")
                 rawline = line.sub('default', '::/0').strip
               else
-                dest = IPAddr.new($1)
+                dest = IPAddr.new($3)
                 rawline = line.strip
               end
               return Route.new(
                 :dest => dest,
                 :gw   => IPAddr.new("::"),
-                :dev  => $2, # keep as a string
-                :rawline  => rawline
+                :dev  => $4, # keep as a string
+                :rawline  => rawline,
+                :route_type => route_type
               ) 
             end
           else 

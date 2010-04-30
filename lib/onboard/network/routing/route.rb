@@ -5,22 +5,24 @@ class OnBoard
     class Routing
       class Route
 
-        attr_reader :dest, :gw, :dev, :rawline
+        attr_reader :dest, :gw, :dev, :rawline, :route_type
 
         def initialize(h)
-          @dest       = h[:dest]    # IPAddr object
-          @gw         = h[:gw]      # IPAddr object
-          @dev        = h[:dev]     # String
-          @rawline    = h[:rawline] # String
+          @dest       = h[:dest]                    # IPAddr object
+          @gw         = h[:gw]                      # IPAddr object
+          @dev        = h[:dev]                     # String
+          @rawline    = h[:rawline]                 # String
+          @route_type = h[:route_type] || 'unicast' # String
         end
 
         def data
           {
-            "dest"    => @dest.data,
-            "gw"      => @gw.data,
-            "dev"     => @dev,
-            "rawline" => @rawline,
-            "static"  => static?
+            "dest"        => @dest.data,
+            "gw"          => @gw.data,
+            "dev"         => @dev,
+            "rawline"     => @rawline,
+            "static"      => static?,
+            "route_type"  => @route_type
           }
         end
 
