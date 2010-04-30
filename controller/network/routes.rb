@@ -5,10 +5,14 @@ require 'onboard/network/routing/table'
 class OnBoard::Controller
 
   get "/network/routes.:format" do
+    redirect "/network/routing/tables/main.#{params['format']}"
+  end
+
+  get "/network/routing/tables/:table.:format" do
     format(
       :path     => 'network/routing/table',
       :format   => params[:format],
-      :objects  => OnBoard::Network::Routing::Table.getCurrent() 
+      :objects  => OnBoard::Network::Routing::Table.get(params[:table]) 
     )
   end
 

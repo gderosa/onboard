@@ -48,7 +48,8 @@
     <% end %>
   </tr>
   <% routing_table.each_route do |route| %>
-    <% 
+    <%
+      next unless route 
       next if 
           route.dest.family == Socket::AF_INET6 and
           (route.dest.link_local? or route.dest.multicast?) and

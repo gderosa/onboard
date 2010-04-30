@@ -31,16 +31,16 @@ class OnBoard
 
         def self.static_routes; @@static_routes; end
 
-        def self.getCurrent
+        def self.get(table='main')
           ary = []
 
           # IPv4
-          `ip -f inet route`.each_line do |line| 
+          `ip -f inet route show table #{table}`.each_line do |line| 
             ary << rawline2routeobj(line, Socket::AF_INET)
           end
 
           # IPv6
-          `ip -f inet6 route`.each_line do |line| 
+          `ip -f inet6 route show table #{table}`.each_line do |line| 
             ary << rawline2routeobj(line, Socket::AF_INET6)
           end
 
