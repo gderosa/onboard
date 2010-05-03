@@ -36,7 +36,8 @@ class OnBoard
         def self.getCurrent; get('main'); end # wrapper compatibility method
 
         def self.getAllIDs
-          all = []
+          all = {} # will use Integers as keys
+          # It's assumed that the only number->name map is here:
           File.foreach '/etc/iproute2/rt_tables' do |line|
             line.sub! /#.*$/, ''
             if line =~ /(\d+)\s+(\S+)/  
@@ -45,15 +46,29 @@ class OnBoard
           end
           `ip rule show`.each_line do |line|
             if line =~ /from \S+ lookup (\d+)/
-              all[$1.to_i] = :noname
+              all[$1.to_i] = nil
             end
           end
           `ip route show table 0`.each_line do |line|
             if line =~ /table (\d+)/
-              all[$1.to_i] = :noname
+              all[$1.to_i] = nil
             end
           end
           return all
+        end
+
+        def self.id2comment(number, name)
+          if number == 0
+            return 'All routes from all tables'
+          elsif name == 'main'
+            return 'Main table for basic routing'
+          elsif name == 'local'
+            return 'Special table: do not touch!'
+          elsif name == 'default'
+            return 'Fallback table'
+          else
+            return 'User defined table'
+          end          
         end
 
         def self.get(table='main')

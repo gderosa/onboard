@@ -8,6 +8,14 @@ class OnBoard::Controller
     redirect "/network/routing/tables/main.#{params['format']}"
   end
 
+  get "/network/routing/tables.:format" do
+    format(
+      :path     => 'network/routing/tables',
+      :format   => params[:format],
+      :objects  => OnBoard::Network::Routing::Table.getAllIDs
+    )
+  end
+  
   get "/network/routing/tables/:table.:format" do
     begin
       format(
