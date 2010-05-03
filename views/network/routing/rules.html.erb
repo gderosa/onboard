@@ -1,0 +1,26 @@
+<% require 'onboard/network/routing' %>
+
+<% all_tables = OnBoard::Network::Routing::Table.getAllIDs %>
+<% all_rules = objects %>
+
+<h2>Advanced Routing: Rules</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Priority</th>
+      <th>From</th>
+      <th>Table</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% all_rules.each do |rule| %>
+      <tr>
+        <td><input class="rwtext" name="rule[]" value="<%= rule.prio %>"/></td>
+        <td><input class="rwtext" name="from[]" value="<%= rule.from %>"/></td>
+        <td><input class="rwtext" name="table[]" value="<%= rule.table %>"/></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

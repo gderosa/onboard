@@ -2,7 +2,7 @@ require 'onboard/extensions/ipaddr'
 
 class OnBoard
   module Network
-    class Routing
+    module Routing
       class Route
 
         attr_reader :dest, :gw, :dev, :rawline, :route_type

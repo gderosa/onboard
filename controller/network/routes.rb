@@ -1,12 +1,16 @@
 require 'sinatra/base'
 
-require 'onboard/network/routing/table'
+require 'onboard/network/routing'
 
 class OnBoard::Controller
 
-  get "/network/routes.:format" do
-    redirect "/network/routing/tables/main.#{params['format']}"
+=begin  
+  ["/network/routes.:format", "/network/routing.:format"].each do |r|
+    get r do
+      redirect "/network/routing/tables/main.#{params['format']}"
+    end
   end
+=end
 
   get "/network/routing/tables.:format" do
     format(
@@ -15,7 +19,15 @@ class OnBoard::Controller
       :objects  => OnBoard::Network::Routing::Table.getAllIDs
     )
   end
-  
+
+  get "/network/routing/rules.:format" do
+    format(
+      :path     => 'network/routing/rules',
+      :format   => params[:format],
+      :objects  => OnBoard::Network::Routing::Rule.getAll
+    )
+  end
+
   get "/network/routing/tables/:table.:format" do
     begin
       format(

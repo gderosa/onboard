@@ -21,4 +21,9 @@ class OnBoard
     :name => 'Multiple tables'
   })
 
+  MENU_ROOT.add_path('/network/routing/advanced/rules', {
+    :href => '/network/routing/rules',
+    :name => 'Source routing / Policy rules'
+  })
+
 end

@@ -7,7 +7,7 @@ require 'onboard/system/command'
 
 class OnBoard
   module Network
-    class Routing
+    module Routing
       class Table
 
         class NotFound < NameError; end
