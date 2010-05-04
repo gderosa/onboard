@@ -5,7 +5,9 @@ class OnBoard
     module Routing
       class Route
 
-        attr_reader :dest, :gw, :dev, :rawline, :route_type
+        ROUTE_TYPES = %w{unicast local broadcast multicast throw unreachable prohibit blackhole nat}
+
+        attr_reader :dest, :gw, :dev, :rawline, :route_type, :proto
 
         def initialize(h)
           @dest       = h[:dest]                    # IPAddr object
@@ -13,6 +15,7 @@ class OnBoard
           @dev        = h[:dev]                     # String
           @rawline    = h[:rawline]                 # String
           @route_type = h[:route_type] || 'unicast' # String
+          @proto      = h[:proto]                   # String
         end
 
         def data
@@ -35,7 +38,7 @@ class OnBoard
         alias :to_rawline :to_s
 
         def static?
-          return true if Table::static_routes.detect {|sr| sr === self}
+          return (@proto == 'static')
         end
 
         # Loose comparison. For example,

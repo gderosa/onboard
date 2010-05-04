@@ -44,9 +44,10 @@ class OnBoard::Controller
   # table, hence the use of the sole PUT method to an unique URI. 
   # A way to retain our code simple but still respect (somewhat) 
   # the HTTP semantics.
-  put "/network/routes.:format" do
+  put "/network/routing/tables/:table.:format" do
+    table = OnBoard::Network::Routing::Table.get(params[:table]) 
     if params['ip_route_del']
-      msg = OnBoard::Network::Routing::Table.ip_route_del params['ip_route_del']
+      msg = table.ip_route_del params['ip_route_del']
     else
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params
     end
@@ -58,7 +59,7 @@ class OnBoard::Controller
     format(
       :path     => 'network/routing/table',
       :format   => params[:format],
-      :objects  => OnBoard::Network::Routing::Table.getCurrent(),
+      :objects  => OnBoard::Network::Routing::Table.get(params['table']),
       :msg      => msg
     )   
   end
