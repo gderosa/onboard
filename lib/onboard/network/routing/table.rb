@@ -92,8 +92,8 @@ class OnBoard
               :scope      => $23,
               :src        => $25
             }
-            rawline = line.sub(/^(#{rttypes})/, '').sub(/table \S+/, '') 
-            rawline += " type #{h[:rttype]}"
+            rawline = 
+                line.sub(/^(#{rttypes})/, '').gsub(/(table|proto) \S+/, '')
             h[:rawline] = rawline
           end
           #pp h
