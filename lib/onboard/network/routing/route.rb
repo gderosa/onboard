@@ -5,37 +5,44 @@ class OnBoard
     module Routing
       class Route
 
-        ROUTE_TYPES = %w{unicast local broadcast multicast throw unreachable prohibit blackhole nat}
+        FIELDS = [:rttype, :dest, :gw, :dev, :proto, :metric, :mtu, :advmss, :error, :hoplimit, :scope, :src, :rawline]
 
-        attr_reader :dest, :gw, :dev, :rawline, :route_type, :proto
+        attr_reader *FIELDS
 
         def initialize(h)
-          @dest       = h[:dest]                    # IPAddr object
-          @gw         = h[:gw]                      # IPAddr object
-          @dev        = h[:dev]                     # String
-          @rawline    = h[:rawline]                 # String
-          @route_type = h[:route_type] || 'unicast' # String
-          @proto      = h[:proto]                   # String
+          FIELDS.each do |field|
+            instance_variable = ('@' + field.to_s).to_sym
+            instance_variable_set instance_variable, h[field]
+          end
         end
 
         def data
-          {
-            "dest"        => @dest.data,
-            "gw"          => @gw.data,
-            "dev"         => @dev,
-            "rawline"     => @rawline,
-            "static"      => static?,
-            "route_type"  => @route_type
-          }
+          h = {}
+          FIELDS.each do |field|
+            s = field.to_s
+            instance_variable = ('@' + s).to_sym
+            h[s] = instance_variable_get instance_variable
+          end
+          return h
         end
 
         def to_s
           s = "#{@dest.to_cidr}"
           s << " via #{@gw.to_s}" if (@gw and @gw.to_i > 0) # exclude 0.0.0.0/*
-          s << " dev #{@dev}" if @dev
+          s << " dev #{@dev}"           if @dev
+          s << " type #{@rttype}"       if @rttype
+          s << " proto #{@proto}"       if @proto
+          s << " metric #{@metric}"     if @metric
+          s << " mtu #{@mtu}"           if @mtu
+          s << " advmss #{@advmss}"     if @advmss
+          s << " error #@error{}"       if @error
+          s << " hoplimit #{@hoplimit}" if @hoplimit
+          s << " scope #{@scope}"       if @scope
+          s << " src #{@src}"           if @src
           return s
         end
-        alias :to_rawline :to_s
+        alias to_rawline to_s
+        alias route_type rttype
 
         def static?
           return (@proto == 'static')

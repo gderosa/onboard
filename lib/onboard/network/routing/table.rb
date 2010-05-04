@@ -69,30 +69,35 @@ class OnBoard
         end
 
         def self.rawline2routeobj(line, af=Socket::AF_INET)
+          line.strip!
+          rttypes = 'unicast|local|broadcast|multicast|throw|unreachable|prohibit|blackhole|nat'
           h = {}
-          if line =~ /^(\S+)\s+(\S.*)$/ and Route::ROUTE_TYPES.include? $1
-            h[:route_type] = $1
-            line = $2
-          else
-            h[:route_type] = 'unicast'
-          end
-          if line =~ /^(\S+)\s+(\S.*)$/
-            if $1 == 'default'
-              case af
-              when Socket::AF_INET
-                h[:dest] = IPAddr.new("0.0.0.0/0")
-                h[:rawline] = line.sub('default', '0.0.0.0/0').sub(/table\s+\S+/, '').strip
-              when Socket::AF_INET6
-                h[:dest] = IPAddr.new("::/0")
-                h[:rawline] = line.sub('default', '::/0').sub(/table\s+\S+/, '').strip
-              else
-                raise ArgumentError, "Address family must be either Socket::AF_INET or Socket::AF_INET6"
-              end
+          if line =~ /^((#{rttypes})\s+)?(\S+)(\s+via (\S+))?(\s+dev (\S+))?(\s+table (\S+))?(\s+proto (\S+))?(\s+metric (\S+))?(\s+mtu (\S+))?(\s+advmss (\S+))?(\s+error (\S+))?(\s+hoplimit (\S+))?(\s+scope (\S+))?(\s+src (\S+))?/
+            if $3 == 'default'
+              dest = IPAddr.new(0, af).mask(0)
+            else
+              dest = IPAddr.new($3)
             end
+            h = {
+              :rttype     => ($2 || 'unicast'),
+              :dest       => dest,
+              :gw         => $5,
+              :dev        => $7,
+              :proto      => $11,
+              :metric     => $13,
+              :mtu        => $15,
+              :advmss     => $17,
+              :error      => $19,
+              :hoplimit   => $21,
+              :scope      => $23,
+              :src        => $25
+            }
+            rawline = line.sub(/^(#{rttypes})/, '').sub(/table \S+/, '') 
+            rawline += " type #{h[:rttype]}"
+            h[:rawline] = rawline
           end
-          if line =~ /via\s+(\S+)/
-            h[:gw] = IPAddr.new $1, af
-          end
+          #pp h
+          return Route.new h
         end
 
         # TODO TODO TODO: DRY DRY DRY !!!
