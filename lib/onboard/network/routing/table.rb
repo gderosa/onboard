@@ -9,29 +9,42 @@ class OnBoard
   module Network
     module Routing
       class Table
+        RT_TABLES_CONFFILE = File.join CONFDIR, 'rt_tables'
 
         class NotFound < NameError; end
 
         def self.getAllIDs
-          all = {} # will use Integers as keys
+          system_tables = {} 
+          custom_tables = {}
           # It's assumed that the only number->name map is here:
           File.foreach '/etc/iproute2/rt_tables' do |line|
             line.sub! /#.*$/, ''
             if line =~ /(\d+)\s+(\S+)/  
-              all[$1.to_i] = $2
+              system_tables[$1.to_i] = $2
             end
           end
           `ip rule show`.each_line do |line|
             if line =~ /from \S+ lookup (\d+)/
-              all[$1.to_i] = nil
+              custom_tables[$1.to_i] = nil
             end
           end
           `ip route show table 0`.each_line do |line|
             if line =~ /table (\d+)/
-              all[$1.to_i] = nil
+              custom_tables[$1.to_i] = nil
             end
           end
-          return all
+          if File.exists? RT_TABLES_CONFFILE
+            File.foreach RT_TABLES_CONFFILE do |line|
+              line.sub! /#.*$/, ''
+              if line =~ /(\d+)\s+(\S+)/
+                custom_tables[$1.to_i] = $2
+              end
+            end
+          end
+          return {
+            'system_tables' => system_tables,
+            'custom_tables' => custom_tables
+          }
         end
 
         def self.id2comment(number, name)
@@ -49,23 +62,39 @@ class OnBoard
         end
 
         def self.get(table='main')
+          # table: name or number
+          # table_n: number
+          table.strip!
+          table_n = nil
+          all_tables = getAllIDs['system_tables'].merge getAllIDs['custom_tables']  
+          if table =~ /[a-z]/i
+            detect = all_tables.detect{|k, v| v == table}
+            if detect
+              table_n = detect[0]
+            else
+              raise NotFound
+            end
+          elsif table =~ /^\d+$/
+            table_n = table.to_i
+          end
+
           ary = []
 
           # IPv4
-          `ip -f inet route show table #{table}`.each_line do |line| 
+          `ip -f inet route show table #{table_n}`.each_line do |line| 
             ary << rawline2routeobj(line, Socket::AF_INET)
           end
 
-          raise NotFound if ary.length == 0 and $?.exitstatus != 0
+          #raise NotFound if ary.length == 0 and $?.exitstatus != 0
 
           # IPv6
-          `ip -f inet6 route show table #{table}`.each_line do |line| 
+          `ip -f inet6 route show table #{table_n}`.each_line do |line| 
             ary << rawline2routeobj(line, Socket::AF_INET6)
           end
 
-          raise NotFound if ary.length == 0 and $?.exitstatus != 0
+          #raise NotFound if ary.length == 0 and $?.exitstatus != 0
 
-          return self.new(ary, table)
+          return self.new(ary, table_n)
         end
 
         def self.rawline2routeobj(line, af=Socket::AF_INET)

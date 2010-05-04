@@ -1,27 +1,29 @@
 <% require 'onboard/network/routing/table' %>
-<% tables = objects %>
+<% system_tables = objects['system_tables'] %>
+<% custom_tables = objects['custom_tables'] %>
+
 <h2>Advanced Routing: Routing Tables</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Comment</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% tables.keys.sort.each do |number|  %>
-      <% name = tables[number] %>
-        <tr>
-          <th scope="row" style="text-align:right;"><a href="tables/<%= name || number %>.html"><%= number %></a></th>
-        <% if name %>
-          <td><a href="tables/<%= name || number %>.html"><code><%= name %></code></a></td>
-        <% else %>
-          <td class="optinfo" style="text-align:right;"><a href="tables/<%= name || number %>.html">(no name)</a></td>
-        <% end %>
-        <td class="optinfo"><%= OnBoard::Network::Routing::Table.id2comment number, name %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<h3>System tables</h3>
+
+<%= 
+  erb(
+    :"network/routing/_tables.html",
+    {
+      :layout => false,
+      :locals => {:tables => system_tables} 
+    }
+  )
+%>
+
+<h3>Custom tables</h3>
+
+<%= 
+  erb(
+    :"network/routing/_tables.html",
+    {
+      :layout => false,
+      :locals => {:tables => custom_tables} 
+    }
+  )
+%>
