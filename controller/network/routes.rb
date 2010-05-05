@@ -94,4 +94,25 @@ class OnBoard::Controller
     )   
   end
 
+  delete "/network/routing/tables/:table.:format" do
+    msg = {}
+    table = OnBoard::Network::Routing::Table.get(params['table'])
+    if table.system?
+      msg[:err]  = "You cannot delete a system table!"
+      status 403 # Forbidden
+    else
+      msg = table.delete!
+    end
+    if msg[:ok]
+      redirect "/network/routing/tables.#{params[:format]}" 
+    else
+      format(
+        :path     => 'network/routing/table',
+        :format   => params[:format],
+        :objects  => OnBoard::Network::Routing::Table.get(params['table']),
+        :msg      => msg
+      )   
+    end
+  end
+
 end

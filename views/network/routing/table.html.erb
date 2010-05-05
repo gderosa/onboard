@@ -143,7 +143,9 @@
 </table>
 
 <% unless routing_table.system? %>
+
   <h3>Advanced</h3>
+
   <h4>Change table name and comment</h4>
   <form method="POST">
     <input type="hidden" name="_method" value="put"/>
@@ -166,5 +168,12 @@
       </tbody>
     </table>
     <button type="submit">Change!</button>
+  </form>
+
+  <h4>Delete this table!</h4>
+  <div class="warn">Are you sure? There is no going back!</div>
+  <form method="POST">
+    <input type="hidden" name="_method" value="delete"/>
+    <button type="submit">Delete!</button>
   </form>
 <% end %>

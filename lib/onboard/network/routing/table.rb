@@ -11,6 +11,12 @@ class OnBoard
       class Table
         RT_TABLES_CONFFILE = File.join CONFDIR, 'rt_tables'
 
+        # Create if it doesn't exist
+        unless File.exists? RT_TABLES_CONFFILE
+          File.open RT_TABLES_CONFFILE, 'w' do |f|
+          end
+        end
+
         class NotFound < NameError; end
 
         def self.getAllIDs
@@ -143,6 +149,7 @@ class OnBoard
           return Route.new h
         end
 
+        # TODO! should be an instance method!
         def self.change_name_and_comment(number, name='', comment='')
           old_text = File.read RT_TABLES_CONFFILE
           File.open RT_TABLES_CONFFILE, 'w' do |f|
@@ -195,10 +202,27 @@ class OnBoard
 
         attr_reader :routes, :id
 
+        # @id is generally the number (Integer), but methods re-read
+        # RT_TABLES_CONFFILE in case it's a (non-numerical) String
+        # (e.g. the name) 
+
         def initialize(ary, table='main')
           @routes = ary
           @id = table
           @static_routes = [] # TODO: this should disappear
+        end
+
+        def delete!
+          ip_route_flush
+          old_text = File.read RT_TABLES_CONFFILE
+          File.open RT_TABLES_CONFFILE, 'w' do |f|
+            old_text.each_line do |line|
+              unless line =~ /^\s*#{number}([^\d].*)?$/
+                f.write line
+              end
+            end
+          end
+          return {:ok => true}
         end
 
         def number
@@ -244,8 +268,11 @@ class OnBoard
           }
         end
 
+        def ip_route_flush
+          msg = OnBoard::System::Command.run "ip route flush table #{@id}", :sudo
+        end
+        
         def ip_route_del(str)
-          routeobj = self.class.rawline2routeobj(str) 
           msg = OnBoard::System::Command.run "ip route del #{str} table #{@id}", :sudo
           return msg
         end
