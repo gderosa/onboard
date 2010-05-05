@@ -16,11 +16,13 @@ class OnBoard
         def self.getAllIDs
           system_tables = {} 
           custom_tables = {}
+          comments      = {}
           # It's assumed that the only number->name map is here:
           File.foreach '/etc/iproute2/rt_tables' do |line|
-            line.sub! /#.*$/, ''
-            if line =~ /(\d+)\s+(\S+)/  
-              system_tables[$1.to_i] = $2
+            if line =~ /^(\d+)\s+([^#\s]+)(\s*#\s*(\S.*))?/  
+              n = $1.to_i
+              system_tables[n] = $2
+              comments[n] = $4
             end
           end
           `ip rule show`.each_line do |line|
@@ -35,16 +37,28 @@ class OnBoard
           end
           if File.exists? RT_TABLES_CONFFILE
             File.foreach RT_TABLES_CONFFILE do |line|
-              line.sub! /#.*$/, ''
-              if line =~ /(\d+)\s+(\S+)/
-                custom_tables[$1.to_i] = $2
+              if line =~ /^(\d+)\s+([^#\s]+)?(\s*#\s*(\S.*))?/
+                n = $1.to_i
+                custom_tables[n] = $2
+                comments[n] = $4
               end
             end
           end
           return {
             'system_tables' => system_tables,
-            'custom_tables' => custom_tables
+            'custom_tables' => custom_tables,
+            'comments'      => comments
           }
+        end
+
+        def self.create_from_HTTP_request(params)
+          File.open RT_TABLES_CONFFILE, 'a' do |f|
+            number  = params['number']
+            name    = params['name']
+            comment = params['comment']
+            
+            f.puts "#{number} #{name} # #{comment}"
+          end
         end
 
         def self.id2comment(number, name)
@@ -57,7 +71,7 @@ class OnBoard
           elsif name == 'default'
             return 'Fallback table'
           else
-            return 'User defined table'
+            return nil # 'User defined table'
           end          
         end
 

@@ -4,14 +4,6 @@ require 'onboard/network/routing'
 
 class OnBoard::Controller
 
-=begin  
-  ["/network/routes.:format", "/network/routing.:format"].each do |r|
-    get r do
-      redirect "/network/routing/tables/main.#{params['format']}"
-    end
-  end
-=end
-
   get "/network/routing/tables.:format" do
     format(
       :path     => 'network/routing/tables',
@@ -19,6 +11,39 @@ class OnBoard::Controller
       :objects  => OnBoard::Network::Routing::Table.getAllIDs
     )
   end
+
+  post "/network/routing/tables.:format" do
+    msg = {}
+    all = OnBoard::Network::Routing::Table.getAllIDs
+    already_used_numbers = all['system_tables'].keys + all['custom_tables'].keys
+    params['number'].strip!
+    params['name'] = params['name'].strip.gsub(/\s/, '_')
+    if params['number'] =~ /^\d+$/
+      n = params['number'].to_i
+      if (1..255).include? n
+        if already_used_numbers.include? n 
+          status 409 # Conflict
+          msg = {:err => "Error: table number #{n} already in use."}
+        else
+          OnBoard::Network::Routing::Table.create_from_HTTP_request(params)
+        end
+      else
+        status 400 # Bad Request
+        msg = {:err => "Invalid table number: allowed range: 1-255"} 
+      end
+    else
+      status 400 # Bad Request
+      msg = {:err => "Invalid table number: \"#{params['number']}\""}
+    end
+
+    format(
+      :path     => 'network/routing/tables',
+      :format   => params[:format],
+      :objects  => OnBoard::Network::Routing::Table.getAllIDs,
+      :msg      => msg
+    )
+  end
+
 
   get "/network/routing/rules.:format" do
     format(
