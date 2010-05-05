@@ -71,7 +71,10 @@ class OnBoard::Controller
   # the HTTP semantics.
   put "/network/routing/tables/:table.:format" do
     table = OnBoard::Network::Routing::Table.get(params[:table]) 
-    if params['ip_route_del']
+    if params['name']
+      msg = OnBoard::Network::Routing::Table.rename table.number, params['name']
+      redirect "/network/routing/tables/#{params['name']}.#{params['format']}"
+    elsif params['ip_route_del']
       msg = table.ip_route_del params['ip_route_del']
     else
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params

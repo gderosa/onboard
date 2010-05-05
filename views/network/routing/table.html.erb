@@ -142,15 +142,12 @@
   </tr>
 </table>
 
-<!--
-<pre>
-  <%= 
-      # html_escape params.pretty_inspect 
-  %>
-</pre>
-<pre>
-  <%= 
-      # html_escape routing_table.pretty_inspect 
-  %>
-</pre>
--->
+<% unless routing_table.system? %>
+  <h3>Advanced</h3>
+  <h4>Change table name</h4>
+  <form method="POST">
+    <input type="hidden" name="_method" value="put"/>
+    <input class="rwtext" type="text" name="name" value="<%= routing_table.name %>"/>
+    <button type="submit">Change!</button>
+  </form>
+<% end %>

@@ -143,95 +143,18 @@ class OnBoard
           return Route.new h
         end
 
-        # TODO TODO TODO: DRY DRY DRY !!!
-        def self.rawline2routeobj_old(line, af=Socket::AF_INET)
-          case af
-          when Socket::AF_INET # IPv4
-            if line =~ /^((\S+)\s+)?(\S+)\s+via\s+(\S+)\s+dev\s+(\S+)\s+proto\s+(\S+)?/
-              route_type = $2
-              gw = IPAddr.new($4) # for some reasons global captures disappear
-              dev = $5 # keep as a string
-              proto = $6
-              if $3 == "default"  
-                dest = IPAddr.new("0.0.0.0/0")
-                rawline = line.sub('default', '0.0.0.0/0').strip
+        def self.rename(number, name)
+          old_text = File.read RT_TABLES_CONFFILE
+          File.open RT_TABLES_CONFFILE, 'w' do |f|
+            old_text.each_line do |line|
+              if line =~ /^\s*#{number}[^#]*(#.*)/
+                f.puts "#{number} #{name} #{$1}" 
               else
-                dest = IPAddr.new($3)
-                rawline = line.strip
+                f.write line
               end
-              return Route.new( 
-                :dest       => dest,
-                :gw         => gw,
-                :dev        => dev,
-                :rawline    => rawline,
-                :route_type => route_type,
-                :proto      => proto
-              )
-            elsif line =~ /^((\S+)\s+)?(\S+)\s+dev\s+(\S+)\s+proto\s+(\S+)?/
-              route_type = $2
-              deststr = $3
-              dev = $4
-              proto = $5
-              if deststr.strip == "default"
-                dest = IPAddr.new("0.0.0.0/0")
-                rawline = line.sub('default', '0.0.0.0/0').strip
-                deststr = "0.0.0.0/0"
-              else
-                dest = IPAddr.new(deststr)
-                rawline = line.strip
-              end
-              return Route.new( 
-                :dest => IPAddr.new(deststr),
-                :gw   => IPAddr.new("0.0.0.0"),
-                :dev  => dev,
-                :rawline  => rawline,
-                :route_type => route_type,
-                :proto  => proto
-              ) 
             end
-          when Socket::AF_INET6 # IPv6
-            if line =~ /^((\S+)\s+)?(\S+)\s+via\s+(\S+)(\s+dev\s+(\S+))?\s+proto\s+(\S+)?/ 
-              route_type = $2
-              gw = IPAddr.new($4)
-              dev = $6
-              proto = $7
-              if $3 == "default"
-                dest = IPAddr.new("::/0")
-                rawline = line.sub('default', '::/0').strip
-              else
-                dest = IPAddr.new($3)
-                rawline = line.strip
-              end
-              return Route.new( 
-                :dest => dest,
-                :gw   => gw,
-                :dev  => dev,
-                :rawline  => rawline,
-                :route_type => route_type,
-                :proto  => proto
-              )
-            elsif line =~ /^((\S+)\s+)?(\S+)\s+dev\s+(\S+)\s+proto\s+(\S+)?/
-              route_type = $2
-              proto = $5
-              if $3 == "default"
-                dest = IPAddr.new("::/0")
-                rawline = line.sub('default', '::/0').strip
-              else
-                dest = IPAddr.new($3)
-                rawline = line.strip
-              end
-              return Route.new(
-                :dest => dest,
-                :gw   => IPAddr.new("::"),
-                :dev  => $4, # keep as a string
-                :rawline  => rawline,
-                :route_type => route_type,
-                :proto => proto
-              ) 
-            end
-          else 
-            raise ArgumentError, "af must be either Socket::AF_INET or Socket::AF_INET6, got #{af}" 
           end
+          return {:ok => true}
         end
 
         def self.route_from_HTTP_request(params) # create new or change
@@ -271,11 +194,45 @@ class OnBoard
         def initialize(ary, table='main')
           @routes = ary
           @id = table
-          @static_routes = []
+          @static_routes = [] # TODO: this should disappear
+        end
+
+        def number
+          return @id if @id.kind_of? Integer
+          @id.strip!
+          return @id.to_i if @id =~ /^\d+$/
+          h = self.class.getAllIDs
+          return 
+            (h['system_tables'].detect{|k, v| v == @id}[0]) or
+            (h['custom_tables'].detect{|k, v| v == @id}[0])
+        end
+
+        def name
+          h = self.class.getAllIDs
+          n = @id.to_i # @id might be a non-numerical String.......
+          if n > 0
+            if kv = h['system_tables'].detect{|k, v| k == n}
+              return kv[1]
+            elsif kv = h['custom_tables'].detect{|k, v| k == n}
+              return kv[1]
+            end
+          elsif @id.strip =~ /^[^\s\d]+$/
+            return @id.strip
+          end
+        end
+
+        def system?
+          h = self.class.getAllIDs
+          return h['system_tables'].detect{|k, v| k == number}
         end
 
         def data
-          @routes.map {|x| x.data} 
+          {
+            'number'  => number,
+            'name'    => name,
+            'system'  => system?,
+            'routes'  => @routes.map {|x| x.data}
+          }
         end
 
         def ip_route_del(str)
