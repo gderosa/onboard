@@ -72,7 +72,9 @@ class OnBoard::Controller
   put "/network/routing/tables/:table.:format" do
     table = OnBoard::Network::Routing::Table.get(params[:table]) 
     if params['name']
-      msg = OnBoard::Network::Routing::Table.rename table.number, params['name']
+      msg = OnBoard::Network::Routing::Table.rename(
+        table.number, params['name'], params['comment']
+      )
       redirect "/network/routing/tables/#{params['name']}.#{params['format']}"
     elsif params['ip_route_del']
       msg = table.ip_route_del params['ip_route_del']

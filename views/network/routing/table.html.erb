@@ -144,10 +144,27 @@
 
 <% unless routing_table.system? %>
   <h3>Advanced</h3>
-  <h4>Change table name</h4>
+  <h4>Change table name and comment</h4>
   <form method="POST">
     <input type="hidden" name="_method" value="put"/>
-    <input class="rwtext" type="text" name="name" value="<%= routing_table.name %>"/>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input class="rwtext" type="text" name="name" value="<%= routing_table.name %>"/>
+          </td>
+          <td>
+            <input class="rwtext" type="text" name="comment" value="<%= routing_table.comment %>"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     <button type="submit">Change!</button>
   </form>
 <% end %>

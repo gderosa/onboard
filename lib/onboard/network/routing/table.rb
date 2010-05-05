@@ -143,18 +143,22 @@ class OnBoard
           return Route.new h
         end
 
-        def self.rename(number, name)
+        def self.change_name_and_comment(number, name='', comment='')
           old_text = File.read RT_TABLES_CONFFILE
           File.open RT_TABLES_CONFFILE, 'w' do |f|
             old_text.each_line do |line|
-              if line =~ /^\s*#{number}[^#]*(#.*)/
-                f.puts "#{number} #{name} #{$1}" 
+              if line =~ /^\s*#{number}([^\d].*)?$/
+                f.puts "#{number} #{name} # #{comment}" 
               else
                 f.write line
               end
             end
           end
           return {:ok => true}
+        end
+
+        def self.rename(*args)
+          change_name_and_comment(*args)
         end
 
         def self.route_from_HTTP_request(params) # create new or change
@@ -219,6 +223,11 @@ class OnBoard
           elsif @id.strip =~ /^[^\s\d]+$/
             return @id.strip
           end
+        end
+
+        def comment
+          n = number
+          self.class.getAllIDs['comments'][n] || ''
         end
 
         def system?
