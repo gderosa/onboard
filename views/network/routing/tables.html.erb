@@ -26,7 +26,11 @@
     :"network/routing/_tables.html",
     {
       :layout => false,
-      :locals => {:tables => system_tables, :comments => comments} 
+      :locals => {
+        :tables => system_tables, 
+        :comments => comments,
+        :readonly => true
+      } 
     }
   )
 %>
@@ -38,7 +42,11 @@
     :"network/routing/_tables.html",
     {
       :layout => false,
-      :locals => {:tables => custom_tables, :comments => comments} 
+      :locals => {
+        :tables => custom_tables, 
+        :comments => comments,
+        :readonly => false
+      } 
     }
   )
 %>
