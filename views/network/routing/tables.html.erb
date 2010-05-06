@@ -54,7 +54,7 @@
 <h3>Create a new table</h3>
 <% 
   first_available_table_number = 
-    ((2.upto 255).to_a - (system_tables.keys + custom_tables.keys))[0]
+    ((1.upto 255).to_a - (system_tables.keys + custom_tables.keys))[0]
 %>
 <form method="POST">
 <table>

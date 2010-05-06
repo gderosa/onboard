@@ -18,6 +18,7 @@ class OnBoard
         end
 
         class NotFound < NameError; end
+        class NameAlreadyInUse < NameError; end
 
         def self.getAllIDs
           system_tables = {} 

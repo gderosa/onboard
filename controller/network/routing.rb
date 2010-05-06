@@ -15,10 +15,17 @@ class OnBoard::Controller
   post "/network/routing/tables.:format" do
     msg = {}
     all = OnBoard::Network::Routing::Table.getAllIDs
-    already_used_numbers = all['system_tables'].keys + all['custom_tables'].keys
+    already_used_numbers  = all['system_tables'].keys + all['custom_tables'].keys
+    already_used_names    = (
+      all['system_tables'].values + 
+      all['custom_tables'].values
+    )
     params['number'].strip!
     params['name'] = params['name'].strip.gsub(/\s/, '_')
-    if params['number'] =~ /^\d+$/
+    if already_used_names.include? params['name']
+      status 409 # Conflict
+      msg = {:err => "Error: table name \"#{params['name']}\" already in use."}
+    elsif params['number'] =~ /^\d+$/
       n = params['number'].to_i
       if (1..255).include? n
         if already_used_numbers.include? n 
@@ -73,14 +80,24 @@ class OnBoard::Controller
     table = OnBoard::Network::Routing::Table.get(params[:table]) 
     format = params[:format]
     number = table.number
-    name = params['name'].strip
+    all = OnBoard::Network::Routing::Table.getAllIDs
+    names = (
+      all['system_tables'].values + 
+      all['custom_tables'].values
+    ).select{|n| n =~ /\S/}
     comment = params['comment'].strip
     if params['name']
-      msg = OnBoard::Network::Routing::Table.rename number, name, comment
-      if name == ''
-        redirect "/network/routing/tables/#{number}.#{format}"      
+      name = params['name'].strip
+      if names.include? name 
+        status 409 # HTTP Conflict!
+        msg = {:err => "Name \"#{name}\" already in use!"}
       else
-        redirect "/network/routing/tables/#{name}.#{format}"
+        msg = OnBoard::Network::Routing::Table.rename number, name, comment
+        if name == ''
+            redirect "/network/routing/tables/#{number}.#{format}"      
+        else
+          redirect "/network/routing/tables/#{name}.#{format}"
+        end
       end
     elsif params['ip_route_del']
       msg = table.ip_route_del params['ip_route_del']
