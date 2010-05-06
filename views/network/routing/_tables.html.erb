@@ -12,7 +12,7 @@
     <% tables.keys.sort.each do |number|  %>
       <% name = tables[number] %>
         <tr>
-          <th scope="row" style="text-align:right;"><a href="tables/<%= name || number %>.html"><%= number %></a></th>
+          <th scope="row" style="text-align:right;"><a href="tables/<%= number %>.html"><%= number %></a></th>
         <% if name %>
           <td><a href="tables/<%= name || number %>.html"><code><%= name %></code></a></td>
         <% else %>

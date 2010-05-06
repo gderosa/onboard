@@ -6,9 +6,14 @@
 
   routing_table = objects
 
+  name            = routing_table.name
+  comment         = routing_table.comment
+  number          = routing_table.number
+  is_system_table = routing_table.system?
+
 %>
 
-<h2>Routing Table: <%= params[:table] %></h2>
+<h2>Routing Table: <%= name || number %></h2>
 
 <% 
   fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Statically\ added?} 
@@ -142,7 +147,7 @@
   </tr>
 </table>
 
-<% unless routing_table.system? %>
+<% unless is_system_table %>
 
   <h3>Advanced</h3>
 
@@ -159,10 +164,10 @@
       <tbody>
         <tr>
           <td>
-            <input class="rwtext" type="text" name="name" value="<%= routing_table.name %>"/>
+            <input class="rwtext" type="text" name="name" value="<%= name %>"/>
           </td>
           <td>
-            <input class="rwtext" type="text" name="comment" value="<%= routing_table.comment %>"/>
+            <input class="rwtext" type="text" name="comment" value="<%= comment %>"/>
           </td>
         </tr>
       </tbody>
