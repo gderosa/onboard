@@ -71,18 +71,24 @@ class OnBoard::Controller
   # the HTTP semantics.
   put "/network/routing/tables/:table.:format" do
     table = OnBoard::Network::Routing::Table.get(params[:table]) 
+    format = params[:format]
+    number = table.number
+    name = params['name'].strip
+    comment = params['comment'].strip
     if params['name']
-      msg = OnBoard::Network::Routing::Table.rename(
-        table.number, params['name'], params['comment']
-      )
-      redirect "/network/routing/tables/#{params['name']}.#{params['format']}"
+      msg = OnBoard::Network::Routing::Table.rename number, name, comment
+      if name == ''
+        redirect "/network/routing/tables/#{number}.#{format}"      
+      else
+        redirect "/network/routing/tables/#{name}.#{format}"
+      end
     elsif params['ip_route_del']
       msg = table.ip_route_del params['ip_route_del']
     else
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params
     end
     unless msg[:ok] # TODO: always sure the error is client-side?
-      status(409)   # TODO: what is the most appropriate HTTP response in this
+      status(400)   # TODO: what is the most appropriate HTTP response in this
                     # case? 400 Bad Request? 409 Conflict?
       #headers("X-STDERR" => msg[:stderr].strip.gsub("\n","\\n")) 
     end
