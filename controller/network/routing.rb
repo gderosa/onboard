@@ -31,8 +31,11 @@ class OnBoard::Controller
         if already_used_numbers.include? n 
           status 409 # Conflict
           msg = {:err => "Error: table number #{n} already in use."}
-        else
+        elsif params['name'] =~ OnBoard::Network::Routing::Table::VALID_NAMES
           OnBoard::Network::Routing::Table.create_from_HTTP_request(params)
+        else
+          status 400
+          msg = {:err => "Invalid name: \"#{params['name']}\". Use at least one alphabetical character; you may also use numbers, '-' and '_'."}
         end
       else
         status 400 # Bad Request
@@ -87,17 +90,20 @@ class OnBoard::Controller
     ).select{|n| n =~ /\S/}
     comment = params['comment'].strip
     if params['name']
-      name = params['name'].strip
+      name = params['name'].strip.gsub(' ', '_') 
       if names.include? name 
         status 409 # HTTP Conflict!
         msg = {:err => "Name \"#{name}\" already in use!"}
-      else
+      elsif name =~ OnBoard::Network::Routing::Table::VALID_NAMES
         msg = OnBoard::Network::Routing::Table.rename number, name, comment
         if name == ''
             redirect "/network/routing/tables/#{number}.#{format}"      
         else
           redirect "/network/routing/tables/#{name}.#{format}"
         end
+      else
+        status 400 # Bad Request
+        msg = {:err => "Invalid name: \"#{name}\". Use at least one alphabetical character; you may also use numbers, '-' and '_'."}
       end
     elsif params['ip_route_del']
       msg = table.ip_route_del params['ip_route_del']

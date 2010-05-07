@@ -10,6 +10,7 @@ class OnBoard
     module Routing
       class Table
         RT_TABLES_CONFFILE = File.join CONFDIR, 'rt_tables'
+        VALID_NAMES = /^[\w_-]*[a-z][\w_-]*$/i
 
         # Create if it doesn't exist
         unless File.exists? RT_TABLES_CONFFILE
@@ -238,8 +239,8 @@ class OnBoard
 
         def name
           h = self.class.getAllIDs
-          n = @id.to_i # @id might be a non-numerical String.......
-          if n > 0
+          if @id.kind_of? Integer
+            n = @id 
             if kv = h['system_tables'].detect{|k, v| k == n}
               return kv[1]
             elsif kv = h['custom_tables'].detect{|k, v| k == n}
