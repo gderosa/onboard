@@ -88,7 +88,7 @@ class OnBoard::Controller
       all['system_tables'].values + 
       all['custom_tables'].values
     ).select{|n| n =~ /\S/}
-    comment = params['comment'].strip
+    comment = params['comment'].strip if params['comment']
     if params['name']
       name = params['name'].strip.gsub(' ', '_') 
       if names.include? name 

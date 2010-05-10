@@ -281,19 +281,23 @@ class OnBoard
 
         def ip_route_add(route, *opts) 
           str = route.to_s # so Route and String are both ok
+          n = number
+          cmd = "ip route add #{str} table #{n}"
           if opts.include? :try
             return \
-                OnBoard::System::Command.run "ip route add #{str} table #@id", :sudo, :try
+                OnBoard::System::Command.run cmd, :sudo, :try
           else
             return \
-                OnBoard::System::Command.run "ip route add #{str} table #@id", :sudo
+                OnBoard::System::Command.run cmd, :sudo
           end
         end
 
         def ip_route_change(route, *opts)
           str = route.to_s # so Route and String are both ok
+          n = number
+          cmd = "ip route change #{str} table #{n}"
           opts << :sudo
-          OnBoard::System::Command.run "ip route change #{str}", *opts
+          OnBoard::System::Command.run "ip route change #{str} table #{n}", *opts
         end
 
         extend Forwardable
