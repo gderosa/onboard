@@ -34,7 +34,8 @@ for module-specific, additional requirements):
 * iptables (with proper kernel support)
 * bridge-utils (brctl)
 * pciutils (lspci command)
-* dhcpcd
+* dhcpcd 
+  * Also, resolvconf is recommended
 * dnsmasq >= 2.46 
   ## removed ISC-style leasefile format, which is assumed when no
   ## dhcp-range is provided -- and leads to troubles
