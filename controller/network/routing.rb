@@ -91,10 +91,14 @@ class OnBoard::Controller
     comment = params['comment'].strip if params['comment']
     if params['name']
       name = params['name'].strip.gsub(' ', '_') 
-      if names.include? name 
-        status 409 # HTTP Conflict!
-        msg = {:err => "Name \"#{name}\" already in use!"}
-      elsif name =~ OnBoard::Network::Routing::Table::VALID_NAMES
+      #
+      # One may just want to chenge the comment...
+      #
+      #if names.include? name 
+      #  status 409 # HTTP Conflict!
+      #  msg = {:err => "Name \"#{name}\" already in use!"}
+      #elsif
+      if name =~ OnBoard::Network::Routing::Table::VALID_NAMES
         msg = OnBoard::Network::Routing::Table.rename number, name, comment
         if name == ''
             redirect "/network/routing/tables/#{number}.#{format}"      
