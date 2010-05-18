@@ -22,6 +22,7 @@ class OnBoard
         class NameAlreadyInUse < NameError; end
 
         def self.getAllIDs
+          # Hashes with numeric keys...
           system_tables = {} 
           custom_tables = {}
           comments      = {}

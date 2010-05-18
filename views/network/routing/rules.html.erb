@@ -10,7 +10,7 @@
     <tr>
       <th>Priority</th>
       <th>From</th>
-      <th>Table</th>
+      <th>Routing Table</th>
     </tr>
   </thead>
   <tbody>
@@ -18,7 +18,20 @@
       <tr>
         <td><input class="rwtext" name="rule[]" value="<%= rule.prio %>"/></td>
         <td><input class="rwtext" name="from[]" value="<%= rule.from %>"/></td>
-        <td><input class="rwtext" name="table[]" value="<%= rule.table %>"/></td>
+        <td>
+          <select class="tt" name="table[]">
+            <optgroup label="System Tables">
+              <% all_tables['system_tables'].each_pair do |n, tbl| %>
+                <option class="tt" value="<%= n %>" <%= 'selected' if [n.to_s, tbl.to_s].include? rule.table.to_s %>><%= sprintf("%3d", n).gsub(' ', '&nbsp;') %> <%= tbl %></option>
+              <% end %>
+            </optgroup>
+            <optgroup label="Custom Tables">
+              <% all_tables['custom_tables'].each_pair do |n, tbl| %>
+                <option class="tt" value="<%= n %>" <%= 'selected' if [n.to_s, tbl.to_s].include? rule.table.to_s %> ><%= sprintf("%3d", n).gsub(' ', '&nbsp;') %> <%= tbl %></option>
+              <% end %>           
+            </optgroup>  
+          </select>
+        </td>
       </tr>
     <% end %>
   </tbody>
