@@ -22,12 +22,12 @@
           <select class="tt" name="table[]">
             <optgroup label="System Tables">
               <% all_tables['system_tables'].each_pair do |n, tbl| %>
-                <option class="tt" value="<%= n %>" <%= 'selected' if [n.to_s, tbl.to_s].include? rule.table.to_s %>><%= sprintf("%3d", n).gsub(' ', '&nbsp;') %> <%= tbl %></option>
+                <option class="tt" value="<%= n %>" <%= 'selected' if [n.to_s, tbl.to_s].include? rule.table.to_s %>><%= sprintf("%3d", n).gsub(' ', '&nbsp;') %>: <%= tbl %></option>
               <% end %>
             </optgroup>
             <optgroup label="Custom Tables">
               <% all_tables['custom_tables'].each_pair do |n, tbl| %>
-                <option class="tt" value="<%= n %>" <%= 'selected' if [n.to_s, tbl.to_s].include? rule.table.to_s %> ><%= sprintf("%3d", n).gsub(' ', '&nbsp;') %> <%= tbl %></option>
+                <option class="tt" value="<%= n %>" <%= 'selected' if [n.to_s, tbl.to_s].include? rule.table.to_s %> ><%= sprintf("%3d", n).gsub(' ', '&nbsp;') %>: <%= tbl %></option>
               <% end %>           
             </optgroup>  
           </select>
