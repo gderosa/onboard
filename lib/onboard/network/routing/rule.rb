@@ -18,7 +18,7 @@ class OnBoard
           return all
         end
 
-        attr_reader :prio, :from, :table
+        attr_reader :prio, :from, :table, :fwmark
 
         def initialize(h)
           @prio   = h[:prio]

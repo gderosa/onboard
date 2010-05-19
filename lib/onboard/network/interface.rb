@@ -300,6 +300,8 @@ class OnBoard
         end    
       end
 
+      def bridge?; is_bridge?; end
+
       def bridged_to
         bridgelink = "/sys/class/net/#@name/brport/bridge"
         if File.symlink? bridgelink
@@ -311,8 +313,8 @@ class OnBoard
         end
       end
 
-      alias bridged?    bridged_to
-      alias is_bridged? bridged_to
+      def bridged?; bridged_to; end
+      def is_bridged?; bridged_to; end
 
       def data
         h = {}
