@@ -6,7 +6,8 @@ class OnBoard
         def self.getAll
           all = []
           `ip rule show`.each_line do |line|
-            if line =~ /^(\d+):\s+from\s+(\S+)\s+(fwmark\s+(\S+)\s+)?(lookup|table)\s+(\S+)/
+            if line =~ 
+                /^(\d+):\s+from\s+(\S+)\s+(fwmark\s+(\S+)\s+)?(lookup|table)\s+(\S+)/
               all << self.new(
                 :prio   => $1,
                 :from   => $2,
