@@ -1,8 +1,8 @@
+# encoding: utf-8
+
 class OnBoard
   module Network
     module QoS
-
-      DSCP = DiffServ::CodePoints
 
       module DiffServ
 
@@ -36,7 +36,7 @@ class OnBoard
         CS6             = 0b110000  # Cisco routing/internetworking
         CS7             = 0b111000  # Cisco "Network Control"
 
-        EF = ExpeditedForwarding =
+        EF = ExpeditedForwarding \
                         = 0b101110  # Expedited Forwarding!                   # VoIP:voice
 
         # An Array because there's a preferred/logical order
@@ -136,7 +136,7 @@ class OnBoard
             :short_name   => 'AF31',
             :long_name    => 'Assured Forwarding class 3, low drop',
             :symbol       => :AF31,
-            :comment      => 'VoIP: SIP'
+            :comment      => 'Recommended for VoIP: signaling'
           },
           {
             :value        => AF32,
@@ -163,7 +163,7 @@ class OnBoard
             :short_name   => 'AF41',
             :long_name    => 'Assured Forwarding class 4, low drop',
             :symbol       => :AF41,
-            :comment      => 'Video'
+            :comment      => 'Recommended for video conferencing, etc.'
           },
           {
             :value        => AF42,
@@ -197,7 +197,7 @@ class OnBoard
             :short_name   => 'CS7',
             :long_name    => 'Class Selector 7',
             :symbol       => :CS7,
-            :comment      => 'Cisco network control'
+            :comment      => 'Cisco “network control”'
           },
 
           {
@@ -208,7 +208,11 @@ class OnBoard
             :comment      => 'Highest priority, recommended for VoIP: voice'
           }   
         ]
-      end
-    end
+      end # module DiffServ
+
+      DSCP = DiffServ::CodePoints
+
+    end # module QoS
+
   end
 end

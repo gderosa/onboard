@@ -1,8 +1,12 @@
-<% require 'onboard/network/routing' %>
+<% 
+  require 'onboard/network/routing'
+  require 'onboard/network/qos/diffserv'
 
-<% all_tables = OnBoard::Network::Routing::Table.getAllIDs %>
-<% all_interfaces = OnBoard::Network::Interface.getAll %>
-<% all_rules = objects %>
+  all_tables      = OnBoard::Network::Routing::Table.getAllIDs 
+  all_interfaces  = OnBoard::Network::Interface.getAll 
+  all_rules       = objects 
+
+%>
 
 <h2>Advanced Routing: Rules</h2>
 
@@ -11,6 +15,7 @@
     <tr>
       <th>Priority</th>
       <th>Source address/network</th>
+      <th><a href="http://en.wikipedia.org/wiki/Differentiated_services">QoS: DSCP</a></th>
       <th>Input Interface</th>
       <th>Output Interface</th>
       <th>Routing Table</th>
@@ -27,6 +32,14 @@
           allow you even to distinguish between different ports inside a 
           bridge ( iptables -m physdev ) which is a really intersting feature.
         -->        
+        <td>
+          <select style="width: 10em;" name="rule[][dscp]">
+            <option value=""></option>
+            <% OnBoard::Network::QoS::DSCP.each do |dscp| %>
+              <option title="<%= dscp[:comment] %>" value="<%= dscp[:value] %>"><%= dscp[:symbol] %>: <%= dscp[:long_name] %></option>
+            <% end %>
+          </select>
+        </td>
         <% %w{rule[][iif] rule[][oif]}.each do |select_name| %>
           <td>
             <select name="<%= select_name %>">

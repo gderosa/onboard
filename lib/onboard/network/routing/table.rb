@@ -35,7 +35,7 @@ class OnBoard
             end
           end
           `ip rule show`.each_line do |line|
-            if line =~ /from \S+ .* lookup (\d+)/
+            if line =~ /from.*lookup\s+(\d+)/
               custom_tables[$1.to_i] = nil
             end
           end
