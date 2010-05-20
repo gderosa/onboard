@@ -1,4 +1,6 @@
-<% 
+<%
+  # encoding: utf-8
+
   require 'onboard/network/routing'
   require 'onboard/network/qos/diffserv'
 %>
@@ -8,7 +10,9 @@
     <tr>
       <th>Priority</th>
       <th>Source address/network</th>
-      <th><a href="http://en.wikipedia.org/wiki/Differentiated_services">QoS: DSCP</a></th>
+      <th title="Quality of Service: Differentiated Service Code Point">
+        <a href="http://en.wikipedia.org/wiki/Differentiated_services">QoS: DSCP</a>
+      </th>
       <th>Input Interface</th>
       <th>Output Interface</th>
       <th>Routing Table</th>
