@@ -12,7 +12,7 @@ public/icons/gnome for details and Copyright info.
 A web interface to configure Linux-based network appliances. It's been
 developed and tested on Debian GNU/Linux and its derivative for
 embedded systems, Voyage Linux (http://linux.voyage.hk/). It should work on 
-other distros too, altough untested right now. Fell free to contribute and 
+other distros too, altough untested right now. Feel free to contribute and 
 test.
 
 ---
@@ -34,7 +34,8 @@ for module-specific, additional requirements):
 * iptables (with proper kernel support)
 * bridge-utils (brctl)
 * pciutils (lspci command)
-* dhcpcd
+* dhcpcd 
+  * Also, resolvconf is recommended
 * dnsmasq >= 2.46 
   ## removed ISC-style leasefile format, which is assumed when no
   ## dhcp-range is provided -- and leads to troubles

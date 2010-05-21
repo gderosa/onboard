@@ -235,7 +235,10 @@ class OnBoard
                     host['leasetime'] << "\n"
           end
         end
-        FileUtils.copy(CONFDIR + '/new/dhcp.conf', CONFDIR + '/new/dhcp.conf~')
+        FileUtils.mkdir(CONFDIR + '/new') unless Dir.exists?(CONFDIR + '/new')
+        FileUtils.copy(
+          CONFDIR + '/new/dhcp.conf', CONFDIR + '/new/dhcp.conf~'
+        ) if File.exists?(CONFDIR + '/new/dhcp.conf')            
         File.open(CONFDIR + '/new/dhcp.conf',  'w') do |file|
           file.write str
         end
