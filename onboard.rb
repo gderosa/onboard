@@ -42,8 +42,11 @@ class OnBoard
     # sort to resamble /etc/rc*.d/* or run-parts behavior
     Find.find(dir).sort.each do |file|
       if file =~ /\.rb$/
+        print "loading: #{file}... "
+        STDOUT.flush
         if load file
-          puts "loaded: #{file}"
+          print "OK\n"
+          STDOUT.flush
         end
       end
     end
@@ -90,8 +93,8 @@ class OnBoard
 
     # modules
     Dir.glob(ROOTDIR + '/modules/*/etc/save/*.rb').each do |script| 
-      load script
-      puts "loaded: #{script}" 
+      print "loading: #{script}... " and STDOUT.flush
+      load script and puts ' OK'
     end
   end
 
