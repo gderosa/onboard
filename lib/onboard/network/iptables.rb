@@ -55,6 +55,14 @@ class OnBoard
               str << ' '
             end
           end
+          if params['to-source_addr'] =~ /\S/ or params['to-source_port'] =~ /\S/
+            str << "--to-source " << params['to-source_addr'].strip
+            if params['to-source_port'] =~ /\S/
+              str << ':' << params['to-source_port']
+            else
+              str << ' '
+            end
+          end
         end
         msg = OnBoard::System::Command.run str, :sudo
         return msg

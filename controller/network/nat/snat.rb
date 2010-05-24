@@ -3,7 +3,12 @@ require 'sinatra/base'
 require 'onboard/network/iptables'
 
 class OnBoard::Controller
+
   get '/network/nat/masquerade.:format' do
+    redirect "/network/nat/snat.#{params[:format]}" 
+  end
+
+  get '/network/nat/snat.:format' do
     iptablesobj = OnBoard::Network::Iptables.new(
       :ip_version => '4', # no IPv6 NAT implemented (probably useless...)  
       :tables => %w{nat}
@@ -11,13 +16,13 @@ class OnBoard::Controller
     iptablesobj.get_all_info
 
     format(
-      :path => '/network/nat/masquerade',
+      :path => '/network/nat/snat',
       :format => params[:format],
       :objects  => iptablesobj
     )
   end
 
-  put '/network/nat/masquerade.:format' do
+  put '/network/nat/snat.:format' do
     # let's *write* into params... looks strange, but it's useful :-)
     params['version'] = '4'   # IPv4
     params['table']   = 'nat'
@@ -45,7 +50,7 @@ class OnBoard::Controller
     iptablesobj.get_all_info
 
     format(
-      :path => '/network/nat/masquerade',
+      :path => '/network/nat/snat',
       :format => params[:format],
       :objects  => iptablesobj,
       :msg  => msg
