@@ -84,6 +84,8 @@ class OnBoard
           end          
         end
 
+        def self.getCurrent; self.get('main'); end # Compatibility
+
         def self.get(table='main')
           # table: name or number
           # table_n: number
