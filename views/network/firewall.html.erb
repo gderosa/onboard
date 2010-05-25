@@ -3,8 +3,8 @@
 
   require 'onboard/network/interface'
 
-  all_interfaces = OnBoard::Network::Interface.getAll_layer3
-  interface_names = all_interfaces.map {|x| x.name} 
+  all_interfaces = OnBoard::Network::Interface.getAll
+  #interface_names = all_interfaces.map {|x| x.name} 
 
   iptablesobj       = objects
 
@@ -203,20 +203,32 @@
           </select>
         </td>
         <td>
-          <select name="input_iface">
-            <option value=""></option>
-            <% interface_names.each do |ifname| %>
-              <option value="<%= ifname %>"><%= ifname %></option>
-            <% end %>
-          </select>
+          <%= 
+            erb(
+              :"network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name    => "input_iface",
+                  :all_interfaces => all_interfaces 
+                }
+              }
+            )
+          %>
         </td>
         <td>
-          <select name="output_iface">
-            <option value=""></option>
-            <% interface_names.each do |ifname| %>
-              <option value="<%= ifname %>"><%= ifname %></option>
-            <% end %>
-          </select>
+          <%= 
+            erb(
+              :"network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name    => "output_iface",
+                  :all_interfaces => all_interfaces 
+                }
+              }
+            )
+          %>
         </td>
         <td>
           <input type="text" class="rwtext" name="source_addr"/>
