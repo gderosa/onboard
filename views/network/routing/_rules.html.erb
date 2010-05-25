@@ -39,18 +39,18 @@
         </td>
         <% %w{rule[][iif] rule[][oif]}.each do |select_name| %>
           <td>
-            <select name="<%= select_name %>">
-              <option value=""></option>
-              <% all_interfaces.each do |iface| %>
-                <%
-                  str = ""
-                  str = "(bridge)" if iface.bridge?
-                  str = "(bridge port)" if iface.bridged?
-                  optional_bridge_info_str = str
-                %>
-                <option value="<%= iface.name %>"><%= iface.name %> <%= optional_bridge_info_str %></option>
-              <% end %>
-            </select>
+            <%= 
+              erb(
+                :"/network/_interface_chooser.html",
+                {
+                  :layout => false,
+                  :locals => {
+                    :select_name    => select_name,
+                    :all_interfaces => all_interfaces
+                  }
+                }
+              )
+            %>
           </td>
         <% end %>
         <td>
