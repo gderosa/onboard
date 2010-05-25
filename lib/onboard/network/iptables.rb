@@ -2,6 +2,26 @@ class OnBoard
   module Network
     class Iptables
       def self.add_rule_from_HTTP_request(params)
+
+        all_bridge_ports = []
+
+        # you might receive something like
+        #
+        #   params['bridge_ports'] #=> ['eth1', 'eth2', 'eth3'] 
+        #
+        # regardless which bridge they belong; or something like
+        #
+        #   params['bridges'] #=> {'br0' => ['eth1', 'eth2'], 'br1' => ['eth3']} 
+        #
+
+        if params['bridge_ports'].respond_to? :[]
+          all_bridge_ports = params['bridge_ports']
+        elsif params['bridges'].respond_to? :each_value
+          params['bridges'].each_value do |br|
+            all_bridge_ports << br['ports']
+          end
+        end
+
         str = ""
         str << case params['version']
         when '4'
@@ -28,10 +48,17 @@ class OnBoard
             params['comment'] and params['comment'] =~ /\S/ 
         str << "-p "                  << params['proto']            << ' ' if
             params['proto']         =~ /\S/    
-        str << "-i "                  << params['input_iface']      << ' ' if
-            params['input_iface']   =~ /\S/
-        str << "-o "                  << params['output_iface']     << ' ' if
-            params['output_iface']  =~ /\S/
+
+        %w{in out}.each do |inout|
+          if params["#{inout}put_iface"]   =~ /\S/
+            if all_bridge_ports.include? params["#{inout}put_iface"]
+              str << "-m physdev --physdev-#{inout} " << params["#{inout}put_iface"] << ' '
+            else
+              str << "-#{inout[0]} " << params["#{inout}put_iface"] << ' '
+            end
+          end
+        end
+
         str << "-s "                  << params["source_addr"]      << ' ' if
             params["source_addr"]   =~ /\S/
         str << "-d "                  <<   params["dest_addr"]      << ' ' if

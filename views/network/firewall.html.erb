@@ -4,7 +4,6 @@
   require 'onboard/network/interface'
 
   all_interfaces = OnBoard::Network::Interface.getAll
-  #interface_names = all_interfaces.map {|x| x.name} 
 
   iptablesobj       = objects
 
@@ -110,6 +109,17 @@
 <h3>Add a new rule</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
+
+  <% 
+    all_interfaces.each do |netif|
+      if netif.bridged_to
+        %>
+          <input type="hidden" name="bridge_ports[]" value="<%= netif.name %>"/>
+        <%
+      end
+    end
+  %>
+
   <table>
     <thead>
       <tr>
