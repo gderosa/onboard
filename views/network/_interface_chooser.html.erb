@@ -1,0 +1,17 @@
+<% 
+  # all_interfaces ||= OnBoard::Network::Interface.getAll
+  # 
+%>
+            <select name="<%= select_name %>">
+              <option value=""></option>
+              <% all_interfaces.each do |iface| %>
+                <%
+                  str = ""
+                  str = "(bridge)" if iface.bridge?
+                  str = "(bridge port)" if iface.bridged?
+                  optional_bridge_info_str = str
+                %>
+                <option value="<%= iface.name %>"><%= iface.name %> <%= optional_bridge_info_str %></option>
+              <% end %>
+            </select>
+
