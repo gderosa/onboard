@@ -10,6 +10,20 @@
 
 <h2>Advanced Routing: Rules</h2>
 
+<pre><%= html_escape params.pretty_inspect %></pre>
+
+<%= 
+  erb(
+    :"_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg    => msg
+      }
+    }
+  )
+%>
+
 <h3>Current rules</h3>
 
 <%=
@@ -29,26 +43,27 @@
 
 <h3>Add a new rule</h3>
 
-<%=
-  erb(
-    :"network/routing/_rules.html",
-    {
-      :layout => false,
-      :locals => {
-        :all_tables     => all_tables,
-        :all_interfaces => all_interfaces,
-        :all_rules      => [ 
-          OnBoard::Network::Routing::Rule.new( { # blank slate
-            :prio   => nil,
-            :from   => 'all',
-            :to     => 'all',
-            :fwmark => nil,
-            :table  => 'main'
-          } ) 
-        ]
+<form method="POST">
+  <%=
+    erb(
+      :"network/routing/_rules.html",
+      {
+        :layout => false,
+        :locals => {
+          :all_tables     => all_tables,
+          :all_interfaces => all_interfaces,
+          :all_rules      => [ 
+            OnBoard::Network::Routing::Rule.new( { # blank slate
+              :prio   => nil,
+              :from   => 'all',
+              :to     => 'all',
+              :fwmark => nil,
+              :table  => 'main'
+            } ) 
+          ]
+        }
       }
-    }
-  )    
-%>
-<button type="submit">Add</button>
-
+    )    
+  %>
+  <button type="submit">Add</button>
+</form>

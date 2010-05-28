@@ -54,7 +54,6 @@ class OnBoard::Controller
     )
   end
 
-
   get "/network/routing/rules.:format" do
     format(
       :path     => 'network/routing/rules',
@@ -62,6 +61,17 @@ class OnBoard::Controller
       :objects  => OnBoard::Network::Routing::Rule.getAll
     )
   end
+
+  post "/network/routing/rules.:format" do
+    msg = OnBoard::Network::Routing::Rule.add_from_HTTP_request(params)
+    format(
+      :path     => 'network/routing/rules',
+      :format   => params[:format],
+      :objects  => OnBoard::Network::Routing::Rule.getAll,
+      :msg      => msg
+    )
+  end
+ 
 
   get "/network/routing/tables/:table.:format" do
     begin

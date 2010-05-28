@@ -22,9 +22,9 @@
   <tbody>
     <% all_rules.each do |rule| %>
       <tr>
-        <td><input class="rwtext" name="rule[][prio]" size="5" style="text-align: right;" value="<%= rule.prio %>"/></td>
-        <td><input size="19" class="rwtext" name="rule[][from]" value="<%= rule.from %>"/></td>
-        <td><input size="19" class="rwtext" name="rule[][to]"   value="<%= rule.to %>"  /></td>
+        <td><input class="rwtext" name="rules[][prio]" size="5" style="text-align: right;" value="<%= rule.prio %>"/></td>
+        <td><input size="19" class="rwtext" name="rules[][from]" value="<%= rule.from %>"/></td>
+        <td><input size="19" class="rwtext" name="rules[][to]"   value="<%= rule.to %>"  /></td>
         <!-- 
           "iif" and "oif" recall ip rule keywords, but really the process goes
           via iptables mark. Why don't use iproute2 directly? Because iptables
@@ -32,14 +32,14 @@
           bridge ( iptables -m physdev ) which is a really interesting feature.
         -->        
         <td>
-          <select style="width: 9em;" name="rule[][dscp]">
+          <select style="width: 9em;" name="rules[][dscp]">
             <option value=""></option>
             <% OnBoard::Network::QoS::DSCP.each do |dscp| %>
               <option title="<%= dscp[:comment] %>" value="<%= dscp[:value] %>"><%= dscp[:symbol] %>: <%= dscp[:long_name] %></option>
             <% end %>
           </select>
         </td>
-        <% %w{rule[][iif] rule[][oif]}.each do |select_name| %>
+        <% %w{rules[][iif] rules[][oif]}.each do |select_name| %>
           <td>
             <%= 
               erb(
@@ -56,7 +56,7 @@
           </td>
         <% end %>
         <td>
-          <select class="tt" name="rule[][table]">
+          <select class="tt" name="rules[][table]">
             <optgroup label="System Tables">
               <% all_tables['system_tables'].each_pair do |n, tbl| %>
                 <% 
