@@ -10,6 +10,7 @@
     <tr>
       <th>Priority</th>
       <th>Source address/network</th>
+      <th>Destination address/network</th>
       <th title="Quality of Service: Differentiated Service Code Point">
         <a href="http://en.wikipedia.org/wiki/Differentiated_services">QoS: DSCP</a>
       </th>
@@ -23,11 +24,12 @@
       <tr>
         <td><input class="rwtext" name="rule[][prio]" size="6" style="text-align: right;" value="<%= rule.prio %>"/></td>
         <td><input class="rwtext" name="rule[][from]" value="<%= rule.from %>"/></td>
+        <td><input class="rwtext" name="rule[][to]"   value="<%= rule.to %>"  /></td>
         <!-- 
           "iif" and "oif" recall ip rule keywords, but really the process goes
           via iptables mark. Why don't use iproute2 directly? Because iptables
           allow you even to distinguish between different ports inside a 
-          bridge ( iptables -m physdev ) which is a really intersting feature.
+          bridge ( iptables -m physdev ) which is a really interesting feature.
         -->        
         <td>
           <select style="width: 10em;" name="rule[][dscp]">

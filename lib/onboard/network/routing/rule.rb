@@ -7,23 +7,25 @@ class OnBoard
           all = []
           `ip rule show`.each_line do |line|
             if line =~ 
-                /^(\d+):\s+from\s+(\S+)\s+(fwmark\s+(\S+)\s+)?(lookup|table)\s+(\S+)/
+                /^(\d+):\s+from\s+(\S+)(to\s+(\S))?\s+(fwmark\s+(\S+)\s+)?(lookup|table)\s+(\S+)/
               all << self.new(
                 :prio   => $1,
                 :from   => $2,
-                :fwmark => $4,
-                :table  => $6
+                :to     => $4,
+                :fwmark => $6,
+                :table  => $8
               )
             end
           end
           return all
         end
 
-        attr_reader :prio, :from, :table, :fwmark
+        attr_reader :prio, :from, :to, :table, :fwmark
 
         def initialize(h)
           @prio   = h[:prio]
           @from   = h[:from]
+          @to     = h[:to]
           @table  = h[:table]
           @fwmark = h[:fwmark]
         end
@@ -32,6 +34,7 @@ class OnBoard
           {
             'prio'  => @prio,
             'from'  => @from,
+            'to'    => @to,
             'table' => @table
           }
         end

@@ -300,7 +300,7 @@ class OnBoard
         end    
       end
 
-      def bridge?; is_bridge?; end
+      def bridge?; self.is_bridge?; end
 
       def bridged_to
         bridgelink = "/sys/class/net/#@name/brport/bridge"
@@ -314,6 +314,7 @@ class OnBoard
       end
 
       def bridged?; bridged_to; end
+
       def is_bridged?; bridged_to; end
 
       def data
