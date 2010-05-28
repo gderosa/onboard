@@ -10,8 +10,8 @@ class OnBoard
                 /^(\d+):\s+from\s+(\S+)(to\s+(\S))?\s+(fwmark\s+(\S+)\s+)?(lookup|table)\s+(\S+)/
               all << self.new(
                 :prio   => $1,
-                :from   => $2,
-                :to     => $4,
+                :from   => $2 || 'all',
+                :to     => $4 || 'all',
                 :fwmark => $6,
                 :table  => $8
               )
