@@ -35,7 +35,44 @@ class OnBoard
           end
         end
 
+=begin
+
+  FWMarking strategy: 32 bit netfilter MARK
+
+  |________| |________| |________| |________|
+    unused    in if       out if   DSCP + 00  
+
+  Interfaces are considered also as bridge ports ( iptables -m physdev )
+
+  It's assumed no other is making packet mangling, which would led to 
+  unpredictable results...!
+  
+=end
         def self.compute_fwmark(h)
+          mark = 0x00000000
+          # in mangle table, MARK rules are not 'final': parsing continues after a match
+          if h['iif'] =~ /\S/
+            if_mark = nil
+            if_mark_already_used = []
+            physdev_mark = nil
+            physdev_mark_already_used = []
+            `sudo iptables-save -t mangle`.each_line do |line|
+              case line
+              when /-A PREROUTING -i #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+                if_mark = $1
+                next
+              when /-A PREROUTING -i \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+                if_mark_already_used << $1
+                next
+              when /-A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+                physdev_mark = $1
+                next
+              when /-A PREROUTING -m physdev --physdev-in \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+                physdev_mark_already_used << $1
+                next
+              end
+            end
+          end
         end
 
         attr_reader :prio, :from, :to, :table, :fwmark
