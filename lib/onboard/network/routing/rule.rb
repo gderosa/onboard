@@ -53,24 +53,32 @@ class OnBoard
           # in mangle table, MARK rules are not 'final': parsing continues after a match
           if h['iif'] =~ /\S/
             if_mark = nil
-            if_mark_already_used = []
+            if_mark_already_used = [0]
             physdev_mark = nil
-            physdev_mark_already_used = []
+            physdev_mark_already_used = [0]
+            # get info...
             `sudo iptables-save -t mangle`.each_line do |line|
               case line
               when /-A PREROUTING -i #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                if_mark = $1
+                if_mark = $1.to_i(16)
                 next
               when /-A PREROUTING -i \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                if_mark_already_used << $1
+                if_mark_already_used << $1.to_i(16)
                 next
               when /-A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                physdev_mark = $1
+                physdev_mark = $1.to_i(16)
                 next
               when /-A PREROUTING -m physdev --physdev-in \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                physdev_mark_already_used << $1
+                physdev_mark_already_used << $1.to_i(16)
                 next
               end
+            end
+            if_mark_1st_unused      = if_mark_already_used.max      + 1
+            physdev_mark_1st_unused = physdev_mark_already_used.max + 1
+            mark                    = [if_mark_1st_unused, physdev_mark_1st_unused].max
+            if !if_mark and !physdev_mark 
+              msg = System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :use_exceptions
+
             end
           end
         end
