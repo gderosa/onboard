@@ -40,7 +40,7 @@ class OnBoard
   FWMarking strategy: 32 bit netfilter MARK
 
   |________| |________| |________| |________|
-    unused    in if       out if   DSCP + 00  
+   unused/0    in if      out if    DSCP + 00  
 
   Interfaces are considered also as bridge ports ( iptables -m physdev )
 
@@ -49,7 +49,7 @@ class OnBoard
   
 =end
         def self.compute_fwmark(h)
-          mark = 0x00000000
+          mark_iif, mark_oif, mark_dscp = 0x00, 0x00, 0x00
           # in mangle table, MARK rules are not 'final': parsing continues after a match
           if h['iif'] =~ /\S/
             if_mark = nil
@@ -75,13 +75,25 @@ class OnBoard
             end
             if_mark_1st_unused      = if_mark_already_used.max      + 1
             physdev_mark_1st_unused = physdev_mark_already_used.max + 1
-            mark                    = [if_mark_1st_unused, physdev_mark_1st_unused].max
-            if !if_mark and !physdev_mark 
-              System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :raise_exception
-              System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :raise_exception
+            new_mark                = [if_mark_1st_unused, physdev_mark_1st_unused].max
+            if 
+                if_mark.kind_of?      Integer and 
+                physdev_mark.kind_of? Integer and 
+                if_mark >             0       and  
+                physdev_mark >        0       and 
+                if_mark ==            physdev_mark
+
+              mark_iif = if_mark
+
+            else # Now, mangle the mangle table ;-)
+              System::Command.run "iptables -t mangle -D PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", if_mark)}0000/0x00ff0000", :sudo, :raise_exception if if_mark
+              System::Command.run "iptables -t mangle -D PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", physdev_mark)}0000/0x00ff0000", :sudo, :raise_exception if physdev_mark
+              System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000", :sudo, :raise_exception
+              System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000", :sudo, :raise_exception
+              mark_iif = new_mark
             end
-            return sprintf("%02x", mark)
           end
+          return sprintf("00%02x%02x%02x", mark_iif, mark_oif, mark_dscp)
         end
 
         attr_reader :prio, :from, :to, :table, :fwmark
