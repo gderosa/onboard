@@ -79,8 +79,8 @@ class OnBoard
             if !if_mark and !physdev_mark 
               System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :raise_exception
               System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :raise_exception
-
             end
+            return sprintf("%02x", mark)
           end
         end
 
