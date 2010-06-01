@@ -83,7 +83,7 @@ class OnBoard
         stdin.close
         stdout.close
         stderr.close
-        if !msg[:ok] and !opts.include?(:try) and opt.include?(:raise_exception)
+        if !msg[:ok] and !opts.include?(:try) and opts.include?(:raise_exception)
           raise RuntimeError, msg[:err]
         end
         return msg

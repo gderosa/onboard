@@ -77,7 +77,8 @@ class OnBoard
             physdev_mark_1st_unused = physdev_mark_already_used.max + 1
             mark                    = [if_mark_1st_unused, physdev_mark_1st_unused].max
             if !if_mark and !physdev_mark 
-              msg = System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :use_exceptions
+              System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :raise_exception
+              System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", mark)}0000/0x00ff0000", :sudo, :raise_exception
 
             end
           end
