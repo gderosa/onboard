@@ -13,7 +13,7 @@ class OnBoard
                 :prio   => $1,
                 :from   => ($2 || 'all'),
                 :to     => ($4 || 'all'),
-                :fwmark => $6,
+                :fwmark => ($6 || '0x00000000'),
                 :table  => $8
               )
             end
@@ -52,48 +52,69 @@ class OnBoard
           mark_iif, mark_oif, mark_dscp = 0x00, 0x00, 0x00
           # in mangle table, MARK rules are not 'final': parsing continues after a match
           if h['iif'] =~ /\S/
-            if_mark = nil
-            if_mark_already_used = [0]
-            physdev_mark = nil
-            physdev_mark_already_used = [0]
+            detected_if_mark              = nil
+            detected_if_mark_others       = [0]
+            detected_physdev_mark         = nil
+            detected_physdev_mark_others  = [0]
             # get info...
             `sudo iptables-save -t mangle`.each_line do |line|
               case line
               when /-A PREROUTING -i #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                if_mark = $1.to_i(16)
+                detected_if_mark = $1.to_i(16)
                 next
               when /-A PREROUTING -i \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                if_mark_already_used << $1.to_i(16)
+                detected_if_mark_others << $1.to_i(16)
                 next
               when /-A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                physdev_mark = $1.to_i(16)
+                detected_physdev_mark = $1.to_i(16)
                 next
               when /-A PREROUTING -m physdev --physdev-in \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
-                physdev_mark_already_used << $1.to_i(16)
+                detected_physdev_mark_others << $1.to_i(16)
                 next
               end
             end
-            if_mark_1st_unused      = if_mark_already_used.max      + 1
-            physdev_mark_1st_unused = physdev_mark_already_used.max + 1
-            new_mark                = [if_mark_1st_unused, physdev_mark_1st_unused].max
-            if 
-                if_mark.kind_of?      Integer and 
-                physdev_mark.kind_of? Integer and 
-                if_mark >             0       and  
-                physdev_mark >        0       and 
-                if_mark ==            physdev_mark
 
-              mark_iif = if_mark
+            if 
+                detected_if_mark.kind_of?      Integer       and 
+                detected_physdev_mark.kind_of? Integer       and 
+                detected_if_mark >             0             and  
+                detected_physdev_mark >        0             and 
+                detected_if_mark ==            physdev_mark
+
+              mark_iif = detected_if_mark
 
             else # Now, mangle the mangle table ;-)
-              System::Command.run "iptables -t mangle -D PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", if_mark)}0000/0x00ff0000", :sudo, :raise_exception if if_mark
-              System::Command.run "iptables -t mangle -D PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", physdev_mark)}0000/0x00ff0000", :sudo, :raise_exception if physdev_mark
+
+              # delete routing rules and firewall marks which are not compliant 
+              # with our "policy"
+
+              if detected_if_mark
+                System::Command.run "iptables -t mangle -D PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", detected_if_mark)}0000/0x00ff0000", :sudo, :raise_exception if detected_if_mark
+                delete_rules_by_fwmark(:mark => detected_if_mark << 0x100, :mask => 0x00ff0000)
+              end
+              if detected_physdev_mark
+                System::Command.run "iptables -t mangle -D PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", detected_physdev_mark)}0000/0x00ff0000", :sudo, :raise_exception if detected_physdev_mark
+                delete_rules_by_fwmark(:mark => detected_physdev_mark << 0x100, :mask => 0x00ff0000)
+              end
+
+              # find the first available mark
+              new_mark = ( 
+                  (0x00..0xff).to_a - detected_if_mark_others - detected_physdev_others
+              ).min
+ 
               System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000", :sudo, :raise_exception
               System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000", :sudo, :raise_exception
-              mark_iif = new_mark
-            end
+           end
           end
           return sprintf("00%02x%02x%02x", mark_iif, mark_oif, mark_dscp)
+        end
+
+        def self.delete_rules_by_fwmark(h)
+           select_rules_by_fwmark.map{|x|x.del!}  
+        end
+
+        def select_rules_by_fwmark(h)
+          getAll.select{|x| x.fwmark_match(h)} 
         end
 
         attr_reader :prio, :from, :to, :table, :fwmark
@@ -104,6 +125,19 @@ class OnBoard
           @to     = h[:to]
           @table  = h[:table]
           @fwmark = h[:fwmark]
+        end
+
+        def del!
+          System::Commad.run(
+              "ip rule del prio #@prio from #@from to #@to fwmark #@fwmark", 
+              :sudo, :raise_exception
+          )
+        end
+
+        # matches if @fwmark == '0x1234abcd' and 
+        # h == {:mark => 0x0000ab00, :mask => 0x0000ff00}
+        def fwmark_match(h)
+          (@fwmark.to_i(16) | h[:mask]) == h[:mark]
         end
 
         def data
