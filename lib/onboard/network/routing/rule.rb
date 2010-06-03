@@ -27,7 +27,7 @@ class OnBoard
             cmd << "prio  #{rule['prio']} "   if rule['prio']   =~ /\S/
             cmd << "from  #{rule['from']} "   if rule['from']   =~ /\S/
             cmd << "to    #{rule['to']} "     if rule['to']     =~ /\S/
-            fwmark = compute_fwmark(rule) 
+            fwmark = compute_fwmark!(rule) 
             cmd << "fwmark #{fwmark} "        if fwmark
             cmd << "lookup #{rule['table']} " if rule['table']  =~ /\S/
             msg = System::Command.run cmd, :sudo
@@ -48,7 +48,7 @@ class OnBoard
   unpredictable results...!
   
 =end
-        def self.compute_fwmark(h)
+        def self.compute_fwmark!(h)
           mark_iif, mark_oif, mark_dscp = 0x00, 0x00, 0x00
           # in mangle table, MARK rules are not 'final': parsing continues after a match
           if h['iif'] =~ /\S/
@@ -90,11 +90,11 @@ class OnBoard
 
               if detected_if_mark
                 System::Command.run "iptables -t mangle -D PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", detected_if_mark)}0000/0x00ff0000", :sudo, :raise_exception if detected_if_mark
-                delete_rules_by_fwmark(:mark => detected_if_mark << 0x100, :mask => 0x00ff0000)
+                delete_rules_by_fwmark(:mark => detected_if_mark << 2*8, :mask => 0x00ff0000)
               end
               if detected_physdev_mark
                 System::Command.run "iptables -t mangle -D PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", detected_physdev_mark)}0000/0x00ff0000", :sudo, :raise_exception if detected_physdev_mark
-                delete_rules_by_fwmark(:mark => detected_physdev_mark << 0x100, :mask => 0x00ff0000)
+                delete_rules_by_fwmark(:mark => detected_physdev_mark << 2*8, :mask => 0x00ff0000)
               end
 
               # find the first available mark
