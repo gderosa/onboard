@@ -99,21 +99,24 @@ class OnBoard
 
               # find the first available mark
               new_mark = ( 
-                  (0x00..0xff).to_a - detected_if_mark_others - detected_physdev_others
+                  (0x00..0xff).to_a             - 
+                  detected_if_mark_others       - 
+                  detected_physdev_mark_others
               ).min
- 
-              System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000", :sudo, :raise_exception
-              System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000", :sudo, :raise_exception
+
+              comment = " -m comment --comment \"automatically added by #{self.name}\" " 
+              System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000 #{comment}", :sudo, :raise_exception
+              System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000 #{comment}", :sudo, :raise_exception
            end
           end
           return sprintf("00%02x%02x%02x", mark_iif, mark_oif, mark_dscp)
         end
 
         def self.delete_rules_by_fwmark(h)
-           select_rules_by_fwmark.map{|x|x.del!}  
+           select_rules_by_fwmark(h).map{|x| x.del!}  
         end
 
-        def select_rules_by_fwmark(h)
+        def self.select_rules_by_fwmark(h)
           getAll.select{|x| x.fwmark_match(h)} 
         end
 
