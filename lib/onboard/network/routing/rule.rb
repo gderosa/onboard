@@ -59,16 +59,18 @@ class OnBoard
             # get info...
             `sudo iptables-save -t mangle`.each_line do |line|
               case line
-              when /-A PREROUTING -i #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+                # ".*" in regexes refer to possible comments 
+                # e.g. "-m comment --comment ...", or other things...
+              when /-A PREROUTING -i #{h['iif']}.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
                 detected_if_mark = $1.to_i(16)
                 next
-              when /-A PREROUTING -i \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+              when /-A PREROUTING -i \S+.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
                 detected_if_mark_others << $1.to_i(16)
                 next
-              when /-A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+              when /-A PREROUTING -m physdev --physdev-in #{h['iif']}.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
                 detected_physdev_mark = $1.to_i(16)
                 next
-              when /-A PREROUTING -m physdev --physdev-in \S+ -j MARK --set-xmark 0x(..?)0000\/0xff0000/
+              when /-A PREROUTING -m physdev --physdev-in \S+.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
                 detected_physdev_mark_others << $1.to_i(16)
                 next
               end
@@ -79,7 +81,7 @@ class OnBoard
                 detected_physdev_mark.kind_of? Integer       and 
                 detected_if_mark >             0             and  
                 detected_physdev_mark >        0             and 
-                detected_if_mark ==            physdev_mark
+                detected_if_mark ==            detected_physdev_mark
 
               mark_iif = detected_if_mark
 
@@ -87,6 +89,9 @@ class OnBoard
 
               # delete routing rules and firewall marks which are not compliant 
               # with our "policy"
+              #
+              # NOTE: this code is untested for the cases when it actually delete
+              # something....
 
               if detected_if_mark
                 System::Command.run "iptables -t mangle -D PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", detected_if_mark)}0000/0x00ff0000", :sudo, :raise_exception if detected_if_mark
@@ -98,8 +103,10 @@ class OnBoard
               end
 
               # find the first available mark
+              p detected_if_mark_others       # DEBUG
+              p detected_physdev_mark_others  # DEBUG
               new_mark = ( 
-                  (0x00..0xff).to_a             - 
+                  (0x01..0xff).to_a             - 
                   detected_if_mark_others       - 
                   detected_physdev_mark_others
               ).min
