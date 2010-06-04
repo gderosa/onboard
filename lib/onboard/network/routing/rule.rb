@@ -40,7 +40,7 @@ class OnBoard
   FWMarking strategy: 32 bit netfilter MARK
 
   |________| |________| |________| |________|
-   unused/0    in if      out if    DSCP + 00  
+   unused/0    in if     unused/0   DSCP + 00  # "out if" makes no sense...
 
   Interfaces are considered also as bridge ports ( iptables -m physdev )
 
@@ -51,17 +51,17 @@ class OnBoard
         def self.compute_fwmark!(h)
 
           computed_mark = {
-            :iif  => 0x00,
-            :oif  => 0x00,
-            :dscp => 0x00
+            :iif        => 0x00,
+            :iphysdev   => 0x00,
+            :dscp       => 0x00
           }
 
           # TODO: place elsewhere?
-          configuration = {
-            :iif  => { # input interface, also as a brige port
-              :name                       => h['iif'],
-              :ipt_if_switch              => '-i',
-              :ipt_physdev_switch         => '-m physdev --physdev-in',
+          config = {
+            :iif  => { # input interface
+              :skip                       => not(h['iif'] =~ /\S/) 
+              :ipt_match                  => "-i #{h['iif']}",
+              ipt_match_any              => "-m physdev --physdev-in \S+",
               :fwmark                     => {
                 :regex                      => '0x(\h?\h)0000',
                 :mask                       => 0xff0000,
@@ -69,23 +69,21 @@ class OnBoard
                 :bitshift                   => 16 # two bytes
               }
             },
-# This doesn't make sense: to know the output interface we should already have been
-# made the routing decision... :-P
-=begin              
-            :oif => { # output interface, also as a brige port
-              :name                       => h['oif'],
-              :ipt_if_switch              => '-o',
-              :ipt_physdev_switch         => '-m physdev --physdev-out',
+            :iphysdev => { # input bridge port
+              :skip                       => not(h['iif'] =~ /\S/) # same as above...
+              :ipt_match                  => "-m physdev --physdev-in #{h['iif']}",
+              :ipt_match_any              => "-m physdev --physdev-in \S+",
               :fwmark                     => {
-                :regex                      => '0x(\h?\h)00',
-                :mask                       => 0xff00,
-                :mask_str                   => '0xff00',
-                :bitshift                   => 8 # one byte
-              }             
-            },
-=end
+                :regex                      => '0x(\h?\h)0000',
+                :mask                       => 0xff0000,
+                :mask_str                   => '0xff0000',
+                :bitshift                   => 16 # two bytes
+              } # same as above...
+            },             
             :dscp => { # DiffServ Code Points
-              :ipt_switch                 => '-m dscp --dscp',
+              :skip                       => not(h['dscp'] =~ /\S/)
+              :ipt_match                  => "-m dscp --dscp 0x#{h['dscp'].to_s(16)}",
+              :ipt_match_any              => "-m dscp --dscp 0x\S+",
               :fwmark                     => {
                 :regex                      => '0x(\h?\h)',
                 :mask                       => 0xff,
@@ -95,64 +93,59 @@ class OnBoard
             }            
           }
 
-          if_name             = configuration[:iif][:name]
-          ipt_if_switch       = configuration[:iif][:ipt_if_switch]
-          ipt_physdev_switch  = configuration[:iif][:ipt_physdev_switch]
-          fwmark              = configuration[:iif][:fwmark]
+          detected_mark         = {}
+          detected_mark_others  = {}
 
-          if if_name =~ /\S/
-            detected_if_mark              = nil
-            detected_if_mark_others       = [0]
-            detected_physdev_mark         = nil
-            detected_physdev_mark_others  = [0]
-            # get info...
-            `sudo iptables-save -t mangle`.each_line do |line|
+          `sudo iptables-save -t mangle`.each_line do |line|
+
+            [:iif, :iphysdev, :dscp].each do |match_by|
+
+              next if config[match_by][:skip]
+
+              ipt_match = config[match_by][:ipt_match]
+              regex     = config[match_by][:regex]
+              mask_str  = config[match_by][:mask_str]
+
               case line
-                # ".*" in regexes refer to possible comments 
-                # e.g. "-m comment --comment ...", or other things...
-              when /-A PREROUTING #{ipt_if_switch} #{if_name}.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
-                detected_if_mark = $1.to_i(16)
+              when /-A PREROUTING #{ipt_match} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
+                detected_mark[match_by] = $1.to_i(16)
                 next
-              when /-A PREROUTING #{ipt_if_switch} \S+.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
-                detected_if_mark_others << $1.to_i(16)
-                next
-              when /-A PREROUTING #{ipt_physdev_switch} #{if_name}.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
-                detected_physdev_mark = $1.to_i(16)
-                next
-              when /-A PREROUTING #{ipt_physdev_switch} \S+.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
+              when /-A PREROUTING #{ipt_match_any} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
                 detected_physdev_mark_others << $1.to_i(16)
                 next
               end
             end
 
-            if 
-                detected_if_mark.kind_of?      Integer       and 
-                detected_physdev_mark.kind_of? Integer       and 
-                detected_if_mark >             0             and  
-                detected_physdev_mark >        0             and 
-                detected_if_mark ==            detected_physdev_mark
+              if 
+                  detected_if_mark.kind_of?      Integer       and 
+                  detected_physdev_mark.kind_of? Integer       and 
+                  detected_if_mark >             0             and  
+                  detected_physdev_mark >        0             and 
+                  detected_if_mark ==            detected_physdev_mark
 
-              computed_mark[:iif] = detected_if_mark
+                computed_mark[:iif] = detected_if_mark
 
-            elsif
-                detected_if_mark != detected_physdev_mark
-              raise RuntimeError, "Found inconsistence in fw marking!"
-            else 
+              elsif
+                  detected_if_mark != detected_physdev_mark
+                raise RuntimeError, "Found inconsistence in fw marking!"
+              else 
 
-              # find the first available mark
-              computed_mark[:iif] = ( 
-                  (0x01..0xff).to_a             - 
-                  detected_if_mark_others       - 
-                  detected_physdev_mark_others
-              ).min
+                # find the first available mark
+                computed_mark[:iif] = ( 
+                    (0x01..0xff).to_a             - 
+                    detected_if_mark_others       - 
+                    detected_physdev_mark_others
+                ).min
 
-              shifted_mark = computed_mark[:iif] << fwmark[:bitshift] 
+                shifted_mark = computed_mark[:iif] << fwmark[:bitshift] 
 
-              set_mark = "0x#{shifted_mark.to_s(16)}/0x#{fwmark[:mask].to_s(16)}"  
-              comment = "-m comment --comment \"automatically added by #{self.name}\"" 
+                set_mark = "0x#{shifted_mark.to_s(16)}/0x#{fwmark[:mask].to_s(16)}"  
+                comment = "-m comment --comment \"automatically added by #{self.name}\"" 
 
-              System::Command.run "iptables -t mangle -A PREROUTING #{ipt_if_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
-              System::Command.run "iptables -t mangle -A PREROUTING #{ipt_physdev_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
+                System::Command.run "iptables -t mangle -A PREROUTING #{ipt_if_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
+                System::Command.run "iptables -t mangle -A PREROUTING #{ipt_physdev_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
+              end
+
             end
 
           end

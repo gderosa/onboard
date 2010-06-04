@@ -10,12 +10,12 @@
     <tr>
       <th>Priority</th>
       <th>Source address/network</th>
-      <th>Destination address/network</th>
+      <!-- <th>Destination address/network</th> --> <!-- makes little sense... -->
       <th title="Quality of Service: Differentiated Service Code Point">
         <a href="http://en.wikipedia.org/wiki/Differentiated_services">QoS: DSCP</a>
       </th>
       <th>Input Interface</th>
-      <th>Output Interface</th>
+      <!-- <th>Output Interface</th> --> <!-- makes no sense! -->
       <th>Routing Table</th>
     </tr>
   </thead>
@@ -24,9 +24,9 @@
       <tr>
         <td><input class="rwtext" name="rules[][prio]" size="5" style="text-align: right;" value="<%= rule.prio %>"/></td>
         <td><input size="19" class="rwtext" name="rules[][from]" value="<%= rule.from %>"/></td>
-        <td><input size="19" class="rwtext" name="rules[][to]"   value="<%= rule.to %>"  /></td>
+        <!-- <td><input size="19" class="rwtext" name="rules[][to]"   value="<%= rule.to %>"  /></td> --> <!-- makes little sense... -->
         <!-- 
-          "iif" and "oif" recall ip rule keywords, but really the process goes
+          "iif" recalls ip rule keyword, but really the process goes
           via iptables mark. Why don't use iproute2 directly? Because iptables
           allow you even to distinguish between different ports inside a 
           bridge ( iptables -m physdev ) which is a really interesting feature.
@@ -39,22 +39,22 @@
             <% end %>
           </select>
         </td>
-        <% %w{rules[][iif] rules[][oif]}.each do |select_name| %>
-          <td>
-            <%= 
-              erb(
-                :"/network/_interface_chooser.html",
-                {
-                  :layout => false,
-                  :locals => {
-                    :select_name    => select_name,
-                    :all_interfaces => all_interfaces
-                  }
+        
+        <td>
+          <%= 
+            erb(
+              :"/network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name    => 'rules[][iif]',
+                  :all_interfaces => all_interfaces
                 }
-              )
-            %>
-          </td>
-        <% end %>
+              }
+            )
+          %>
+        </td>
+
         <td>
           <select class="tt" name="rules[][table]">
             <optgroup label="System Tables">
