@@ -49,9 +49,58 @@ class OnBoard
   
 =end
         def self.compute_fwmark!(h)
-          mark_iif, mark_oif, mark_dscp = 0x00, 0x00, 0x00
-          # in mangle table, MARK rules are not 'final': parsing continues after a match
-          if h['iif'] =~ /\S/
+
+          computed_mark = {
+            :iif  => 0x00,
+            :oif  => 0x00,
+            :dscp => 0x00
+          }
+
+          # TODO: place elsewhere?
+          configuration = {
+            :iif  => { # input interface, also as a brige port
+              :name                       => h['iif'],
+              :ipt_if_switch              => '-i',
+              :ipt_physdev_switch         => '-m physdev --physdev-in',
+              :fwmark                     => {
+                :regex                      => '0x(\h?\h)0000',
+                :mask                       => 0xff0000,
+                :mask_str                   => '0xff0000',
+                :bitshift                   => 16 # two bytes
+              }
+            },
+# This doesn't make sense: to know the output interface we should already have been
+# made the routing decision... :-P
+=begin              
+            :oif => { # output interface, also as a brige port
+              :name                       => h['oif'],
+              :ipt_if_switch              => '-o',
+              :ipt_physdev_switch         => '-m physdev --physdev-out',
+              :fwmark                     => {
+                :regex                      => '0x(\h?\h)00',
+                :mask                       => 0xff00,
+                :mask_str                   => '0xff00',
+                :bitshift                   => 8 # one byte
+              }             
+            },
+=end
+            :dscp => { # DiffServ Code Points
+              :ipt_switch                 => '-m dscp --dscp',
+              :fwmark                     => {
+                :regex                      => '0x(\h?\h)',
+                :mask                       => 0xff,
+                :mask_str                   => '0xff',
+                :bitshift                   => 0 # last byte
+              }             
+            }            
+          }
+
+          if_name             = configuration[:iif][:name]
+          ipt_if_switch       = configuration[:iif][:ipt_if_switch]
+          ipt_physdev_switch  = configuration[:iif][:ipt_physdev_switch]
+          fwmark              = configuration[:iif][:fwmark]
+
+          if if_name =~ /\S/
             detected_if_mark              = nil
             detected_if_mark_others       = [0]
             detected_physdev_mark         = nil
@@ -61,16 +110,16 @@ class OnBoard
               case line
                 # ".*" in regexes refer to possible comments 
                 # e.g. "-m comment --comment ...", or other things...
-              when /-A PREROUTING -i #{h['iif']}.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
+              when /-A PREROUTING #{ipt_if_switch} #{if_name}.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
                 detected_if_mark = $1.to_i(16)
                 next
-              when /-A PREROUTING -i \S+.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
+              when /-A PREROUTING #{ipt_if_switch} \S+.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
                 detected_if_mark_others << $1.to_i(16)
                 next
-              when /-A PREROUTING -m physdev --physdev-in #{h['iif']}.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
+              when /-A PREROUTING #{ipt_physdev_switch} #{if_name}.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
                 detected_physdev_mark = $1.to_i(16)
                 next
-              when /-A PREROUTING -m physdev --physdev-in \S+.*-j MARK --set-xmark 0x(..?)0000\/0xff0000/
+              when /-A PREROUTING #{ipt_physdev_switch} \S+.*-j MARK --set-xmark #{fwmark[:regex]}\/#{fwmark[:mask_str]}/
                 detected_physdev_mark_others << $1.to_i(16)
                 next
               end
@@ -83,40 +132,31 @@ class OnBoard
                 detected_physdev_mark >        0             and 
                 detected_if_mark ==            detected_physdev_mark
 
-              mark_iif = detected_if_mark
+              computed_mark[:iif] = detected_if_mark
 
-            else # Now, mangle the mangle table ;-)
-
-              # delete routing rules and firewall marks which are not compliant 
-              # with our "policy"
-              #
-              # NOTE: this code is untested for the cases when it actually delete
-              # something....
-
-              if detected_if_mark
-                System::Command.run "iptables -t mangle -D PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", detected_if_mark)}0000/0x00ff0000", :sudo, :raise_exception if detected_if_mark
-                delete_rules_by_fwmark(:mark => detected_if_mark << 2*8, :mask => 0x00ff0000)
-              end
-              if detected_physdev_mark
-                System::Command.run "iptables -t mangle -D PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", detected_physdev_mark)}0000/0x00ff0000", :sudo, :raise_exception if detected_physdev_mark
-                delete_rules_by_fwmark(:mark => detected_physdev_mark << 2*8, :mask => 0x00ff0000)
-              end
+            elsif
+                detected_if_mark != detected_physdev_mark
+              raise RuntimeError, "Found inconsistence in fw marking!"
+            else 
 
               # find the first available mark
-              p detected_if_mark_others       # DEBUG
-              p detected_physdev_mark_others  # DEBUG
-              new_mark = ( 
+              computed_mark[:iif] = ( 
                   (0x01..0xff).to_a             - 
                   detected_if_mark_others       - 
                   detected_physdev_mark_others
               ).min
 
-              comment = " -m comment --comment \"automatically added by #{self.name}\" " 
-              System::Command.run "iptables -t mangle -A PREROUTING -i #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000 #{comment}", :sudo, :raise_exception
-              System::Command.run "iptables -t mangle -A PREROUTING -m physdev --physdev-in #{h['iif']} -j MARK --set-mark 0x00#{sprintf("%02x", new_mark)}0000/0x00ff0000 #{comment}", :sudo, :raise_exception
-           end
+              shifted_mark = computed_mark[:iif] << fwmark[:bitshift] 
+
+              set_mark = "0x#{shifted_mark.to_s(16)}/0x#{fwmark[:mask].to_s(16)}"  
+              comment = "-m comment --comment \"automatically added by #{self.name}\"" 
+
+              System::Command.run "iptables -t mangle -A PREROUTING #{ipt_if_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
+              System::Command.run "iptables -t mangle -A PREROUTING #{ipt_physdev_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
+            end
+
           end
-          return sprintf("00%02x%02x%02x", mark_iif, mark_oif, mark_dscp)
+          
         end
 
         def self.delete_rules_by_fwmark(h)
