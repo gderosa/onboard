@@ -1,3 +1,5 @@
+require 'onboard/extensions/string'
+
 class OnBoard
   module Network
     module Routing
@@ -28,7 +30,7 @@ class OnBoard
             cmd << "from  #{rule['from']} "   if rule['from']   =~ /\S/
             cmd << "to    #{rule['to']} "     if rule['to']     =~ /\S/
             fwmark = compute_fwmark!(rule) 
-            cmd << "fwmark #{fwmark} "        if fwmark
+            cmd << "fwmark #{fwmark} "        if fwmark and fwmark > 0
             cmd << "lookup #{rule['table']} " if rule['table']  =~ /\S/
             msg = System::Command.run cmd, :sudo
             return msg if msg[:err] 
@@ -59,97 +61,124 @@ class OnBoard
           # TODO: place elsewhere?
           config = {
             :iif  => { # input interface
-              :skip                       => not(h['iif'] =~ /\S/) 
-              :ipt_match                  => "-i #{h['iif']}",
-              ipt_match_any              => "-m physdev --physdev-in \S+",
+              :value                      => h['iif'], 
+              :ipt_switch                 => '-i',
               :fwmark                     => {
                 :regex                      => '0x(\h?\h)0000',
                 :mask                       => 0xff0000,
                 :mask_str                   => '0xff0000',
                 :bitshift                   => 16 # two bytes
-              }
+              },
             },
             :iphysdev => { # input bridge port
-              :skip                       => not(h['iif'] =~ /\S/) # same as above...
-              :ipt_match                  => "-m physdev --physdev-in #{h['iif']}",
-              :ipt_match_any              => "-m physdev --physdev-in \S+",
+              :value                      => h['iif'], # same as iif...
+              :ipt_switch                 => "-m physdev --physdev-in",
               :fwmark                     => {
                 :regex                      => '0x(\h?\h)0000',
                 :mask                       => 0xff0000,
                 :mask_str                   => '0xff0000',
                 :bitshift                   => 16 # two bytes
-              } # same as above...
+              }, # same as above...
             },             
             :dscp => { # DiffServ Code Points
-              :skip                       => not(h['dscp'] =~ /\S/)
-              :ipt_match                  => "-m dscp --dscp 0x#{h['dscp'].to_s(16)}",
-              :ipt_match_any              => "-m dscp --dscp 0x\S+",
+              :value                      => h['dscp'].to_i,
+              :ipt_switch                 => "-m dscp --dscp",
               :fwmark                     => {
                 :regex                      => '0x(\h?\h)',
                 :mask                       => 0xff,
                 :mask_str                   => '0xff',
                 :bitshift                   => 0 # last byte
-              }             
+              }
             }            
           }
 
           detected_mark         = {}
           detected_mark_others  = {}
 
-          `sudo iptables-save -t mangle`.each_line do |line|
+          [:iif, :iphysdev, :dscp].each do |match_by|
 
-            [:iif, :iphysdev, :dscp].each do |match_by|
+            detected_mark_others[match_by] ||= [] # initialize as empty Array
+            value         = config[match_by][:value] 
+                # iterface name, dscp value etc.
+              
+            next if value.kind_of? Integer  and value == 0
+            next if value.kind_of? String   and value =~ /^\s*$/
+              
+            pp match_by
+            ipt_switch    = config[match_by][:ipt_switch]              
+            ipt_match     = "#{ipt_switch} #{value}"
+            ipt_match_any = "#{ipt_switch} (\\S+)"
+            fwmark        = config[match_by][:fwmark]
+            regex         = fwmark[:regex]
+            mask_str      = fwmark[:mask_str]
+            bitshift      = fwmark[:bitshift]
 
-              next if config[match_by][:skip]
+            `sudo iptables-save -t mangle`.each_line do |line|
 
-              ipt_match = config[match_by][:ipt_match]
-              regex     = config[match_by][:regex]
-              mask_str  = config[match_by][:mask_str]
+              re = 
+/-A PREROUTING #{ipt_match} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
+              re_any =
+/-A PREROUTING #{ipt_match_any} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
 
-              case line
-              when /-A PREROUTING #{ipt_match} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
+#NOTE: ipt_match_any contains a capture, while ipt_match not
+
+              if line =~ re
                 detected_mark[match_by] = $1.to_i(16)
-                next
-              when /-A PREROUTING #{ipt_match_any} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
-                detected_physdev_mark_others << $1.to_i(16)
-                next
+              elsif line =~ re_any
+                if value == $1.to_i and value.kind_of? Integer
+                  detected_mark[match_by] = $2.to_i(16)
+                else
+                  detected_mark_others[match_by] << $2.to_i(16)
+                end
               end
+
             end
 
-              if 
-                  detected_if_mark.kind_of?      Integer       and 
-                  detected_physdev_mark.kind_of? Integer       and 
-                  detected_if_mark >             0             and  
-                  detected_physdev_mark >        0             and 
-                  detected_if_mark ==            detected_physdev_mark
+            if 
+                detected_mark[match_by].kind_of?  Integer and 
+                detected_mark[match_by] >         0               
 
-                computed_mark[:iif] = detected_if_mark
+              computed_mark[match_by] = detected_mark[match_by]
 
-              elsif
-                  detected_if_mark != detected_physdev_mark
-                raise RuntimeError, "Found inconsistence in fw marking!"
-              else 
+            else 
 
+              if match_by == :dscp # DSCP is special, no need to create a "map"
+                #
+                # unfortunately to_i is not smart enough:
+                #
+                #   "0xff".to_i #=> 0
+                #
+                case value
+                when Integer
+                  computed_mark[match_by] = value
+                when /^0x(\h*)/
+                  computed_mark[match_by] = value.to_i(16)
+                else
+                  computed_mark[match_by] = value.to_i
+                end
+              else
                 # find the first available mark
-                computed_mark[:iif] = ( 
-                    (0x01..0xff).to_a             - 
-                    detected_if_mark_others       - 
-                    detected_physdev_mark_others
+                computed_mark[match_by] = ( 
+                    (0x01..0xff).to_a               - 
+                    detected_mark_others[match_by]   
                 ).min
-
-                shifted_mark = computed_mark[:iif] << fwmark[:bitshift] 
-
-                set_mark = "0x#{shifted_mark.to_s(16)}/0x#{fwmark[:mask].to_s(16)}"  
-                comment = "-m comment --comment \"automatically added by #{self.name}\"" 
-
-                System::Command.run "iptables -t mangle -A PREROUTING #{ipt_if_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
-                System::Command.run "iptables -t mangle -A PREROUTING #{ipt_physdev_switch} #{if_name} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
               end
 
+              shifted_mark = computed_mark[match_by] << bitshift
+              set_mark = "0x#{shifted_mark.to_s(16)}/0x#{fwmark[:mask].to_s(16)}"  
+              comment = "-m comment --comment \"automatically added by #{self.name}\"" 
+              
+              System::Command.run "iptables -t mangle -A PREROUTING #{ipt_match} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
             end
 
           end
-          
+
+          sum = 0x00000000 # 32 bits fw mark
+          computed_mark.each_pair do |match_by, val|
+            sum += (val << config[match_by][:fwmark][:bitshift])
+          end
+          return sum
+
         end
 
         def self.delete_rules_by_fwmark(h)
