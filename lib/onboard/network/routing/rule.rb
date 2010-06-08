@@ -189,7 +189,7 @@ class OnBoard
           getAll.select{|x| x.fwmark_match(h)} 
         end
 
-        attr_reader :prio, :from, :to, :table, :fwmark
+        attr_reader :prio, :from, :to, :table, :fwmark, :iif, :dscp
 
         def initialize(h)
           @prio   = h[:prio]
@@ -197,6 +197,8 @@ class OnBoard
           @to     = h[:to]
           @table  = h[:table]
           @fwmark = h[:fwmark]
+          @iif    = find_iif
+          @dscp   = find_dscp
         end
 
         def del!
@@ -217,8 +219,16 @@ class OnBoard
             'prio'  => @prio,
             'from'  => @from,
             'to'    => @to,
-            'table' => @table
+            'table' => @table,
+            'iif'   => @iif.to_s,
+            'dscp'  => @dscp
           }
+        end
+
+        def find_iif
+        end
+
+        def find_dscp
         end
 
       end

@@ -36,8 +36,12 @@ class OnBoard
         CS6             = 0b110000  # Cisco routing/internetworking
         CS7             = 0b111000  # Cisco "Network Control"
 
+        VOICE_ADMIT     = 0b101100  # RFC5865
+
         EF = ExpeditedForwarding \
                         = 0b101110  # Expedited Forwarding!                   # VoIP:voice
+
+
 
         # An Array because there's a preferred/logical order
 
@@ -199,6 +203,15 @@ class OnBoard
             :symbol       => :CS7,
             :comment      => 'Cisco “network control”'
           },
+
+          {
+            :value        => VOICE_ADMIT,
+            :short_name   => 'VOICE-ADMIT',
+            :long_name    => 'Capacity-Admitted Traffic',
+            :symbol       => :"VOICE-ADMIT",
+            :comment      => 'Capacity-Admitted Traffic'
+          },
+         
 
           {
             :value        => EF,
