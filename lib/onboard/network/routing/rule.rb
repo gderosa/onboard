@@ -143,19 +143,9 @@ class OnBoard
             else 
 
               if match_by == :dscp # DSCP is special, no need to create a "map"
-                #
-                # unfortunately to_i is not smart enough:
-                #
-                #   "0xff".to_i #=> 0
-                #
-                case value
-                when Integer
-                  computed_mark[match_by] = value
-                when /^0x(\h*)/
-                  computed_mark[match_by] = value.to_i(16)
-                else
-                  computed_mark[match_by] = value.to_i
-                end
+
+                computed_mark[match_by] = value.to_i # use our String#to_i extension
+
               else
                 # find the first available mark
                 computed_mark[match_by] = ( 
