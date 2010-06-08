@@ -164,11 +164,15 @@ class OnBoard
 
           end
 
-          sum = 0x00000000 # 32 bits fw mark
+          retval = 0x00000000 # 32 bits fw mark
           computed_mark.each_pair do |match_by, val|
-            sum += (val << config[match_by][:fwmark][:bitshift])
+            # bitwise mask ? set : orig
+            orig    = retval
+            mask    = config[match_by][:fwmark][:mask]
+            set     = val << config[match_by][:fwmark][:bitshift]
+            retval  = (mask & set) | ( (0xffffffff - mask) & orig )
           end
-          return sum
+          return retval
 
         end
 
@@ -252,23 +256,6 @@ class OnBoard
                 :mark     => $2.to_i,
                 :mask     => $3.to_i
               }
-
-              # DEBUG
-              print <<EOF
----
-"#{line}"              
-"#{detected[:iphysdev]}"              
-@fwmark                           = 0x#{@fwmark.to_i.to_s(16)}
-detected[:mask]                   = 0x#{detected[:mask].to_s(16)} 
-@fwmark.to_i & detected[:mask]    = 0x#{(@fwmark.to_i & detected[:mask]).to_s(16)}
-+
-detected[:mark]                   = 0x#{detected[:mark].to_s(16)}
-detected[:mask]                   = 0x#{detected[:mask].to_s(16)}
-detected[:mark] & detected[:mask] = 0x#{(detected[:mark] & detected[:mask]).to_s(16)}
----
-EOF
-
-              # DEBUG
 
               if (@fwmark.to_i & detected[:mask]) == (detected[:mark] & detected[:mask]) 
                 retval[:iphysdev] = detected[:iphysdev] 
