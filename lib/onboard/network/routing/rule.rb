@@ -15,7 +15,7 @@ class OnBoard
                 :prio   => $1,
                 :from   => ($2 || 'all'),
                 :to     => ($4 || 'all'),
-                :fwmark => ($6 || '0x00000000'),
+                :fwmark => $6,
                 :table  => $8
               )
             end
@@ -58,7 +58,9 @@ class OnBoard
             :dscp       => 0x00
           }
 
-          # TODO: place elsewhere?
+          # TODO: Don't play with iptables here. Create useful methods under
+          # Network::Iptables namespace, instead. And use it!
+
           config = {
             :iif  => { # input interface
               :value                      => h['iif'], 
@@ -104,7 +106,6 @@ class OnBoard
             next if value.kind_of? Integer  and value == 0
             next if value.kind_of? String   and value =~ /^\s*$/
               
-            pp match_by
             ipt_switch    = config[match_by][:ipt_switch]              
             ipt_match     = "#{ipt_switch} #{value}"
             ipt_match_any = "#{ipt_switch} (\\S+)"
@@ -179,16 +180,20 @@ class OnBoard
           getAll.select{|x| x.fwmark_match(h)} 
         end
 
-        attr_reader :prio, :from, :to, :table, :fwmark, :iif, :dscp
+        attr_reader :prio, :from, :to, :table, :fwmark, :iif, :iphysdev, :dscp
 
         def initialize(h)
-          @prio   = h[:prio]
-          @from   = h[:from]
-          @to     = h[:to]
-          @table  = h[:table]
-          @fwmark = h[:fwmark]
-          @iif    = find_iif
-          @dscp   = find_dscp
+          @prio     = h[:prio]
+          @from     = h[:from]
+          @to       = h[:to]
+          @table    = h[:table]
+          @fwmark   = h[:fwmark]
+
+          info      = find_info_from_fwmark
+
+          @iif      = info[:iif]
+          @iphysdev = info[:iphysdev]
+          @dscp     = info[:dscp]
         end
 
         def del!
@@ -201,24 +206,79 @@ class OnBoard
         # matches if @fwmark == '0x1234abcd' and 
         # h == {:mark => 0x0000ab00, :mask => 0x0000ff00}
         def fwmark_match(h)
-          (@fwmark.to_i(16) | h[:mask]) == h[:mark]
+          (@fwmark.to_i(16) & h[:mask]) == h[:mark]
         end
 
         def data
           {
-            'prio'  => @prio,
-            'from'  => @from,
-            'to'    => @to,
-            'table' => @table,
-            'iif'   => @iif.to_s,
-            'dscp'  => @dscp
+            'prio'      => @prio,
+            'from'      => @from,
+            'to'        => @to,
+            'table'     => @table,
+            'iif'       => @iif,
+            'iphysdev'  => @iphysdev,
+            'dscp'      => @dscp
           }
         end
 
-        def find_iif
-        end
+        def find_info_from_fwmark
 
-        def find_dscp
+          retval = {
+            :dscp     => nil,
+            :iif      => nil,
+            :iphysdev => nil
+          }
+
+          return retval unless @fwmark.to_i > 0
+
+          `sudo iptables-save -t mangle`.each_line do |line|
+
+            if line =~ /-m dscp .*--dscp (\S+) .*-j MARK .*--set-x?mark (0x\h+)\/(0x\h+)/
+              detected = {
+                :dscp => $1.to_i,
+                :mark => $2.to_i,
+                :mask => $3.to_i
+              }
+
+              if (@fwmark.to_i & detected[:mask]) == (detected[:mark] & detected[:mask]) 
+                retval[:dscp] = detected[:dscp] 
+              end
+            end
+
+            if line =~ 
+/-m physdev .*--physdev-in (\S+) .*-j MARK .*--set-x?mark (0x\h+)\/(0x\h+)/
+              detected = {
+                :iphysdev => $1,
+                :mark     => $2.to_i,
+                :mask     => $3.to_i
+              }
+
+              # DEBUG
+              print <<EOF
+---
+"#{line}"              
+"#{detected[:iphysdev]}"              
+@fwmark                           = 0x#{@fwmark.to_i.to_s(16)}
+detected[:mask]                   = 0x#{detected[:mask].to_s(16)} 
+@fwmark.to_i & detected[:mask]    = 0x#{(@fwmark.to_i & detected[:mask]).to_s(16)}
++
+detected[:mark]                   = 0x#{detected[:mark].to_s(16)}
+detected[:mask]                   = 0x#{detected[:mask].to_s(16)}
+detected[:mark] & detected[:mask] = 0x#{(detected[:mark] & detected[:mask]).to_s(16)}
+---
+EOF
+
+              # DEBUG
+
+              if (@fwmark.to_i & detected[:mask]) == (detected[:mark] & detected[:mask]) 
+                retval[:iphysdev] = detected[:iphysdev] 
+              end
+            end
+
+          end
+
+          return retval
+
         end
 
       end
