@@ -3,6 +3,7 @@
 
   require 'onboard/network/routing'
   require 'onboard/network/qos/diffserv'
+  require 'onboard/extensions/string' # a "smarter" to_i 
 %>
 
 <table>
@@ -35,7 +36,7 @@
           <select style="width: 9em;" name="rules[][dscp]">
             <option value=""></option>
             <% OnBoard::Network::QoS::DSCP.each do |dscp| %>
-              <option title="<%= dscp[:comment] %>" value="<%= dscp[:value] %>"><%= dscp[:symbol] %>: <%= dscp[:long_name] %></option>
+              <option title="<%= dscp[:comment] %>" value="<%= dscp[:value] %>" <%= 'selected' if dscp[:value] == rule.dscp %>><%= dscp[:symbol] %>: <%= dscp[:long_name] %></option>
             <% end %>
           </select>
         </td>
@@ -47,9 +48,10 @@
               {
                 :layout => false,
                 :locals => {
-                  :select_name        => 'rules[][iif]',
-                  :all_interfaces     => all_interfaces.reject{|x| x.bridged?},
-                  :print_bridge_info  => true
+                  :select_name          => 'rules[][iif]',
+                  :all_interfaces       => all_interfaces.reject{|x| x.bridged?},
+                  :selected_if          => lambda {|x| x.name == rule.iif}, 
+                  :print_bridge_info    => true
                 }
               }
             )  # display IP interfaces, including bridges, but not bridge ports
@@ -62,9 +64,10 @@
               {
                 :layout => false,
                 :locals => {
-                  :select_name        => 'rules[][iphysdev]',
-                  :all_interfaces     => all_interfaces.select{|x| x.bridged?},
-                  :print_bridge_info  => true
+                  :select_name          => 'rules[][iphysdev]',
+                  :all_interfaces       => all_interfaces.select{|x| x.bridged?},
+                  :selected_if          => lambda {|x| x.name == rule.iphysdev},
+                  :print_bridge_info    => true
                 }
               }
             ) 
