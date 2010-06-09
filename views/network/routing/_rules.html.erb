@@ -15,7 +15,7 @@
         <a href="http://en.wikipedia.org/wiki/Differentiated_services">QoS: DSCP</a>
       </th>
       <th>Input Interface</th>
-      <!-- <th>Output Interface</th> --> <!-- makes no sense! -->
+      <th>Input Bridge Port</th> 
       <th>Routing Table</th>
     </tr>
   </thead>
@@ -47,11 +47,27 @@
               {
                 :layout => false,
                 :locals => {
-                  :select_name    => 'rules[][iif]',
-                  :all_interfaces => all_interfaces
+                  :select_name        => 'rules[][iif]',
+                  :all_interfaces     => all_interfaces.reject{|x| x.bridged?},
+                  :print_bridge_info  => true
                 }
               }
-            )
+            )  # display IP interfaces, including bridges, but not bridge ports
+          %>
+        </td>
+        <td>
+          <%= 
+            erb(
+              :"/network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name        => 'rules[][iphysdev]',
+                  :all_interfaces     => all_interfaces.select{|x| x.bridged?},
+                  :print_bridge_info  => true
+                }
+              }
+            ) 
           %>
         </td>
 

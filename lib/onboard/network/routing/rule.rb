@@ -9,14 +9,15 @@ class OnBoard
           all = []
           `ip rule show`.each_line do |line|
             if line =~ 
-                /^(\d+):\s+from\s+(\S+)(\s+to\s+(\S+))?(\s+fwmark\s+(\S+))?\s+(lookup|table)\s+(\S+)/
-#                /^(\d+):\s+from\s+(\S+)(\s+to\s+(\S))?\s+(lookup|table)\s+(\S+)/
+                /^(\d+):\s+from\s+(\S+)(\s+to\s+(\S+))?(\s+fwmark\s+(\S+))?(\s+iif\s+(\S+))?\s+(lookup|table)\s+(\S+)/
+              #puts line
               all << self.new(
                 :prio   => $1,
                 :from   => ($2 || 'all'),
                 :to     => ($4 || 'all'),
                 :fwmark => $6,
-                :table  => $8
+                :iif    => $8,
+                :table  => $10
               )
             end
           end
@@ -29,6 +30,7 @@ class OnBoard
             cmd << "prio  #{rule['prio']} "   if rule['prio']   =~ /\S/
             cmd << "from  #{rule['from']} "   if rule['from']   =~ /\S/
             cmd << "to    #{rule['to']} "     if rule['to']     =~ /\S/
+            cmd << "iif   #{rule['iif']} "    if rule['iif']    =~ /\S/
             fwmark = compute_fwmark!(rule) 
             cmd << "fwmark #{fwmark} "        if fwmark and fwmark > 0
             cmd << "lookup #{rule['table']} " if rule['table']  =~ /\S/
@@ -42,9 +44,7 @@ class OnBoard
   FWMarking strategy: 32 bit netfilter MARK
 
   |________| |________| |________| |________|
-   unused/0    in if     unused/0   DSCP + 00  # "out if" makes no sense...
-
-  Interfaces are considered also as bridge ports ( iptables -m physdev )
+   unused/0   iphysdev   unused/0   DSCP + 00  # physdev = bridge port
 
   It's assumed no other is making packet mangling, which would led to 
   unpredictable results...!
@@ -53,7 +53,6 @@ class OnBoard
         def self.compute_fwmark!(h)
 
           computed_mark = {
-            :iif        => 0x00,
             :iphysdev   => 0x00,
             :dscp       => 0x00
           }
@@ -62,18 +61,8 @@ class OnBoard
           # Network::Iptables namespace, instead. And use it!
 
           config = {
-            :iif  => { # input interface
-              :value                      => h['iif'], 
-              :ipt_switch                 => '-i',
-              :fwmark                     => {
-                :regex                      => '0x(\h?\h)0000',
-                :mask                       => 0xff0000,
-                :mask_str                   => '0xff0000',
-                :bitshift                   => 16 # two bytes
-              },
-            },
             :iphysdev => { # input bridge port
-              :value                      => h['iif'], # same as iif...
+              :value                      => h['iphysdev'], # same as iif...
               :ipt_switch                 => "-m physdev --physdev-in",
               :fwmark                     => {
                 :regex                      => '0x(\h?\h)0000',
@@ -97,7 +86,7 @@ class OnBoard
           detected_mark         = {}
           detected_mark_others  = {}
 
-          [:iif, :iphysdev, :dscp].each do |match_by|
+          [:iphysdev, :dscp].each do |match_by|
 
             detected_mark_others[match_by] ||= [] # initialize as empty Array
             value         = config[match_by][:value] 
@@ -145,7 +134,13 @@ class OnBoard
 
               if match_by == :dscp # DSCP is special, no need to create a "map"
 
-                computed_mark[match_by] = value.to_i # use our String#to_i extension
+                computed_mark[match_by] = (value.to_i << 2) 
+                # DS FIELD bits = DSCP(6 bits) + ECN(2 bits)
+                # fw mark "byte" will be identical to a DS field with ECN bits
+                # set to zero, hence the bitshift "<< 2" 
+                #
+                # Last two bits will be used when a ECN match will be 
+                # desired/implemented, so they are reserved for future use.
 
               else
                 # find the first available mark
@@ -192,26 +187,21 @@ class OnBoard
           @to       = h[:to]
           @table    = h[:table]
           @fwmark   = h[:fwmark]
+          @iif      = h[:iif]
 
           info      = find_info_from_fwmark
 
-          @iif      = info[:iif]
           @iphysdev = info[:iphysdev]
           @dscp     = info[:dscp]
         end
 
-        def del!
-          System::Commad.run(
-              "ip rule del prio #@prio from #@from to #@to fwmark #@fwmark", 
-              :sudo, :raise_exception
-          )
-        end
-
+=begin        
         # matches if @fwmark == '0x1234abcd' and 
         # h == {:mark => 0x0000ab00, :mask => 0x0000ff00}
         def fwmark_match(h)
           (@fwmark.to_i(16) & h[:mask]) == h[:mark]
         end
+=end
 
         def data
           {
@@ -229,7 +219,6 @@ class OnBoard
 
           retval = {
             :dscp     => nil,
-            :iif      => nil,
             :iphysdev => nil
           }
 

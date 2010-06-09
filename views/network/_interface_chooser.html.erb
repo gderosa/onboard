@@ -8,12 +8,13 @@
               <option value=""></option>
               <% all_interfaces.each do |iface| %>
                 <%
-                  str = ""
-                  str = "(bridge)" if iface.bridge?
-                  str = "(bridge port)" if iface.bridged?
-                  optional_bridge_info_str = str
+                  bridge_info = nil
+                  if local_variables.include? :print_bridge_info and print_bridge_info
+                    bridge_info = "(bridge)" if iface.bridge?
+                    bridge_info = "(bridge port -> #{iface.bridged_to})" if iface.bridged?
+                  end
                 %>
-                <option value="<%= iface.name %>"><%= iface.name %> <%= optional_bridge_info_str %></option>
+              <option value="<%= iface.name %>"><%= iface.name %><% if bridge_info %> <%= bridge_info %><% end %></option>
               <% end %>
             </select>
 
