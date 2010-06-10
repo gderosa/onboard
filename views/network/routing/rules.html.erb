@@ -40,7 +40,8 @@
       :locals => {
         :all_tables     => all_tables,
         :all_interfaces => all_interfaces,
-        :all_rules      => all_rules
+        :all_rules      => all_rules,
+        :show_delete_checkbox => true
       }
     }
   )    
@@ -58,8 +59,8 @@
         :locals => {
           :all_tables     => all_tables,
           :all_interfaces => all_interfaces,
-          :all_rules      => [ 
-            OnBoard::Network::Routing::Rule.new( { # blank slate
+          :all_rules      => [ # Array of just one element:
+            OnBoard::Network::Routing::Rule.new( { # a "blank" Routing::Rule object
               :prio   => nil,
               :from   => 'all',
               :to     => 'all',

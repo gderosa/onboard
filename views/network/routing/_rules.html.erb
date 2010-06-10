@@ -4,6 +4,9 @@
   require 'onboard/network/routing'
   require 'onboard/network/qos/diffserv'
   require 'onboard/extensions/string' # a "smarter" to_i 
+
+  show_delete_checkbox ||= false
+
 %>
 
 <table>
@@ -18,6 +21,9 @@
       <th>Input Interface</th>
       <th>Input Bridge Port</th> 
       <th>Routing Table</th>
+      <% if show_delete_checkbox %>
+        <th>Delete?</th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -91,6 +97,11 @@
             </optgroup>  
           </select>
         </td>
+        <% if show_delete_checkbox %>
+          <td style="text-align: center;">
+            <input type="checkbox" name="rule[][delete]"/>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
