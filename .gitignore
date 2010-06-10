@@ -9,4 +9,9 @@ serial
 *.log
 *.off
 index.txt
-
+etc/config/network/dnsmasq/dhcp.conf
+etc/config/network/dnsmasq/dns.conf
+etc/config/network/dnsmasq/new/
+etc/config/network/ip6tables.save
+etc/config/network/iptables.save
+etc/config/network/routing/rt_tables
