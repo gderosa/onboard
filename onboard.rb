@@ -81,7 +81,18 @@ class OnBoard
       restore_scripts.each do |script|
         print "loading: #{script}... "
         STDOUT.flush
-        load script and puts "OK"
+        begin
+          load script and puts "OK"
+        rescue
+          exception = $!
+
+          puts exception.inspect
+
+          LOGGER.error "loading #{script}: #{exception.inspect}"
+          backtrace_str = "Exception backtrace follows:"
+          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          LOGGER.error backtrace_str
+        end
       end
     end
 
