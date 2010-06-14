@@ -31,22 +31,24 @@
 %>
 
 <h3>Current rules</h3>
-
-<%=
-  erb(
-    :"network/routing/_rules.html",
-    {
-      :layout => false,
-      :locals => {
-        :all_tables     => all_tables,
-        :all_interfaces => all_interfaces,
-        :all_rules      => all_rules,
-        :show_delete_checkbox => true
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <%=
+    erb(
+      :"network/routing/_rules.html",
+      {
+        :layout => false,
+        :locals => {
+          :all_tables     => all_tables,
+          :all_interfaces => all_interfaces,
+          :all_rules      => all_rules,
+          :show_delete_checkbox => true
+        }
       }
-    }
-  )    
-%>
-<button type="submit">Change</button> 
+    )    
+  %>
+  <button type="submit">Change</button> 
+</form>
 
 <h3>Add a new rule</h3>
 

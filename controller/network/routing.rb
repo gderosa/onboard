@@ -72,7 +72,19 @@ class OnBoard::Controller
     )
   end
  
-
+  put "/network/routing/rules.:format" do
+    msg = OnBoard::Network::Routing::Rule.change_from_HTTP_request(
+      :http_params    => params,
+      :current_rules  => OnBoard::Network::Routing::Rule.getAll
+    )
+    format(
+      :path     => 'network/routing/rules',
+      :format   => params[:format],
+      :objects  => OnBoard::Network::Routing::Rule.getAll,
+      :msg      => msg
+    )
+  end
+ 
   get "/network/routing/tables/:table.:format" do
     begin
       format(
