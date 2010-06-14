@@ -5,6 +5,8 @@ class OnBoard
   module System
     module Command
 
+      class RuntimeError < ::RuntimeError; end
+
       def self.bgexec(cmd, *opts)
         msg = {:background => true}
         if opts.include? :sudo and ::Process.uid != 0
@@ -81,6 +83,9 @@ class OnBoard
         stdin.close
         stdout.close
         stderr.close
+        if !msg[:ok] and !opts.include?(:try) and opts.include?(:raise_exception)
+          raise RuntimeError, msg[:err]
+        end
         return msg
       end
 

@@ -10,7 +10,8 @@ class OnBoard
 
       def self.save
         %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
-          FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}"
+          FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}" if
+              File.exists? "#{CONFDIR}/new/#{file}"
         end
       end
 

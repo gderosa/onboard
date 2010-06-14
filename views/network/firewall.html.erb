@@ -3,8 +3,7 @@
 
   require 'onboard/network/interface'
 
-  all_interfaces = OnBoard::Network::Interface.getAll_layer3
-  interface_names = all_interfaces.map {|x| x.name} 
+  all_interfaces = OnBoard::Network::Interface.getAll
 
   iptablesobj       = objects
 
@@ -110,6 +109,17 @@
 <h3>Add a new rule</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
+
+  <% 
+    all_interfaces.each do |netif|
+      if netif.bridged_to
+        %>
+          <input type="hidden" name="bridge_ports[]" value="<%= netif.name %>"/>
+        <%
+      end
+    end
+  %>
+
   <table>
     <thead>
       <tr>
@@ -203,20 +213,32 @@
           </select>
         </td>
         <td>
-          <select name="input_iface">
-            <option value=""></option>
-            <% interface_names.each do |ifname| %>
-              <option value="<%= ifname %>"><%= ifname %></option>
-            <% end %>
-          </select>
+          <%= 
+            erb(
+              :"network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name    => "input_iface",
+                  :all_interfaces => all_interfaces 
+                }
+              }
+            )
+          %>
         </td>
         <td>
-          <select name="output_iface">
-            <option value=""></option>
-            <% interface_names.each do |ifname| %>
-              <option value="<%= ifname %>"><%= ifname %></option>
-            <% end %>
-          </select>
+          <%= 
+            erb(
+              :"network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name    => "output_iface",
+                  :all_interfaces => all_interfaces 
+                }
+              }
+            )
+          %>
         </td>
         <td>
           <input type="text" class="rwtext" name="source_addr"/>

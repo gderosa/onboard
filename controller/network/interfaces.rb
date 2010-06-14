@@ -33,48 +33,4 @@ class OnBoard::Controller
     ) 
   end
 
-  # "Hidden" routes?
-
-  get "/network/interfaces/:ifname.:format" do
-    interfaces  = OnBoard::Network::Interface.getAll
-    names       = interfaces.map {|netif| netif.name}
-    raise Sinatra::NotFound unless names.include? params[:ifname]
-    format(
-      :path   => 'network/interfaces',
-      :format => params[:format],
-      :objects  => interfaces.find do |netif|
-        netif.name  == params[:ifname]
-      end
-    )
-  end
-
-  get "/network/interfaces/:ifname/ip.:format" do
-    interfaces  = OnBoard::Network::Interface.getAll
-    names       = interfaces.map {|netif| netif.name}
-    raise Sinatra::NotFound unless names.include? params[:ifname]
-    format(
-      :path   => 'network/interfaces/ip',
-      :format => params[:format],
-      :objects  => (interfaces.find do |netif|
-        netif.name  == params[:ifname]
-      end).ip
-    )
-  end
-
-  get "/network/interfaces/:ifname/ip/:ip.:format" do
-    interfaces  = OnBoard::Network::Interface.getAll
-    names       = interfaces.map {|netif| netif.name}
-    raise Sinatra::NotFound unless names.include? params[:ifname]
-    interface   = interfaces.find {|netif| netif.name == params[:ifname]}
-    ipstrings   = interface.ip.map {|ip| ip.addr.to_s} 
-    raise Sinatra::NotFound unless ipstrings.include? params[:ip] 
-    ipobject    = interface.ip.find {|ip| ip.addr.to_s == params[:ip]} 
-
-    format(
-      :path     => 'network/interfaces/ip',
-      :format   => params[:format],
-      :objects  => ipobject
-    )
-  end
-
 end

@@ -1,22 +1,42 @@
 <% 
+  # not just SNAT, also MASQUERADE target
+%>
+
+<% 
   require 'pp'
 
   require 'onboard/network/interface'
+  require 'onboard/network/routing/table'
 
   all_interfaces = OnBoard::Network::Interface.getAll_layer3
-  all_interfaces.delete_if {|x| x.type == "loopback"}
+  # all_interfaces.delete_if {|x| x.type == "loopback"}
   interface_names = all_interfaces.map {|x| x.name} 
+
+  rt_table = OnBoard::Network::Routing::Table.getCurrent()
+
+  defaultroute_ifname = nil
 
   iptablesobj       = objects
 
-  ip_version        = iptablesobj.ip_version
+  ip_version        = iptablesobj.ip_version  # useful? NAT is v4 only...
+
+  rt_table.each_route do |rt|
+    if 
+        rt.dest.family        == Socket::AF_INET  and # NAT is v4 only...
+        rt.dest.to_i          == 0                and 
+        rt.dest.netmask.to_i  == 0
+
+      defaultroute_ifname = rt.dev
+
+    end
+  end
 %>
 <style type="text/css">
   td {
     text-align: center;
   }
 </style>
-<h2>Internet connection sharing (&ldquo;IP Masquerading&rdquo;)</h2>
+<h2>Source NAT / Internet connection sharing</h2>
 
   <%=
     erb(
@@ -83,13 +103,13 @@
           </td>
           <td>
             <% 
-              # first rule in the chain, so cannot move up? Disable button!
+              # first rule in the chain, so cannot move up? => disable button!
             %>
             <button <%= 'disabled' if rule[0] == 1 %> type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
           </td>
           <td>
             <% 
-              # last rule in the chain, so cannot move down? Disable button!
+              # last rule in the chain, so cannot move down? => disable button!
             %>
             <button <%= 'disabled' if rule[0] == chain.rules.length %> type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
           </td>           
@@ -109,10 +129,9 @@
     <% end %>
   </tbody>
 </table>
-<!-- <pre><%= 
-  # html_escape params.pretty_inspect 
-%></pre> -->
+
 <h3>Add a new rule</h3>
+<h4>Outgoing packets:</h4>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <table>
@@ -128,7 +147,16 @@
           Output interface
         </th>
         <th>
-          Source Address/Network
+          Protocol
+        </th>
+        <th>
+          Destination Address/Network
+        </th>        
+        <th>
+          Destination Port
+          <div class="optinfo">
+            You may also specify an interval, e.g. '5000:8000'
+          </div>
         </th>        
         <th>
           Comment
@@ -147,20 +175,75 @@
           </select>
         </td>
         <input type="hidden" name="chain" value="POSTROUTING"/>
-        <input type="hidden" name="jump-target" value="MASQUERADE"/>
         <td>
           <select name="output_iface">
-            <!-- <option value=""></option> -->
+            <option value=""></option>
             <% interface_names.each do |ifname| %>
-              <option value="<%= ifname %>"><%= ifname %></option>
+              <option value="<%= ifname %>" <%= 'selected' if ifname == defaultroute_ifname%>><%= ifname %></option>
             <% end %>
           </select>
         </td>
         <td>
-          <input type="text" class="rwtext" name="source_addr" title="Leave this field blank if you want to connect your whole private network"/>
+          <select name="proto">
+            <option value=""></option> 
+            <option value="tcp">TCP</option>
+            <option value="udp">UDP</option>
+            <!-- <option value="icmp">ICMP</option> --> 
+              <!-- does it make any sense ? -->
+          </select>        
+        </td>
+        <td>
+          <input type="text" class="rwtext" name="dest_addr"/>
         </td>       
         <td>
+          <input type="text" class="rwtext" name="dest_ports" size="11" title="Use colon for port interval, e.g. `2100:2200'"/>
+        </td>
+        <td>
           <input type="text" name="comment" class="humantext"/> 
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h4>Action</h4>
+  <fieldset>
+    <span>
+      <input type="radio" name="jump-target" value="SNAT" checked />
+      <span style="vertical-align: middle;">Source NAT</span>
+    </span>
+    <span>
+      <input type="radio" name="jump-target" value="MASQUERADE" checked/>
+      <span style="vertical-align: middle;">MASQUERADE (Simple Internet connection sharing)</span>
+    </span>
+    <span title="Do not perform any transformation or redirection, just let the traffic through">
+      <input type="radio" name="jump-target" value="ACCEPT"/>
+      <span style="vertical-align: middle;">Do nothing (&ldquo;ACCEPT&rdquo;)</span>
+    </span>   
+  </fieldset>
+  <h4>Rewrite source as (SNAT only):</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          IP Address
+          <div class="optinfo">
+            You may also specify an interval, e.g. '1.2.3.100-1.2.4.200'
+          </div>
+        </th>
+        <th>
+          Port
+          <div class="optinfo">
+            You may also specify an interval, e.g. '15000-35000'
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <input type="text" class="rwtext" name="to-source_addr"/> 
+        </td>
+        <td>
+          <input type="text" class="rwtext" name="to-source_port" size="11"/>
         </td>
       </tr>
     </tbody>

@@ -173,7 +173,11 @@
       <% dhcp_leases.each do |lease| %>
         <%
           if lease['expiry'].to_i > 0 
-            expiry = Time.at lease['expiry'].to_i 
+            begin
+              expiry = Time.at lease['expiry'].to_i 
+            rescue RangeError
+              expiry = 'Never'
+            end 
           else
             expiry = 'Never'
           end # A Time or String object, will be coerced to_s ...
