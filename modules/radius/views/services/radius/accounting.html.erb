@@ -1,5 +1,11 @@
 <% rows = objects %>
-<% columns = rows[0].keys %>
+<% 
+  if rows[0]
+    columns = rows[0].keys 
+  else
+    columns = ['no info available yet']
+  end
+%>
 <h2>RADIUS Accounting</h2>
 
 <table>
