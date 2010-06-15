@@ -49,16 +49,22 @@ class OnBoard
         end
 
         def self.change_from_HTTP_request(h)
-          old_rules         = h[:current_rules]
-          new_rules_params  = h[:http_params]['rules']
-          new_rules         = new_rules_params.map{|h| self.new(h)} 
+          old_rules               = h[:current_rules]
+          new_rules_params        = h[:http_params]['rules']
+          new_rules               = new_rules_params.map{|h| self.new(h)} 
 
-          rules_to_add = []
-          rules_to_del = []
+          rules_to_del            = []
+          rules_to_add_params     = []
 
-          new_rules.each do |new_rule|
+          new_rules_params.each_with_index do |rule_params, idx|
+            if rule_params['delete'] == 'on'
+              old_rules[idx].del!
+            end
+          end
+
+          new_rules.each_with_index do |new_rule, n|
             unless old_rules.include? new_rule
-              rules_to_add << new_rule
+              rules_to_add_params << new_rules_params[n] 
             end
           end
 
@@ -68,9 +74,11 @@ class OnBoard
             end
           end
 
-          puts
-          pp rules_to_add
-          pp rules_to_del
+          # add only the rules wich are really new
+          add_from_HTTP_request('rules' => rules_to_add_params)
+
+          # delete rules which areno longer present
+          rules_to_del.map{|rule| rule.del!}
         end
 
 =begin
@@ -205,6 +213,7 @@ class OnBoard
 
         end
 
+=begin
         def self.delete_rules_by_fwmark(h)
            select_rules_by_fwmark(h).map{|x| x.del!}  
         end
@@ -212,6 +221,7 @@ class OnBoard
         def self.select_rules_by_fwmark(h)
           getAll.select{|x| x.fwmark_match(h)} 
         end
+=end
 
         attr_reader :prio, :from, :to, :table, :fwmark, :iif, :iphysdev, :dscp, :rulespec
 
@@ -234,6 +244,14 @@ class OnBoard
             @iphysdev = h[:iphysdev]
             @dscp     = h[:dscp ]
           end
+        end
+
+        def del!
+          System::Command.run(
+            "ip rule del #{@rulespec}",
+            :sudo,
+            :raise_exception
+          )
         end
 
         def ==(other)
