@@ -49,26 +49,28 @@ class OnBoard
         end
 
         def self.change_from_HTTP_request(h)
-          old_rules = h[:current_rules]
-          new_rules = h[:http_params]['rules'].map{|h| self.new(h.symbolize_keys)} 
-          f = File.open '/tmp/onboard-data.rb', 'w'
-          puts "\n\n"
-          old_rules.each_with_index do |old_rule, o|
-            new_rules.each_with_index do |new_rule, n|
-              if o == n
-                f.puts "\n"
-                f.write old_rule.pretty_inspect
-                f.write new_rule.pretty_inspect
-              end
-              if old_rule == new_rule
-                print '1'
-              else
-                print '0'
-              end
+          old_rules         = h[:current_rules]
+          new_rules_params  = h[:http_params]['rules']
+          new_rules         = new_rules_params.map{|h| self.new(h)} 
+
+          rules_to_add = []
+          rules_to_del = []
+
+          new_rules.each do |new_rule|
+            unless old_rules.include? new_rule
+              rules_to_add << new_rule
             end
-            puts
           end
-          f.close
+
+          old_rules.each do |old_rule|
+            unless new_rules.include? old_rule
+              rules_to_del << old_rule
+            end
+          end
+
+          puts
+          pp rules_to_add
+          pp rules_to_del
         end
 
 =begin
@@ -213,7 +215,8 @@ class OnBoard
 
         attr_reader :prio, :from, :to, :table, :fwmark, :iif, :iphysdev, :dscp, :rulespec
 
-        def initialize(h)
+        def initialize(h_in)
+          h = h_in.symbolize_keys
           @prio     = h[:prio]
           @from     = h[:from]
           @from.strip! if @from.respond_to? :strip!
