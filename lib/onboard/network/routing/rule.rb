@@ -56,9 +56,12 @@ class OnBoard
           rules_to_del            = []
           rules_to_add_params     = []
 
-          new_rules_params.each_with_index do |rule_params, idx|
+          new_rules_params.dup.each_with_index do |rule_params, idx|
             if rule_params['delete'] == 'on'
               old_rules[idx].del!
+              old_rules.delete_at idx
+              new_rules_params.delete_at idx
+              new_rules.delete_at idx
             end
           end
 
@@ -77,8 +80,29 @@ class OnBoard
           # add only the rules wich are really new
           add_from_HTTP_request('rules' => rules_to_add_params)
 
-          # delete rules which areno longer present
+          # delete rules which are no longer present
           rules_to_del.map{|rule| rule.del!}
+
+=begin # DEBUG
+          puts '---'
+          pp rules_to_add_params
+          pp rules_to_del
+=end
+
+=begin # DEBUG
+# should print an identity matrix if no chenges are requested from html form 
+          puts
+          old_rules.each do |old_rule|
+            puts
+            new_rules.each do |new_rule|
+              if old_rule == new_rule
+                print '1'
+              else
+                print '0'
+              end
+            end
+          end
+=end
         end
 
 =begin
