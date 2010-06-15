@@ -1,3 +1,5 @@
+require 'facets/hash'
+
 require 'onboard/extensions/string'
 
 class OnBoard
@@ -36,6 +38,16 @@ class OnBoard
             cmd << "lookup #{rule['table']} " if rule['table']  =~ /\S/
             msg = System::Command.run cmd, :sudo
             return msg if msg[:err] 
+          end
+        end
+
+        def self.change_from_HTTP_request(h)
+          old_rules = h[:current_rules]
+          new_rules = h[:http_params]['rules'].map{|h| self.new(h.symbolize_keys)} 
+          File.open '/tmp/onboard-data.rb', 'w' do |f|
+            f.write old_rules.pretty_inspect
+            f.write "\n\n"
+            f.write new_rules.pretty_inspect
           end
         end
 
