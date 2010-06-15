@@ -1,6 +1,9 @@
 require 'facets/hash'
 
+require 'onboard/network/interface/ip'
+
 require 'onboard/extensions/string'
+require 'onboard/extensions/ipaddr'
 
 class OnBoard
   module Network
@@ -10,17 +13,21 @@ class OnBoard
         def self.getAll
           all = []
           `ip rule show`.each_line do |line|
-            if line =~ 
-                /^(\d+):\s+from\s+(\S+)(\s+to\s+(\S+))?(\s+fwmark\s+(\S+))?(\s+iif\s+(\S+))?\s+(lookup|table)\s+(\S+)/
-              #puts line
-              all << self.new(
-                :prio   => $1,
-                :from   => ($2 || 'all'),
-                :to     => ($4 || 'all'),
-                :fwmark => $6,
-                :iif    => $8,
-                :table  => $10
-              )
+            if line =~ /^(\d+):\s+(.*)$/
+              rulespec = "prio #{$1} #{$2}"
+              if line =~ 
+                  /^(\d+):\s+from\s+(\S+)(\s+to\s+(\S+))?(\s+fwmark\s+(\S+))?(\s+iif\s+(\S+))?\s+(lookup|table)\s+(\S+)/
+                #puts line
+                all << self.new(
+                  :prio     => $1,
+                  :from     => ($2 || 'all'),
+                  :to       => ($4 || 'all'),
+                  :fwmark   => $6,
+                  :iif      => $8,
+                  :table    => $10,
+                  :rulespec => rulespec
+                )
+              end
             end
           end
           return all
@@ -44,11 +51,24 @@ class OnBoard
         def self.change_from_HTTP_request(h)
           old_rules = h[:current_rules]
           new_rules = h[:http_params]['rules'].map{|h| self.new(h.symbolize_keys)} 
-          File.open '/tmp/onboard-data.rb', 'w' do |f|
-            f.write old_rules.pretty_inspect
-            f.write "\n\n"
-            f.write new_rules.pretty_inspect
+          f = File.open '/tmp/onboard-data.rb', 'w'
+          puts "\n\n"
+          old_rules.each_with_index do |old_rule, o|
+            new_rules.each_with_index do |new_rule, n|
+              if o == n
+                f.puts "\n"
+                f.write old_rule.pretty_inspect
+                f.write new_rule.pretty_inspect
+              end
+              if old_rule == new_rule
+                print '1'
+              else
+                print '0'
+              end
+            end
+            puts
           end
+          f.close
         end
 
 =begin
@@ -191,29 +211,51 @@ class OnBoard
           getAll.select{|x| x.fwmark_match(h)} 
         end
 
-        attr_reader :prio, :from, :to, :table, :fwmark, :iif, :iphysdev, :dscp
+        attr_reader :prio, :from, :to, :table, :fwmark, :iif, :iphysdev, :dscp, :rulespec
 
         def initialize(h)
           @prio     = h[:prio]
           @from     = h[:from]
+          @from.strip! if @from.respond_to? :strip!
           @to       = h[:to]
           @table    = h[:table]
           @fwmark   = h[:fwmark]
           @iif      = h[:iif]
+          @rulespec = h[:rulespec] 
 
-          info      = find_info_from_fwmark
-
-          @iphysdev = info[:iphysdev]
-          @dscp     = info[:dscp]
+          if @fwmark # object comes from the OS
+            info      = find_info_from_fwmark
+            @iphysdev = info[:iphysdev]
+            @dscp     = info[:dscp]
+          else # object may come from an HTML form
+            @iphysdev = h[:iphysdev]
+            @dscp     = h[:dscp ]
+          end
         end
 
-=begin        
-        # matches if @fwmark == '0x1234abcd' and 
-        # h == {:mark => 0x0000ab00, :mask => 0x0000ff00}
-        def fwmark_match(h)
-          (@fwmark.to_i(16) & h[:mask]) == h[:mark]
+        def ==(other)
+          return true if (
+              (
+                @from == other.from or 
+                (
+                  Interface::IP.valid_address? @from and
+                  Interface::IP.valid_address? other.from and
+                  IPAddr.new(@from) == IPAddr.new(other.from)
+                )
+              ) and
+              (
+                @fwmark.to_i == other.fwmark.to_i or
+                (
+                  @dscp.to_i == other.dscp.to_i and
+                  @iphysdev.to_s.strip  == other.iphysdev.to_s.strip
+                )
+              ) and
+              @iif.to_s.strip == other.iif.to_s.strip and
+              @prio.to_i == other.prio.to_i and
+              Table.number(@table) == Table.number(other.table)  # and ignore @to ;)
+          )
+          return false
         end
-=end
 
         def data
           {

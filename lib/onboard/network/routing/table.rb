@@ -84,24 +84,32 @@ class OnBoard
           end          
         end
 
+        def self.number(table)
+          # table: name or number
+          if table.kind_of? Integer
+            return table
+          else # Must be a String, then
+            table.strip!
+          end
+          if table =~ /^\d+$/
+            return table.to_i
+          end
+          table_n = nil
+          all_tables = getAllIDs['system_tables'].merge getAllIDs['custom_tables']
+          detect = all_tables.detect{|k, v| v == table}
+          if detect
+            table_n = detect[0]
+            return table_n.to_i
+          else
+            raise NotFound
+          end
+        end
+
         def self.getCurrent; self.get('main'); end # Compatibility
 
         def self.get(table='main')
-          # table: name or number
-          # table_n: number
-          table.strip!
-          table_n = nil
-          all_tables = getAllIDs['system_tables'].merge getAllIDs['custom_tables']  
-          if table =~ /[a-z]/i
-            detect = all_tables.detect{|k, v| v == table}
-            if detect
-              table_n = detect[0]
-            else
-              raise NotFound
-            end
-          elsif table =~ /^\d+$/
-            table_n = table.to_i
-          end
+
+          table_n = number(table)
 
           ary = []
 
