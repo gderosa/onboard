@@ -18,12 +18,12 @@ class OnBoard
 
   MENU_ROOT.add_path('/network/routing/advanced/multiple-tables', {
     :href => '/network/routing/tables',
-    :name => 'Multiple tables'
+    :name => 'Tables'
   })
 
   MENU_ROOT.add_path('/network/routing/advanced/rules', {
     :href => '/network/routing/rules',
-    :name => 'Source routing / Policy rules'
+    :name => 'Rules'
   })
 
 end
