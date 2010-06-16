@@ -15,7 +15,7 @@ require 'onboard/menu/node'
 require 'onboard/platform/debian'
 
 class OnBoard
-  LONGNAME = 'Ruby OnBoard'
+  LONGNAME = 'OnBoard'
  
   ROOTDIR = File.dirname File.expand_path(__FILE__)
   CONFDIR = ROOTDIR + '/etc/config'
@@ -24,19 +24,21 @@ class OnBoard
 
   LOGGER = Logger.new(ROOTDIR + '/' + 'onboard.log')
 
+  LOGGER.formatter = proc { |severity, datetime, progname, msg|
+    "#{datetime} #{severity}: #{msg}\n"
+  }
+
+  LOGGER.level = Logger::INFO
+
+  LOGGER.info "Ruby OnBoard started."
+
+
   MENU_ROOT = Menu::MenuNode.new('ROOT', {
     :href => '/',
     :name => 'Home',
     :desc => 'Home page',
     :n    => 0
   })
-
-  #LOGGER.datetime_format = "%Y-%m-%d %H:%M:%S"
-  LOGGER.formatter = proc { |severity, datetime, progname, msg|
-    "#{datetime} #{severity}: #{msg}\n"
-  }
-
-  LOGGER.info "Ruby OnBoard started."
 
   def self.find_n_load(dir)
     # sort to resamble /etc/rc*.d/* or run-parts behavior
