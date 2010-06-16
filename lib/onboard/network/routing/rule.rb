@@ -39,14 +39,21 @@ class OnBoard
               rulespec = "prio #{$1} #{$2}"
               if line =~ 
                   /^(\d+):\s+from\s+(\S+)(\s+to\s+(\S+))?(\s+fwmark\s+(\S+))?(\s+iif\s+(\S+))?\s+(lookup|table)\s+(\S+)/
-                #puts line
+                prio, from, to, fwmark_and_fwmask, iif, table =
+                    $1, ($2 || 'all'), ($4 || 'all'), $6, $8, $10
+                if fwmark_and_fwmask =~ /^([^\/]+)\/([^\/]+)$/
+                  fwmark, fwmask = $1, $2
+                else
+                  fwmark, fwmask = fwmark_and_fwmask, '0xffffffff'
+                end
                 all << self.new(
-                  :prio     => $1,
-                  :from     => ($2 || 'all'),
-                  :to       => ($4 || 'all'),
-                  :fwmark   => $6,
-                  :iif      => $8,
-                  :table    => $10,
+                  :prio     => prio,
+                  :from     => from,
+                  :to       => to,
+                  :fwmark   => fwmark,
+                  :fwmask   => fwmask,
+                  :iif      => iif,
+                  :table    => table,
                   :rulespec => rulespec
                 )
               end
@@ -62,8 +69,10 @@ class OnBoard
             cmd << "from  #{rule['from']} "   if rule['from']   =~ /\S/
             cmd << "to    #{rule['to']} "     if rule['to']     =~ /\S/
             cmd << "iif   #{rule['iif']} "    if rule['iif']    =~ /\S/
-            fwmark = compute_fwmark!(rule) 
-            cmd << "fwmark #{fwmark} "        if fwmark and fwmark > 0
+            h = compute_fwmark!(rule) 
+            fwmark = h[:mark]
+            fwmask = h[:mask]
+            cmd << "fwmark #{fwmark}/#{fwmask} " if fwmark and fwmark > 0
             cmd << "lookup #{rule['table']} " if rule['table']  =~ /\S/
             msg = System::Command.run cmd, :sudo
             return msg if msg[:err] 
@@ -143,7 +152,13 @@ class OnBoard
   unpredictable results...!
   
 =end
+        
+        # TODO TODO TODO: rename h -> rule_h (more meaningful and less bug-prone)
         def self.compute_fwmark!(h)
+          return_h = {
+            :mark => 0x00000000,
+            :mask => 0x00000000
+          }
 
           computed_mark = {
             :iphysdev   => 0x00,
@@ -252,16 +267,30 @@ class OnBoard
 
           end
 
-          retval = 0x00000000 # 32 bits fw mark
-          computed_mark.each_pair do |match_by, val|
-            # bitwise mask ? set : orig
-            orig    = retval
-            mask    = config[match_by][:fwmark][:mask]
-            set     = val << config[match_by][:fwmark][:bitshift]
-            retval  = (mask & set) | ( (0xffffffff - mask) & orig )
-          end
-          return retval
+          retval_mark = 0x00000000 # 32 bits fw mark
+          retval_mask = 0x00000000
 
+          computed_mark.each_pair do |match_by, val|
+            orig    = retval_mark
+            mask    = config[match_by][:fwmark][:mask]
+
+            # if the rule (h) is on iphysdev AND dscp
+            # retval_mask will be 0x00ff00ff ;
+            # if the rule is on dscp only
+            # retval_mask will be 0x000000ff ;
+            # if the rule is on iphysdev only 
+            # retval_mask will be 0x00ff0000 .
+            retval_mask |= mask if (h[match_by.to_s] =~ /\S/ or h[match_by.to_s].to_i > 0)
+
+            set     = val << config[match_by][:fwmark][:bitshift]
+            # bitwise mask ? set : orig
+            retval_mark  = (mask & set) | ( (0xffffffff - mask) & orig )
+          end
+
+          return_h[:mark] = retval_mark
+          return_h[:mask] = retval_mask
+
+          return return_h
         end
 
 =begin
@@ -274,7 +303,7 @@ class OnBoard
         end
 =end
 
-        attr_reader :prio, :from, :to, :table, :fwmark, :iif, :iphysdev, :dscp, :rulespec
+        attr_reader :prio, :from, :to, :table, :fwmark, :fwmask, :iif, :iphysdev, :dscp, :rulespec
 
         def initialize(h_in)
           h = h_in.symbolize_keys
@@ -284,6 +313,7 @@ class OnBoard
           @to       = h[:to]
           @table    = h[:table]
           @fwmark   = h[:fwmark]
+          @fwmask   = h[:fwmask]
           @iif      = h[:iif]
           @rulespec = h[:rulespec] 
 
