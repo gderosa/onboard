@@ -1,9 +1,18 @@
 require 'onboard/extensions/ipaddr'
+require 'onboard/network/routing/constants'
 
 class OnBoard
   module Network
     module Routing
       class Route
+
+        STATIC_ROUTES_FILE = File.join CONFDIR, 'static_routes'
+
+        def self.save_static
+          File.open STATIC_ROUTES_FILE, 'w' do |f|
+            f.write `ip route show table all | grep 'proto static'`
+          end
+        end
 
         FIELDS = [:rttype, :dest, :gw, :dev, :proto, :metric, :mtu, :advmss, :error, :hoplimit, :scope, :src, :rawline]
 
