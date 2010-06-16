@@ -32,11 +32,14 @@
     )
   %>
 
-<!-- <pre>
-<%= 
-  # html_escape iptablesobj.pretty_inspect 
-%>
-</pre> -->
+<div class="warn">
+  These are special packet alteration rules; most of the times they are created 
+  automatically by the system to make policy routing and other tasks work 
+  (see <a href="../routing/tables.html">here</a> and 
+  <a href="../routing/rules.html">here</a>, for example).
+  They <em>should not</em> be changed manually.
+</div>
+
 <% iptablesobj.tables[tablename].chains.each_pair do |chainname, chain| %>
   <h4>Chain <%= chain.name %></h4>
   <table>
@@ -107,5 +110,5 @@
   </table>
 <% end %>
 
-<h3 class="warn">Adding new rules manually / explicitely is disabled</h3>
+<h3 class="warn">Adding new rules explicitely is disabled</h3>
 
