@@ -1,8 +1,10 @@
-$static_routes_restore = true
-
-require 'onboard/network/routing/table'
+require 'onboard/network/routing'
 
 OnBoard::Network::Routing::Route.restore_static
+
+OnBoard::Network::Routing::Rule.restore
+
+
 
 
 

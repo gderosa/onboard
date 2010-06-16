@@ -3,9 +3,9 @@ require 'onboard/network/routing/constants'
 class OnBoard
   module Network
     module Routing
-      autoload :Table,  'onboarb/network/routing/table'
-      autoload :Route,  'onboarb/network/routing/route'
-      autoload :Rule,   'onboarb/network/routing/rule'
+      autoload :Table,  'onboard/network/routing/table'
+      autoload :Route,  'onboard/network/routing/route'
+      autoload :Rule,   'onboard/network/routing/rule'
     end
   end
 end

@@ -1,14 +1,36 @@
 require 'facets/hash'
 
-require 'onboard/network/interface/ip'
-
 require 'onboard/extensions/string'
 require 'onboard/extensions/ipaddr'
+require 'onboard/network/interface/ip'
 
 class OnBoard
   module Network
     module Routing
       class Rule
+
+        SAVE_FILE = File.join Routing::CONFDIR, 'rules'
+
+        def self.save
+          File.open SAVE_FILE, 'w' do |f|
+            f.write `ip rule show`
+          end
+        end        
+
+        def self.restore
+          return false unless File.exists? SAVE_FILE
+          File.foreach SAVE_FILE do |line|
+            if line =~ /^\s*(\d+):\s+(\S.*\S)\s*$/
+              prio, rulespec = $1, $2
+              next if prio.to_i == 0
+              del = "ip rule del prio #{prio} #{rulespec}"
+              add = "ip rule add prio #{prio} #{rulespec}"
+              System::Command.run del, :sudo, :try
+              System::Command.run add, :sudo
+            end
+          end
+        end
+
 
         def self.getAll
           all = []
