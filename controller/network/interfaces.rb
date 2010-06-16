@@ -20,12 +20,12 @@ class OnBoard::Controller
       interface = current_interfaces.detect {|i| i.name == ifname}
       interface.modify_from_HTTP_request(ifhash) 
     end
-    status(202)                       # HTTP "Accepted"
-    headers(
-      "Location"      => request.path_info,
-      "Pragma"        => "no-cache",  # HTTP/1.0
-      "Cache-Control" => "no-cache"   # HTTP/1.1
-    ) 
+    #status(202)                       # HTTP "Accepted"
+    #headers(
+    #  "Location"      => request.path_info,
+    #  "Pragma"        => "no-cache",  # HTTP/1.0
+    #  "Cache-Control" => "no-cache"   # HTTP/1.1
+    #) 
     format(
       :path => '/network/interfaces',
       :format => params[:format],

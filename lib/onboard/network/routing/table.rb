@@ -2,14 +2,16 @@ require 'forwardable'
 require 'set'
 
 require 'onboard/extensions/ipaddr'
-require 'onboard/network/routing/route'
 require 'onboard/system/command'
+require 'onboard/network/routing/constants'
+require 'onboard/network/routing/route'
+
 
 class OnBoard
   module Network
     module Routing
       class Table
-        RT_TABLES_CONFFILE = File.join CONFDIR, 'rt_tables'
+        RT_TABLES_CONFFILE = File.join Routing::CONFDIR, 'rt_tables'
         VALID_NAMES = /^[\w_-]*[a-z][\w_-]*$/i
 
         # Create if it doesn't exist
