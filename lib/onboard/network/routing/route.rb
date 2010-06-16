@@ -14,6 +14,15 @@ class OnBoard
           end
         end
 
+        def self.restore_static
+          return false unless File.exists? STATIC_ROUTES_FILE
+          File.foreach STATIC_ROUTES_FILE do |line|
+            line.strip!
+            cmd = "ip route add #{line}"
+            System::Command.run cmd, :sudo, :try
+          end
+        end
+
         FIELDS = [:rttype, :dest, :gw, :dev, :proto, :metric, :mtu, :advmss, :error, :hoplimit, :scope, :src, :rawline]
 
         attr_reader *FIELDS
