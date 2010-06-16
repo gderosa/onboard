@@ -78,13 +78,18 @@ class OnBoard
           rules_to_del            = []
           rules_to_add_params     = []
 
+          indexes_to_del          = []
+
           new_rules_params.dup.each_with_index do |rule_params, idx|
             if rule_params['delete'] == 'on'
               old_rules[idx].del!
-              old_rules.delete_at idx
-              new_rules_params.delete_at idx
-              new_rules.delete_at idx
+              indexes_to_del << idx
             end
+          end
+          indexes_to_del.each do |idx|
+            old_rules.delete_at idx
+            new_rules_params.delete_at idx
+            new_rules.delete_at idx
           end
 
           new_rules.each_with_index do |new_rule, n|
