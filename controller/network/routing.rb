@@ -1,9 +1,9 @@
 require 'sinatra/base'
 
-#require 'onboard/network/routing'
-require 'onboard/network/routing/route'
-require 'onboard/network/routing/table'
-require 'onboard/network/routing/rule'
+require 'onboard/network/routing'
+#require 'onboard/network/routing/route'
+#require 'onboard/network/routing/table'
+#require 'onboard/network/routing/rule'
 
 class OnBoard::Controller
 
@@ -159,7 +159,15 @@ class OnBoard::Controller
       msg[:err]  = "You cannot delete a system table!"
       status 403 # Forbidden
     else
-      msg = table.delete!
+      begin
+        msg = table.delete!
+      rescue OnBoard::Network::Routing::RulesExist
+        msg = {
+          :err => $!.to_s,
+          :err_html => 'Couldn&apos;t delete: one or more <a href="/network/routing/rules.html">rules</a> still refer to this table! <a href="/network/routing/rules.html">Delete them</a> and try again.'
+        }
+        status 409 # HTTP Conflict
+      end
     end
     if msg[:ok]
       redirect "/network/routing/tables.#{params[:format]}" 

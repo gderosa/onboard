@@ -223,11 +223,15 @@ class OnBoard
 
         def initialize(ary, table='main')
           @routes = ary
-          @id = table
-          @static_routes = [] # TODO: this should disappear
+          @id = Routing::Table.number(table)   
         end
 
         def delete!
+          all_rules = Rule.getAll
+          if all_rules.detect{|rule| Routing::Table.number(rule.table) == self.number}
+            raise OnBoard::Network::Routing::RulesExist, 
+                'Couldn\'t delete: one or more rules still refer to this routing table! Delete them and try again.'
+          end
           ip_route_flush
           old_text = File.read RT_TABLES_CONFFILE
           File.open RT_TABLES_CONFFILE, 'w' do |f|
