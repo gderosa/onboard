@@ -20,7 +20,7 @@ class OnBoard
   ROOTDIR = File.dirname File.expand_path(__FILE__)
   CONFDIR = ROOTDIR + '/etc/config'
 
-  PLATFORM = Platform::Debian # TODO? make in configurable?
+  PLATFORM = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
   LOGGER = Logger.new(ROOTDIR + '/' + 'onboard.log')
 
@@ -28,7 +28,7 @@ class OnBoard
     "#{datetime} #{severity}: #{msg}\n"
   }
 
-  LOGGER.level = Logger::INFO
+  # LOGGER.level = Logger::INFO
 
   LOGGER.info "Ruby OnBoard started."
 
