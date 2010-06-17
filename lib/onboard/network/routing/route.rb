@@ -39,7 +39,12 @@ class OnBoard
           FIELDS.each do |field|
             s = field.to_s
             instance_variable = ('@' + s).to_sym
-            h[s] = instance_variable_get instance_variable
+            object = instance_variable_get instance_variable
+            if object.respond_to? :data
+              h[s] = object.data
+            else
+              h[s] = object
+            end
           end
           return h
         end

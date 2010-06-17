@@ -236,7 +236,11 @@
               addr      = route['dest']['addr'] 
               prefixlen = route['dest']['prefixlen'] 
               af        = route['dest']['af']
-              gw        = route['gw']['addr']
+              if route['gw']
+                gw        = route['gw']['addr']
+              else
+                gw        = ''
+              end
 
               str       << addr
               unless  (af=='inet'   and prefixlen==32) or 
