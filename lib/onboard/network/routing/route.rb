@@ -18,8 +18,8 @@ class OnBoard
           return false unless File.exists? STATIC_ROUTES_FILE
           File.foreach STATIC_ROUTES_FILE do |line|
             line.strip!
-            cmd = "ip route add #{line}"
-            System::Command.run cmd, :sudo, :try
+            cmd = "ip route replace #{line}"
+            System::Command.run cmd, :sudo
           end
         end
 

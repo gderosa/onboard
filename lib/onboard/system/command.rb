@@ -67,8 +67,12 @@ class OnBoard
           msg[:status] = wait_thr.value.exitstatus
           # if we know how to safely handle an error, treat errors as 
           # something smaller
-          error_as = (opts.include?(:try) ? :debug : :error)
+          error_as = :error
           errmsg = "Command \"#{cmd}\" failed (#{wait_thr.value})"
+          if opts.include? :try
+            error_as  = :debug
+            errmsg = "Attempt to execute \"#{cmd}\" failed (#{wait_thr.value}), but this is safe -- don't panic :-)"
+          end
           LOGGER.method(error_as).call(errmsg)
           msg[:err] = errmsg unless opts.include?(:try)
           msg[:stderr].each_line do |line|
