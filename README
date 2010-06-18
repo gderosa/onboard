@@ -52,6 +52,11 @@ gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape
 
 --
 
+Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append 
+the configuration to the Linux machine /etc/sysctl.conf file.
+
+--
+
 Optional add-ons:
 
 You can get pretty-printed JSON output via JsonPrinter 
