@@ -52,6 +52,8 @@ To solve the problem, you may disable rp_filter...
 ...so Linux RP filter is happy!
 
 ---
+THE FOLLOWING IS NOT TESTED!!!
+---
 
 If your two gateways are on two different interfaces
 
