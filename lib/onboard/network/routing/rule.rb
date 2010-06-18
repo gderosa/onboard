@@ -1,4 +1,5 @@
 require 'facets/hash'
+require 'facets/array'
 
 require 'onboard/extensions/string'
 require 'onboard/extensions/ipaddr'
@@ -87,19 +88,20 @@ class OnBoard
           rules_to_del            = []
           rules_to_add_params     = []
 
-          indexes_to_del          = []
-
-          new_rules_params.dup.each_with_index do |rule_params, idx|
+          # explicit deletion, i.e. from an explicit deletion request, not as a 
+          # consequence of a *change* request
+          deleted_indexes         = []
+          new_rules_params.each_with_index do |rule_params, idx|
             if rule_params['delete'] == 'on'
               old_rules[idx].del!
-              indexes_to_del << idx
+              deleted_indexes << idx
             end
           end
-          indexes_to_del.each do |idx|
-            old_rules.delete_at idx
-            new_rules_params.delete_at idx
-            new_rules.delete_at idx
-          end
+          old_rules.delete_values_at        *deleted_indexes
+          new_rules_params.delete_values_at *deleted_indexes
+          new_rules.delete_values_at        *deleted_indexes
+          
+          # Change request
 
           new_rules.each_with_index do |new_rule, n|
             unless old_rules.include? new_rule
@@ -119,26 +121,6 @@ class OnBoard
           # delete rules which are no longer present
           rules_to_del.map{|rule| rule.del!}
 
-=begin # DEBUG
-          puts '---'
-          pp rules_to_add_params
-          pp rules_to_del
-=end
-
-=begin # DEBUG
-# should print an identity matrix if no chenges are requested from html form 
-          puts
-          old_rules.each do |old_rule|
-            puts
-            new_rules.each do |new_rule|
-              if old_rule == new_rule
-                print '1'
-              else
-                print '0'
-              end
-            end
-          end
-=end
         end
 
 =begin

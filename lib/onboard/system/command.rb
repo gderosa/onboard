@@ -7,6 +7,8 @@ class OnBoard
 
       class RuntimeError < ::RuntimeError; end
 
+      DEFAULT_LOG_LEVEL = :debug
+
       def self.bgexec(cmd, *opts)
         msg = {:background => true}
         if opts.include? :sudo and ::Process.uid != 0
@@ -68,10 +70,10 @@ class OnBoard
           # if we know how to safely handle an error, treat errors as 
           # something smaller
           error_as = :error
-          errmsg = "Command \"#{cmd}\" failed (#{wait_thr.value})"
+          errmsg = "Command failed: \"#{cmd_do}\" (#{wait_thr.value})"
           if opts.include? :try
-            error_as  = :debug
-            errmsg = "Attempt to execute \"#{cmd}\" failed (#{wait_thr.value}), but this is safe -- don't panic :-)"
+            error_as  = DEFAULT_LOG_LEVEL
+            errmsg = "Attempt failed: \"#{cmd_do}\" (#{wait_thr.value})"
           end
           LOGGER.method(error_as).call(errmsg)
           msg[:err] = errmsg unless opts.include?(:try)
@@ -83,6 +85,8 @@ class OnBoard
             line.strip!
             LOGGER.info line if line =~ /\S/
           end
+        else
+          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: \"#{cmd_do}\""
         end
         stdin.close
         stdout.close
