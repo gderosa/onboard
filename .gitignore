@@ -9,6 +9,8 @@ serial
 *.dat
 *.log
 *.off
+*.pid
+*.pidd
 index.txt
 etc/config/network/dnsmasq/dhcp.conf
 etc/config/network/dnsmasq/dns.conf
@@ -16,3 +18,6 @@ etc/config/network/dnsmasq/new/
 etc/config/network/ip6tables.save
 etc/config/network/iptables.save
 etc/config/network/routing/rt_tables
+etc/config/network/routing/rules
+etc/config/network/routing/static_routes
+
