@@ -110,6 +110,7 @@ class OnBoard
               cmd             = $2
               args            = $4.strip
               iface           = ary.detect {|i| args.include? i.name}
+	      next unless iface
               iface.ipassign  = {
                 :method         => :dhcp,
                 :pid            => pid,
