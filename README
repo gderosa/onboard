@@ -69,7 +69,7 @@ You can also take advantage of Ya2YAML by Akira FUNAI to get native
 UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
 and encode them in base64). 
 
-gem install kch-ya2yaml
+gem install ya2yaml
 
 ---
 
