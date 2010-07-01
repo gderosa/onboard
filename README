@@ -41,6 +41,7 @@ for module-specific, additional requirements):
   ## dhcp-range is provided -- and leads to troubles
 * locales 
   ## and generate (UTF8) locales for languages/countries you want to support
+* ifrename (optional) 
 
 Gems:
 
