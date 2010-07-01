@@ -8,4 +8,6 @@ LANG='en_US.UTF-8'
 
 export LANG
 
+sysctl net.ipv6.bindv6only=0 # allow a single thin instance to listen on IPv4 and IPv6
+
 thin -C config.yml -R config.ru start
