@@ -56,7 +56,7 @@ class OnBoard
 
   def self.prepare
     # menu
-    unless ARGV.include? '--restore-only'
+    unless ARGV.include? '--no-web'
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
     end
@@ -75,7 +75,7 @@ class OnBoard
     end
 
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
-    unless ARGV.include? '--no-restore'
+    if ARGV.include? '--restore' 
       restore_scripts = 
           Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           +
           Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
@@ -114,11 +114,11 @@ class OnBoard
 end
 
 OnBoard.prepare
-exit if ARGV.include? '--restore-only'
+exit if ARGV.include? '--no-web'
 require OnBoard::ROOTDIR + '/controller.rb'
 
 if $0 == __FILE__
-  OnBoard::Controller.run!(:host => '::')
+  OnBoard::Controller.run!
 end
 
 
