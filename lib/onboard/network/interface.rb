@@ -58,10 +58,13 @@ class OnBoard
                 :state      => $6 
               }
               if netif_h[:state] == "UNKNOWN" 
-                if netif_h[:misc].include? "UP"
-                  netif_h[:state] = "UP"
-                elsif netif_h[:misc].include? "DOWN"
+                #if netif_h[:misc].include? "UP"
+                #  netif_h[:state] = "UP"
+                #elsif netif_h[:misc].include? "DOWN"
+                if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
+                else
+                  netif_h[:state] = "UNKNOWN"
                 end
               end
               if netif_h[:misc].include_ary? %w{UP NO-CARRIER}
