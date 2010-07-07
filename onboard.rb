@@ -28,10 +28,13 @@ class OnBoard
     "#{datetime} #{severity}: #{msg}\n"
   }
 
-  # LOGGER.level = Logger::INFO
-
-  LOGGER.info "Ruby OnBoard started."
-
+  LOGGER.level = Logger::INFO
+  LOGGER.level = Logger::DEBUG if 
+      $0 == __FILE__ or 
+      ENV['ONBOARD_ENVIRONMENT'] =~ /^dev(el(opment)?)?/i
+      # this is required because there is no Sinatra environment until
+      # controller.rb is loaded (where OnBoard::Controller inherits 
+      # from Sinatra::Base)
 
   MENU_ROOT = Menu::MenuNode.new('ROOT', {
     :href => '/',
