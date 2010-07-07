@@ -111,7 +111,10 @@
           </form>
         </td>
         <td rowspan="<%= rowspan %>">
-          <a href="openvpn/vpn/<%= vpnid %>.html" title="View Advanced VPN details" style="border:0;"><button><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button></a>
+          <form method="GET" action="openvpn/vpn/<%= vpnid %>.html">
+              <!-- not a real form, just an hyperlink  -->
+            <button type="submit"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button> 
+          </form>
         </td>
         <td rowspan="<%= rowspan %>">
           <% 
