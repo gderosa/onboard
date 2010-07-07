@@ -193,16 +193,27 @@ class OnBoard
           #end
         end
 
-        def restore
-          saved_ifaces = [] 
-          begin
-            File.open(OnBoard::CONFDIR + '/network/interfaces.dat', 'r') do |f|
-              saved_ifaces =  Marshal.load f
+        def restore(opt_h={})
+          saved_ifaces = []
+
+          if opt_h[:saved_interfaces]
+            saved_ifaces = opt_h[:saved_interfaces]
+          else 
+	          begin
+              File.open(
+                  OnBoard::CONFDIR + '/network/interfaces.dat', 'r') do |f|
+                saved_ifaces =  Marshal.load f
+              end
+            rescue # invalid or non-existent dat file? skip!
+              return
             end
-          rescue # invalid or non-existent dat file? skip!
-            return
           end
-          current_ifaces = getAll
+          if opt_h[:current_interfaces]
+            current_ifaces = opt_h[:current_interfaces]
+          else
+            current_ifaces = getAll
+          end
+
           saved_ifaces.each do |saved_iface|
             current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
             unless current_iface

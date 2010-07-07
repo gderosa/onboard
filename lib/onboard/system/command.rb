@@ -2,6 +2,9 @@ require 'logger'
 require 'open3'
 
 class OnBoard
+
+  LOGGER ||= Logger.new(STDERR)
+
   module System
     module Command
 
