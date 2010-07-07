@@ -25,6 +25,8 @@ class OnBoard
 
       STATUS_UPDATE_INTERVAL = 60 # seconds # 'status' file
 
+      UPSCRIPT ||= OpenVPN::ROOTDIR + '/etc/scripts/up'
+
       class VPN
         CONFDIR = ROOTDIR + '/etc/config/network/openvpn/vpn'
 
@@ -143,6 +145,14 @@ class OnBoard
           reserved_tcp_port = reserve_a_tcp_port.addr[1] 
           cmdline = []
           cmdline << 'openvpn'
+	  cmdline << '--script-security' << '2'
+	  cmdline << '--up' << UPSCRIPT
+	  cmdline << '--up-restart'
+	  cmdline << '--setenv' << 'PATH' << ENV['PATH']
+	  cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
+	  cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' << 
+	    OnBoard::CONFDIR + '/network/interfaces.dat' 
+	  cmdline << '--persist-tun'
           cmdline << '--management' << '127.0.0.1' << reserved_tcp_port.to_s
           cmdline << '--daemon'
           logfile = "/var/log/ovpn-#{uuid}.log" 

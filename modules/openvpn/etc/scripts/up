@@ -7,7 +7,7 @@
 # RUBYLIB 
 #   prepend to the standard Ruby $LOAD_PATH 
 #
-# DATFILE
+# NETWORK_INTERFACES_DATFILE
 #   marshal dump of the saved interfaces state
 #
 #
@@ -19,7 +19,7 @@
 #
 # EXAMPLE:
 #   
-# RUBYLIB=/home/onboard/onboard/lib DATFILE=/home/onboard/onboard/etc/config/network/interfaces.dat ./up ovpn_tap0
+# RUBYLIB=/home/onboard/onboard/lib NETWORK_INTERFACES_DATFILE=/home/onboard/onboard/etc/config/network/interfaces.dat ./up ovpn_tap0
 
 require 'pp'
 
@@ -29,7 +29,7 @@ ifname = ARGV[0]
 
 all_interfaces = OnBoard::Network::Interface.getAll
 
-all_interfaces_saved = Marshal.load File.read ENV['DATFILE']
+all_interfaces_saved = Marshal.load File.read ENV['NETWORK_INTERFACES_DATFILE']
 
 # Arrays of one element (for compatibility)
 netifs = all_interfaces.select{|x| x.name == ifname}
