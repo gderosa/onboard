@@ -58,13 +58,19 @@ class OnBoard
                 :state      => $6 
               }
               if netif_h[:state] == "UNKNOWN" 
-                #if netif_h[:misc].include? "UP"
-                #  netif_h[:state] = "UP"
-                #elsif netif_h[:misc].include? "DOWN"
                 if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
                 else
-                  netif_h[:state] = "UNKNOWN"
+                  carrier = File.read("/sys/class/net/#{netif_h[:name]}/carrier").strip
+                  netif_h[:state] = 
+                      case carrier 
+                      when '0'
+                        "NO-CARRIER"
+                      when '1'
+                        "UP"
+                      else
+                        "UNKNOWN"
+                      end
                 end
               end
               if netif_h[:misc].include_ary? %w{UP NO-CARRIER}
