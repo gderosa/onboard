@@ -15,14 +15,26 @@ require 'onboard/menu/node'
 require 'onboard/platform/debian'
 
 class OnBoard
-  LONGNAME = 'Ruby OnBoard'
+  LONGNAME = 'OnBoard'
  
   ROOTDIR = File.dirname File.expand_path(__FILE__)
   CONFDIR = ROOTDIR + '/etc/config'
 
-  PLATFORM = Platform::Debian # TODO? make in configurable?
+  PLATFORM = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
   LOGGER = Logger.new(ROOTDIR + '/' + 'onboard.log')
+
+  LOGGER.formatter = proc { |severity, datetime, progname, msg|
+    "#{datetime} #{severity}: #{msg}\n"
+  }
+
+  LOGGER.level = Logger::INFO
+  LOGGER.level = Logger::DEBUG if 
+      $0 == __FILE__ or 
+      ENV['ONBOARD_ENVIRONMENT'] =~ /^dev(el(opment)?)?/i
+      # this is required because there is no Sinatra environment until
+      # controller.rb is loaded (where OnBoard::Controller inherits 
+      # from Sinatra::Base)
 
   MENU_ROOT = Menu::MenuNode.new('ROOT', {
     :href => '/',
@@ -30,13 +42,6 @@ class OnBoard
     :desc => 'Home page',
     :n    => 0
   })
-
-  #LOGGER.datetime_format = "%Y-%m-%d %H:%M:%S"
-  LOGGER.formatter = proc { |severity, datetime, progname, msg|
-    "#{datetime} #{severity}: #{msg}\n"
-  }
-
-  LOGGER.info "Ruby OnBoard started."
 
   def self.find_n_load(dir)
     # sort to resamble /etc/rc*.d/* or run-parts behavior
@@ -54,7 +59,7 @@ class OnBoard
 
   def self.prepare
     # menu
-    unless ARGV.include? '--restore-only'
+    unless ARGV.include? '--no-web'
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
     end
@@ -73,7 +78,7 @@ class OnBoard
     end
 
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
-    unless ARGV.include? '--no-restore'
+    if ARGV.include? '--restore' 
       restore_scripts = 
           Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           +
           Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
@@ -81,7 +86,18 @@ class OnBoard
       restore_scripts.each do |script|
         print "loading: #{script}... "
         STDOUT.flush
-        load script and puts "OK"
+        begin
+          load script and puts "OK"
+        rescue
+          exception = $!
+
+          puts exception.inspect
+
+          LOGGER.error "loading #{script}: #{exception.inspect}"
+          backtrace_str = "Exception backtrace follows:"
+          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          LOGGER.error backtrace_str
+        end
       end
     end
 
@@ -101,11 +117,11 @@ class OnBoard
 end
 
 OnBoard.prepare
-exit if ARGV.include? '--restore-only'
+exit if ARGV.include? '--no-web'
 require OnBoard::ROOTDIR + '/controller.rb'
 
 if $0 == __FILE__
-  OnBoard::Controller.run!(:host => '::')
+  OnBoard::Controller.run!
 end
 
 

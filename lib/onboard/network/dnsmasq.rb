@@ -10,7 +10,8 @@ class OnBoard
 
       def self.save
         %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
-          FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}"
+          FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}" if
+              File.exists? "#{CONFDIR}/new/#{file}"
         end
       end
 
@@ -219,7 +220,8 @@ class OnBoard
                     range['leasetime']<< "\n"
           end
         end
-        params['hosts'].each_value do |host|
+        params['hosts'].each_value do |host| # fixed host
+          host['mac'].gsub! '-', ':' # normalize: 00-aa-bb-ff-23-45 -> 00:aa:bb:ff:23:45
           msg = self.class.validate_dhcp_host(host) 
           return msg if msg[:err]
           unless msg[:ignore]

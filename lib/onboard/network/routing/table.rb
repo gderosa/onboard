@@ -2,155 +2,185 @@ require 'forwardable'
 require 'set'
 
 require 'onboard/extensions/ipaddr'
-require 'onboard/network/routing/route'
 require 'onboard/system/command'
+require 'onboard/network/routing/constants'
+require 'onboard/network/routing/route'
+
 
 class OnBoard
   module Network
-    class Routing
+    module Routing
       class Table
+        RT_TABLES_CONFFILE = File.join Routing::CONFDIR, 'rt_tables'
+        VALID_NAMES = /^[\w_-]*[a-z][\w_-]*$/i
 
-        # Persistance across Ruby restarts but not machine reboot
-        CURRENT_STATIC_ROUTES_FILE = 
-          File.join CONFDIR, 'network/static_routes.dat.new'
-        
-        # "Real" persistance, i.e. across system reboots too
-        STATIC_ROUTES_FILE = 
-          File.join CONFDIR, 'network/static_routes.dat'
-
-        unless ( 
-            class_variable_defined? :@@static_routes or 
-            $static_routes_restore
-        )
-          if File.readable? CURRENT_STATIC_ROUTES_FILE
-            @@static_routes = Marshal.load File.read CURRENT_STATIC_ROUTES_FILE
-          else
-            @@static_routes = []
+        # Create if it doesn't exist
+        unless File.exists? RT_TABLES_CONFFILE
+          File.open RT_TABLES_CONFFILE, 'w' do |f|
           end
         end
 
-        def self.static_routes; @@static_routes; end
+        class NotFound < NameError; end
+        class NameAlreadyInUse < NameError; end
 
-        def self.getCurrent
+        def self.getAllIDs
+          # Hashes with numeric keys...
+          system_tables = {} 
+          custom_tables = {}
+          comments      = {}
+          # It's assumed that the only number->name map is here:
+          File.foreach '/etc/iproute2/rt_tables' do |line|
+            if line =~ /^(\d+)\s+([^#\s]+)(\s*#\s*(\S.*))?/  
+              n = $1.to_i
+              system_tables[n] = $2
+              comments[n] = $4
+            end
+          end
+          `ip rule show`.each_line do |line|
+            if line =~ /from.*lookup\s+(\d+)/
+              custom_tables[$1.to_i] = nil
+            end
+          end
+          `ip route show table 0`.each_line do |line|
+            if line =~ /table (\d+)/
+              custom_tables[$1.to_i] = nil
+            end
+          end
+          if File.exists? RT_TABLES_CONFFILE
+            File.foreach RT_TABLES_CONFFILE do |line|
+              if line =~ /^(\d+)\s+([^#\s]+)?(\s*#\s*(\S.*))?/
+                n = $1.to_i
+                custom_tables[n] = $2
+                comments[n] = $4
+              end
+            end
+          end
+          return {
+            'system_tables' => system_tables,
+            'custom_tables' => custom_tables,
+            'comments'      => comments
+          }
+        end
+
+        def self.create_from_HTTP_request(params)
+          File.open RT_TABLES_CONFFILE, 'a' do |f|
+            number  = params['number']
+            name    = params['name']
+            comment = params['comment']
+            
+            f.puts "#{number} #{name} # #{comment}"
+          end
+        end
+
+        def self.id2comment(number, name)
+          if number == 0
+            return 'All routes from all tables'
+          elsif name == 'main'
+            return 'Main table for basic routing'
+          elsif name == 'local'
+            return 'Special table: do not touch!'
+          elsif name == 'default'
+            return 'Fallback table'
+          else
+            return nil # 'User defined table'
+          end          
+        end
+
+        def self.number(table)
+          # table: name or number
+          if table.kind_of? Integer
+            return table
+          else # Must be a String, then
+            table.strip!
+          end
+          if table =~ /^\d+$/
+            return table.to_i
+          end
+          table_n = nil
+          all_tables = getAllIDs['system_tables'].merge getAllIDs['custom_tables']
+          detect = all_tables.detect{|k, v| v == table}
+          if detect
+            table_n = detect[0]
+            return table_n.to_i
+          else
+            raise NotFound
+          end
+        end
+
+        def self.getCurrent; self.get('main'); end # Compatibility
+
+        def self.get(table='main')
+
+          table_n = number(table)
+
           ary = []
 
           # IPv4
-          `ip -f inet route`.each_line do |line| 
+          `ip -f inet route show table #{table_n}`.each_line do |line| 
             ary << rawline2routeobj(line, Socket::AF_INET)
           end
 
+          #raise NotFound if ary.length == 0 and $?.exitstatus != 0
+
           # IPv6
-          `ip -f inet6 route`.each_line do |line| 
+          `ip -f inet6 route show table #{table_n}`.each_line do |line| 
             ary << rawline2routeobj(line, Socket::AF_INET6)
           end
 
-          return self.new(ary)
+          #raise NotFound if ary.length == 0 and $?.exitstatus != 0
+
+          return self.new(ary, table_n)
         end
 
         def self.rawline2routeobj(line, af=Socket::AF_INET)
-          case af
-          when Socket::AF_INET # IPv4
-            if line =~ /^(\S+)\s+via\s+(\S+)\s+dev\s+(\S+)/
-              gw = IPAddr.new($2) # for some reasons global captures disappear
-              dev = $3 # keep as a string
-              if $1 == "default"  
-                dest = IPAddr.new("0.0.0.0/0")
-                rawline = line.sub('default', '0.0.0.0/0').strip
-              else
-                dest = IPAddr.new($1)
-                rawline = line.strip
-              end
-              return Route.new( 
-                :dest     => dest,
-                :gw       => gw,
-                :dev      => dev,
-                :rawline  => rawline
-              )
-            elsif line =~ /^(\S+)\s+dev\s+(\S+)/
-              deststr = $1
-              dev = $2
-              if deststr.strip == "default"
-                dest = IPAddr.new("0.0.0.0/0")
-                rawline = line.sub('default', '0.0.0.0/0').strip
-                deststr = "0.0.0.0/0"
-              else
-                dest = IPAddr.new(deststr)
-                rawline = line.strip
-              end
-              return Route.new( 
-                :dest => IPAddr.new(deststr),
-                :gw   => IPAddr.new("0.0.0.0"),
-                :dev  => dev,
-                :rawline  => rawline
-              ) 
+          line.strip!
+          rttypes = 'unicast|local|broadcast|multicast|throw|unreachable|prohibit|blackhole|nat'
+          h = {}
+          if line =~ /^((#{rttypes})\s+)?(\S+)(\s+via (\S+))?(\s+dev (\S+))?(\s+table (\S+))?(\s+proto (\S+))?(\s+metric (\S+))?(\s+mtu (\S+))?(\s+advmss (\S+))?(\s+error (\S+))?(\s+hoplimit (\S+))?(\s+scope (\S+))?(\s+src (\S+))?/
+            if $3 == 'default'
+              dest = IPAddr.new(0, af).mask(0)
+            else
+              dest = IPAddr.new($3)
             end
-          when Socket::AF_INET6 # IPv6
-            if line =~ /^(\S+)\s+via\s+(\S+)(\s+dev\s+(\S+))?/ 
-              gw = IPAddr.new($2)
-              dev = $4
-              if $1 == "default"
-                dest = IPAddr.new("::/0")
-                rawline = line.sub('default', '::/0').strip
+            h = {
+              :rttype     => ($2 || 'unicast'),
+              :dest       => dest,
+              :gw         => $5,
+              :dev        => $7,
+              :proto      => $11,
+              :metric     => $13,
+              :mtu        => $15,
+              :advmss     => $17,
+              :error      => $19,
+              :hoplimit   => $21,
+              :scope      => $23,
+              :src        => $25
+            }
+            rawline = 
+                line.sub(/^(#{rttypes})/, '').gsub(/(table|proto) \S+/, '')
+            h[:rawline] = rawline
+          end
+          #pp h
+          return Route.new h
+        end
+
+        # TODO! should be an instance method!
+        def self.change_name_and_comment(number, name='', comment='')
+          old_text = File.read RT_TABLES_CONFFILE
+          File.open RT_TABLES_CONFFILE, 'w' do |f|
+            old_text.each_line do |line|
+              if line =~ /^\s*#{number}([^\d].*)?$/
+                f.puts "#{number} #{name} # #{comment}" 
               else
-                dest = IPAddr.new($1)
-                rawline = line.strip
+                f.write line
               end
-              return Route.new( 
-                :dest => dest,
-                :gw   => gw,
-                :dev  => dev,
-                :rawline  => rawline
-              )
-            elsif line =~ /^(\S+)\s+dev\s+(\S+)/
-              if $1 == "default"
-                dest = IPAddr.new("::/0")
-                rawline = line.sub('default', '::/0').strip
-              else
-                dest = IPAddr.new($1)
-                rawline = line.strip
-              end
-              return Route.new(
-                :dest => dest,
-                :gw   => IPAddr.new("::"),
-                :dev  => $2, # keep as a string
-                :rawline  => rawline
-              ) 
             end
-          else 
-            raise ArgumentError, "af must be either Socket::AF_INET or Socket::AF_INET6, got #{af}" 
           end
-        end
-       
-        
-        def self.ip_route_del(str)
-          routeobj = rawline2routeobj(str) 
-          msg = OnBoard::System::Command.run "ip route del #{str}", :sudo
-          if msg[:ok]
-            delete_from_static_routes routeobj
-          end
-          return msg
+          return {:ok => true}
         end
 
-        def self.delete_from_static_routes(static_route)
-          @@static_routes = @@static_routes.reject {|sr| sr === static_route} 
-          save_current_static_routes
-        end
-
-        def self.ip_route_add(route, *opts) 
-          str = route.to_s # so Route and String are both ok
-          if opts.include? :try
-            return \
-                OnBoard::System::Command.run "ip route add #{str}", :sudo, :try
-          else
-            return \
-                OnBoard::System::Command.run "ip route add #{str}", :sudo
-          end
-        end
-
-        def self.ip_route_change(route, *opts)
-          str = route.to_s # so Route and String are both ok
-          opts << :sudo
-          OnBoard::System::Command.run "ip route change #{str}", *opts
+        def self.rename(*args)
+          change_name_and_comment(*args)
         end
 
         def self.route_from_HTTP_request(params) # create new or change
@@ -170,74 +200,121 @@ class OnBoard
           end
           str << "via #{params['gw']} "   if params['gw']   =~ /[\da-f:]/i
           str << "dev #{params['dev']} "  if params['dev']  =~ /\S/
-          result = self.ip_route_add(str.strip, :try)
+          str << "proto static "
+          table = self.get(params['table'])
+          result = table.ip_route_add(str.strip, :try)
           if not result[:ok] 
             if result[:stderr] =~ /file exists/i
               LOGGER.info "Retrying \"ip route change #{str.strip}\""
-              result = self.ip_route_change(str.strip) 
+              result = table.ip_route_change(str.strip) 
             else
               LOGGER.error \
                   "Couldn't add route as requested (see messages above)"
             end
           end
-          if result[:ok]
-            @@static_routes << (
-                rawline2routeobj(str) or 
-                rawline2routeobj(str, Socket::AF_INET6) 
-            ) 
-            save_current_static_routes
-          end
           return result
         end
 
-        # Peristance across Ruby restarts, not system reboots
-        def self.save_current_static_routes
-          File.open(CURRENT_STATIC_ROUTES_FILE, 'w') do |f| 
-            f.write Marshal.dump @@static_routes
-          end
+        attr_reader :routes, :id
+
+        # @id is generally the number (Integer), but methods re-read
+        # RT_TABLES_CONFFILE in case it's a (non-numerical) String
+        # (e.g. the name) 
+
+        def initialize(ary, table='main')
+          @routes = ary
+          @id = Routing::Table.number(table)   
         end
 
-        # Peristance across system reboots
-        def self.save_static_routes
-          # TODO? is it enough?
-          FileUtils.cp CURRENT_STATIC_ROUTES_FILE, STATIC_ROUTES_FILE if File.exists? CURRENT_STATIC_ROUTES_FILE
-        end
-        def self.restore_static_routes
-          if File.exists? STATIC_ROUTES_FILE
-            @@static_routes = Marshal.load File.read STATIC_ROUTES_FILE
-            FileUtils.cp STATIC_ROUTES_FILE, CURRENT_STATIC_ROUTES_FILE
-          else
-            @@static_routes = []
+        def delete!
+          all_rules = Rule.getAll
+          if all_rules.detect{|rule| Routing::Table.number(rule.table) == self.number}
+            raise OnBoard::Network::Routing::RulesExist, 
+                'Couldn\'t delete: one or more rules still refer to this routing table! Delete them and try again.'
           end
-          @@static_routes.each do |static_route|
-            msg = ip_route_add static_route, :try
-            unless msg[:ok]
-              msg = ip_route_change static_route, :try
-              unless msg[:ok]
-                Thread.new do
-                  # useful on OpenVPN startup, when ifaces/addresses not ready
-                  # TODO/coming_soon: such services manage their own routes
-                  sleep 30 # dirty?
-                  msg = ip_route_add static_route, :try
-                  if msg[:ok]
-                    msg = ip_route_change static_route
-                  end
-                end
+          ip_route_flush
+          old_text = File.read RT_TABLES_CONFFILE
+          File.open RT_TABLES_CONFFILE, 'w' do |f|
+            old_text.each_line do |line|
+              unless line =~ /^\s*#{number}([^\d].*)?$/
+                f.write line
               end
-              LOGGER.warn "Setup of static route '#{static_route}' delayed!"
             end
           end
+          return {:ok => true}
         end
-        def self.restore; restore_static_routes; end
 
-        attr_reader :routes
+        def number
+          return @id if @id.kind_of? Integer
+          @id.strip!
+          return @id.to_i if @id =~ /^\d+$/
+          h = self.class.getAllIDs
+          return 
+            (h['system_tables'].detect{|k, v| v == @id}[0]) or
+            (h['custom_tables'].detect{|k, v| v == @id}[0])
+        end
 
-        def initialize(ary)
-          @routes = ary
+        def name
+          h = self.class.getAllIDs
+          if @id.kind_of? Integer
+            n = @id 
+            if kv = h['system_tables'].detect{|k, v| k == n}
+              return kv[1]
+            elsif kv = h['custom_tables'].detect{|k, v| k == n}
+              return kv[1]
+            end
+          elsif @id.strip =~ /^[^\s\d]+$/
+            return @id.strip
+          end
+        end
+
+        def comment
+          n = number
+          self.class.getAllIDs['comments'][n] || ''
+        end
+
+        def system?
+          h = self.class.getAllIDs
+          return h['system_tables'].detect{|k, v| k == number}
         end
 
         def data
-          @routes.map {|x| x.data} 
+          {
+            'number'  => number,
+            'name'    => name,
+            'system'  => system?,
+            'routes'  => @routes.map {|x| x.data}
+          }
+        end
+
+        def ip_route_flush
+          msg = OnBoard::System::Command.run "ip route flush table #{@id}", :sudo
+        end
+        
+        def ip_route_del(str)
+          msg = OnBoard::System::Command.run "ip route del #{str} table #{@id}", :sudo
+          return msg
+        end
+
+        def ip_route_add(route, *opts) 
+          str = route.to_s # so Route and String are both ok
+          n = number
+          cmd = "ip route add #{str} table #{n}"
+          if opts.include? :try
+            return \
+                OnBoard::System::Command.run cmd, :sudo, :try
+          else
+            return \
+                OnBoard::System::Command.run cmd, :sudo
+          end
+        end
+
+        def ip_route_change(route, *opts)
+          str = route.to_s # so Route and String are both ok
+          n = number
+          cmd = "ip route change #{str} table #{n}"
+          opts << :sudo
+          OnBoard::System::Command.run "ip route change #{str} table #{n}", *opts
         end
 
         extend Forwardable

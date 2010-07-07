@@ -250,7 +250,11 @@
               addr      = route['dest']['addr'] 
               prefixlen = route['dest']['prefixlen'] 
               af        = route['dest']['af']
-              gw        = route['gw']['addr']
+              if route['gw']
+                gw        = route['gw']['addr']
+              else
+                gw        = ''
+              end
 
               next if addr == 'fe80::' # skip ipv6 link-local
 

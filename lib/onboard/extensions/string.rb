@@ -51,4 +51,27 @@ class String
 
   end
 
+  alias to_i_orig to_i
+
+  # A smarter to_i which automatically guess the base of 
+  # "0xff", "0377", "0b11111111"" and "255"
+  # if no argument is provided
+  #
+  def to_i(*args)
+
+    return to_i_orig(*args) if args.length > 0
+
+    case self
+    when /^\s*0x(\h*)\s*$/      # hexadecimal 
+      return $1.to_i_orig(16)
+    when /^\s*0o?([0-7]*)\s*$/  # octal
+      return $1.to_i_orig(8)
+    when /^\s*0b([01]*)\s*$/    # binary ("0" and "1")
+      return $1.to_i_orig(2)
+    else
+      return to_i_orig
+    end
+
+  end
+
 end

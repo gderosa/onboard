@@ -58,10 +58,13 @@ class OnBoard
                 :state      => $6 
               }
               if netif_h[:state] == "UNKNOWN" 
-                if netif_h[:misc].include? "UP"
-                  netif_h[:state] = "UP"
-                elsif netif_h[:misc].include? "DOWN"
+                #if netif_h[:misc].include? "UP"
+                #  netif_h[:state] = "UP"
+                #elsif netif_h[:misc].include? "DOWN"
+                if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
+                else
+                  netif_h[:state] = "UNKNOWN"
                 end
               end
               if netif_h[:misc].include_ary? %w{UP NO-CARRIER}
@@ -110,6 +113,7 @@ class OnBoard
               cmd             = $2
               args            = $4.strip
               iface           = ary.detect {|i| args.include? i.name}
+	      next unless iface
               iface.ipassign  = {
                 :method         => :dhcp,
                 :pid            => pid,
@@ -300,6 +304,8 @@ class OnBoard
         end    
       end
 
+      def bridge?; self.is_bridge?; end
+
       def bridged_to
         bridgelink = "/sys/class/net/#@name/brport/bridge"
         if File.symlink? bridgelink
@@ -311,8 +317,9 @@ class OnBoard
         end
       end
 
-      alias bridged?    bridged_to
-      alias is_bridged? bridged_to
+      def bridged?; bridged_to; end
+
+      def is_bridged?; bridged_to; end
 
       def data
         h = {}

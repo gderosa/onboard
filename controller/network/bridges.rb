@@ -89,13 +89,14 @@ class OnBoard::Controller
     bridge = interfaces.find do |netif|
       netif.name == params['brname']
     end
+    #fail 'No bridge!' unless bridge
     # send response
-    status(202)                       # HTTP "Accepted"
-    headers(
-      "Location"      => request.path_info,
-      "Pragma"        => "no-cache",  # HTTP/1.0
-      "Cache-Control" => "no-cache"   # HTTP/1.1
-    )
+    #status(202)                       # HTTP "Accepted"    
+    #headers(
+    #  "Location"      => request.path_info,
+    #  "Pragma"        => "no-cache",  # HTTP/1.0
+    #  "Cache-Control" => "no-cache"   # HTTP/1.1
+    #)
     format(
       :path => '/network/bridge',
       :format => params[:format],

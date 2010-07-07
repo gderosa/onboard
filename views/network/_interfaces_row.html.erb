@@ -28,7 +28,7 @@
                 <!-- </a> -->
               <!-- </div> -->
             </th>
-            <td>
+            <td style="text-align: center;">
               <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]" <%= 'readonly' unless [:static, :dhcp].include? netif.ipassign[:method] %> />
             </td>
             <td><!--<div>--><%= html_escape netif.data['state'] %><!--</div>--></td>
