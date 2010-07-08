@@ -2,7 +2,9 @@ class OnBoard
   module Network
     module Routing
 
-      CONFDIR = File.join OnBoard::CONFDIR, 'network/routing'
+      CONFDIR = OnBoard.const_Defined? :CONFDIR ? 
+        File.join OnBoard::CONFDIR, 'network/routing' :
+        nil          
 
       class RulesExist < ::RuntimeError; end
 
