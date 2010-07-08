@@ -6,7 +6,7 @@ class OnBoard
     module Routing
       class Route
 
-        STATIC_ROUTES_FILE = File.join CONFDIR, 'static_routes'
+        STATIC_ROUTES_FILE = File.join CONFDIR, 'static_routes' if CONFDIR
 
         def self.save_static
           File.open STATIC_ROUTES_FILE, 'w' do |f|
@@ -31,7 +31,7 @@ class OnBoard
         #
         #
         def self.restore_static(opt_h={})
-          if STATIC_ROUTES_FILE and File.exists? STATIC_ROUTES_FILE
+          if const_defined? :STATIC_ROUTES_FILE and File.exists? STATIC_ROUTES_FILE
             file = STATIC_ROUTES_FILE
           elsif opt_h[:file] and File.exists? opt_h[:file]
             file = opt_h[:file]
