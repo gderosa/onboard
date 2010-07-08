@@ -43,6 +43,8 @@ class OnBoard
           stdout.close
           stderr.close 
         end
+        wait_thr[:onboard_wait_me] = true
+        wait_thr[:description] = cmd
         return msg
       end
 
