@@ -6,7 +6,7 @@ class OnBoard
     module Routing
       class Route
 
-        STATIC_ROUTES_FILE = File.join CONFDIR, 'static_routes'
+        STATIC_ROUTES_FILE = File.join CONFDIR, 'static_routes' if CONFDIR
 
         def self.save_static
           File.open STATIC_ROUTES_FILE, 'w' do |f|
@@ -14,10 +14,33 @@ class OnBoard
           end
         end
 
-        def self.restore_static
-          return false unless File.exists? STATIC_ROUTES_FILE
-          File.foreach STATIC_ROUTES_FILE do |line|
+        #
+        # opt_h[:file]
+        # 
+        # opt_h[:match]
+        # a lamda with a custom selection rule
+        #
+        # With no args restore all routes, reading from file at standard OnBoard
+        # path.
+        #
+        # example (with args):
+        # OnBoard::Network::Routing::Route.restore_static(
+        #   :match => lambda do |line| { line =~ /dev eth0/ },  # Linux iproute2 syntax
+        #   :file => '/path/to/file'
+        # )
+        #
+        #
+        def self.restore_static(opt_h={})
+          if const_defined? :STATIC_ROUTES_FILE and File.exists? STATIC_ROUTES_FILE
+            file = STATIC_ROUTES_FILE
+          elsif opt_h[:file] and File.exists? opt_h[:file]
+            file = opt_h[:file]
+          else
+            return false
+          end
+          File.foreach file do |line|
             line.strip!
+            next if opt_h[:match] and not opt_h[:match].call(line)
             cmd = "ip route replace #{line}"
             System::Command.run cmd, :sudo
           end

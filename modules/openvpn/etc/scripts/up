@@ -10,20 +10,24 @@
 # NETWORK_INTERFACES_DATFILE
 #   marshal dump of the saved interfaces state
 #
+# STATIC_ROUTES_DATFILE
+#   saved output of "ip -[6|4] route show proto static"
+#
 #
 # COMMAND LINE ARGUMENTS:
 #
-# ARGV[0] (from openvpn --up)
-#   interface name
+# ARGV[0] 
+#   interface name (automatically appended by openvpn --up)
 #
 #
 # EXAMPLE:
 #   
 # RUBYLIB=/home/onboard/onboard/lib NETWORK_INTERFACES_DATFILE=/home/onboard/onboard/etc/config/network/interfaces.dat ./up ovpn_tap0
 
-require 'pp'
+require 'pp' # DEBUG
 
 require 'onboard/network/interface'
+require 'onboard/network/routing'
 
 ifname = ARGV[0]
 
@@ -40,4 +44,8 @@ OnBoard::Network::Interface.restore(
   :current_interfaces => netifs 
 )
 
+OnBoard::Network::Routing::Route.restore_static(
+  :match => lambda { |line| line =~ /dev\s+#{ifname}/ },  # Linux iproute2 syntax 
+  :file => ENV['STATIC_ROUTES_DATFILE']
+)
 
