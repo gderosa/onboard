@@ -43,8 +43,12 @@ class OnBoard
           stdout.close
           stderr.close 
         end
-        wait_thr[:wait_me] = true
-        wait_thr[:description] = cmd
+        END {
+          if wait_thr.alive?
+            print "Waiting for #{wait_thr}: #{cmd} ..."
+            wait_thr.join and puts 'OK'
+          end
+        }
         return msg
       end
 
