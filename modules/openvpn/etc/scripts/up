@@ -33,7 +33,12 @@ ifname = ARGV[0]
 
 all_interfaces = OnBoard::Network::Interface.getAll
 
-all_interfaces_saved = Marshal.load File.read ENV['NETWORK_INTERFACES_DATFILE']
+if File.exists? ENV['NETWORK_INTERFACES_DATFILE']
+  all_interfaces_saved = 
+      Marshal.load File.read ENV['NETWORK_INTERFACES_DATFILE']
+else
+  all_interfaces_saved = []
+end
 
 # Arrays of one element (for compatibility)
 netifs = all_interfaces.select{|x| x.name == ifname}
