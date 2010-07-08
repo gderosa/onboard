@@ -125,11 +125,5 @@ unless ARGV.include? '--no-web'
   end
 end
 
-Thread.list.each do |thr|
-  if thr[:onboard_wait_me]
-    print "Waiting for #{thr} #{thr[:description]} ... "
-    thr.join and puts 'OK'
-  end
-end
 
 
