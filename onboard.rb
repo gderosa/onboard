@@ -117,11 +117,19 @@ class OnBoard
 end
 
 OnBoard.prepare
-exit if ARGV.include? '--no-web'
-require OnBoard::ROOTDIR + '/controller.rb'
 
-if $0 == __FILE__
-  OnBoard::Controller.run!
+unless ARGV.include? '--no-web'
+  require OnBoard::ROOTDIR + '/controller.rb'
+  if $0 == __FILE__
+    OnBoard::Controller.run!
+  end
+end
+
+Thread.list.each do |thr|
+  if thr[:onboard_wait_me]
+    print "Waiting for #{thr} #{thr[:description]} ... "
+    thr.join and puts 'OK'
+  end
 end
 
 
