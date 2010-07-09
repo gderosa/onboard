@@ -147,7 +147,7 @@ class OnBoard
           cmdline << 'openvpn'
           cmdline << '--script-security' << '2'
           cmdline << '--up' << UPSCRIPT
-          cmdline << '--up-restart'
+          # cmdline << '--up-restart'
           cmdline << '--setenv' << 'PATH' << ENV['PATH']
           cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
           cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' << 
