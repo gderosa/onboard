@@ -46,7 +46,7 @@ class OnBoard
           stdout.close
           stderr.close 
         end
-        END {
+        at_exit {
           if wait_thr.alive?
             print "Waiting for #{wait_thr}: #{cmd} ..."
             wait_thr.join and puts 'OK'
