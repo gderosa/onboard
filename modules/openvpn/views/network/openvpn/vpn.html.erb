@@ -381,10 +381,14 @@
           <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
         </td>
         <td>
-          <select style="width:9em;" name="dev-type">
-            <option title="Recommended for IPv4, routed VPNs" value="tun">Point-to-Point</option>
-            <option title="Useful for IPv6 and/or bridged VPNs" value="tap">Virtual Ethernet</option>
-          </select>
+          <%= 
+            format(
+              :module => 'openvpn',
+              :partial => true,
+              :path => 'network/openvpn/_interface_type_chooser',
+              :format => 'html'
+            )
+          %>
         </td>
         <td rowspan="<%= rowspan %>" style="text-align:center;">
           <input type="checkbox" name="ns-cert-type_server" checked/><br/>
@@ -432,7 +436,7 @@
           SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
         </th>
         <th colspan="2">Real Network</th>
-        <th colspan="1" rowspan="2">Virtual Network</th>
+        <th colspan="2" rowspan="1">Virtual</th>
         <th rowspan="2">LZO<br/>Compression?</th>
       </tr>
       <tr>
@@ -440,6 +444,8 @@
         <th rowspan="1">Trusted Certificate Authority</th>
         <th rowspan="1">Protocol</th>
         <th colspan="1">Local<br/>port</th>
+        <th>Network</th>
+        <th>Interface type</th>
       </tr>
     </thead>
     <tbody>
@@ -497,6 +503,16 @@
         </td>
         <td>
           <input title="Suggestion shown is a random private IP network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/>
+        </td>
+        <td>
+          <%=
+            format(
+              :module => 'openvpn',
+              :partial => true,
+              :path => 'network/openvpn/_interface_type_chooser',
+              :format => 'html'
+            )
+          %>
         </td>
         <td style="text-align: center;">
           <input type="checkbox" checked name="comp-lzo"/>
