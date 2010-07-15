@@ -451,7 +451,14 @@
         <th rowspan="1">Trusted Certificate Authority</th>
         <th rowspan="1">Protocol</th>
         <th colspan="1">Local<br/>port</th>
-        <th>Network</th>
+        <th>
+          Network (Point-to-Point, IPv4 only)
+          <div class="optinfo">
+            If you choose Virtual Ethernet as Interface type, this field will be ignored.
+
+            Virtual ethernets will be configured just like ordinary network devices (<a href="/network/interfaces.html">here</a>)
+          </div>
+        </th>
         <th>Interface type</th>
       </tr>
     </thead>
@@ -509,7 +516,8 @@
           <input type="text" class="rwtext" name="port" size="4" value="1194"/>
         </td>
         <td>
-          <input title="Suggestion shown is a random private IP network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/>
+          <input style="width: 100%;" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/> 
+          <!-- <input style="width: 100%;" type="text" class="rwtext" name="server_net"/> -->
         </td>
         <td>
           <%=
