@@ -45,7 +45,7 @@
         Actions 
       </th>
       <th rowspan="3">
-        Client/Server
+        Mode
       </th>
       <th rowspan="3" title="<%= common_name_description %>">
         &ldquo;Common Name&rdquo;
@@ -134,6 +134,13 @@
           </form>
         </td>
         <td rowspan="<%= rowspan %>">
+          <%= 
+            if vpn.data['dev-type'] == 'tun'
+              "Point-to-Point"
+            elsif vpn.data['dev-type'] == 'tap'
+              "Virtual Ethernet"
+            end
+          %>
           <%= 
             if vpn.data['client']
               "Client"

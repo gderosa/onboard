@@ -181,19 +181,31 @@ class OnBoard
             "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crl'"
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
+
+          dev_type ||= 'tun' # default
           if params['dev-type'] =~ /^\s*(tun|tap)\s*$/
-            cmdline << '--dev-type' << $1
+            dev_type = $1
           elsif params['dev'] =~ /^\s*(tun|tap)/
-            cmdline << '--dev-type' << $1
-          else
-            cmdline << '--dev-type' << 'tun'
+            dev_type = $1
           end
+          cmdline << '--dev-type' << dev_type
+
           cmdline << '--dev' << OpenVPN::Interface::Name.generate 
-          #cmdline << '--proto' << params['proto']
-          if params['server_net'] =~ /\S/ # it's a server
+          
+          if params['server_net'] # it's a server, may be empty for TAPs
             client_config_dir = config_dir + '/clients'
-            net = IPAddr.new params['server_net']
-            cmdline << '--server' << net.to_s << net.netmask.to_s
+
+            net = nil            
+            if params['server_net'] =~ /\S/
+              net = IPAddr.new params['server_net']
+            end
+
+            if dev_type == 'tun'
+              cmdline << '--server' << net.to_s << net.netmask.to_s
+            elsif dev_type == 'tap'
+              cmdline << '--mode' << 'server' << '--tls-server'
+            end
+
             cmdline << '--port' << params['port'].to_s
             cmdline << '--proto' << params['proto']
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
@@ -601,6 +613,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 @data[optname] = $1
                 next
               end
+            end
+
+            if line =~ /^\s*mode\s+server\s*$/ or line =~ /^\s*tls-server\s*$/
+              @data['server'] ||= true
             end
 
             # "public" options with more arguments
