@@ -282,7 +282,7 @@
             str
           %>
         </td>
-        <td rowspan="<%= rowspan %>"><code><%= vpn.data['interface'] %></code></td>
+        <td rowspan="<%= rowspan %>"><code><a href="/network/interfaces/<%= vpn.data['interface'] %>.html"><%= vpn.data['interface'] %></a></code></td>
         <td rowspan="<%= rowspan %>" style="text-align: center;">
           <% if vpn.data['comp-lzo'] %>
             <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
