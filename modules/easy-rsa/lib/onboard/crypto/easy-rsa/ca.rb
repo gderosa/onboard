@@ -20,7 +20,7 @@ class OnBoard
           return "Invalid Organization name" \
                                             unless params['O']        =~ /\S/
           return "Invalid email address"    unless (
-              params['emailAddress'].strip! =~ /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i )
+              params['emailAddress'].strip =~ /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i )
           return false
         end
 
