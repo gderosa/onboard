@@ -190,7 +190,7 @@ class OnBoard
           end
           cmdline << '--dev-type' << dev_type
 
-          params['dev'].strip!
+          params['dev'].strip! if params['dev']
           dev_name = case params['dev']
                    when /\S/
                      params['dev']
