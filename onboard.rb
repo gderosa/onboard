@@ -16,6 +16,7 @@ require 'onboard/platform/debian'
 
 class OnBoard
   LONGNAME = 'OnBoard'
+  VERSION = '2010.07'
  
   ROOTDIR = File.dirname File.expand_path(__FILE__)
   CONFDIR = ROOTDIR + '/etc/config'
