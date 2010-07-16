@@ -438,20 +438,20 @@
   <table>
     <thead>
       <tr>
-        <th rowspan="2">Add?</th>
+        <th rowspan="3">Add?</th>
         <th colspan="2">
           SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
         </th>
         <th colspan="2">Real Network</th>
-        <th colspan="2" rowspan="1">Virtual</th>
-        <th rowspan="2">LZO<br/>Compression?</th>
+        <th colspan="3" rowspan="1">Virtual</th>
+        <th rowspan="3">LZO<br/>Compression?</th>
       </tr>
       <tr>
-        <th rowspan="1">Certificate (must have Private Key)</th>
-        <th rowspan="1">Trusted Certificate Authority</th>
-        <th rowspan="1">Protocol</th>
-        <th colspan="1">Local<br/>port</th>
-        <th>
+        <th rowspan="2">Certificate (must have Private Key)</th>
+        <th rowspan="2">Trusted Certificate Authority</th>
+        <th rowspan="2">Protocol</th>
+        <th rowspan="2">Local<br/>port</th>
+        <th rowspan="2">
           Network (Point-to-Point, IPv4 only)
           <div class="optinfo">
             If you choose Virtual Ethernet as Interface type, this field will be ignored.
@@ -459,7 +459,11 @@
             Virtual ethernets will be configured just like ordinary network devices (<a href="/network/interfaces.html">here</a>)
           </div>
         </th>
-        <th>Interface type</th>
+        <th colspan="2">Interface</th>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
       </tr>
     </thead>
     <tbody>
@@ -519,6 +523,7 @@
           <input style="width: 100%;" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/> 
           <!-- <input style="width: 100%;" type="text" class="rwtext" name="server_net"/> -->
         </td>
+        <td><input size="15" maxlength="15" type="text" class="rwtext" name="dev"/></td>
         <td>
           <%=
             format(

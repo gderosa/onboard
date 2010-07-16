@@ -190,7 +190,14 @@ class OnBoard
           end
           cmdline << '--dev-type' << dev_type
 
-          cmdline << '--dev' << OpenVPN::Interface::Name.generate 
+          params['dev'].strip!
+          dev_name = case params['dev']
+                   when /\S/
+                     params['dev']
+                   else
+                     OpenVPN::Interface::Name.generate(dev_type)
+                   end          
+          cmdline << '--dev' << dev_name
           
           if params['server_net'] # it's a server, may be empty for TAPs
             client_config_dir = config_dir + '/clients'
