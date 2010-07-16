@@ -36,6 +36,7 @@
 
 <%
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
+  ifname_form_field = '<input size="15" maxlength="15" type="text" class="rwtext" name="dev"/>'
 %>
 <h3>Running/Configured VPNs</h3>
 <table>
@@ -312,7 +313,7 @@
           SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
         </th>
         <th colspan="3">Real Network</th>
-        <th>Virtual Interface</th>
+        <th colspan="2">Virtual Interface</th>
         <th colspan="2">Options</th>
       </tr>
       <tr>
@@ -320,6 +321,7 @@
         <th rowspan="2">Trusted Certificate Authority</th>
         <th rowspan="2">Protocol</th>
         <th colspan="2">Server</th>
+        <th rowspan="2">Name</th>
         <th rowspan="2">Type</th>
         <th rowspan="2">Demand Server-type Certificate for the Server?</th>
         <th rowspan="2">LZO Compression?</th>
@@ -385,7 +387,10 @@
           <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
         </td>
         <td>
-          <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
+          <input type="text" class="rwtext" name="remote_port[]" size="5" maxlength="5" value="1194"/>
+        </td>
+        <td rowspan="<%= rowspan %>">
+          <%= ifname_form_field %>
         </td>
         <td rowspan="<%= rowspan %>">
           <%= 
@@ -418,7 +423,7 @@
             <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
           </td>
           <td>
-            <input type="text" class="rwtext" name="remote_port[]" size="4" value="1194"/>
+            <input type="text" class="rwtext" name="remote_port[]" size="5" maxlength="5" value="1194"/>
           </td>
         </tr>
       <% end %>
@@ -427,7 +432,7 @@
         <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
           (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
         </td>
-        <td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td>
       </tr>
     </tbody>
   </table>
@@ -517,13 +522,13 @@
           </select>
         </td>
         <td style="text-align:center;"> 
-          <input type="text" class="rwtext" name="port" size="4" value="1194"/>
+          <input type="text" class="rwtext" name="port" size="5" maxlength="5" value="1194"/>
         </td>
         <td>
           <input style="width: 100%;" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/> 
           <!-- <input style="width: 100%;" type="text" class="rwtext" name="server_net"/> -->
         </td>
-        <td><input size="15" maxlength="15" type="text" class="rwtext" name="dev"/></td>
+        <td><%= ifname_form_field %></td>
         <td>
           <%=
             format(
