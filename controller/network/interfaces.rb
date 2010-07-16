@@ -13,6 +13,16 @@ class OnBoard::Controller
     )
   end
 
+  get '/network/interfaces/:ifname.:format' do
+    format(
+      :path => '/network/interfaces',
+      :format => params[:format],
+      :objects  => OnBoard::Network::Interface.getAll.select do |iface|
+        iface.name == params[:ifname]
+      end
+    )
+  end
+
   # An example params is found in doc/  
   put '/network/interfaces.:format' do
     current_interfaces = OnBoard::Network::Interface.getAll
@@ -20,16 +30,30 @@ class OnBoard::Controller
       interface = current_interfaces.detect {|i| i.name == ifname}
       interface.modify_from_HTTP_request(ifhash) 
     end
-    #status(202)                       # HTTP "Accepted"
-    #headers(
-    #  "Location"      => request.path_info,
-    #  "Pragma"        => "no-cache",  # HTTP/1.0
-    #  "Cache-Control" => "no-cache"   # HTTP/1.1
-    #) 
     format(
       :path => '/network/interfaces',
       :format => params[:format],
       :objects  => OnBoard::Network::Interface.getAll
+    ) 
+  end
+
+  put '/network/interfaces/:ifname.:format' do
+    ifname = params[:ifname]
+    current_interface = OnBoard::Network::Interface.getAll.detect do |iface|
+      iface.name == ifname
+    end
+
+    begin
+      current_interface.modify_from_HTTP_request params['netifs'][ifname]
+    rescue NoMethodError # in case of nil, skip!
+    end
+
+    format(
+      :path => '/network/interfaces',
+      :format => params[:format],
+      :objects  => OnBoard::Network::Interface.getAll.select do |iface|
+        iface.name == ifname
+      end
     ) 
   end
 
