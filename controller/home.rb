@@ -9,11 +9,19 @@ class OnBoard::Controller
   end
 
   get "/" do
-    format(
-      :path     => 'home',
-      :format   => 'html',
-      :objects  =>  []
-    ) 
+    begin 
+      format(
+        :path     => 'home-custom',
+        :format   => 'html',
+        :objects  =>  []
+      ) 
+    rescue Errno::ENOENT
+      format(
+        :path     => 'home',
+        :format   => 'html',
+        :objects  =>  []
+      ) 
+    end
   end
 
 end

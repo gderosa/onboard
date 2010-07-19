@@ -14,8 +14,13 @@ require 'onboard/menu/node'
 
 require 'onboard/platform/debian'
 
+begin
+  require 'onboard/constants/custom'
+rescue LoadError
+end
+
 class OnBoard
-  LONGNAME = 'OnBoard'
+  LONGNAME ||= 'OnBoard'
   VERSION = '2010.07'
  
   ROOTDIR = File.dirname File.expand_path(__FILE__)
