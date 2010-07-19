@@ -35,14 +35,23 @@ class OnBoard::Controller
   # An example params is found in doc/  
   put '/network/interfaces.:format' do
     current_interfaces = OnBoard::Network::Interface.getAll
+
     params['netifs'].each_pair do |ifname, ifhash|
       interface = current_interfaces.detect {|i| i.name == ifname}
       interface.modify_from_HTTP_request(ifhash) 
     end
+
+    updated_objects = OnBoard::Network::Interface.getAll.sort_by do |iface|
+      [
+        OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
+        (iface.mac ? iface.mac.raw : 0xffffffffffff) 
+      ]
+    end
+
     format(
       :path => '/network/interfaces',
       :format => params[:format],
-      :objects  => OnBoard::Network::Interface.getAll
+      :objects  => updated_objects
     ) 
   end
 
