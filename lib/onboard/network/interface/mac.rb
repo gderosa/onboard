@@ -38,8 +38,16 @@ class OnBoard
           @raw == other.raw
         end
 
+        def <=>(other)
+          @raw <=> other.raw
+        end
+
         def data
           @string
+        end
+
+        def to_s
+          data
         end
 
         private
