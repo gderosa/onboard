@@ -10,16 +10,37 @@ class OnBoard
 
       # Constants
 
-      TYPES_HUMAN_READABLE = {
-        'ether'       => 'Ethernet',
-        'P-t-P'       => 'Point-to-Point',
-        'virtual'     => 'Virtual Ethernet',
-        'wi-fi'       => 'Wireless IEEE 802.11',
-        'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;',
-        'bridge'      => 'Bridge',
-        'loopback'    => 'Loopback'
+      TYPES = {
+        'loopback'    => {
+          :preferred_order  => 0,
+          :human_readable   => 'Loopback'
+        },
+        'bridge'      => {
+          :preferred_order  => 0.8,
+          :human_readable   => 'Bridge'
+        },
+        'ether'       => {
+          :preferred_order  => 1,
+          :human_readable   => 'Ethernet'
+        },
+        'wi-fi'       => {
+          :preferred_order  => 2,
+          :human_readable   => 'Wireless IEEE 802.11'
+        },
+        'ieee802.11'  => {
+          :preferred_order  => 2.1, # "master"
+          :human_readable   => 'IEEE 802.11 "master"'
+        },
+        'virtual'     => {
+          :preferred_order  => 4,
+          :human_readable   => 'Virtual Ethernet'
+        },
+        'P-t-P'       => {
+          :preferred_order  => 5,
+          :human_readable   => 'Point-to-Point'
+        }
       }
-
+     
       # Class methods.
 
       class << self
@@ -287,7 +308,7 @@ class OnBoard
       def initialize(hash)
         %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
           eval "@#{property} = hash[:#{property}]"
-        end
+        end        
         set_pciid_from_sysfs
         lspci_by_id = OnBoard::Hardware::LSPCI.by_id
         if @pciid 
@@ -462,7 +483,7 @@ class OnBoard
       end
 
       def type_hr
-        TYPES_HUMAN_READABLE[@type] or @type
+        TYPES[@type.to_s][:human_readable] or @type.to_s
       end
 
       private
