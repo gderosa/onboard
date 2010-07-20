@@ -26,7 +26,8 @@ class OnBoard::Controller < Sinatra::Base
       :module   => 'easy-rsa',
       :path     => '/crypto/easy-rsa',
       :format   => params[:format],
-      :objects  => OnBoard::Crypto::SSL.getAll() 
+      :objects  => OnBoard::Crypto::SSL.getAll(),
+      :title    => 'SSL keys and certificates'
     )
   end
 
@@ -77,7 +78,8 @@ EOF
     headers('Location' => redirection)
     format(
       :path     => '/303',
-      :format   => params['format']
+      :format   => params['format'],
+      :title    => 'SSL keys and certificates'
     )
   end
 
@@ -99,7 +101,8 @@ EOF
       :path     => '/crypto/easy-rsa/ca-create',
       :format   => params[:format],
       :objects  => nil,
-      :msg      => msg
+      :msg      => msg,
+      :title    => 'SSL keys and certificates'
     )
   end
 
@@ -126,7 +129,8 @@ EOF
       :path     => '/crypto/easy-rsa/cert-create',
       :format   => params[:format],
       :objects  => nil,
-      :msg      => msg
+      :msg      => msg,
+      :title    => 'SSL keys and certificates'
     )
   end
 
@@ -163,7 +167,8 @@ EOF
       :path     => '/crypto/easy-rsa/cert-del',
       :format   => 'html',
       :objects  => {},
-      :msg      => msg
+      :msg      => msg,
+      :title    => 'SSL keys and certificates'
     )
   end
 

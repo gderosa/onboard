@@ -13,7 +13,8 @@ class OnBoard::Controller
     format(
       :path     => 'network/bridges',
       :format   => params[:format],
-      :objects  => bridges
+      :objects  => bridges,
+      :title    => 'Bridges'
     )
   end
 
@@ -30,6 +31,7 @@ class OnBoard::Controller
       :path     => 'network/bridges',
       :format   => params[:format],
       :objects  => bridges,
+      :title    => 'Bridges',
       :msg      => msg
     )
   end
@@ -57,9 +59,10 @@ class OnBoard::Controller
       "Cache-Control" => "no-cache"   # HTTP/1.1
     )
     format(
-      :path => '/network/bridges',
-      :format => params[:format],
-      :objects  => bridges
+      :path     => '/network/bridges',
+      :format   => params[:format],
+      :objects  => bridges,
+      :title    => 'Bridges'
     )
   end
 
@@ -70,9 +73,10 @@ class OnBoard::Controller
     end
     raise Sinatra::NotFound unless bridge
     format(
-      :path   => 'network/bridge',
-      :format => params[:format],
-      :objects  => {:bridge => bridge, :all_interfaces => interfaces}
+      :path     => 'network/bridge',
+      :format   => params[:format],
+      :objects  => {:bridge => bridge, :all_interfaces => interfaces},
+      :title    => "Bridge: #{params['brname']}"
     )
   end
 
@@ -89,18 +93,11 @@ class OnBoard::Controller
     bridge = interfaces.find do |netif|
       netif.name == params['brname']
     end
-    #fail 'No bridge!' unless bridge
-    # send response
-    #status(202)                       # HTTP "Accepted"    
-    #headers(
-    #  "Location"      => request.path_info,
-    #  "Pragma"        => "no-cache",  # HTTP/1.0
-    #  "Cache-Control" => "no-cache"   # HTTP/1.1
-    #)
     format(
       :path => '/network/bridge',
       :format => params[:format],
-      :objects  => {:bridge => bridge, :all_interfaces => interfaces}
+      :objects  => {:bridge => bridge, :all_interfaces => interfaces},
+      :title    => "Bridge: #{params['brname']}"
     )
   end
 

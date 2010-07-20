@@ -20,9 +20,10 @@ class OnBoard::Controller
     iptablesobj.get_all_info
 
     format(
-      :path => '/network/firewall',
-      :format => params[:format],
-      :objects  => iptablesobj 
+      :path     => '/network/firewall',
+      :format   => params[:format],
+      :objects  => iptablesobj,
+      :title    => "Firewall (IPv#{params[:version]})"
     )
   end
 
@@ -55,10 +56,11 @@ class OnBoard::Controller
     iptablesobj.get_all_info
 
     format(
-      :path => '/network/firewall',
-      :format => params[:format],
+      :path     => '/network/firewall',
+      :format   => params[:format],
       :objects  => iptablesobj,
-      :msg  => msg 
+      :msg      => msg,
+      :title    => "Firewall (IPv#{params[:version]})" 
     )
   end
 

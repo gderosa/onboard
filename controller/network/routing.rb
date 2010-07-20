@@ -1,9 +1,6 @@
 require 'sinatra/base'
 
 require 'onboard/network/routing'
-#require 'onboard/network/routing/route'
-#require 'onboard/network/routing/table'
-#require 'onboard/network/routing/rule'
 
 class OnBoard::Controller
 
@@ -11,6 +8,7 @@ class OnBoard::Controller
     format(
       :path     => 'network/routing/tables',
       :format   => params[:format],
+      :title    => 'Policy routing: tables',
       :objects  => OnBoard::Network::Routing::Table.getAllIDs
     )
   end
@@ -52,6 +50,7 @@ class OnBoard::Controller
     format(
       :path     => 'network/routing/tables',
       :format   => params[:format],
+      :title    => 'Policy routing: tables',
       :objects  => OnBoard::Network::Routing::Table.getAllIDs,
       :msg      => msg
     )
@@ -61,6 +60,7 @@ class OnBoard::Controller
     format(
       :path     => 'network/routing/rules',
       :format   => params[:format],
+      :title    => 'Policy routing: rules',
       :objects  => OnBoard::Network::Routing::Rule.getAll
     )
   end
@@ -70,6 +70,7 @@ class OnBoard::Controller
     format(
       :path     => 'network/routing/rules',
       :format   => params[:format],
+      :title    => 'Policy routing: rules',
       :objects  => OnBoard::Network::Routing::Rule.getAll,
       :msg      => msg
     )
@@ -83,6 +84,7 @@ class OnBoard::Controller
     format(
       :path     => 'network/routing/rules',
       :format   => params[:format],
+      :title    => 'Policy routing: rules',
       :objects  => OnBoard::Network::Routing::Rule.getAll,
       :msg      => msg
     )
@@ -93,6 +95,7 @@ class OnBoard::Controller
       format(
         :path     => 'network/routing/table',
         :format   => params[:format],
+        :title    => "Routing table: #{params[:table]}",
         :objects  => OnBoard::Network::Routing::Table.get(params[:table])
       )
     rescue OnBoard::Network::Routing::Table::NotFound
@@ -147,6 +150,7 @@ class OnBoard::Controller
     format(
       :path     => 'network/routing/table',
       :format   => params[:format],
+      :title    => "Routing table: #{params[:table]}",
       :objects  => OnBoard::Network::Routing::Table.get(params['table']),
       :msg      => msg
     )   
@@ -175,6 +179,7 @@ class OnBoard::Controller
       format(
         :path     => 'network/routing/table',
         :format   => params[:format],
+        :title    => "Routing table: #{params['table']}",
         :objects  => OnBoard::Network::Routing::Table.get(params['table']),
         :msg      => msg
       )   

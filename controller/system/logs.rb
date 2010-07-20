@@ -8,8 +8,10 @@ class OnBoard::Controller
     format(
       :path     => 'system/logs',
       :format   => params[:format],
-      :objects  => OnBoard::System::Log ) # yes, the class: a way to implement
+      :objects  => OnBoard::System::Log , # yes, the class: a way to implement
         # the Singleton pattern without creating "AllLogs"  
+      :title    => 'Logs'
+    )
   end
 
   get "/system/logs/:logid.raw" do
@@ -32,7 +34,8 @@ class OnBoard::Controller
     format(
       :path     => 'system/logs',
       :format   => params[:format],
-      :objects  => log
+      :objects  => log,
+      :title    => "Log: #{params['logid']}"
     )
   end
 
@@ -51,17 +54,10 @@ class OnBoard::Controller
       format(
         :path     => 'system/logs',
         :format   => fmt,
-        :objects  => log
+        :objects  => log,
+        :title    => "Log: #{path}" 
       )
     end
-=begin
-    "
-<pre>
-    \"#{path}\"
-    \"#{fmt}\"
-</pre>
-    "
-=end
   end
 
 end
