@@ -8,6 +8,8 @@ class OnBoard
     class Dnsmasq
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
 
+      # TODO: DRY
+
       def self.save
         %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
           FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}" if
@@ -30,6 +32,23 @@ class OnBoard
         # do not copy new/*.conf to parent directory if you don't want
         # persistence        
         OnBoard::PLATFORM::restart_dnsmasq("#{CONFDIR}/new")
+      end
+
+      def self.init_conf
+        need_restart = false
+        unless File.exists? "#{CONFDIR}/new"
+          FileUtils.mkdir_p "#{CONFDIR}/new"
+          need_restart = true
+        end
+        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
+          unless File.exists? "#{CONFDIR}/new/#{file}"
+            FileUtils.copy "#{CONFDIR}/defaults/#{file}", "#{CONFDIR}/new/#{file}"
+            need_restart = true
+          end
+        end
+        if need_restart
+          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR}/new"  
+        end
       end
 
       def self.validate_dhcp_range(dhcp_range_params)
