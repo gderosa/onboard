@@ -261,7 +261,12 @@ class OnBoard
           str << "local=/#{params['localdomain']}/\n"
         end
 
-        FileUtils.copy(CONFDIR + '/new/dns.conf', CONFDIR + '/new/dns.conf~')
+        unless File.exists? CONFDIR + '/new'
+          FileUtils.mkdir_p CONFDIR + '/new'
+        end
+        
+        FileUtils.copy(CONFDIR + '/new/dns.conf', CONFDIR + '/new/dns.conf~') if
+          File.exists? CONFDIR + '/new/dns.conf'
         File.open(CONFDIR + '/new/dns.conf',  'w') do |file|
           file.write str
         end
