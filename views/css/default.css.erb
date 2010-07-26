@@ -115,7 +115,7 @@ div#main .error pre, div#main .warn pre, div#main .info pre {
   margin-bottom: 0;
 }
 
-div#main .error, div#main .warn, div#main .info {
+div#main div.error, div#main div.warn, div#main div.info {
   margin-right: 4em;
 }
 
@@ -131,7 +131,8 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 .optinfo {
   text-align:   left;
   font-weight:  normal;
-  font-family:  sans-serif;
+  /* font-family:  sans-serif; */
+  font-style:   italic;
 }
 
 strong {
@@ -267,9 +268,8 @@ table tr td button img {
   margin: 0;
 }
 
-tbody {
-  margin: 10px;
-  border: 2px black solid;
+table tr td div {
+  margin: 0.3em 0;
 }
 
 button[disabled] {
@@ -288,9 +288,20 @@ ul li ul li {
   margin-top: 0.3em; 
 }
 
+div#sidebar ul {
+  font-weight: bold;
+  color: #444;
+}
+
 li {
   margin-top: 0.3em;
   margin-bottom: 0.3em;
 }
 
+<<<<<<< HEAD
 
+=======
+select.tt, select option.tt {
+  font-family: monospace;
+}
+>>>>>>> master

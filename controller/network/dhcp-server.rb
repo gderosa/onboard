@@ -2,6 +2,10 @@ require 'sinatra/base'
 
 require 'onboard/network/dnsmasq'
 
+# this should be always safe: it's a no-op if a current
+# configuration already exists
+OnBoard::Network::Dnsmasq.init_conf 
+
 class OnBoard::Controller
 
   get "/network/dhcp-server.:format" do
@@ -11,7 +15,8 @@ class OnBoard::Controller
     format(
       :path     => 'network/dhcp-server',
       :format   => params[:format],
-      :objects  => dnsmasq 
+      :objects  => dnsmasq,
+      :title    => 'DHCP Server'
     )
   end
 
@@ -32,7 +37,8 @@ class OnBoard::Controller
       :path     => 'network/dhcp-server',
       :format   => params[:format],
       :objects  => dnsmasq,
-      :msg      => msg
+      :msg      => msg,
+      :title    => 'DHCP Server'
     )
   end
 

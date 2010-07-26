@@ -8,6 +8,8 @@ class OnBoard
     class Dnsmasq
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
 
+      # TODO: DRY
+
       def self.save
         %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
           FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}" if
@@ -30,6 +32,23 @@ class OnBoard
         # do not copy new/*.conf to parent directory if you don't want
         # persistence        
         OnBoard::PLATFORM::restart_dnsmasq("#{CONFDIR}/new")
+      end
+
+      def self.init_conf
+        need_restart = false
+        unless File.exists? "#{CONFDIR}/new"
+          FileUtils.mkdir_p "#{CONFDIR}/new"
+          need_restart = true
+        end
+        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
+          unless File.exists? "#{CONFDIR}/new/#{file}"
+            FileUtils.copy "#{CONFDIR}/defaults/#{file}", "#{CONFDIR}/new/#{file}"
+            need_restart = true
+          end
+        end
+        if need_restart
+          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR}/new"  
+        end
       end
 
       def self.validate_dhcp_range(dhcp_range_params)
@@ -226,7 +245,8 @@ class OnBoard
                     range['leasetime']<< "\n"
           end
         end
-        params['hosts'].each_value do |host|
+        params['hosts'].each_value do |host| # fixed host
+          host['mac'].gsub! '-', ':' # normalize: 00-aa-bb-ff-23-45 -> 00:aa:bb:ff:23:45
           msg = self.class.validate_dhcp_host(host) 
           return msg if msg[:err]
           unless msg[:ignore]
@@ -276,7 +296,12 @@ class OnBoard
           str << "local=/#{params['localdomain']}/\n"
         end
 
-        FileUtils.copy(CONFDIR + '/new/dns.conf', CONFDIR + '/new/dns.conf~')
+        unless File.exists? CONFDIR + '/new'
+          FileUtils.mkdir_p CONFDIR + '/new'
+        end
+        
+        FileUtils.copy(CONFDIR + '/new/dns.conf', CONFDIR + '/new/dns.conf~') if
+          File.exists? CONFDIR + '/new/dns.conf'
         File.open(CONFDIR + '/new/dns.conf',  'w') do |file|
           file.write str
         end

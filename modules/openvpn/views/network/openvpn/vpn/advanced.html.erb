@@ -21,85 +21,91 @@
 -->
 
 <% if vpn.data['server'] %>
-  <h3>Advanced clients configuration</h3>
+  <% unless vpn.data['dev-type'] == 'tap' %>
+    <h3>Advanced clients configuration</h3>
+  <% end %>
   <form method="POST">
     <input type="hidden" name="_method" value="put">
-    <table>
-      <thead>
-        <tr>
-          <th>Client’s &ldquo;Common Name&rdquo;</th>
-          <th>
-            Route networks
-            <div class="optinfo">  
-              <p>
-                List of networks, one per line, which are behind the client and
-                you want to make securely accessible through the VPN.
-              </p>
-              <p>
-                You can either use <a href="http://en.wikipedia.org/wiki/Subnet_mask">netmask</a> or <a href="http://en.wikipedia.org/wiki/CIDR_notation">CIDR notation</a>.
-              </p>
-            </div>
-          </th>
-          <th>
-            Push routes
-            <div class="optinfo">  
-              <p>
-                List of networks, one per line, which are behind this server
-                and you want to make securely accessible from the client.
-              </p>
-              <p>
-                You can either use <a href="http://en.wikipedia.org/wiki/Subnet_mask">netmask</a> or <a href="http://en.wikipedia.org/wiki/CIDR_notation">CIDR notation</a>.
-              </p>
-            </div>
-          </th>
-          <th>
-            Delete?
-          </th>
-        </tr>
-      </thead>
-      <% network_textarea_columns = 26 %>
-      <% cols = network_textarea_columns %>
-      <tbody>
-        <% vpn.data['client-config'].each_pair do |cn, h| %>
+    <% if vpn.data['dev-type'] == 'tap' %>
+      <!-- nothing here -->
+    <% else %>
+      <table>
+        <thead>
           <tr>
-            <td><code><%= cn %></code></td>
-            <input type="hidden" name="clients[][CN]" value="<%= cn %>">
+            <th>Client’s &ldquo;Common Name&rdquo;</th>
+            <th>
+              Route networks
+              <div class="optinfo">  
+                <p>
+                  List of networks, one per line, which are behind the client and
+                  you want to make securely accessible through the VPN.
+                </p>
+                <p>
+                  You can either use <a href="http://en.wikipedia.org/wiki/Subnet_mask">netmask</a> or <a href="http://en.wikipedia.org/wiki/CIDR_notation">CIDR notation</a>.
+                </p>
+              </div>
+            </th>
+            <th>
+              Push routes
+              <div class="optinfo">  
+                <p>
+                  List of networks, one per line, which are behind this server
+                  and you want to make securely accessible from the client.
+                </p>
+                <p>
+                  You can either use <a href="http://en.wikipedia.org/wiki/Subnet_mask">netmask</a> or <a href="http://en.wikipedia.org/wiki/CIDR_notation">CIDR notation</a>.
+                </p>
+              </div>
+            </th>
+            <th>
+              Delete?
+            </th>
+          </tr>
+        </thead>
+        <% network_textarea_columns = 26 %>
+        <% cols = network_textarea_columns %>
+        <tbody>
+          <% vpn.data['client-config'].each_pair do |cn, h| %>
+            <tr>
+              <td><code><%= cn %></code></td>
+              <input type="hidden" name="clients[][CN]" value="<%= cn %>">
+              <td>
+                <%
+                  text = ''
+                  h['iroutes'].each do |route|
+                    text << "#{route['net']}/#{route['mask']}\n"
+                  end
+                %>
+                <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea> 
+              </td>
+              <td>
+                <% 
+                  text = ''
+                  h['push']['routes'].each do |route|
+                    text << "#{route['net']}/#{route['mask']}\n"
+                  end
+                %>
+                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea>
+              </td>
+              <td style="text-align: center;">
+                <input type="checkbox" name="clients[][delete]"/> 
+              </td>
+            </tr>
+          <% end %>
+          <tr>
+            <td><input name="clients[][CN]" type="text" class="rwtext"/></td>
             <td>
-              <%
-                text = ''
-                h['iroutes'].each do |route|
-                  text << "#{route['net']}/#{route['mask']}\n"
-                end
-              %>
-              <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea> 
+              <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off></textarea> 
             </td>
             <td>
-              <% 
-                text = ''
-                h['push']['routes'].each do |route|
-                  text << "#{route['net']}/#{route['mask']}\n"
-                end
-              %>
-              <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea>
+              <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off></textarea>
             </td>
             <td style="text-align: center;">
-              <input type="checkbox" name="clients[][delete]"/> 
             </td>
           </tr>
-        <% end %>
-        <tr>
-          <td><input name="clients[][CN]" type="text" class="rwtext"/></td>
-          <td>
-            <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off></textarea> 
-          </td>
-          <td>
-            <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off></textarea>
-          </td>
-          <td style="text-align: center;">
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    <% end %>
     <h4>Options</h4>
     <table style="margin-bottom: 1em;">
       <tbody>

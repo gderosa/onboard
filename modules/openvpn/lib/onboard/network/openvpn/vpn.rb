@@ -25,6 +25,8 @@ class OnBoard
 
       STATUS_UPDATE_INTERVAL = 60 # seconds # 'status' file
 
+      UPSCRIPT ||= OpenVPN::ROOTDIR + '/etc/scripts/up'
+
       class VPN
         CONFDIR = ROOTDIR + '/etc/config/network/openvpn/vpn'
 
@@ -143,6 +145,16 @@ class OnBoard
           reserved_tcp_port = reserve_a_tcp_port.addr[1] 
           cmdline = []
           cmdline << 'openvpn'
+          cmdline << '--script-security' << '2'
+          cmdline << '--up' << UPSCRIPT
+          # cmdline << '--up-restart'
+          cmdline << '--setenv' << 'PATH' << ENV['PATH']
+          cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
+          cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' << 
+              OnBoard::CONFDIR + '/network/interfaces.dat' 
+          cmdline << '--setenv' << 'STATIC_ROUTES_DATFILE' << 
+              OnBoard::CONFDIR + '/network/routing/static_routes'          
+          cmdline << '--persist-tun'
           cmdline << '--management' << '127.0.0.1' << reserved_tcp_port.to_s
           cmdline << '--daemon'
           logfile = "/var/log/ovpn-#{uuid}.log" 
@@ -169,13 +181,38 @@ class OnBoard
             "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crl'"
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
-          cmdline << '--dev-type' << 'tun'
-          cmdline << '--dev' << OpenVPN::Interface::Name.generate 
-          #cmdline << '--proto' << params['proto']
-          if params['server_net'] =~ /\S/ # it's a server
+
+          dev_type ||= 'tun' # default
+          if params['dev-type'] =~ /^\s*(tun|tap)\s*$/
+            dev_type = $1
+          elsif params['dev'] =~ /^\s*(tun|tap)/
+            dev_type = $1
+          end
+          cmdline << '--dev-type' << dev_type
+
+          params['dev'].strip! if params['dev']
+          dev_name = case params['dev']
+                   when /\S/
+                     params['dev']
+                   else
+                     OpenVPN::Interface::Name.generate(dev_type)
+                   end          
+          cmdline << '--dev' << dev_name
+          
+          if params['server_net'] # it's a server, may be empty for TAPs
             client_config_dir = config_dir + '/clients'
-            net = IPAddr.new params['server_net']
-            cmdline << '--server' << net.to_s << net.netmask.to_s
+
+            net = nil            
+            if params['server_net'] =~ /\S/
+              net = IPAddr.new params['server_net']
+            end
+
+            if dev_type == 'tun'
+              cmdline << '--server' << net.to_s << net.netmask.to_s
+            elsif dev_type == 'tap'
+              cmdline << '--mode' << 'server' << '--tls-server'
+            end
+
             cmdline << '--port' << params['port'].to_s
             cmdline << '--proto' << params['proto']
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
@@ -485,20 +522,32 @@ EOF
         end
 
         def find_interface
-          interface = @@all_interfaces.detect do |iface|
-            if iface.ip
-              iface.ip.detect do |ip|
-                ip.addr.to_s == @data['virtual_address']
+          case @data['dev']
+          when 'tun', 'tap', /^\s*$/, nil, false
+            interface = @@all_interfaces.detect do |iface|
+              if iface.ip
+                iface.ip.detect do |ip|
+                  ip.addr.to_s == @data['virtual_address']
+                end
+              else
+                nil
               end
-            else
-              nil
             end
-          end
-          @data['interface'] = interface.name if interface
+            @data['interface'] = interface.name if interface
+          else
+            @data['interface'] = @data['dev']
+          end          
         end
 
         def find_virtual_address
-          if @data['client']
+          @@all_interfaces ||= Network::Interface.getAll()
+          iface = @@all_interfaces.detect do |x| 
+            x.name == @data['interface'] or
+            x.name == @data['dev'] 
+          end
+          if @data['dev-type'] == 'tap' or @data['dev'] =~ /^tap/
+            @data['virtual_addresses'] = iface.data['ip'] if iface
+          elsif @data['client']
             begin
               @data['virtual_address'] = @data['client']['Virtual Address']
             rescue NoMethodError, TypeError
@@ -566,11 +615,15 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end 
 
             # "public" options with 1 argument 
-            %w{port proto dev max-clients local comp-lzo}.each do |optname|
+            %w{port proto dev dev-type max-clients local comp-lzo}.each do |optname|
               if line =~ /^\s*#{optname}\s+(.*)\s*$/ 
                 @data[optname] = $1
                 next
               end
+            end
+
+            if line =~ /^\s*mode\s+server\s*$/ or line =~ /^\s*tls-server\s*$/
+              @data['server'] ||= true
             end
 
             # "public" options with more arguments

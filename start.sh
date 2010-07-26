@@ -1,11 +1,19 @@
 #!/bin/sh
 
-#default
-LANG='en_US.UTF-8' 
+ENV_SH=`dirname $0`/env.sh
 
-# allow a customization of the environment in env.sh
-[ -r env.sh ] && . env.sh
+LANG='en_US.UTF-8' 
+ONBOARD_ENVIRONMENT='production'
+
+if [ -r $ENV_SH ]; then
+	. $ENV_SH 
+fi
 
 export LANG
+export ONBOARD_ENVIRONMENT
 
 thin -C config.yml -R config.ru start
+sync
+thin -C config6.yml -R config.ru start
+sync
+

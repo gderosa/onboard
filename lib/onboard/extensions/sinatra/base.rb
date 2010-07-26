@@ -1,5 +1,6 @@
 module Sinatra
   class Base
+
     def routed?(path, verb="GET")
       if verb == :any
         %w{GET POST PUT DELETE}.each do |verb_|
@@ -15,6 +16,7 @@ module Sinatra
         return false
       end
     end
+
     def allowed_methods(path)
       methods = self.class.routes.keys
       retval = methods.dup
@@ -23,5 +25,6 @@ module Sinatra
       end
       return retval
     end
+
   end
 end

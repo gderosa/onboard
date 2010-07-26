@@ -2,10 +2,15 @@ require 'logger'
 require 'open3'
 
 class OnBoard
+
+  LOGGER ||= Logger.new(STDERR)
+
   module System
     module Command
 
       class RuntimeError < ::RuntimeError; end
+
+      DEFAULT_LOG_LEVEL = :debug
 
       def self.bgexec(cmd, *opts)
         msg = {:background => true}
@@ -41,6 +46,12 @@ class OnBoard
           stdout.close
           stderr.close 
         end
+        at_exit {
+          if wait_thr.alive?
+            print "Waiting for #{wait_thr}: #{cmd} ..."
+            wait_thr.join and puts 'OK'
+          end
+        }
         return msg
       end
 
@@ -67,8 +78,12 @@ class OnBoard
           msg[:status] = wait_thr.value.exitstatus
           # if we know how to safely handle an error, treat errors as 
           # something smaller
-          error_as = (opts.include?(:try) ? :warn : :error)
-          errmsg = "Command \"#{cmd}\" failed (#{wait_thr.value})"
+          error_as = :error
+          errmsg = "Command failed: \"#{cmd_do}\" (#{wait_thr.value})"
+          if opts.include? :try
+            error_as  = DEFAULT_LOG_LEVEL
+            errmsg = "Attempt failed: \"#{cmd_do}\" (#{wait_thr.value})"
+          end
           LOGGER.method(error_as).call(errmsg)
           msg[:err] = errmsg unless opts.include?(:try)
           msg[:stderr].each_line do |line|
@@ -79,6 +94,8 @@ class OnBoard
             line.strip!
             LOGGER.info line if line =~ /\S/
           end
+        else
+          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: \"#{cmd_do}\""
         end
         stdin.close
         stdout.close

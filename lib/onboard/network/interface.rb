@@ -10,16 +10,37 @@ class OnBoard
 
       # Constants
 
-      TYPES_HUMAN_READABLE = {
-        'ether'       => 'Ethernet',
-        'P-t-P'       => 'Point-to-Point',
-        'virtual'     => 'Virtual Ethernet',
-        'wi-fi'       => 'Wireless IEEE 802.11',
-        'ieee802.11'  => 'IEEE 802.11 &ldquo;master&rdquo;',
-        'bridge'      => 'Bridge',
-        'loopback'    => 'Loopback'
+      TYPES = {
+        'loopback'    => {
+          :preferred_order  => 0,
+          :human_readable   => 'Loopback'
+        },
+        'bridge'      => {
+          :preferred_order  => 0.8,
+          :human_readable   => 'Bridge'
+        },
+        'ether'       => {
+          :preferred_order  => 1,
+          :human_readable   => 'Ethernet'
+        },
+        'wi-fi'       => {
+          :preferred_order  => 2,
+          :human_readable   => 'Wireless IEEE 802.11'
+        },
+        'ieee802.11'  => {
+          :preferred_order  => 2.1, # "master"
+          :human_readable   => 'IEEE 802.11 "master"'
+        },
+        'virtual'     => {
+          :preferred_order  => 4,
+          :human_readable   => 'Virtual Ethernet'
+        },
+        'P-t-P'       => {
+          :preferred_order  => 5,
+          :human_readable   => 'Point-to-Point'
+        }
       }
-
+     
       # Class methods.
 
       class << self
@@ -58,10 +79,19 @@ class OnBoard
                 :state      => $6 
               }
               if netif_h[:state] == "UNKNOWN" 
-                if netif_h[:misc].include? "UP"
-                  netif_h[:state] = "UP"
-                elsif netif_h[:misc].include? "DOWN"
+                if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
+                else
+                  carrier = File.read("/sys/class/net/#{netif_h[:name]}/carrier").strip
+                  netif_h[:state] = 
+                      case carrier 
+                      when '0'
+                        "NO-CARRIER"
+                      when '1'
+                        "UP"
+                      else
+                        "UNKNOWN"
+                      end
                 end
               end
               if netif_h[:misc].include_ary? %w{UP NO-CARRIER}
@@ -110,6 +140,7 @@ class OnBoard
               cmd             = $2
               args            = $4.strip
               iface           = ary.detect {|i| args.include? i.name}
+	      next unless iface
               iface.ipassign  = {
                 :method         => :dhcp,
                 :pid            => pid,
@@ -183,16 +214,27 @@ class OnBoard
           #end
         end
 
-        def restore
-          saved_ifaces = [] 
-          begin
-            File.open(OnBoard::CONFDIR + '/network/interfaces.dat', 'r') do |f|
-              saved_ifaces =  Marshal.load f
+        def restore(opt_h={})
+          saved_ifaces = []
+
+          if opt_h[:saved_interfaces]
+            saved_ifaces = opt_h[:saved_interfaces]
+          else 
+	          begin
+              File.open(
+                  OnBoard::CONFDIR + '/network/interfaces.dat', 'r') do |f|
+                saved_ifaces =  Marshal.load f
+              end
+            rescue # invalid or non-existent dat file? skip!
+              return
             end
-          rescue # invalid or non-existent dat file? skip!
-            return
           end
-          current_ifaces = getAll
+          if opt_h[:current_interfaces]
+            current_ifaces = opt_h[:current_interfaces]
+          else
+            current_ifaces = getAll
+          end
+
           saved_ifaces.each do |saved_iface|
             current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
             unless current_iface
@@ -266,7 +308,7 @@ class OnBoard
       def initialize(hash)
         %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
           eval "@#{property} = hash[:#{property}]"
-        end
+        end        
         set_pciid_from_sysfs
         lspci_by_id = OnBoard::Hardware::LSPCI.by_id
         if @pciid 
@@ -313,8 +355,9 @@ class OnBoard
         end
       end
 
-      def bridged?; self.bridged_to; end
-      def is_bridged?; self.bridged_to; end
+      def bridged?; bridged_to; end
+
+      def is_bridged?; bridged_to; end
 
       def data
         h = {}
@@ -441,7 +484,7 @@ class OnBoard
       end
 
       def type_hr
-        TYPES_HUMAN_READABLE[@type] or @type
+        TYPES[@type.to_s][:human_readable] or @type.to_s
       end
 
       private

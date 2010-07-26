@@ -12,9 +12,6 @@ Defaults	env_reset
 # User alias specification
 
 # Cmnd alias specification
-Cmnd_Alias      ONBOARD = /sbin/ip, /sbin/dhcpcd, /usr/sbin/brctl, /sbin/iptables, /sbin/iptables-save, /sbin/iptables-restore, /sbin/ip6tables, /sbin/ip6tables-save, /sbin/ip6tables-restore, /bin/kill, /bin/killall, /bin/readlink, /bin/cat /proc/*/environ, /bin/cat /var/log/*, /bin/cat /var/run/*, /usr/bin/tail -n * /var/log/*, /usr/sbin/openvpn, /bin/chmod, /bin/chown, /usr/bin/touch, /bin/touch, /bin/rm /var/log/ovpn-*, /usr/sbin/chilli, /usr/local/sbin/chilli, /usr/sbin/chilli_*, /usr/local/sbin/chilli_*
-Cmnd_Alias      ONBOARD_SETENV = /etc/init.d/dnsmasq, /usr/sbin/openvpn
- 
 
 # User privilege specification
 root	ALL=(ALL) ALL
@@ -22,8 +19,7 @@ root	ALL=(ALL) ALL
 # Uncomment to allow members of group sudo to not need a password
 # (Note that later entries override this, so you might need to move
 # it further down)
-# %sudo ALL=NOPASSWD: ALL
-
-%onboard ALL = NOPASSWD: ONBOARD 
-%onboard ALL = SETENV: NOPASSWD: ONBOARD_SETENV 
-	# vim doesn't understand this syntax (multiple tags)
+#
+# NOTE: add user 'onboard' to the sudo group
+#
+%sudo ALL=NOPASSWD: ALL

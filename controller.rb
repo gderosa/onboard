@@ -29,7 +29,14 @@ class OnBoard
     set :public, OnBoard::ROOTDIR + '/public'
     set :views, OnBoard::ROOTDIR + '/views'
 
-    Thread.abort_on_exception = true if environment == :development
+    case environment
+    when :development
+      Thread.abort_on_exception = true
+      OnBoard::LOGGER.level = Logger::DEBUG
+    when :production
+      Thread.abort_on_exception = false
+      OnBoard::LOGGER.level = Logger::INFO
+    end
 
     use Rack::Auth::Basic do |username, password|
       (File.exists? OnBoard::Passwd::ADMIN_PASSWD_FILE) ?
@@ -156,7 +163,8 @@ class OnBoard
               :objects => h[:objects], 
               :icondir => IconDir, 
               :iconsize => IconSize,
-              :msg => h[:msg] 
+              :msg => h[:msg],
+              :title => h[:title]
             } 
           )
 

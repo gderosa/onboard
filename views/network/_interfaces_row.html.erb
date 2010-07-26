@@ -6,7 +6,8 @@
 
             <th scope="row">
               <!-- <div> -->
-                <!-- <a href="<%= 'interfaces/' + url_encode(netif.name) + '.html' %>"> -->
+                <% iface_url = "/network/interfaces/#{url_encode(netif.name)}.html" %>
+                <% unless request.path_info == iface_url %><a href="<%= iface_url %>"><% end %> 
                   <% if netif.type == 'bridge' %>
                     <%=
                       if netif.members.length > 0 
@@ -25,10 +26,10 @@
                   <% else %>
                     <%= netif.name %>
                   <% end %>
-                <!-- </a> -->
+                <% unless request.path_info == iface_url %></a><% end %>
               <!-- </div> -->
             </th>
-            <td>
+            <td style="text-align: center;">
               <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]" <%= 'readonly' unless [:static, :dhcp].include? netif.ipassign[:method] %> />
             </td>
             <td><!--<div>--><%= html_escape netif.data['state'] %><!--</div>--></td>

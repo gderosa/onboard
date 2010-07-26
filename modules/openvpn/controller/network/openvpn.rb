@@ -26,7 +26,8 @@ class OnBoard
         :module => 'openvpn',
         :path => '/network/openvpn/vpn',
         :format => params[:format],
-        :objects  => vpns
+        :objects  => vpns,
+        :title  => 'OpenVPN'
       )
     end
 
@@ -96,7 +97,8 @@ class OnBoard
         :path => '/network/openvpn/vpn',
         :format => params[:format],
         :objects  => vpns,
-        :msg  => msg
+        :msg  => msg,
+        :title => 'OpenVPN'
       )
     end
 
@@ -121,7 +123,8 @@ class OnBoard
         :path     => '/network/openvpn/vpn',
         :format   => params[:format],
         :objects  => vpns,
-        :msg      => msg
+        :msg      => msg,
+        :title    => 'OpenVPN'
       )
     end
 
@@ -134,7 +137,8 @@ class OnBoard
           :module   => 'openvpn',
           :path     => '/network/openvpn/vpn/advanced',
           :format   => params[:format],
-          :objects  => vpn
+          :objects  => vpn,
+          :title    => "OpenVPN: ##{params[:vpn_identifier]}"
         )      
       else
         not_found
@@ -154,7 +158,8 @@ class OnBoard
           :path     => '/network/openvpn/vpn/advanced',
           :format   => params[:format],
           :objects  => vpn,
-          :msg      => msg
+          :msg      => msg,
+          :title    => "OpenVPN: ##{params[:vpn_identifier]}"
         )      
       else
         not_found

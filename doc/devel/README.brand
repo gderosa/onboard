@@ -1,0 +1,18 @@
+You can customize (or "brand") your OnBoard installation
+by adding:
+
+* your own views/home-custom.html.erb  which overrides views/home.html.erb
+
+* your own lib/onboard/constants/custom.rb to override OnBoard::LONGNAME
+
+* additional partial templates, images, media etc. required by your custom 
+  home page template
+
+You are recommended to create a specific branch in your fork/development 
+process.
+
+See as an example http://github.com/gderosa/onboard/tree/brand-margay 
+(beware that the Margay logo is full copyrighted by Vemar SAS, 
+http://www.vemarsas.it/).
+
+

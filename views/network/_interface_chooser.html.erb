@@ -1,19 +1,21 @@
 <% 
-  # passed variables:
-  # 
-  # all_interfaces ||= OnBoard::Network::Interface.getAll
-  # select_name
+  require 'onboard/network/interface'
+
+  all_interfaces    ||= OnBoard::Network::Interface.getAll
+  print_bridge_info ||= false
+  selected_if       ||= lambda {|x| false} 
 %>
             <select name="<%= select_name %>">
               <option value=""></option>
               <% all_interfaces.each do |iface| %>
                 <%
-                  str = ""
-                  str = "(bridge)" if iface.bridge?
-                  str = "(bridge port)" if iface.bridged?
-                  optional_bridge_info_str = str
+                  bridge_info = nil
+                  if print_bridge_info
+                    bridge_info = "(bridge)" if iface.bridge?
+                    bridge_info = "(bridge port -> #{iface.bridged_to})" if iface.bridged?
+                  end
                 %>
-                <option value="<%= iface.name %>"><%= iface.name %> <%= optional_bridge_info_str %></option>
+              <option value="<%= iface.name %>" <%= 'selected' if selected_if.call(iface) %>><%= iface.name %><% if bridge_info %> <%= bridge_info %><% end %></option>
               <% end %>
             </select>
 

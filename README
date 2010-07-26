@@ -41,6 +41,7 @@ for module-specific, additional requirements):
   ## dhcp-range is provided -- and leads to troubles
 * locales 
   ## and generate (UTF8) locales for languages/countries you want to support
+* ifrename (optional) 
 
 Gems:
 
@@ -48,7 +49,12 @@ Gems:
 C/C++ build environment; and, if you installed a pre-packaged ruby, you
 will need header files from a package named ruby-dev or something alike)
 
-gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape
+gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets --no-ri --no-rdoc
+
+--
+
+Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append 
+the configuration to the Linux machine /etc/sysctl.conf file.
 
 --
 
@@ -64,7 +70,7 @@ You can also take advantage of Ya2YAML by Akira FUNAI to get native
 UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
 and encode them in base64). 
 
-gem install kch-ya2yaml
+gem install ya2yaml
 
 ---
 

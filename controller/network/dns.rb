@@ -11,7 +11,8 @@ class OnBoard::Controller
     format(
       :path     => 'network/dns',
       :format   => params[:format],
-      :objects  => dnsmasq 
+      :objects  => dnsmasq,
+      :title    => 'DNS'
     )
   end
 
@@ -32,7 +33,8 @@ class OnBoard::Controller
       :path     => 'network/dns',
       :format   => params[:format],
       :objects  => dnsmasq,
-      :msg      => msg
+      :msg      => msg,
+      :title    => 'DNS'
     )
   end
 
