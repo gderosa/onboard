@@ -3,6 +3,6 @@ class OnBoard
     :href => '/network/interfaces',
     :name => 'Interfaces',
     :desc => 'Network interfaces',
-    :n    => 0
+    :n    => -10
   })
 end
