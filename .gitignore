@@ -15,6 +15,7 @@ index.txt
 env.sh
 etc/config/network/dnsmasq/dhcp.conf
 etc/config/network/dnsmasq/dns.conf
+etc/config/network/dnsmasq/dnsmasq.conf
 etc/config/network/dnsmasq/new/
 etc/config/network/ip6tables.save
 etc/config/network/iptables.save
@@ -22,4 +23,7 @@ etc/config/network/routing/rt_tables
 etc/config/network/routing/rules
 etc/config/network/routing/static_routes
 modules/openvpn/etc/config/network/openvpn/vpn/*/*
+modules/chilli/etc/config/current/chilli.conf.*
+modules/hotspotlogin/etc/config/current/hotspotlogin.conf.yaml
+modules/radius/etc/config/current/radius.conf.yaml
 
