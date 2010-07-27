@@ -71,9 +71,10 @@
           </form>
         </td>
         <td style="text-align: center;">
-          <a href="chilli/<%= chilli.conf['dhcpif'] %>.html">
-            <button title="View<% if chilli.managed? %>/Edit<% end %> Configuration"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="Configuration"/></button> 
-          </a>
+          <!-- not a real form, just a link -->
+          <form method="GET" action="chilli/<%= chilli.conf['dhcpif'] %>.html">
+            <button type="submit" title="View<% if chilli.managed? %>/Edit<% end %> Configuration"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="Configuration"/></button> 
+          </form>
         </td>
         <td style="text-align: center;">
           <form method="POST" action="chilli/<%= chilli.conf['dhcpif'] %>.html">
