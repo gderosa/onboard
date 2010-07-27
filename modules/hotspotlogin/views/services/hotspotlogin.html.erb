@@ -1,4 +1,7 @@
 <% 
+  # encoding: utf-8
+%>
+<% 
   hslogin       = objects 
   running       = hslogin['running']
   userpassword  = hslogin['conf']['userpassword']
@@ -63,7 +66,7 @@
     </tr>
    
     <tr>
-      <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. don&apos;t use <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (you <strong>must</strong> set a UAM shared secret in this case)</div></th>
+      <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. don't use <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (you <strong>must</strong> set a UAM shared secret in this case)</div></th>
     <td><input type="checkbox" name="userpassword" <% if userpassword %>checked<% end %>/></td>
     </tr>
   </tbody>
