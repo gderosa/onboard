@@ -6,15 +6,9 @@ require 'onboard/network/interface'
 class OnBoard::Controller
 
   get '/network/interfaces.:format' do
-    # sort by muliple criteria
-    # http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
-    #
-    objects = OnBoard::Network::Interface.getAll.sort_by do |iface|
-      [
-        OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-        (iface.mac ? iface.mac.raw : 0xffffffffffff) 
-      ]
-    end
+    objects = OnBoard::Network::Interface.getAll.sort_by(
+      &OnBoard::Network::Interface::PREFERRED_ORDER 
+    ) 
     format(
       :path     => '/network/interfaces',
       :format   => params[:format],
