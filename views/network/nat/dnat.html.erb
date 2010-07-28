@@ -7,7 +7,9 @@
 
   require 'onboard/network/interface'
 
-  all_interfaces = OnBoard::Network::Interface.getAll_layer3
+	all_interfaces = OnBoard::Network::Interface.getAll_layer3.sort_by &(
+		OnBoard::Network::Interface::PREFERRED_ORDER
+	)
   # all_interfaces.delete_if {|x| x.type == "loopback"}
   interface_names = all_interfaces.map {|x| x.name} 
 
