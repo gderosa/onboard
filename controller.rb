@@ -135,7 +135,8 @@ class OnBoard
               :objects => h[:objects], 
               :icondir => IconDir, 
               :iconsize => IconSize,
-              :msg => h[:msg] 
+              :msg => h[:msg],
+              :title => h[:title]
             } 
           )
 

@@ -2,10 +2,13 @@ require 'sinatra/base'
 
 class OnBoard::Controller
 
+  title = 'Save configuration'
+
   get "/save.html" do
     format(
       :path     => '/save',
-      :format   => 'html'
+      :format   => 'html',
+      :title    => title
     )
   end
 
@@ -13,7 +16,8 @@ class OnBoard::Controller
     OnBoard.save! if params['save'] =~ /yes/i
     format(
       :path     => '/save',
-      :format   => 'html'
+      :format   => 'html',
+      :title    => title
     )
   end
 

@@ -13,7 +13,15 @@
 
 %>
 
-<h2>Routing Table: <%= name || number %></h2>
+<!-- 
+<h2>
+  Routing Table: 
+    <%= 
+      # name || number 
+    %>
+</h2> 
+-->
+<h2><%= title %></h2>
 
 <% 
   fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Static?} 

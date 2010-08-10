@@ -20,7 +20,8 @@ class OnBoard::Controller
     format(
       :path => '/network/packet-mangling',
       :format => params[:format],
-      :objects  => iptablesobj 
+      :objects  => iptablesobj,
+      :title  => "Packet Mangling (IPv#{params[:version]})"
     )
   end
 
@@ -58,7 +59,8 @@ class OnBoard::Controller
       :path => '/network/packet-mangling',
       :format => params[:format],
       :objects  => iptablesobj,
-      :msg  => msg 
+      :msg  => msg,
+      :title  => "Packet Mangling (IPv#{params[:version]})" 
     )
   end
 

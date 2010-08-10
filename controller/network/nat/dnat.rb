@@ -13,7 +13,8 @@ class OnBoard::Controller
     format(
       :path => '/network/nat/dnat',
       :format => params[:format],
-      :objects  => iptablesobj
+      :objects  => iptablesobj,
+      :title  => 'DNAT'
     )
   end
 
@@ -48,7 +49,8 @@ class OnBoard::Controller
       :path => '/network/nat/dnat',
       :format => params[:format],
       :objects  => iptablesobj,
-      :msg  => msg
+      :msg  => msg,
+      :title => 'DNAT'
     )
   end
  

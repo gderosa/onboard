@@ -18,7 +18,8 @@ class OnBoard::Controller
     format(
       :path => '/network/nat/snat',
       :format => params[:format],
-      :objects  => iptablesobj
+      :objects  => iptablesobj,
+      :title => 'SNAT'
     )
   end
 
@@ -53,7 +54,8 @@ class OnBoard::Controller
       :path => '/network/nat/snat',
       :format => params[:format],
       :objects  => iptablesobj,
-      :msg  => msg
+      :msg  => msg,
+      :title => 'SNAT'
     )
   end
  
