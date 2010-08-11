@@ -18,8 +18,14 @@ class OnBoard
           end
         end        
 
-        def self.restore
-          return false unless File.exists? SAVE_FILE
+        def self.restore(opt_h={})
+          return false unless File.readable? SAVE_FILE
+          # This is dangerous, but if you "moved down" system default rules
+          # you may find a copy at the old position, which might break your policy 
+          # routing setup :-O
+          # TODO: develop a smarter system which makes sure that local and main
+          # tables are referenced by some saved rule before flushing the curent ones
+          System::Command.run "ip rule flush", :sudo if opt_h[:flush] 
           File.foreach SAVE_FILE do |line|
             if line =~ /^\s*(\d+):\s+(\S.*\S)\s*$/
               prio, rulespec = $1, $2
