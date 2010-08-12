@@ -109,19 +109,21 @@ class OnBoard
                           sleep 0.3
                         end
                       end
-                      carrier = File.read(carrier_file).strip
-                      netif_h[:state] = 
-                          case carrier 
-                          when '0'
-                            "NO-CARRIER"
-                          when '1'
-                            "UP"
-                          else
-                            "UNKNOWN"
-                          end
                     rescue Timeout::Error
                       LOGGER.warn "#{carrier_file} unavailable!"
                     end
+                  end
+                  if File.readable? carrier_file
+                    carrier = File.read(carrier_file).strip
+                    netif_h[:state] = 
+                      case carrier 
+                      when '0'
+                        "NO-CARRIER"
+                      when '1'
+                        "UP"
+                      else
+                        "UNKNOWN"
+                      end
                   end
                 end
               end
