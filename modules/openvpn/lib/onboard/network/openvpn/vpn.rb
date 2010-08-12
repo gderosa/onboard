@@ -28,7 +28,7 @@ class OnBoard
       UPSCRIPT ||= OpenVPN::ROOTDIR + '/etc/scripts/up'
 
       class VPN
-        CONFDIR = ROOTDIR + '/etc/config/network/openvpn/vpn'
+        CONFDIR = OnBoard::CONFDIR + '/network/openvpn/vpn'
 
         System::Log.register_category 'openvpn', 'OpenVPN'
 
