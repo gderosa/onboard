@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'onboard/extensions/ipaddr'
 require 'onboard/network/routing/constants'
 
@@ -9,6 +10,9 @@ class OnBoard
         STATIC_ROUTES_FILE = File.join CONFDIR, 'static_routes' if CONFDIR
 
         def self.save_static
+          dir = File.dirname STATIC_ROUTES_FILE
+          FileUtils.mkdir_p dir unless Dir.exists? dir
+
           File.open STATIC_ROUTES_FILE, 'w' do |f|
             f.write `ip route show table all | grep 'proto static'`
           end
