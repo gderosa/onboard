@@ -8,7 +8,7 @@ class OnBoard
       autoload :Cert, 'onboard/crypto/easy-rsa/cert'
 
       SCRIPTDIR = OnBoard::ROOTDIR + '/modules/easy-rsa/easy-rsa/2.0'
-      KEYDIR = OnBoard::CONFDIR + '/var/lib/crypto/easy-rsa/keys'
+      KEYDIR = OnBoard::RWDIR + '/var/lib/crypto/easy-rsa/keys'
       CRL = KEYDIR + '/crl.pem'
 
       def self.create_dh(n)

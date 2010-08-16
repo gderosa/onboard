@@ -24,9 +24,9 @@ class OnBoard
   VERSION = '2010.07'
  
   ROOTDIR = File.dirname File.expand_path(__FILE__)
-  #CONFDIR = ROOTDIR + '/etc/config'
-  CONFDIR = File.join ENV['HOME'], '.onboard/etc/config'
-
+  RWDIR   = File.join ENV['HOME'], '.onboard'
+  DATADIR = RWDIR # an useful 'alias'
+  CONFDIR = File.join RWDIR, '/etc/config'
 
   PLATFORM = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
