@@ -26,8 +26,11 @@ class OnBoard
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
   ROOTDIR           = File.dirname File.expand_path(__FILE__)
-  RWDIR             = File.join ENV['HOME'], '.onboard'
-  DATADIR           = RWDIR # an useful 'alias'
+  DATADIR = RWDIR   = (
+      ENV['ONBOARD_RWDIR'] or 
+      ENV['ONBOARD_DATADIR'] or 
+      File.join(ENV['HOME'], '.onboard')
+  )
   CONFDIR           = File.join RWDIR, '/etc/config'
   LOGDIR            = File.join RWDIR, '/var/log'
   LOGFILE_BASENAME  = 'onboard.log'

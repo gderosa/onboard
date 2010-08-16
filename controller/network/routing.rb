@@ -1,6 +1,7 @@
 require 'sinatra/base'
 
 require 'onboard/network/routing'
+require 'onboard/network/routing/table'
 
 class OnBoard::Controller
 

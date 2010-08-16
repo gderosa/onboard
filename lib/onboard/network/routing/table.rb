@@ -16,6 +16,9 @@ class OnBoard
 
         # Create if it doesn't exist
         unless File.exists? RT_TABLES_CONFFILE
+          unless Dir.exists? File.dirname RT_TABLES_CONFFILE
+            FileUtils.mkdir_p File.dirname RT_TABLES_CONFFILE
+          end
           File.open RT_TABLES_CONFFILE, 'w' do |f|
           end
         end
