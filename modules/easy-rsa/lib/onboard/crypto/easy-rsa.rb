@@ -2,6 +2,9 @@ require 'fileutils'
 
 class OnBoard
   module Crypto
+
+    autoload :SSL, 'onboard/crypto/ssl'
+
     module EasyRSA
 
       autoload :CA,   'onboard/crypto/easy-rsa/ca'

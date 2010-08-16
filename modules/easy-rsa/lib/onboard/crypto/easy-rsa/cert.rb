@@ -26,14 +26,16 @@ class OnBoard
         def self.create_from_HTTP_request(params)
 
           # First, create necessary files if they are missing
-          File.mkdir SCRIPTDIR + '/keys' unless Dir.exists?(SCRIPTDIR + '/keys')
+          [SSL::CERTDIR, SSL::KEYDIR, EasyRSA::KEYDIR].each do |dir|
+            FileUtils.mkdir_p dir unless Dir.exists? dir
+          end
           %w{index.txt serial}.each do |file|
-            path = SCRIPTDIR + '/keys/' + file
+            path = File.join KEYDIR, file
             unless File.exists? path
               File.new(path, 'w') 
             end
           end
-          serfile = SCRIPTDIR + '/keys/serial'
+          serfile = File.join KEYDIR, 'serial'
           unless File.read(serfile).strip =~ /^([a-f\d][a-f\d])+$/i
             File.open serfile, 'w' do |f|
               f.puts '01'
@@ -51,6 +53,7 @@ class OnBoard
           else
             msg = System::Command.run <<EOF 
 cd #{SCRIPTDIR}
+export KEY_DIR=#{EasyRSA::KEYDIR}
 . ./vars
 export CACERT=#{SSL::CACERT}
 export CAKEY=#{SSL::CAKEY}
@@ -67,24 +70,21 @@ EOF
             if msg[:ok] 
               destcert = "#{SSL::CERTDIR}/#{params['CN']}.crt"
               destkey = "#{SSL::KEYDIR}/#{params['CN']}.key"
-              certpn = Pathname.new destcert
-              keypn  = Pathname.new destkey
-              easy_rsa_keydir_pn = Pathname.new EasyRSA::KEYDIR
               begin
                 FileUtils.mv(
-                    SCRIPTDIR + "/keys/#{params['CN']}.crt", 
+                    KEYDIR + "/#{params['CN']}.crt", 
                     SSL::CERTDIR 
                 )
                 FileUtils.symlink(
-                    certpn.relative_path_from(easy_rsa_keydir_pn),
+                    destcert,
                     EasyRSA::KEYDIR
                 )              
                 FileUtils.mv( 
-                    SCRIPTDIR + "/keys/#{params['CN']}.key", 
+                    KEYDIR + "/#{params['CN']}.key", 
                     SSL::KEYDIR  
                 )
                 FileUtils.symlink(
-                    keypn.relative_path_from(easy_rsa_keydir_pn),
+                    destkey,
                     EasyRSA::KEYDIR
                 )              
                 begin
