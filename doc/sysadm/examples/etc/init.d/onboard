@@ -16,9 +16,14 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 DIR=/home/onboard/onboard
+DATADIR=/home/onboard/.onboard
 DESC="OnBoard Web Interface"
 NAME=onboard
+USERNAME=onboard
 SCRIPTNAME=/etc/init.d/$NAME
+
+export ONBOARD_DATADIR=$DATADIR
+export ONBOARD_USERNAME=$USERNAME
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME

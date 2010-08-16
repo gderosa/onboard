@@ -33,6 +33,7 @@ class OnBoard
         System::Log.register_category 'openvpn', 'OpenVPN'
 
         def self.save
+          FileUtils.mkdir_p CONFDIR unless Dir.exists? CONFDIR
           @@all_vpn = getAll() unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
           File.open(

@@ -8,6 +8,7 @@ require 'json'
 require 'yaml'
 require 'logger'
 require 'pp' 
+require 'etc'
 
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
@@ -19,6 +20,14 @@ begin
 rescue LoadError
 end
 
+if Process.uid == 0
+  if ENV['ONBOARD_USERNAME']
+    userdata = Etc.getpwnam ENV['ONBOARD_USERNAME']
+    Process.uid = userdata.uid
+  end
+end
+system "touch /tmp/whoami.test"
+
 class OnBoard
   LONGNAME          ||= 'OnBoard'
   VERSION           = '2010.07'
@@ -26,7 +35,7 @@ class OnBoard
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
   ROOTDIR           = File.dirname File.expand_path(__FILE__)
-  DATADIR = RWDIR   = (
+  DATADIR = RWDIR = (
       ENV['ONBOARD_RWDIR'] or 
       ENV['ONBOARD_DATADIR'] or 
       File.join(ENV['HOME'], '.onboard')
