@@ -25,10 +25,13 @@ class OnBoard
         end
 
         def self.create_from_HTTP_request(params)
-          [EasyRSA::KEYDIR, SSL::CACERT, SSL::CAKEY].each do |file_or_dir|
-            dir = File.dirname file_or_dir
+
+          [SSL::CACERT, SSL::CAKEY].each do |file|
+            dir = File.dirname file
             FileUtils.mkdir_p dir unless Dir.exists? dir
           end
+          FileUtils.mkdir_p EasyRSA::KEYDIR unless Dir.exists? EasyRSA::KEYDIR
+
           if Dir.exists? EasyRSA::KEYDIR
             msg = System::Command.run <<EOF
 cd #{SCRIPTDIR}
@@ -39,6 +42,7 @@ EOF
           end
           msg = System::Command.run <<EOF 
 cd #{SCRIPTDIR}
+export KEY_DIR=#{EasyRSA::KEYDIR}
 . ./vars
 export CACERT=#{SSL::CACERT}
 export CAKEY=#{SSL::CAKEY}
