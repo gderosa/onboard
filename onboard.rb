@@ -26,7 +26,6 @@ if Process.uid == 0
     Process.uid = userdata.uid
   end
 end
-system "touch /tmp/whoami.test"
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
