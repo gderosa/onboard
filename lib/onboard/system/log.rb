@@ -10,8 +10,8 @@ class OnBoard
       # TODO: do not hardcode
       @@logs = [
         {
-          'path'    => OnBoard::ROOTDIR + "/onboard.log", 
-          'id'      => "onboard.log",
+          'path'    => OnBoard::LOGFILE_PATH, 
+          'id'      => OnBoard::LOGFILE_BASENAME,
           'desc'    => "Main log",
           'category'=> 'main'
         },

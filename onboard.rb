@@ -20,18 +20,22 @@ rescue LoadError
 end
 
 class OnBoard
-  LONGNAME ||= 'OnBoard'
-  VERSION = '2010.07'
+  LONGNAME          ||= 'OnBoard'
+  VERSION           = '2010.07'
+
+  PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
+
+  ROOTDIR           = File.dirname File.expand_path(__FILE__)
+  RWDIR             = File.join ENV['HOME'], '.onboard'
+  DATADIR           = RWDIR # an useful 'alias'
+  CONFDIR           = File.join RWDIR, '/etc/config'
+  LOGDIR            = File.join RWDIR, '/var/log'
+  LOGFILE_BASENAME  = 'onboard.log'
+  LOGFILE_PATH      = File.join LOGDIR, LOGFILE_BASENAME
  
-  ROOTDIR = File.dirname File.expand_path(__FILE__)
-  RWDIR   = File.join ENV['HOME'], '.onboard'
-  DATADIR = RWDIR # an useful 'alias'
-  CONFDIR = File.join RWDIR, '/etc/config'
-
-  PLATFORM = Platform::Debian # TODO? make it configurable? get rid of Platform?
-
-  LOGGER = Logger.new(ROOTDIR + '/' + 'onboard.log')
-
+  FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
+  LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log')
+  
   LOGGER.formatter = proc { |severity, datetime, progname, msg|
     "#{datetime} #{severity}: #{msg}\n"
   }
