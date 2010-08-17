@@ -24,6 +24,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 export ONBOARD_DATADIR=$DATADIR
 export ONBOARD_USERNAME=$USERNAME
+export ONBOARD_ENVIRONMENT="production"
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
