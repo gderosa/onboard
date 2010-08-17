@@ -56,7 +56,7 @@ class OnBoard
         end
 
         def self.restore
-          datafile = ROOTDIR + '/etc/config/network/openvpn/vpn/vpn.dat'
+          datafile = DATADIR + '/etc/config/network/openvpn/vpn/vpn.dat'
           return false unless File.readable? datafile
           current_VPNs = getAll()
           Marshal.load(File.read datafile).each do |h|
