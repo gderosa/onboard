@@ -1,19 +1,12 @@
 #!/bin/sh
 
-ENV_SH=`dirname $0`/env.sh
-
-LANG='en_US.UTF-8' 
-ONBOARD_ENVIRONMENT='production'
-
-if [ -r $ENV_SH ]; then
-	. $ENV_SH 
-fi
+. `dirname $0`/common.sh
 
 export LANG
 export ONBOARD_ENVIRONMENT
 
-thin -C config.yml -R config.ru start
+thin -C config.yml -R config.ru start --pid $ONBOARD_DATADIR/var/run/thin.pid
 sync
-thin -C config6.yml -R config.ru start
+thin -C config6.yml -R config.ru start --pid $ONBOARD_DATADIR/var/run/thin6.pid
 sync
 
