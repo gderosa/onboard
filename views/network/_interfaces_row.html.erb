@@ -35,7 +35,7 @@
             <td><!--<div>--><%= html_escape netif.data['state'] %><!--</div>--></td>
             <td><!--<div>-->
               <% if netif.data['type'] == 'bridge' %>
-                <a href="<%= 'bridges/' + url_encode(netif.name) + '.html' %>" title="Configure <%= netif.name %> bridge">
+                <a href="<%= '/network/bridges/' + url_encode(netif.name) + '.html' %>" title="Configure <%= netif.name %> bridge">
                   <%= netif.type_hr  %>            
                 </a>
               <% else %>
