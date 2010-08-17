@@ -4,6 +4,12 @@
 # at boot time, one per line. Lines beginning with "#" are ignored.
 # Parameters can be specified after the module name.
 
+# /etc/modules: kernel modules to load at boot time.
+#
+# This file contains the names of kernel modules that should be loaded
+# at boot time, one per line. Lines beginning with "#" are ignored.
+# Parameters can be specified after the module name.
+
 ipv6
 ipt_MASQUERADE           
 iptable_nat              
@@ -15,4 +21,6 @@ ip_tables
 ip6table_filter      
 ip6_tables          
 x_tables           
+nf_nat_ftp
+tun
 
