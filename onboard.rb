@@ -53,8 +53,8 @@ class OnBoard
 
   LOGGER.level = Logger::INFO
   LOGGER.level = Logger::DEBUG if 
-      $0 == __FILE__ or 
-      ENV['ONBOARD_ENVIRONMENT'] =~ /^dev(el(opment)?)?/i
+      $0 == __FILE__ and not
+      ENV['ONBOARD_ENVIRONMENT'] =~ /production/i
       # this is required because there is no Sinatra environment until
       # controller.rb is loaded (where OnBoard::Controller inherits 
       # from Sinatra::Base)

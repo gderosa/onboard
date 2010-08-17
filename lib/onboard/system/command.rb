@@ -95,7 +95,7 @@ class OnBoard
             LOGGER.info line if line =~ /\S/
           end
         else
-          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: \"#{cmd_do}\""
+          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: \"#{cmd_do}\""  
         end
         stdin.close
         stdout.close
