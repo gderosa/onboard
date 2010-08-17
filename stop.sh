@@ -2,6 +2,8 @@
 
 . `dirname $0`/common.sh
 
+echo $VARRUN
+
 for i in $VARRUN/thin.pid $VARRUN/thin6.pid
 do
 	pid=`cat $i` 2> /dev/null 2> /dev/null && \
