@@ -1,3 +1,4 @@
+#!/bin/sh
 
 ONBOARD_HOME=/home/onboard
 
