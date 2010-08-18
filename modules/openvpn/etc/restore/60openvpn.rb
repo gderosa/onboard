@@ -1,3 +1,4 @@
+require 'onboard/system/log'
 require 'onboard/network/openvpn/vpn'
 require 'onboard/network/interface'
 

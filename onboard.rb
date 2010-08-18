@@ -29,7 +29,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2010.07'
+  VERSION           = '2010.08'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -80,9 +80,14 @@ class OnBoard
     end
   end
 
+  def self.web?
+    return true unless ARGV.include? '--no-web'
+    return false
+  end
+
   def self.prepare
     # menu
-    unless ARGV.include? '--no-web'
+    if web?
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
     end
@@ -141,7 +146,7 @@ end
 
 OnBoard.prepare
 
-unless ARGV.include? '--no-web'
+if OnBoard.web?
   require OnBoard::ROOTDIR + '/controller.rb'
   if $0 == __FILE__
     OnBoard::Controller.run!
