@@ -35,6 +35,7 @@ class OnBoard
         #
         #
         def self.restore_static(opt_h={})
+          pp STATIC_ROUTES_FILE
           if const_defined? :STATIC_ROUTES_FILE and File.exists? STATIC_ROUTES_FILE
             file = STATIC_ROUTES_FILE
           elsif opt_h[:file] and File.exists? opt_h[:file]

@@ -30,9 +30,9 @@ class OnBoard
             if line =~ /^\s*(\d+):\s+(\S.*\S)\s*$/
               prio, rulespec = $1, $2
               next if prio.to_i == 0
-              del = "ip rule del prio #{prio} #{rulespec}"
+              del = "ip rule del prio #{prio} #{rulespec}"  
               add = "ip rule add prio #{prio} #{rulespec}"
-              System::Command.run del, :sudo, :try
+              System::Command.run del, :sudo, :try unless opt_h[:flush]
               System::Command.run add, :sudo
             end
           end
