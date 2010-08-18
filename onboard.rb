@@ -21,10 +21,7 @@ rescue LoadError
 end
 
 if Process.uid == 0
-  if ENV['ONBOARD_USERNAME']
-    userdata = Etc.getpwnam ENV['ONBOARD_USERNAME']
-    Process.uid = userdata.uid
-  end
+  fail 'OnBoard should not be run as root: use an user who can sudo with no-password instead!'
 end
 
 class OnBoard
