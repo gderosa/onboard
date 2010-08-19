@@ -7,7 +7,7 @@ class OnBoard
   module Network
     class Dnsmasq
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
-      DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/config/network/dnsmasq/defaults'
+      DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
 
       # TODO: DRY
 
