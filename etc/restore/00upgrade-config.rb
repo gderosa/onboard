@@ -13,7 +13,7 @@ end
 
 if 
     saved_configuration_version <   [2010, 8] and 
-    current_version             >=  [2010, 7]
+    current_version             >=  [2010, 8]
 
   print "\nNOTE: Upgrading configuration to version #{OnBoard::VERSION} ... "
 
