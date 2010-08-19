@@ -1,8 +1,8 @@
 class OnBoard
   MENU_ROOT.add_path('/configuration/save', {
     :href => '/configuration/save',
-    :name => 'Save',
+    :name => 'Save changes',
     :desc => 'Save the current configuration so it will not be lost at the next reboot',
-    :n    => 10
+    :n    => 20
   })
 end
