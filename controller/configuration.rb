@@ -19,10 +19,13 @@ class OnBoard::Controller
     )
   end
 
-  #get "/configuration.html" do
-  #  format(
-  #    :path     => '/configuration',
+  get "/configuration/export.html" do
+    format(
+      :path     => '/configuration/export',
+      :format   => 'html',
+      :title    => 'Export Configuration'
+    )
+  end
 
-  #end
 
 end
