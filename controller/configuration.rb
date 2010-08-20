@@ -27,5 +27,10 @@ class OnBoard::Controller
     )
   end
 
+  get "/configuration.tgz" do
+    cmd = "tar --directory #{OnBoard::DATADIR} --create etc/config var/lib | gzip -cf"
+    content_type 'application/x-gzip'
+    `#{cmd}`
+  end
 
 end
