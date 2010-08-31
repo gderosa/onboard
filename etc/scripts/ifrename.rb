@@ -46,15 +46,23 @@ OptionParser.new do |opts|
   opts.on("-s", "--start-from START_FROM", Integer, "number to start from") do |start_from|
     options[:start_from] = start_from
   end
+  opts.on("-r", "--reverse", "sort in reverse order") do |rev|
+    options[:reverse] = rev
+  end
 end.parse!
 
 n       = options[:start_from] || 0
 format  = options[:format] || "ETH%02d" # as in ZeroShell ;-PPPP
+type    = options[:type] || 'ether'
+reverse = options[:reverse]
 
 OnBoard::Network::Interface.getAll.select do |iface| 
-  options[:type] == 'any' or options[:type] == iface.type
+  type == 'any' or type == iface.type
 end.sort do |x, y| 
-  x.mac <=> y.mac
+  reverse ? 
+    (y.mac <=> x.mac)
+  :
+    (x.mac <=> y.mac)
 end.each do |iface|
   printf "#{format} mac #{iface.mac} # formerly #{iface.name} \n", n
   n += 1
