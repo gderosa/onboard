@@ -43,7 +43,7 @@ class OnBoard
   LOGFILE_PATH      = File.join LOGDIR, LOGFILE_BASENAME
  
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
-  LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log')
+  LOGGER            ||= Logger.new(LOGDIR + '/' + 'onboard.log')
   
   LOGGER.formatter = proc { |severity, datetime, progname, msg|
     "#{datetime} #{severity}: #{msg}\n"
