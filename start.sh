@@ -4,6 +4,7 @@
 
 export LANG
 export ONBOARD_ENVIRONMENT
+export RUBYOPT='-E utf-8'
 
 thin -C config.yml -R config.ru start --pid $ONBOARD_DATADIR/var/run/thin.pid
 sync
