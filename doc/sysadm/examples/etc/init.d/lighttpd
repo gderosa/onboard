@@ -1,0 +1,100 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          lighttpd
+# Required-Start:    $syslog $remote_fs $network
+# Required-Stop:     $syslog $remote_fs $network
+# Should-Start:      fam
+# Should-Stop:       fam
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the lighttpd web server.
+### END INIT INFO
+
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/sbin/lighttpd
+NAME=lighttpd
+DESC="web server"
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+DAEMON_OPTS="-f /etc/lighttpd/lighttpd.conf"
+
+test -x $DAEMON || exit 0
+
+set -e
+
+
+
+if [ "$1" != status ]; then
+	# be sure there is a /var/run/lighttpd, even with tmpfs
+	mkdir --mode 750 --parents /var/run/lighttpd
+	chown www-data:www-data /var/run/lighttpd
+	mkdir --mode 750 --parents /var/log/lighttpd
+	chown www-data:www-data /var/log/lighttpd
+fi
+
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+        log_daemon_msg "Starting $DESC" $NAME
+        if ! start-stop-daemon --start --oknodo --quiet \
+            --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+        then
+            log_end_msg 1
+        else
+            log_end_msg 0
+        fi
+        ;;
+    stop)
+        log_daemon_msg "Stopping $DESC" $NAME
+        if start-stop-daemon --stop --retry 30 --oknodo --quiet \
+            --pidfile $PIDFILE --exec $DAEMON
+        then
+            rm -f $PIDFILE
+            log_end_msg 0
+        else
+            log_end_msg 1
+        fi
+        ;;
+    reload|force-reload)
+        log_daemon_msg "Reloading $DESC configuration" $NAME
+        if start-stop-daemon --stop --signal INT --quiet \
+            --pidfile $PIDFILE --exec $DAEMON
+        then
+            rm $PIDFILE
+            if start-stop-daemon --start --quiet  \
+                --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS ; then
+                log_end_msg 0
+            else
+                log_end_msg 1
+            fi
+        else
+            log_end_msg 1
+        fi
+        ;;
+    reopen-logs)
+        log_daemon_msg "Reopening $DESC logs" $NAME
+        if start-stop-daemon --stop --signal HUP --oknodo --quiet \
+            --pidfile $PIDFILE --exec $DAEMON
+        then
+            log_end_msg 0
+        else
+            log_end_msg 1
+        fi
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        ;;
+    status)
+        status_of_proc -p "$PIDFILE" "$DAEMON" lighttpd && exit 0 || exit $?
+        ;;
+    *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload|status}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
