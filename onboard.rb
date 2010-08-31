@@ -12,6 +12,7 @@ require 'etc'
 
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
+require 'onboard/system/command'
 
 require 'onboard/platform/debian'
 
@@ -138,7 +139,7 @@ class OnBoard
       load script and puts ' OK'
     end
 
-    System::Comand.run 'sync'
+    System::Command.run 'sync'
   end
 
 end
