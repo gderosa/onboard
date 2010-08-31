@@ -137,6 +137,8 @@ class OnBoard
       print "loading: #{script}... " and STDOUT.flush
       load script and puts ' OK'
     end
+
+    System::Comand.run 'sync'
   end
 
 end
