@@ -49,16 +49,6 @@ OptionParser.new do |opts|
   opts.on("-r", "--reverse", "sort in reverse order") do |rev|
     options[:reverse] = rev
   end
-<<<<<<< HEAD
-end.parse!
-
-n       = options[:start_from] || 0
-format  = options[:format] || "ETH%02d" # as in ZeroShell ;-PPPP
-type    = options[:type] || 'ether'
-reverse = options[:reverse]
-
-OnBoard::Network::Interface.getAll.select do |iface| 
-=======
 #  opts.on("-n", "--udev-kernel-name NAME", String, "interface name (only the new name will be printed in this case: for use in PROGRAM=/this/script in /etc/udev/rules.d/*-persistent-net.rules), instead of ifrename /etc/iftab") do |name|
 #    options[:udev_kernel_name] = name
 #  end
@@ -71,7 +61,6 @@ reverse           = options[:reverse]
 #udev_kernel_name  = options[:udev_kernel_name]
 
 ordered_interfaces = OnBoard::Network::Interface.getAll.select do |iface| 
->>>>>>> master
   type == 'any' or type == iface.type
 end.sort do |x, y| 
   reverse ? 
