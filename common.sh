@@ -8,10 +8,16 @@ if [ ! -d "$ONBOARD_DATADIR" ]; then
 	ONBOARD_DATADIR=/home/onboard/.onboard
 fi
 
-VARRUN="$ONBOARD_DATADIR/var/run"
-
-if [ ! -d "$VARRUN" ]; then
-	mkdir -p $VARRUN
+# NOTE NOTE NOTE: now, Operating System's /var/run is used to store 
+# pidfiles: it SHOULD be mounted in RAM (aka tmpfs) to avoid spurious 
+# Thin::PidFileExist exceptions after power failures and so on, 
+# which ultimately prevent application startup at all!!
+#
+# See also https://thin.lighthouseapp.com/projects/7212/tickets/137-empty-pid-files-should-be-ignoreddeleted-instead-of-raising-thinpidfileexist
+#
+ONBOARD_VARRUN="/var/run/onboard"
+if [ ! -d "$ONBOARD_VARRUN" ]; then
+	mkdir -p $ONBOARD_VARRUN
 fi
 
 chown -R $ONBOARD_USERNAME $ONBOARD_DATADIR
