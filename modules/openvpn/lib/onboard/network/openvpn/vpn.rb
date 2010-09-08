@@ -1,3 +1,8 @@
+# So autoload works well with gems
+require 'rubygems'
+gem 'uuid'
+gem 'escape'
+
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :UUID,       'uuid'

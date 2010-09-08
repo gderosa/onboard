@@ -1,13 +1,10 @@
 ---
   environment: production 
-  #chdir: 
   address: '::' 
   user: onboard
   group: onboard
   port: 4568
-  #pid: thin6.pid
   rackup: config.ru
-  #log: thin6.log
   max_conns: 1024
   timeout: 30
   max_persistent_conns: 512
