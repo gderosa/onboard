@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <% 
+  require 'hmenu/css'
+
   title ||= nil # avoid NameError if no title was set
 %> 
 <html>
@@ -7,6 +9,9 @@
     <title><%= OnBoard::LONGNAME %><%= ": #{title}" if title %></title> 
     <link rel="stylesheet" href="/css/default.css"/>
     <link rel="icon" href="/icons/favicon.ico"/>
+    <style type="text/css">
+      <%= ::HMenu::CSS.out %>
+    </style>
   </head>
   <body>
     <div id="sidebar">
