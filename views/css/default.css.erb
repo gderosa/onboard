@@ -179,10 +179,14 @@ div#main h2:first-child {
 
 /* p a:hover {<%= hover %> text-decoration: none; } */
 
-a {
+a, .hmenu-bullet:hover {
   color: <%= highlight %>;
   text-decoration: none;
   font-weight: bold;
+}
+
+.hmenu-bullet-nochildren {
+  color: <%= lowlight %>;
 }
 
 a:hover {
