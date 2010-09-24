@@ -2,9 +2,16 @@ require 'hmenu'
 
 class OnBoard
   module Menu
-    # very simple "delegation" to +HMenu::Node+ class. See documentation
-    # for 'hierarchical_menu' on rubygems.org .
-    class MenuNode < ::HMenu::Node; end
+    class MenuNode < ::HMenu::Node
+
+      # wrapper method
+      def add_path(path, hash)
+        new_hash = hash.dup
+        new_hash[:href] = hash[:href] + '.html' if  hash[:href]
+        super(path, new_hash)
+      end
+
+    end
   end
 end
 
