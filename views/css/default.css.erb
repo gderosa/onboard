@@ -92,11 +92,6 @@ input[type="radio"] {
   vertical-align: middle; 
 }
 
-/* code {
-  font-family: monospace;
-  font-style: normal;
-} */
-
 .product-name, em {
   font-style: italic;
   margin-right: 0.3ex;
@@ -178,6 +173,15 @@ a:hover   {
 a.img, a.img:hover, a img  {
   border: none;
   background: transparent;
+}
+
+.superhighlight a {
+  color: <%= superhighlight %>;
+}
+
+.superhighlight a:hover {
+  color: white;
+  background: <%= superhighlight %>;
 }
 
 table {
