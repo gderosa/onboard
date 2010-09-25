@@ -7,7 +7,8 @@
 
 body {
   overflow: auto;
-  font-size: 10pt;
+  font-size: 96%;
+  font-family: helvetica;
 }
 
 .highlight{
@@ -29,13 +30,14 @@ div#sidebar {
   height: 80%;
   margin: 1em 1em 0 0;
   padding-right: 0.5em;
-  font-size: 97%;
+  font-size: 85%;
+  overflow: auto;
 }
 
 div#sidebar ul {
-  padding: 0 1.4em;
+  padding: 0 1em;
   margin: 0.2em 0;
-}
+} 
 
 div#navbar {
   font-style: italic;
@@ -119,11 +121,9 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 .warn   {border: 1px yellow dashed; font-style: italic; font-size:105%;}
 .info   {border: 1px #4b0 dotted;}
 
-/* .optinfo {font-style: italic;} */
 .optinfo {
   text-align:   left;
   font-weight:  normal;
-  /* font-family:  sans-serif; */
   font-style:   italic;
 }
 
@@ -173,34 +173,23 @@ div#main h2:first-child {
   margin-top: 2px;
 }
 
-/* a:hover pre {<%= hover %>} */
-
-/* a:hover div.item {<% hover %>} */
-
-/* p a:hover {<%= hover %> text-decoration: none; } */
-
-a, .hmenu-bullet:hover {
+a, .hmenu-bullet {
   color: <%= highlight %>;
   text-decoration: none;
   font-weight: bold;
 }
 
-.hmenu-bullet-nochildren {
-  color: <%= lowlight %>;
+a:hover   {
+  color: white; 
+  background: <%= highlight %>; 
 }
 
-a:hover {
-  color: white;
-  background: <%= highlight %>;
+.hmenu-bullet:hover  {
+  color: <%= superhighlight %>;
 }
 
-a img {
+a.img, a.img:hover, a img  {
   border: none;
-}
-
-div#main div.item {
-  margin: 3px;
-  border: 1px <%= highlight %> solid;  
 }
 
 table {
@@ -268,9 +257,9 @@ button[disabled] img { /* CSS3 */
   filter:alpha(opacity=40); /* MSIE */
 }
 
-ul li ul li .hmenu-content {
-  font-size: 90%;
-}
+ul li ul li .hmenu-content  {
+  font-size: 98%;
+} 
 
 div#sidebar ul {
   font-weight: bold;
@@ -278,8 +267,7 @@ div#sidebar ul {
 }
 
 li {
-  margin-top: 0.3em;
-  margin-bottom: 0.3em;
+  margin: 6pt 0;
 }
 
 select.tt, select option.tt {
