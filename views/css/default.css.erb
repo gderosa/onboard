@@ -175,14 +175,19 @@ a:hover   {
   color: <%= superhighlight %>;
 }
 
-span.hmenu-selected {
+li.hmenu-selected {
   font-weight: bold;
-  border: 1px <%= superhighlight %> solid;
+  /* color: white; */
+  /* background: <%= superhighlight %>; */
+  border: 1px <%= superhighlight %> solid; 
+}
+
+ul.hmenu li, ul.hmenu-submenu li {
   padding: 0 0.2em;
 }
 
 span.hmenu-root {
-  border: 0;
+  font-weight: bold;
 }
 
 a.img, a.img:hover, a img  {
