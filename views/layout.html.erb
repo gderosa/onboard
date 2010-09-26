@@ -24,8 +24,11 @@
       <div id="onboard-menu">
         <%= 
           OnBoard::MENU_ROOT.to_html_ul do |node, output|
-            if node.content[:href] == request.path_info
+            if request.path_info ==  node.content[:href]
               output[:href] = nil
+              output[:extra_class] = "hmenu-selected"
+            end
+            if request.path_info =~  node.content[:children]
               output[:extra_class] = "hmenu-selected"
             end
           end
