@@ -6,7 +6,7 @@
   hover           = "color: white; background: #{highlight};" 
   lightbg         = "#faf4d0" 
   serif           = %q{"Times New Roman", Times, Georgia, serif}
-  sans_serif      = %q{Arial, Helvetica, sans-serif}
+  sans_serif      = %q{Helvetica, Arial, sans-serif}
 %>
 
 body {
@@ -173,10 +173,6 @@ a {
   font-weight: bold;
 }
 
-.hmenu-bullet {
-  font-weight: normal;
-}
-
 a:hover   {
   color: white; 
   background: <%= highlight %>; 
@@ -197,15 +193,25 @@ a:hover   {
   padding-right: 0;
 }
 
-span.hmenu-selected, div.hmenu-selected {
+li span.hmenu-selected, li div.hmenu-selected {
   font-weight: bold;
   /* color: white; */
+  color: <%= superhighlight %>; 
   /* background: <%= superhighlight %>; */
-  border: 1px <%= superhighlight %> solid;
+  /* border: 1px <%= superhighlight %> solid; */
+}
+
+li.hmenu-selected > .hmenu-bullet, 
+li.hmenu-selected > .hmenu-bullet-nochildren {
+  color: <%= superhighlight %>;
+}
+
+li.hmenu-selected {
+  border-left: 1px <%= superhighlight %> dashed; 
 }
 
 ul.hmenu li, ul.hmenu-submenu li {
-  padding: 0 0.2em;
+  padding: 0 0.3em;
 }
 
 span.hmenu-root, div.hmenu-root {
