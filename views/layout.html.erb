@@ -28,7 +28,9 @@
               output[:href] = nil
               output[:extra_class] = "hmenu-selected"
             end
-            if request.path_info =~  node.content[:children]
+            # That's why I love Ruby: node.content[:children] may
+            # be a String, a Regexp or even a block of code! (lambda) 
+            if node.content[:children] === request.path_info              
               output[:extra_class] = "hmenu-selected"
             end
           end
