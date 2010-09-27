@@ -206,12 +206,13 @@ li.hmenu-selected > .hmenu-bullet-nochildren {
   color: <%= superhighlight %>;
 }
 
-li.hmenu-selected {
+/* border-aligment hack... */
+ul.hmenu li.hmenu-selected, ul.hmenu-submenu li.hmenu-selected {
   border-left: 1px <%= superhighlight %> dashed; 
+  padding-left: 4px;  /* 4px + 1px = 5px */
 }
-
 ul.hmenu li, ul.hmenu-submenu li {
-  padding: 0 0.3em;
+  padding: 0 5px;     /* 4px + 1px = 5px */
 }
 
 span.hmenu-root, div.hmenu-root {
