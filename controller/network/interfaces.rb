@@ -37,12 +37,9 @@ class OnBoard::Controller
       interface.modify_from_HTTP_request(ifhash) 
     end
 
-    updated_objects = OnBoard::Network::Interface.getAll.sort_by do |iface|
-      [
-        OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-        (iface.mac ? iface.mac.raw : 0xffffffffffff) 
-      ]
-    end
+    updated_objects = OnBoard::Network::Interface.getAll.sort_by(
+        &OnBoard::Network::Interface::PREFERRED_ORDER
+    )
 
     format(
       :path     => '/network/interfaces',

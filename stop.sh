@@ -1,6 +1,8 @@
 #!/bin/sh
 
-for i in *.pid
+. `dirname $0`/common.sh
+
+for i in $ONBOARD_VARRUN/thin.pid $ONBOARD_VARRUN/thin6.pid
 do
 	pid=`cat $i` 2> /dev/null 2> /dev/null && \
 	kill -2 $pid && \

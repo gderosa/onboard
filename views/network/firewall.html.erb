@@ -3,7 +3,9 @@
 
   require 'onboard/network/interface'
 
-  all_interfaces = OnBoard::Network::Interface.getAll
+  all_interfaces = OnBoard::Network::Interface.getAll.sort_by(
+      &OnBoard::Network::Interface::PREFERRED_ORDER
+  )
 
   iptablesobj       = objects
 

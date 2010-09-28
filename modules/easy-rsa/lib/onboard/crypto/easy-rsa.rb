@@ -2,23 +2,29 @@ require 'fileutils'
 
 class OnBoard
   module Crypto
+
+    autoload :SSL, 'onboard/crypto/ssl'
+
     module EasyRSA
 
       autoload :CA,   'onboard/crypto/easy-rsa/ca'
       autoload :Cert, 'onboard/crypto/easy-rsa/cert'
 
       SCRIPTDIR = OnBoard::ROOTDIR + '/modules/easy-rsa/easy-rsa/2.0'
-      KEYDIR = SCRIPTDIR + '/keys'
+      KEYDIR = OnBoard::RWDIR + '/var/lib/crypto/easy-rsa/keys'
       CRL = KEYDIR + '/crl.pem'
 
       def self.create_dh(n)
+        FileUtils.mkdir_p KEYDIR unless Dir.exists? KEYDIR
         System::Command.run <<EOF
 cd #{SCRIPTDIR}
+export KEY_DIR=#{KEYDIR}
 . ./vars
 export KEY_SIZE=#{n} 
 ./build-dh
 EOF
-        FileUtils.cp(SCRIPTDIR + '/keys/dh' + n.to_s + '.pem', SSL::DIR)  
+        FileUtils.mkdir_p SSL::DIR unless Dir.exists? SSL::DIR
+        FileUtils.cp(KEYDIR + '/dh' + n.to_s + '.pem', SSL::DIR)  
       end
 
     end

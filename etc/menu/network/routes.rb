@@ -17,8 +17,12 @@ class OnBoard
   })
 
   MENU_ROOT.add_path('/network/routing/advanced/multiple-tables', {
-    :href => '/network/routing/tables',
-    :name => 'Tables'
+    :href     => '/network/routing/tables',
+    :children => lambda do |uri_path|
+      uri_path =~ %r{^/network/routing/tables/.+} and not
+      uri_path =~ %r{^/network/routing/tables/main\.\w+$}
+    end,
+    :name     => 'Tables'
   })
 
   MENU_ROOT.add_path('/network/routing/advanced/rules', {

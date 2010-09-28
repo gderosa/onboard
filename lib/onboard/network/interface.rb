@@ -1,3 +1,5 @@
+require 'timeout'
+
 require 'onboard/network/interface/mac'
 require 'onboard/network/interface/ip'
 require 'onboard/network/bridge'
@@ -45,18 +47,27 @@ class OnBoard
   	  # http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
     	#
 			# in practice, you are sorting an Enumerable made up of Arrays
-			#	
-			#	First, order by type, according to a prefered order; then
-			#	order by MAC address, but put interfaces with no MAC address at the end;
-			#	finally, order by name.
+				
+#			#	First, order by type, according to a prefered order; then
+#			#	order by MAC address, but put interfaces with no MAC address at the end;
+#			#	finally, order by name.
+#			PREFERRED_ORDER = lambda do |iface|
+#	      [
+#  	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
+#    	    (iface.mac ? iface.mac.raw : 0xffffffffffff),
+#					iface.name
+#      	]
+#			end
+
+ 			#	First, order by type, according to a prefered order; then
+			#	order by name, but put interfaces with no MAC address at the end.
 			PREFERRED_ORDER = lambda do |iface|
 	      [
   	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-    	    (iface.mac ? iface.mac.raw : 0xffffffffffff),
-					iface.name
+    	    (iface.mac ? iface.name : "zzz_#{iface.name}")
       	]
 			end
-     
+    
       # Class methods.
 
       class << self
@@ -98,8 +109,22 @@ class OnBoard
                 if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
                 else
-                  carrier = File.read("/sys/class/net/#{netif_h[:name]}/carrier").strip
-                  netif_h[:state] = 
+                  carrier_file = "/sys/class/net/#{netif_h[:name]}/carrier"
+                  unless File.readable? carrier_file
+                    LOGGER.debug "waiting for #{carrier_file} ... "
+                    begin
+                      Timeout.timeout(6) do 
+                        until File.readable? carrier_file do
+                          sleep 0.3
+                        end
+                      end
+                    rescue Timeout::Error
+                      LOGGER.warn "#{carrier_file} unavailable!"
+                    end
+                  end
+                  if File.readable? carrier_file
+                    carrier = File.read(carrier_file).strip
+                    netif_h[:state] = 
                       case carrier 
                       when '0'
                         "NO-CARRIER"
@@ -108,6 +133,7 @@ class OnBoard
                       else
                         "UNKNOWN"
                       end
+                  end
                 end
               end
               if netif_h[:misc].include_ary? %w{UP NO-CARRIER}

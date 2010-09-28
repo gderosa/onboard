@@ -5,7 +5,7 @@ require 'onboard/extensions/openssl'
 class OnBoard
   module Crypto
     module SSL
-      DIR                   = OnBoard::ROOTDIR + '/etc/config/crypto/ssl'
+      DIR                   = OnBoard::CONFDIR + '/crypto/ssl'
       CERTDIR               = DIR + '/cert'
       KEYDIR                = CERTDIR + '/private'
       KEY_SIZES             = [1024, 2048]

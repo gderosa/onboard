@@ -1,13 +1,18 @@
-<% superhighlight = "#080" %>
-<% highlight = "#44b" %>
-<% lowlight = "#777" %>
-<% superlowlight = "#bbb" %>
-<% hover = "color: white; background: #{highlight};" %>
-<% lightbg = "#faf4d0" %>
+<% 
+  superhighlight  = "#080"
+  highlight       = "#44b" 
+  lowlight        = "#777" 
+  superlowlight   = "#bbb" 
+  hover           = "color: white; background: #{highlight};" 
+  lightbg         = "#faf4d0" 
+  serif           = %q{"Times New Roman", Times, Georgia, serif}
+  sans_serif      = %q{Helvetica, Arial, sans-serif}
+%>
 
 body {
   overflow: auto;
   font-size: 10pt;
+  font-family: <%= sans_serif %>;
 }
 
 .highlight{
@@ -29,26 +34,37 @@ div#sidebar {
   height: 80%;
   margin: 1em 1em 0 0;
   padding-right: 0.5em;
-  font-size: 97%;
+  font-size: 85%;
+  overflow: auto;
+  color: #444;
 }
 
 div#sidebar ul {
-  padding: 0 1.4em;
+  padding: 2px 1em;
   margin: 0.2em 0;
 }
 
+div#onboard-menu {
+  padding-top: 2px;
+}
+
 div#navbar {
+  font-size: 93%;
+  /* font-family: <%= serif %>; */
   font-style: italic;
   margin-top: 0.3em;
 }
 
 div#main {
-  /* border: 1px gray dotted;	*/
   border: 0;
 	float: right;
 	width: 80%;	
 	padding: 2px;
   margin: 1em 1px;
+}
+
+h2{
+  font-size: 135%;
 }
 
 form {
@@ -85,11 +101,6 @@ input[type="radio"] {
   vertical-align: middle; 
 }
 
-code {
-  font-family: monospace;
-  font-style: normal;
-}
-
 .product-name, em {
   font-style: italic;
   margin-right: 0.3ex;
@@ -119,11 +130,9 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 .warn   {border: 1px yellow dashed; font-style: italic; font-size:105%;}
 .info   {border: 1px #4b0 dotted;}
 
-/* .optinfo {font-style: italic;} */
 .optinfo {
   text-align:   left;
   font-weight:  normal;
-  /* font-family:  sans-serif; */
   font-style:   italic;
 }
 
@@ -155,48 +164,74 @@ pre {
   overflow: auto;
 }
 
-div#main h2, div#main h4 {
-  font-family: sans-serif;  
-}
-
-div#main h3 {
-  font-size: 120%;
-} 
-
-div#main h4 {
-  font-size:95%;
-  margin-bottom: 0.3em;
-}
-
-
-div#main h2:first-child {
-  margin-top: 2px;
-}
-
-a:hover pre {<%= hover %>}
-
-/* a:hover div.item {<%= hover %>} */
-
-p a:hover {<%= hover %> text-decoration: none; }
-
-a {
+a, .hmenu-bullet {
   color: <%= highlight %>;
   text-decoration: none;
+}
+
+a {
   font-weight: bold;
 }
 
-a:hover {
-  color: white;
-  background: <%= highlight %>;
+a:hover   {
+  color: white; 
+  background: <%= highlight %>; 
+} 
+
+.hmenu-bullet:hover  {
+  color: <%= superhighlight %>;
 }
 
-a img {
+.hmenu-content {
+  padding: 0 0.3em;
+}
+
+.menu-content a {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  padding-right: 0;
+}
+
+li span.hmenu-selected, li div.hmenu-selected {
+  font-weight: bold;
+  /* color: white; */
+  color: <%= superhighlight %>; 
+  /* background: <%= superhighlight %>; */
+  /* border: 1px <%= superhighlight %> solid; */
+}
+
+li.hmenu-selected > .hmenu-bullet, 
+li.hmenu-selected > .hmenu-bullet-nochildren {
+  color: <%= superhighlight %>;
+}
+
+/* border-aligment hack... */
+ul.hmenu li.hmenu-selected, ul.hmenu-submenu li.hmenu-selected {
+  border-left: 1px <%= superhighlight %> dashed; 
+  padding-left: 4px;  /* 4px + 1px = 5px */
+}
+ul.hmenu li, ul.hmenu-submenu li {
+  padding: 0 5px;     /* 4px + 1px = 5px */
+}
+
+span.hmenu-root, div.hmenu-root {
+  font-weight: bold;
   border: none;
 }
 
-div#main div.item {
-  margin: 3px;
-  border: 1px <%= highlight %> solid;  
+a.img, a.img:hover, a img  {
+  border: none;
+  background: transparent;
+}
+
+.superhighlight a {
+  color: <%= superhighlight %>;
+}
+
+.superhighlight a:hover {
+  color: white;
+  background: <%= superhighlight %>;
 }
 
 table {
@@ -264,19 +299,17 @@ button[disabled] img { /* CSS3 */
   filter:alpha(opacity=40); /* MSIE */
 }
 
-ul li ul li {
-  font-size: 92%;
-}
+ul li ul li .hmenu-content  {
+  font-size: 97%;
+} 
 
 div#sidebar ul {
   font-weight: bold;
-  color: #444;
 }
 
 li {
-  margin-top: 0.3em;
-  margin-bottom: 0.3em;
-}
+  margin: 6pt 0;
+} 
 
 select.tt, select option.tt {
   font-family: monospace;

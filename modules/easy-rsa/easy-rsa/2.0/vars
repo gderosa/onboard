@@ -36,7 +36,7 @@ export KEY_CONFIG=`$EASY_RSA/whichopensslcnf $EASY_RSA`
 # a rm -rf on this directory
 # so make sure you define
 # it correctly!
-export KEY_DIR="$EASY_RSA/keys"
+#export KEY_DIR="$EASY_RSA/keys" # MUST be set externally!
 
 export CACERT="$KEY_DIR/ca.crt"
 export CAKEY="$KEY_DIR/ca.key"

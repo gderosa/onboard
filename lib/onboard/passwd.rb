@@ -25,6 +25,7 @@ class OnBoard
           :status_http => 400
         }
       end
+      FileUtils.mkdir_p PASSWD_DIR unless Dir.exists? PASSWD_DIR
       File.open ADMIN_PASSWD_FILE, 'w' do |f|
         f.write Digest::MD5.digest params['newpasswd']
       end

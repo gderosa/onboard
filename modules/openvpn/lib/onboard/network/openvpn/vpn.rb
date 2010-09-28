@@ -1,3 +1,8 @@
+# So autoload works well with gems
+require 'rubygems'
+gem 'uuid'
+gem 'escape'
+
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :UUID,       'uuid'
@@ -28,11 +33,12 @@ class OnBoard
       UPSCRIPT ||= OpenVPN::ROOTDIR + '/etc/scripts/up'
 
       class VPN
-        CONFDIR = ROOTDIR + '/etc/config/network/openvpn/vpn'
+        CONFDIR = OnBoard::CONFDIR + '/network/openvpn/vpn'
 
         System::Log.register_category 'openvpn', 'OpenVPN'
 
         def self.save
+          FileUtils.mkdir_p CONFDIR unless Dir.exists? CONFDIR
           @@all_vpn = getAll() unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
           File.open(
@@ -55,7 +61,7 @@ class OnBoard
         end
 
         def self.restore
-          datafile = ROOTDIR + '/etc/config/network/openvpn/vpn/vpn.dat'
+          datafile = DATADIR + '/etc/config/network/openvpn/vpn/vpn.dat'
           return false unless File.readable? datafile
           current_VPNs = getAll()
           Marshal.load(File.read datafile).each do |h|
