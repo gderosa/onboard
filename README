@@ -60,13 +60,7 @@ the configuration to the Linux machine /etc/sysctl.conf file.
 
 Optional add-ons:
 
-You can get pretty-printed JSON output via JsonPrinter 
-by Mark McGranaghan. To get it, change to the lib/ directory (or your
-system's site_ruby dir), then:
-
-git clone git://github.com/techcrunch/json_printer.git
-
-You can also take advantage of Ya2YAML by Akira FUNAI to get native 
+You can take advantage of Ya2YAML by Akira FUNAI to get native 
 UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
 and encode them in base64). 
 
