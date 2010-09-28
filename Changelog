@@ -1,3 +1,7 @@
+2010.09.01
+
+* Minor/implementation: use stdlib for JSON pretty-printed output
+
 2010.09
 
 * JavaScript menus based on hierarchical_menu gem
