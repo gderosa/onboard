@@ -1,3 +1,7 @@
+2010.09
+
+* JavaScript menus based on hierarchical_menu gem
+
 2010.08
 
 * A separate, writeable directory for configuration, log, pids and so on.
