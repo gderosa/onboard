@@ -11,7 +11,8 @@ class Object
   def to_(what)
     if what.to_s == 'json'
       begin
-        return JSON.pretty_generate(self)
+        json = JSON.pretty_generate(self)
+        return json
       rescue NoMethodError
         return self.to_json
       end
