@@ -145,11 +145,11 @@ class OnBoard
           # strings as they are.
           if h[:format] == 'json'
             content_type  'application/json'
-          else  # elsif h[:format] == 'yaml' would be redundant...
+          elsif h[:format] == 'yaml' # "explicit is better than implicit" :-)
             if $ya2yaml_1_9compatible_available
-              content_type 'application/json', :charset => 'utf-8'
+              content_type 'application/x-yaml', :charset => 'utf-8'
             else
-              content_type 'application/json' # base64(ASCII) used by std lib
+              content_type 'application/x-yaml' # base64(ASCII) used by std lib
             end
           end
           # The following is common to YAML and JSON.
