@@ -43,30 +43,19 @@ class OnBoard
         }
       }
 
-	    # sort by muliple criteria
-  	  # http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
-    	#
-			# in practice, you are sorting an Enumerable made up of Arrays
-				
-#			#	First, order by type, according to a prefered order; then
-#			#	order by MAC address, but put interfaces with no MAC address at the end;
-#			#	finally, order by name.
-#			PREFERRED_ORDER = lambda do |iface|
-#	      [
-#  	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-#    	    (iface.mac ? iface.mac.raw : 0xffffffffffff),
-#					iface.name
-#      	]
-#			end
+      # sort by muliple criteria
+# http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
+      #
+      # in practice, you are sorting an Enumerable made up of Arrays
 
- 			#	First, order by type, according to a prefered order; then
-			#	order by name, but put interfaces with no MAC address at the end.
-			PREFERRED_ORDER = lambda do |iface|
-	      [
-  	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-    	    (iface.mac ? iface.name : "zzz_#{iface.name}")
+      # First, order by type, according to a prefered order; then
+      # order by name, but put interfaces with no MAC address at the end.
+      PREFERRED_ORDER = lambda do |iface|
+        [
+          OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
+          (iface.mac ? iface.name : "zzz_#{iface.name}")
       	]
-			end
+      end
     
       # Class methods.
 
