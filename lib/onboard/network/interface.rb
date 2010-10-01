@@ -181,8 +181,7 @@ class OnBoard
                 fail "fix your regexps: looks like a dhcp client process is managing more than one interface: #{ifaces.map{|i| i.name}.join}"
               end
               iface = ifaces[0]
-              puts iface.name # debug
-	      next unless iface
+              next unless iface
               iface.ipassign  = {
                 :method         => :dhcp,
                 :pid            => pid,
