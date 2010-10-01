@@ -15,6 +15,7 @@ require 'onboard/extensions/openssl'
 require 'onboard/system/process'
 require 'onboard/network/interface'
 require 'onboard/network/routing/table'
+require 'onboard/network/openvpn/convert'
 require 'onboard/network/openvpn/process'
 require 'onboard/network/openvpn/interface/name'
 
@@ -307,7 +308,7 @@ EOF
               x.data['portable_id'] == params['portable_id'] 
             end
           end
-          if vpn  # the VPN has been found by portable_id (preferred method)
+          if vpn  # the VPN has been found by portable_id (preferred method?)
             if params['stop']
               return vpn.stop()
             elsif params['start']
@@ -324,6 +325,7 @@ EOF
           end
         end
 
+=begin
         # Turn the OpenVPN command line into a "virtual" configuration file
         def self.cmdline2conf(cmdline_ary)
           line_ary = []
@@ -339,7 +341,12 @@ EOF
           text << line_ary.join(' ') << "\n" if line_ary.length > 0
           return text
         end
-       
+=end 
+
+        # Turn the OpenVPN command line into a "virtual" configuration file
+        def self.cmdline2conf(cmdline_ary) # delegate
+          Convert.cmdline2conf(cmdline_ary)
+        end
 
         attr_reader :data
         attr_writer :data
@@ -397,8 +404,11 @@ EOF
                 FileUtils.rm "#{@data_internal['client-config-dir']}/#{client['CN']}" 
                 next
               end
+
               routes      = client['routes'].lines.map{|x| x.strip}
-              push_routes = client['push_routes'].lines.map{|x| x.strip}
+
+              # will be calculated by Convert.textarea2push_routes
+              # push_routes = client['push_routes'].lines.map{|x| x.strip}
 
               client_config_file = 
 "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
@@ -415,6 +425,9 @@ EOF
                   @data['explicitly_configured_routes'] << h unless
                       @data['explicitly_configured_routes'].include? h
                 end
+
+# moved to Convert.textarea2push_routes
+=begin                
                 push_routes.each do |push_route|
                   # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
                   begin
@@ -424,7 +437,11 @@ EOF
                   end
                   f.puts %Q{push "route #{ip} #{ip.netmask}"}  
                 end
+=end
+                f.puts Convert.textarea2push_routes client['push_routes']
+
               end
+
             end
 
             # now edit the vpn server config file
@@ -433,16 +450,19 @@ EOF
             File.foreach(@data_internal['conffile']) do |line|
               text << line unless 
                   line =~ /^\s*route\s+(\S+)\s+(\S)/ or
-                  line =~ /^\s*client-to-client\s*$/
+                  line =~ /^\s*client-to-client\s*(#.*)?$/ or
+                  line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S)\s*"/
             end
             # add new one
             @data['explicitly_configured_routes'].each do |route_h|
               text << "route #{route_h['net']} #{route_h['mask']}\n"
             end
             text << "client-to-client\n" if params['client_to_client'] == 'on'
+            text << Convert.textarea2push_routes(params['push_routes'])
             File.open @data_internal['conffile'], 'w' do |f|
               f.write text
             end
+            params['push_routes']
 
             # Reload openvpn configuration and restart connections
             # TODO: do not hardcode, improve System::Process

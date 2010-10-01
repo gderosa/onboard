@@ -9,6 +9,9 @@
     padding: 0.5em;
   }
 </style>
+<!-- debug -->
+<pre><%= html_escape params.pretty_inspect %></pre>
+<!-- end debug -->
 <h2>VPN<%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details<% if vpn.data['server'] %> (server)<% end %></h2>
 <!-- 
   As usual, maybe we are not strictly ReSTful, but we find it convenient
@@ -62,9 +65,18 @@
             </th>
           </tr>
         </thead>
-        <% network_textarea_columns = 26 %>
+        <% network_textarea_columns = 28 %>
+        <% network_textarea_rows = 3 %>
         <% cols = network_textarea_columns %>
+        <% rows = network_textarea_rows %>
         <tbody>
+          <!-- A first row for "All clients" -->
+          <tr>
+            <td><strong>All clients</strong></td>
+            <td></td>
+            <td><textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea></td>
+            <td></td>
+          </tr>
           <% vpn.data['client-config'].each_pair do |cn, h| %>
             <tr>
               <td><code><%= cn %></code></td>
@@ -76,7 +88,7 @@
                     text << "#{route['net']}/#{route['mask']}\n"
                   end
                 %>
-                <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea> 
+                <textarea name="clients[][routes]" cols=<%= cols %> rows=3 wrap=off><%= text %></textarea> 
               </td>
               <td>
                 <% 
@@ -85,7 +97,7 @@
                     text << "#{route['net']}/#{route['mask']}\n"
                   end
                 %>
-                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off><%= text %></textarea>
+                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= text %></textarea>
               </td>
               <td style="text-align: center;">
                 <input type="checkbox" name="clients[][delete]"/> 
@@ -95,7 +107,7 @@
           <tr>
             <td><input name="clients[][CN]" type="text" class="rwtext"/></td>
             <td>
-              <textarea name="clients[][routes]" cols=<%= cols %> rows=2 wrap=off></textarea> 
+              <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea> 
             </td>
             <td>
               <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off></textarea>
