@@ -43,30 +43,19 @@ class OnBoard
         }
       }
 
-	    # sort by muliple criteria
-  	  # http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
-    	#
-			# in practice, you are sorting an Enumerable made up of Arrays
-				
-#			#	First, order by type, according to a prefered order; then
-#			#	order by MAC address, but put interfaces with no MAC address at the end;
-#			#	finally, order by name.
-#			PREFERRED_ORDER = lambda do |iface|
-#	      [
-#  	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-#    	    (iface.mac ? iface.mac.raw : 0xffffffffffff),
-#					iface.name
-#      	]
-#			end
+      # sort by muliple criteria
+# http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
+      #
+      # in practice, you are sorting an Enumerable made up of Arrays
 
- 			#	First, order by type, according to a prefered order; then
-			#	order by name, but put interfaces with no MAC address at the end.
-			PREFERRED_ORDER = lambda do |iface|
-	      [
-  	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-    	    (iface.mac ? iface.name : "zzz_#{iface.name}")
+      # First, order by type, according to a prefered order; then
+      # order by name, but put interfaces with no MAC address at the end.
+      PREFERRED_ORDER = lambda do |iface|
+        [
+          OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
+          (iface.mac ? iface.name : "zzz_#{iface.name}")
       	]
-			end
+      end
     
       # Class methods.
 
@@ -88,6 +77,7 @@ class OnBoard
         end
         
         def getAll_layer2 
+
           ary = []
           netif_h = nil
 
@@ -181,8 +171,17 @@ class OnBoard
               pid             = $1
               cmd             = $2
               args            = $4.strip
-              iface           = ary.detect {|i| args.include? i.name}
-	      next unless iface
+              ifaces = ary.select do |i| 
+                args =~ /\s#{i.name}$/      or  # ends as " eth0"
+                args =~ /\s\-\w#{i.name}$/  or  # ends as " -ieth0"
+                args =~ /\s#{i.name}\s/     or  # contains " eth0 "
+                args =~ /\s\-\w#{i.name}\s/     # contains " -ieth0 "
+              end
+              if ifaces.length > 1
+                fail "fix your regexps: looks like a dhcp client process is managing more than one interface: #{ifaces.map{|i| i.name}.join}"
+              end
+              iface = ifaces[0]
+              next unless iface
               iface.ipassign  = {
                 :method         => :dhcp,
                 :pid            => pid,

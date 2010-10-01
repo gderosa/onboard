@@ -17,7 +17,10 @@ fi
 #
 ONBOARD_VARRUN="/var/run/onboard"
 if [ ! -d "$ONBOARD_VARRUN" ]; then
-	mkdir -p $ONBOARD_VARRUN
+	(mkdir -p $ONBOARD_VARRUN 2> /dev/null) || (
+		sudo mkdir -p $ONBOARD_VARRUN
+		sudo chown onboard:onboard $ONBOARD_VARRUN
+	)
 fi
 
 chown -R $ONBOARD_USERNAME $ONBOARD_DATADIR

@@ -145,11 +145,11 @@ class OnBoard
           # strings as they are.
           if h[:format] == 'json'
             content_type  'application/json'
-          else  # elsif h[:format] == 'yaml' would be redundant...
-            if $ya2yaml_1_9compatible_available
-              content_type 'application/json', :charset => 'utf-8'
+          elsif h[:format] == 'yaml' # "explicit is better than implicit" :-)
+            if $ya2yaml_available
+              content_type 'application/x-yaml', :charset => 'utf-8'
             else
-              content_type 'application/json' # base64(ASCII) used by std lib
+              content_type 'application/x-yaml' # base64(ASCII) used by std lib
             end
           end
           # The following is common to YAML and JSON.
@@ -167,8 +167,12 @@ class OnBoard
             headers x_headers                                           if 
                 x_headers.length > 0
           end
-          if h[:objects].class == Array and h[:objects][0].respond_to? :data
-            # we assume that array is made up of objects of the same class
+          if 
+              h[:objects].is_a? Enumerable and 
+              h[:objects].any? {|x| x.respond_to? :data}
+
+            # we assume that Enumerable is made up of objects of the 
+            # same class
             return (h[:objects].map {|obj| obj.data}).to_(h[:format]) 
           elsif h[:objects].respond_to? :data
             return h[:objects].data.to_(h[:format])
