@@ -34,13 +34,13 @@ div#sidebar {
   height: 80%;
   margin: 1em 1em 0 0;
   padding-right: 0.5em;
-  font-size: 85%;
+  font-size: 82%;
   overflow: auto;
   color: #444;
 }
 
 div#sidebar ul {
-  padding: 2px 1em;
+  padding: 2px 0 2px 0.5em;
   margin: 0.2em 0;
 }
 
@@ -169,6 +169,10 @@ a, .hmenu-bullet {
   text-decoration: none;
 }
 
+.hmenu-bullet, .hmenu-bullet-nochildren {
+  /* border: 1px <%= superlowlight %> solid; */ /* debug */
+}
+
 a {
   font-weight: bold;
 }
@@ -182,23 +186,16 @@ a:hover   {
   color: <%= superhighlight %>;
 }
 
-.hmenu-content {
-  padding: 0 0.3em;
-}
-
-.menu-content a {
-  padding-left: 0;
-  padding-right: 0;
-  margin-left: 0;
-  padding-right: 0;
+li .hmenu-content {
+  padding: 0;
+  margin: 0 0 0 1px; /* Y A alignment hack */
 }
 
 li span.hmenu-selected, li div.hmenu-selected {
   font-weight: bold;
-  /* color: white; */
   color: <%= superhighlight %>; 
-  /* background: <%= superhighlight %>; */
-  /* border: 1px <%= superhighlight %> solid; */
+  padding: 0;
+  margin: 0 0 0 0; /* Y A alignment hack */
 }
 
 li.hmenu-selected > .hmenu-bullet, 
