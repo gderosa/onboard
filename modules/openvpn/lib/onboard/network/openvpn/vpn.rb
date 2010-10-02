@@ -418,7 +418,7 @@ EOF
               text << line unless 
                   line =~ /^\s*route\s+(\S+)\s+(\S)/ or
                   line =~ /^\s*client-to-client\s*(#.*)?$/ or
-                  line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S)\s*"/
+                  line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
             end
             # add new one
             @data['explicitly_configured_routes'].each do |route_h|
@@ -429,7 +429,6 @@ EOF
             File.open @data_internal['conffile'], 'w' do |f|
               f.write text
             end
-            params['push_routes']
 
             # Reload openvpn configuration and restart connections
             # TODO: do not hardcode, improve System::Process

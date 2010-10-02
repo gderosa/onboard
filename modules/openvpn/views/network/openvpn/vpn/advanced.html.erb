@@ -1,5 +1,6 @@
 <% 
   require 'onboard/system/log'
+  require 'onboard/network/openvpn/convert'
 
   vpn = objects
   log = OnBoard::System::Log.new({'path' => vpn.logfile}) 
@@ -74,30 +75,40 @@
           <tr>
             <td><strong>All clients</strong></td>
             <td></td>
-            <td><textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea></td>
+            <% 
+              text = vpn.data['push'] ? 
+                OnBoard::Network::OpenVPN::Convert.routes2textarea(vpn.data['push']['routes']) :
+                ''
+            %>
+            <td>
+              <textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off><%= html_escape text %></textarea>
+            </td>
             <td></td>
           </tr>
+          <!-- Client rows -->
           <% vpn.data['client-config'].each_pair do |cn, h| %>
             <tr>
               <td><code><%= cn %></code></td>
               <input type="hidden" name="clients[][CN]" value="<%= cn %>">
               <td>
                 <%
-                  text = ''
-                  h['iroutes'].each do |route|
-                    text << "#{route['net']}/#{route['mask']}\n"
-                  end
+                  # text = ''
+                  # h['iroutes'].each do |route|
+                  #   text << "#{route['net']}/#{route['mask']}\n"
+                  # end
+                  text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['iroutes'])
                 %>
-                <textarea name="clients[][routes]" cols=<%= cols %> rows=3 wrap=off><%= text %></textarea> 
+                <textarea name="clients[][routes]" cols=<%= cols %> rows=3 wrap=off><%= html_escape text %></textarea> 
               </td>
               <td>
                 <% 
-                  text = ''
-                  h['push']['routes'].each do |route|
-                    text << "#{route['net']}/#{route['mask']}\n"
-                  end
+                  # text = ''
+                  # h['push']['routes'].each do |route|
+                  #   text << "#{route['net']}/#{route['mask']}\n"
+                  # end
+                  text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['push']['routes'])
                 %>
-                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= text %></textarea>
+                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= html_escape text %></textarea>
               </td>
               <td style="text-align: center;">
                 <input type="checkbox" name="clients[][delete]"/> 

@@ -23,6 +23,19 @@ class OnBoard
           return out
         end
 
+        # Warning: html escape is not performed!
+        def routes2textarea(h_ary)
+          return '' unless h_ary.respond_to? :each
+          out = ''
+          h_ary.each do |route_h|
+            # out << route_h.pretty_inspect
+            if route_h['net'] and route_h['mask']
+              out << route_h['net'] << '/' << route_h['mask'] << "\n" 
+            end
+          end
+          return out
+        end
+
         # Turn the OpenVPN command line into a "virtual" configuration file
         def cmdline2conf(cmdline_ary)
           line_ary = []
