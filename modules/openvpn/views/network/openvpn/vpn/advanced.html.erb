@@ -11,7 +11,7 @@
   }
 </style>
 
-<h2>VPN<%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details<% if vpn.data['server'] %> (server)<% end %></h2>
+<h2>VPN <%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details<% if vpn.data['server'] %> (server)<% end %></h2>
 <!-- 
   As usual, maybe we are not strictly ReSTful, but we find it convenient
   to PUT/GET the whole set of configured clients, instead of 
@@ -34,7 +34,7 @@
       <table>
         <thead>
           <tr>
-            <th>Client’s &ldquo;Common Name&rdquo;</th>
+            <th>Client&rsquo;s &ldquo;Common Name&rdquo;</th>
             <th>
               Route networks
               <div class="optinfo">  
@@ -115,7 +115,7 @@
           <% end %>
           <!-- New client -->
           <tr>
-            <td><input title='Add a new client’s "Common Name" ' name="clients[][CN]" type="text" class="rwtext"/></td>
+            <td><input title='Add a new client&rsquo;s "Common Name" ' name="clients[][CN]" type="text" class="rwtext"/></td>
             <td>
               <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea> 
             </td>
