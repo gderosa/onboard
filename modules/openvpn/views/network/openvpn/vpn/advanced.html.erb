@@ -10,9 +10,7 @@
     padding: 0.5em;
   }
 </style>
-<!-- debug -->
-<pre><%= html_escape params.pretty_inspect %></pre>
-<!-- end debug -->
+
 <h2>VPN<%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details<% if vpn.data['server'] %> (server)<% end %></h2>
 <!-- 
   As usual, maybe we are not strictly ReSTful, but we find it convenient
