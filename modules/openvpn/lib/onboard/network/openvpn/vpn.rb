@@ -325,24 +325,6 @@ EOF
           end
         end
 
-=begin
-        # Turn the OpenVPN command line into a "virtual" configuration file
-        def self.cmdline2conf(cmdline_ary)
-          line_ary = []
-          text = ""
-          cmdline_ary.each do |arg|
-            if arg =~ /\-\-(\S+)/ 
-              text << line_ary.join(' ') << "\n" if line_ary.length > 0
-              line_ary = [$1] 
-            elsif line_ary.length > 0
-              line_ary << arg
-            end
-          end
-          text << line_ary.join(' ') << "\n" if line_ary.length > 0
-          return text
-        end
-=end 
-
         # Turn the OpenVPN command line into a "virtual" configuration file
         def self.cmdline2conf(cmdline_ary) # delegate
           Convert.cmdline2conf(cmdline_ary)
@@ -407,9 +389,6 @@ EOF
 
               routes      = client['routes'].lines.map{|x| x.strip}
 
-              # will be calculated by Convert.textarea2push_routes
-              # push_routes = client['push_routes'].lines.map{|x| x.strip}
-
               client_config_file = 
 "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
               File.open(client_config_file, 'w') do |f|
@@ -426,18 +405,6 @@ EOF
                       @data['explicitly_configured_routes'].include? h
                 end
 
-# moved to Convert.textarea2push_routes
-=begin                
-                push_routes.each do |push_route|
-                  # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
-                  begin
-                    ip = IPAddr.new(push_route)
-                  rescue ArgumentError
-                    next
-                  end
-                  f.puts %Q{push "route #{ip} #{ip.netmask}"}  
-                end
-=end
                 f.puts Convert.textarea2push_routes client['push_routes']
 
               end
@@ -678,6 +645,12 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               h = {'net' => $1, 'mask' => $2} # TODO? 'gateway', 'metric' (RTFM)
               @data['explicitly_configured_routes'] << h unless
                   @data['explicitly_configured_routes'].include? h
+            end
+            # TODO: DRY with parse_client_config code: How?
+            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
+              @data['push'] ||= {}
+              @data['push']['routes'] ||= []
+              @data['push']['routes'] << {'net' => $1, 'mask' => $2}
             end
 
             # "private" options with no args
