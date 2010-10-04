@@ -96,14 +96,10 @@
                   # end
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['iroutes'])
                 %>
-                <textarea name="clients[][routes]" cols=<%= cols %> rows=3 wrap=off><%= html_escape text %></textarea> 
+                <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= html_escape text %></textarea> 
               </td>
               <td>
                 <% 
-                  # text = ''
-                  # h['push']['routes'].each do |route|
-                  #   text << "#{route['net']}/#{route['mask']}\n"
-                  # end
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['push']['routes'])
                 %>
                 <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= html_escape text %></textarea>
@@ -115,12 +111,15 @@
           <% end %>
           <!-- New client -->
           <tr>
-            <td><input title='Add a new client&rsquo;s "Common Name" ' name="clients[][CN]" type="text" class="rwtext"/></td>
+            <td>
+              <!-- <p class="optinfo" style="margin-bottom: 0.5em;">New client-specific routes configuration</p> -->
+              <input title='Add a new client&rsquo;s "Common Name" ' name="clients[][CN]" type="text" class="rwtext"/>
+            </td>
             <td>
               <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea> 
             </td>
             <td>
-              <textarea name="clients[][push_routes]" cols=<%= cols %> rows=2 wrap=off></textarea>
+              <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea>
             </td>
             <td style="text-align: center;">
             </td>
