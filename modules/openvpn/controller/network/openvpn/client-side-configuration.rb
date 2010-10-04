@@ -10,7 +10,7 @@ class OnBoard
         :path => '/network/openvpn/client-side-configuration',
         :format => 'html',
         #:objects  => vpns,
-        :title  => 'Cient-side Configuration Wizard'
+        :title  => 'Cient-side configuration Wizard'
       )
     end
 
