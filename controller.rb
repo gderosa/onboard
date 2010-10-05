@@ -167,18 +167,14 @@ class OnBoard
             headers x_headers                                           if 
                 x_headers.length > 0
           end
-          if 
-              h[:objects].is_a? Enumerable and 
-              h[:objects].any? {|x| x.respond_to? :data}
 
-            # we assume that Enumerable is made up of objects of the 
-            # same class
-            return (h[:objects].map {|obj| obj.data}).to_(h[:format]) 
-          elsif h[:objects].respond_to? :data
-            return h[:objects].data.to_(h[:format])
-          else
-            return h[:objects].to_(h[:format])
-          end
+          # 'data' method turns a Ruby Object into a data structure
+          # made up of hashes, arrays, strings and numbers, with
+          # no Ruby-specific stuff (such as Symbols) and no application
+          # specific objects (OnBoard::Some::Thing objects). So JSON/YAML
+          # exportation and communication should be easier,
+          # including to non-Ruby third-party applications. 
+          return h[:objects].deep_map{|x| x.data}.to_(h[:format])
 
         when 'rb'
           if options.environment == :development
