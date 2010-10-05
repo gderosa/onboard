@@ -8,7 +8,7 @@ class OnBoard
   })
   MENU_ROOT.add_path('/network/openvpn/client-side-configuration', {
     :href => '/network/openvpn/client-side-configuration',
-    #:children => %r{^/network/openvpn/vpn/.+},
+    :children => %r{^/network/openvpn/client-side-configuration/.*},
     :name => 'Client-side configuration Wizard',
     :desc => 'This will also help you to configure Windows clients',
     #:n    => 2
