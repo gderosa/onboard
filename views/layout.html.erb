@@ -26,11 +26,12 @@
             if request.path_info ==  node.content[:href]
               output[:href] = nil
               output[:extra_class] = "hmenu-selected"
-            end
             # That's why I love Ruby: node.content[:children] may
             # be a String, a Regexp or even a block of code! (lambda) 
-            if node.content[:children] === request.path_info              
-              output[:extra_class] = "hmenu-selected"
+            elsif node.content[:children] === request.path_info              
+              output[:extra_class] = "hmenu-selected" unless
+                  # do not highlight if any descendant has exact match
+                  node.any? {|n| n.content[:href] == request.path_info}
             end
           end
         %>
