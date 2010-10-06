@@ -19,6 +19,9 @@ require 'onboard/passwd'
 
 class OnBoard
   class Controller < ::Sinatra::Base
+
+    class ArgumentError < ArgumentError; end
+
     # Extensions must be explicitly registered in modular style apps.
     register ::Sinatra::R18n
 
@@ -117,6 +120,12 @@ class OnBoard
     
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
+
+        # try to guess if not provided
+        h[:format]                                ||= 
+            params[:format]                       ||= 
+            request.path_info =~ /\.(\w+$)/ && $1
+
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
         end
@@ -184,7 +193,11 @@ class OnBoard
             multiple_choices(h)
           end
         else
-          multiple_choices(h)
+          if h[:partial]
+            raise ArgumentError, "You requested a partial but you did not provide a valid :format. You may want something like :format => 'html' in #{caller[0]}"
+          else
+            multiple_choices(h)
+          end
         end  
       end
 
