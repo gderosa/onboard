@@ -146,7 +146,7 @@ class OnBoard
               :iconsize => IconSize,
               :msg => h[:msg],
               :title => h[:title]
-            } 
+            }.merge(h[:locals] || {}) , 
           )
 
         when 'json', 'yaml'
