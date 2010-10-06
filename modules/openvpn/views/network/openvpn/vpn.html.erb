@@ -40,11 +40,15 @@
 %>
 <h3>Running/Configured VPNs</h3>
 <table>
-  <thead>
+  <thead>    
     <tr>
-      <th rowspan="3" colspan="3">
-        Actions 
-      </th>
+      <%= 
+        format(
+          :module => 'openvpn',
+          :partial => true,
+          :path => 'network/openvpn/_table_header_actions'
+        )
+      %>
       <th rowspan="3">
         Mode
       </th>
