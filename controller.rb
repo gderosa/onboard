@@ -183,7 +183,10 @@ class OnBoard
           # specific objects (OnBoard::Some::Thing objects). So JSON/YAML
           # exportation and communication should be easier,
           # including to non-Ruby third-party applications. 
-          return h[:objects].deep_map{|x| x.data}.to_(h[:format])
+          
+          exportable_data = h[:objects].deep_map{|k,v| [k.to_s, v.data]}
+          
+          return exportable_data.to_(h[:format])
 
         when 'rb'
           if options.environment == :development

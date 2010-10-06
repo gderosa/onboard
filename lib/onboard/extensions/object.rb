@@ -7,6 +7,21 @@ rescue LoadError
   $ya2yaml_available = false
 end
 
+require 'facets/hash'
+
+module Kernel
+
+  module_function
+
+  def null
+    retval = nil
+    def retval.method_missing(*)
+      return self
+    end
+  end 
+
+end
+
 class Object
 
   def to_(what)
@@ -24,11 +39,20 @@ class Object
     end
   end
 
+  def deep?
+    respond_to? :each or respond_to? :each_pair
+  end
+
   def deep_map(&block)
     if self.respond_to? :each_pair
       out = {}
       self.each_pair do |k, v|
-        out[k] = v.deep_map(&block)
+        if v.deep?
+          new_k, new_v = block.call(k, null)[0], v.deep_map(&block)
+        else
+          new_k, new_v = block.call(k, v)
+        end
+        out[new_k] = new_v
       end
       return out
     elsif self.respond_to? :each
@@ -38,7 +62,7 @@ class Object
       end
       return out
     else
-      return block.call(self)
+      return block.call(null, self)[1]
     end
   end
 
