@@ -177,10 +177,11 @@ class OnBoard
                 x_headers.length > 0
           end
 
-          # 'data' method turns a Ruby Object into a data structure
+          # 'data' method turns an OnBoard::< ... >  object into a data 
+          # structure
           # made up of hashes, arrays, strings and numbers, with
           # no Ruby-specific stuff (such as Symbols) and no application
-          # specific objects (OnBoard::Some::Thing objects). So JSON/YAML
+          # specific objects. So JSON/YAML
           # exportation and communication should be easier,
           # including to non-Ruby third-party applications. 
           

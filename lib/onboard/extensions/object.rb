@@ -7,20 +7,8 @@ rescue LoadError
   $ya2yaml_available = false
 end
 
+require 'facets/na'
 require 'facets/hash'
-
-module Kernel
-
-  module_function
-
-  def null
-    retval = nil
-    def retval.method_missing(*)
-      return self
-    end
-  end 
-
-end
 
 class Object
 
@@ -48,7 +36,7 @@ class Object
       out = {}
       self.each_pair do |k, v|
         if v.deep?
-          new_k, new_v = block.call(k, null)[0], v.deep_map(&block)
+          new_k, new_v = block.call(k, NA)[0], v.deep_map(&block)
         else
           new_k, new_v = block.call(k, v)
         end
@@ -62,7 +50,7 @@ class Object
       end
       return out
     else
-      return block.call(null, self)[1]
+      return block.call(NA, self)[1]
     end
   end
 
