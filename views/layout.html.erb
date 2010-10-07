@@ -38,6 +38,15 @@
     </div>
     <div id="main">
       <%= erb(:"_navbar.html", :layout => false) %>
+      <div id="altbar">
+        <a href="<%= request.path_info.sub(/\.\w+$/, '.json') %>">
+          JSON 
+        </a>
+        | 
+        <a href="<%= request.path_info.sub(/\.\w+$/, '.yaml') %>">
+          YAML
+        </a>
+      </div>
       <%= yield %>
       <pre id="jsdebug"></pre>
     </div>
