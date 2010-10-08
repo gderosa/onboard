@@ -292,6 +292,10 @@ class OnBoard
             'routes'  => @routes.map {|x| x.data}
           }
         end
+        alias to_h data
+
+        def to_json(*a); to_h.to_json(*a); end
+        def to_yaml(*a); to_h.to_yaml(*a); end
 
         def ip_route_flush
           msg = OnBoard::System::Command.run "ip route flush table #{@id}", :sudo
