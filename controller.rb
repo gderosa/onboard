@@ -73,6 +73,8 @@ class OnBoard
 
     helpers do
 
+      def formats; @@formats; end
+
       # Localization helpers 
       def locale
         if params['locale']
