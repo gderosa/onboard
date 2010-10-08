@@ -13,6 +13,7 @@ require 'logger'
 require 'pp'
 
 require 'onboard/extensions/object'
+require 'onboard/extensions/object/deep'
 require 'onboard/extensions/sinatra/base'
 require 'onboard/menu/node'
 require 'onboard/passwd'
@@ -179,7 +180,7 @@ class OnBoard
                 x_headers.length > 0
           end
 
-          return h[:objects].to_(h[:format]) 
+          return h[:objects].deep_rekey{|k| k.to_s}.to_(h[:format]) 
 
         when 'rb'
           if options.environment == :development
