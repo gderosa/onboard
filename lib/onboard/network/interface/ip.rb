@@ -112,6 +112,7 @@ class OnBoard
           end
           return h
         end
+        alias data to_h
 
         def to_json(*a); to_h.to_json(*a); end
         def to_yaml(*a); to_h.to_yaml(*a); end
