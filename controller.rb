@@ -13,6 +13,7 @@ require 'logger'
 require 'pp'
 
 require 'onboard/extensions/object'
+require 'onboard/extensions/object/deep'
 require 'onboard/extensions/sinatra/base'
 require 'onboard/menu/node'
 require 'onboard/passwd'
@@ -72,6 +73,8 @@ class OnBoard
     end
 
     helpers do
+
+      def formats; @@formats; end
 
       # Localization helpers 
       def locale
@@ -177,17 +180,7 @@ class OnBoard
                 x_headers.length > 0
           end
 
-          # 'data' method turns an OnBoard::< ... >  object into a data 
-          # structure
-          # made up of hashes, arrays, strings and numbers, with
-          # no Ruby-specific stuff (such as Symbols) and no application
-          # specific objects. So JSON/YAML
-          # exportation and communication should be easier,
-          # including to non-Ruby third-party applications. 
-          
-          exportable_data = h[:objects].deep_map{|k,v| [k.to_s, v.data]}
-          
-          return exportable_data.to_(h[:format])
+          return h[:objects].deep_rekey{|k| k.to_s}.to_(h[:format]) 
 
         when 'rb'
           if options.environment == :development

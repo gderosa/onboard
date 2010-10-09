@@ -1,0 +1,23 @@
+<%
+  require 'onboard/extensions/sinatra/base'
+%>
+
+      <div id="altbar"> <!-- alternate formats -->
+        <% if request.path_info =~ /^(.*)\.(\w+)$/ %>
+          <% 
+            path = $1 
+            current_format = $2 
+            valid_formats = (formats - [current_format]).select do |fmt|
+              routed? "#{path}.#{fmt}"
+            end
+          %>
+          <% valid_formats.each do |fmt| %>
+            <a class="altformat" href="<%= "#{path}.#{fmt}" %>">
+              <%= fmt %>
+            </a>
+            <% unless fmt == formats.last %>
+              | 
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>

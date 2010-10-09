@@ -27,33 +27,6 @@ class Object
     end
   end
 
-  def deep?
-    respond_to? :each or respond_to? :each_pair
-  end
-
-  def deep_map(&block)
-    if self.respond_to? :each_pair
-      out = {}
-      self.each_pair do |k, v|
-        if v.deep?
-          new_k, new_v = block.call(k, NA)[0], v.deep_map(&block)
-        else
-          new_k, new_v = block.call(k, v)
-        end
-        out[new_k] = new_v
-      end
-      return out
-    elsif self.respond_to? :each
-      out = []
-      self.each do |x|
-        out << x.deep_map(&block)
-      end
-      return out
-    else
-      return block.call(NA, self)[1]
-    end
-  end
-
 end
 
 

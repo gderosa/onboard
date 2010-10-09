@@ -1,3 +1,9 @@
+2010.10.01
+
+* Improved JSON/YAML support
+
+* "Alternate formats" bar
+
 2010.10
 
 * OpenVPN: push routes to "All Clients" 

@@ -400,34 +400,6 @@ class OnBoard
 
       def is_bridged?; bridged_to; end
 
-      def data
-        h = {}
-        %w{name misc qdisc state type vendor model}.each do |property|
-          h[property] = eval "@#{property}" if eval "@#{property}"
-        end
-        h['active']   = @active   # may be true or false
-        %w{n mtu}.each do |property|
-          h[property] = (eval "@#{property}").to_i
-        end
-        %w{mac}.each do |property|
-          h[property] = (eval "@#{property}").data if eval "@#{property}"
-        end
-        h['ip'] = case @ip
-                  when Array
-                    @ip.map {|ip| ip.data} 
-                  else
-                    nil
-                  end
-        h['ipassign'] = {
-          'method'      => @ipassign[:method].to_s,
-          'pid'         => @ipassign[:pid].to_i,
-          'cmd'         => @ipassign[:cmd],
-          'args'        => @ipassign[:args] 
-        }
-        h['wifi_properties'] = @wifi_properties
-        return h
-      end
-
       def modify_from_HTTP_request(h)
         if h['active'] =~ /on|yes|1/
           #Command.run "ip link set #{@name} up", :sudo unless @active # DRY!
@@ -527,6 +499,33 @@ class OnBoard
         TYPES[@type.to_s][:human_readable] or @type.to_s
       end
 
+      def to_h
+        h = {}
+        %w{name misc qdisc state type vendor model}.each do |property|
+          h[property] = eval "@#{property}" if eval "@#{property}"
+        end
+        h['active']   = @active   # may be true or false
+        %w{n mtu}.each do |property|
+          h[property] = (eval "@#{property}").to_i
+        end
+        %w{mac}.each do |property|
+          h[property] = (eval "@#{property}") if eval "@#{property}"
+        end
+        h['ip'] = @ip
+        h['ipassign'] = {
+          'method'      => @ipassign[:method].to_s,
+          'pid'         => @ipassign[:pid].to_i,
+          'cmd'         => @ipassign[:cmd],
+          'args'        => @ipassign[:args] 
+        }
+        h['wifi_properties'] = @wifi_properties
+        return h
+      end
+      alias data to_h
+
+      def to_json(*a); to_h.to_json(*a); end
+      def to_yaml(*a); to_h.to_yaml(*a); end
+     
       private
 
       def set_pciid_from_sysfs

@@ -370,6 +370,12 @@ EOF
           find_routes()
         end
 
+        alias to_h data
+
+        def to_json(*a); to_h.to_json(*a); end
+
+        def to_yaml(*a); to_h.to_yaml(*a); end
+
         def modify_from_HTTP_request(params)
           if @data['server'] and @data_internal['client-config-dir']
 

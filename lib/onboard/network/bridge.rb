@@ -99,6 +99,11 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     end
   end
 
+  def data
+    super.update('members' => @members)
+  end
+  alias to_h data
+
   private
 
   def member_netifs

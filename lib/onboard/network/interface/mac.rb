@@ -50,6 +50,9 @@ class OnBoard
           data
         end
 
+        def to_json(*a); to_s.to_json(*a); end
+        def to_yaml(*a); to_s.to_yaml(*a); end
+
         private
 
         def set_raw_from_string
