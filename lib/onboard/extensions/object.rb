@@ -7,9 +7,6 @@ rescue LoadError
   $ya2yaml_available = false
 end
 
-require 'facets/na'
-require 'facets/hash'
-
 class Object
 
   def to_(what)
