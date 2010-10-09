@@ -1,5 +1,5 @@
 <%
-  # all_vpn_server = object[]
+  vpns = objects[:vpns] || objects['vpns'] # be robust
 %>
 
 <h2><%= title %></h2>
@@ -12,6 +12,38 @@
 </p>
 
 <form method="GET">
+
   <h3>Choose an OpenVPN (server) process</h3>
+
+  <table>
+    <thead>
+      <%=
+        format(
+          :module   => 'openvpn',
+          :partial  => true,
+          :path     => 'network/openvpn/_vpninfo_thead',
+          :locals   => {
+            :show_actions_column => 'Choose',
+          }
+        )
+      %>
+    </thead>
+    <tbody>
+      <% vpns.each_with_index do |vpn, vpn_i| %>
+        <%=
+          format(
+            :module   => 'openvpn',
+            :partial  => true,
+            :path     => 'network/openvpn/_vpninfo_tr',
+            :locals   => {
+              :show_actions_column  => 
+%Q{<input type="radio" name="vpn_uuid" value="#{vpn.data['uuid']}"/>}, 
+              :vpn                  => vpn,
+              :vpn_i                => vpn_i
+            }
+          )
+        %>
+      <% end %>
+    </tbody>
 
 </form>

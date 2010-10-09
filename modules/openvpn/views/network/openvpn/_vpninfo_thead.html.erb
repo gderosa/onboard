@@ -2,16 +2,21 @@
   locals:
     actions: 
     common_name_description:
+    show_actions_column: boolean or an alternate String
 %>
 
 <% 
-  show_actions_column     ||= false # just to avoid NameError
+  show_actions_column     ||= '' 
   common_name_description ||= ''
+
+  if show_actions_column == true
+    show_actions_column = 'Actions'
+  end
 %>
 
     <tr>
       <th rowspan="3" colspan="3">
-        Actions 
+        <%= show_actions_column %>
       </th>
       <th rowspan="3">
         Mode

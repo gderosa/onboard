@@ -28,7 +28,9 @@ locals automatically provided by format() helper:
 
       <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
 
-        <% if show_actions_column %>
+        <% if show_actions_column == true %> <%# by default show buttons %>
+          
+          <!-- START/STOP/EDIT/DELETE BUTTONS -->  
           <td rowspan="<%= rowspan %>" style="text-align:center;">
             <form method="POST">
               <input type="hidden" name="_method" value="put"/>
@@ -44,31 +46,36 @@ locals automatically provided by format() helper:
               <% end %>
             </form>
           </td>
+
+          <td rowspan="<%= rowspan %>">
+            <form method="GET" action="openvpn/vpn/<%= vpnid %>.html">
+                <!-- not a real form, just an hyperlink  -->
+              <button type="submit"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button> 
+            </form>
+          </td>
+          <td rowspan="<%= rowspan %>">
+            <% 
+              if vpn.data['running']
+                str = 'Stop the VPN and remove from the list'
+              else
+                str = 'Remove from the list'
+              end
+            %>
+            <% if vpn.data['portable_id'] and vpn.data['portable_id'] =~ /\S/ %>
+            <form action="openvpn/vpn/<%= vpn.data['portable_id'] %>.html" method="POST">
+            <% else %>
+            <form action="openvpn/vpn/<%= vpnid %>.html" method="POST">
+            <% end %>
+              <input type="hidden" name="_method" value="delete"/>
+              <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
+            </form>
+          </td>
+        <% elsif show_actions_column %>
+          <td colspan="3" style="text-align:center;">
+            <%= show_actions_column or '' %>
+          </td> <%# show alternate text  %>
         <% end %> <%# if show_actions_column %>
 
-        <td rowspan="<%= rowspan %>">
-          <form method="GET" action="openvpn/vpn/<%= vpnid %>.html">
-              <!-- not a real form, just an hyperlink  -->
-            <button type="submit"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button> 
-          </form>
-        </td>
-        <td rowspan="<%= rowspan %>">
-          <% 
-            if vpn.data['running']
-              str = 'Stop the VPN and remove from the list'
-            else
-              str = 'Remove from the list'
-            end
-          %>
-          <% if vpn.data['portable_id'] and vpn.data['portable_id'] =~ /\S/ %>
-          <form action="openvpn/vpn/<%= vpn.data['portable_id'] %>.html" method="POST">
-          <% else %>
-          <form action="openvpn/vpn/<%= vpnid %>.html" method="POST">
-          <% end %>
-            <input type="hidden" name="_method" value="delete"/>
-            <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
-          </form>
-        </td>
         <td rowspan="<%= rowspan %>">
           <%= 
             if vpn.data['dev-type'] == 'tun'

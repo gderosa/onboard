@@ -16,7 +16,7 @@ class OnBoard
         end
       end
       objects = {
-        :vpns               => all_vpns,
+        :vpns               => all_vpns.select{|v| v.data['server']}, 
         :network_interfaces => all_interfaces
       }
       format(
