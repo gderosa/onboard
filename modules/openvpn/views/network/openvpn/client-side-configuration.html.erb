@@ -29,6 +29,7 @@
       %>
     </thead>
     <tbody>
+      <% checked = true %>
       <% vpns.each_with_index do |vpn, vpn_i| %>
         <%=
           format(
@@ -37,13 +38,56 @@
             :path     => 'network/openvpn/_vpninfo_tr',
             :locals   => {
               :show_actions_column  => 
-%Q{<input type="radio" name="vpn_uuid" value="#{vpn.data['uuid']}"/>}, 
+%Q{<input #{'checked' if checked} type="radio" name="vpn_uuid" value="#{vpn.data['uuid']}"/>}, 
               :vpn                  => vpn,
               :vpn_i                => vpn_i
             }
           )
         %>
+        <% checked = false %> <%# auto-check the first vpn %>
       <% end %>
     </tbody>
+  </table>
 
+  <h3>Choose the address this server will be reached at</h3>
+  <p>
+    <em class="term">Address</em> may be one of your 
+    <a href="/network/interfaces.html">network interfaces</a> address, unless
+    this machine is behind another Internet connection router which performs
+    <a href="http://en.wikipedia.org/wiki/Port_forwarding">
+      DNAT/Port Forwarding</a>. 
+  </p>
+  <p>
+    <em class="term">Port</em> is generally the same listed above 
+    (under "Local Port")
+    for the VPN you choose; but, again, check the DNAT
+    configuration of your external DSL router, if any.
+  </p>
+  <p><table>
+    <thead>
+      <tr>
+        <th>Address/Host Name</th>
+        <th>UDP/TCP Port</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:0.3em;"><input type="text" name="address"/></td>
+        <td style="padding:0.3em; text-align:center;"><input type="text" name="port" size="5" value="1194"/></td>
+      </tr>
+    </tbody>
+  </table></p>
+  <h3>Choose Client Operating system</h3>
+  <fieldset>
+    <span>
+      <input type="radio" name="os" value="windows" checked />
+      <span style="vertical-align: middle;">Microsoft Windows&trade;</span>
+    </span>
+    <span title="GNU/Linux, BSD variants etc.">
+      <input type="radio" name="os" value="unix"/>
+      <span style="vertical-align: middle;">Unix-like</span> 
+    </span>
+  </fieldset>
+  <h3>Submit</h3>
+  <button type="submit"/>Submit</button>
 </form>
