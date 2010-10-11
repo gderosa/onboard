@@ -53,7 +53,7 @@
             | <a href="<%= request.referer %>">Back</a>
           </span>
           <span <%= 'style="visibility:hidden;"' unless routed? request.path_info, 'GET' %>>
-            | <a href="<%= request.path_info %>">Refresh</a>
+            | <a href="<%= request.fullpath %>">Refresh</a>
           </span>
         </span>
       </div>
