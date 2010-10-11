@@ -1,5 +1,7 @@
 <%
   vpns = objects[:vpns] || objects['vpns'] # be robust
+
+  windoze = %q{<span class="product-name">Microsoft<sup class="trademark">&reg;</sup> Windows<sup class="trademark">&reg;</sup></span>}
 %>
 
 <h2><%= title %></h2>
@@ -7,8 +9,7 @@
 <p>
   If you have configured one or more <span class="product-name">OpenVPN</span> 
   server instances, this page will help you to configure the related clients,
-  including <span class="product-name">Microsoft&reg; Windows&reg;</span> 
-  clients.
+  including <%= windoze %> clients.
 </p>
 
 <form 
@@ -83,7 +84,7 @@
   <fieldset>
     <span>
       <input type="radio" name="os" value="windows" checked />
-      <span style="vertical-align: middle;">Microsoft Windows&trade;</span>
+      <span style="vertical-align: middle;"><%= windoze %></span>
     </span>
     <span title="GNU/Linux, BSD variants etc.">
       <input type="radio" name="os" value="unix"/>
