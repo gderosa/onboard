@@ -7,6 +7,7 @@
   lightbg         = "#faf4d0" 
   serif           = %q{"Times New Roman", Times, Georgia, serif}
   sans_serif      = %q{Helvetica, Arial, sans-serif}
+  monospace       = %q{monospace}
 %>
 
 body {
@@ -87,29 +88,25 @@ form {
   margin: 0;
 }
 
-div#main input.rotext, div#main input.rwtext {
-  font-family: monospace;
-  /* font-size: 130%; */
+input[type="text"], textarea {
+  color: <%= highlight %>;
+  font-size: inherit;
 }
 
-div#main input[type="text"][readonly] {
+input[type="text"] {
+  font-family: <%= monospace %>;
+  padding: 2px;
+  background: white;
+}
+
+input[type="text"][readonly] {
   background: transparent;
   color: <%= lowlight %>;
 }
 
-div#main input.rwtext {
-  color: <%= highlight %>;
-  background: white;
-}
-
-div#main input.rotext {
-  color: <%= lowlight %>;
-  background: <%= lightbg %>;
-}
-
 textarea {
-  color: <%= highlight %>;
-  font-family: monospace;
+  font-family: <%= monospace %>;
+  overflow: auto;
 }
 
 input[type="radio"] {
@@ -275,6 +272,7 @@ table tr th .optinfo {
 
 table tr th[scope="row"] {
   text-align: left;
+  font-size: 90%;
 }
 
 table tr td {
@@ -320,11 +318,15 @@ div#sidebar ul {
 }
 
 li {
-  margin: 6pt 0;
+  margin: 0.2em 0;
 } 
 
+li.hmenu-item, li.hmenu-submenu {
+  margin-top: 0.5em;
+}
+
 select.tt, select option.tt {
-  font-family: monospace;
+  font-family: <%= monospace %>;
 }
 
 /* TEMPORARY */
