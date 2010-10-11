@@ -2,33 +2,41 @@
   require "pp"
   require "onboard/extensions/string"
   require "onboard/network/interface"
+
+  iface_path = 
+      "/network/interfaces/#{url_encode(netif.name)}.html" 
+  iface_href ||= {} 
+  iface_href = 
+      request.path_info == iface_path           ?
+      {:open    => '', :close => ''}            :
+      {
+        :open   => %Q{<a href="#{iface_path}">},   
+        :close  => '</a>'
+      }
+  netif_html = "#{iface_href[:open]}#{netif.name}#{iface_href[:close]}"
 %>
 
             <th scope="row">
-              <!-- <div> -->
-                <% iface_url = "/network/interfaces/#{url_encode(netif.name)}.html" %>
-                <% unless request.path_info == iface_url %><a href="<%= iface_url %>"><% end %> 
-                  <% if netif.type == 'bridge' %>
-                    <%=
-                      if netif.members.length > 0 
-                        netif.name + ':' 
-                      else
-                        netif.name
-                      end
-                    %>
-                    <% if netif.members.length > 0 %>
-                      <ul>
-                        <% netif.members.each do |membername| %>
-                          <li><%= membername %></li>
-                        <% end %>
-                      </ul>
+              <% if netif.type == 'bridge' %>
+                <%=
+                  if netif.members.length > 0 
+                    netif_html + ':' 
+                  else
+                    netif_html
+                  end
+                %>
+                <% if netif.members.length > 0 %>
+                  <ul>
+                    <% netif.members.each do |membername| %>
+                      <li style="font-weight:normal;"><%= membername %></li>
                     <% end %>
-                  <% else %>
-                    <%= netif.name %>
-                  <% end %>
-                <% unless request.path_info == iface_url %></a><% end %>
-              <!-- </div> -->
+                  </ul>
+                <% end %>
+              <% else %>
+                <%= netif_html %>
+              <% end %>
             </th>
+
             <td style="text-align: center;">
               <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]" <%= 'readonly' unless [:static, :dhcp].include? netif.ipassign[:method] %> />
             </td>
