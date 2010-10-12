@@ -28,15 +28,16 @@ class OnBoard
       )
     end
 
-    get '/network/openvpn/client-side-configuration/howto.html' do
-      objects = {
-        :vpns => Network::OpenVPN::VPN.getAll.select{|v| v.data['server']}
-      } 
+    get %r{/network/openvpn/client-side-configuration/howto\.(html|rb)} do
+      format = $1
+      vpn = Network::OpenVPN::VPN.getAll.select do |vpn_| 
+        vpn_.data['uuid'] == params['vpn_uuid']
+      end
       format(
         :module   => 'openvpn',
         :path     => '/network/openvpn/client-side-configuration/howto',
-        :format   => 'html', 
-        :objects  => objects,
+        :format   => format, 
+        :objects  => vpn,
         :title    => 'Cient-side configuration: short guide'
       )   
     end
