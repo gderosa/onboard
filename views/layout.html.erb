@@ -42,8 +42,18 @@
       </div>
     </div>
     <div id="main">
+
       <%= erb(:"_navbar.html", :layout => false) %>
-      <%= erb(:"_altbar.html", :layout => false) %>
+
+      <%= 
+        erb(
+          :"_altbar.html", 
+          :layout => false,
+          :locals => {
+            :formats => formats
+          }
+        ) 
+      %>
       <%= yield %>
       <pre id="jsdebug"></pre>
     </div>

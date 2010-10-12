@@ -80,8 +80,6 @@ class OnBoard
 
     helpers do
 
-      def formats; @@formats; end
-
       # Localization helpers 
       def locale
         if params['locale']
@@ -129,7 +127,6 @@ class OnBoard
     
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
-
         # try to guess if not provided
         h[:format]                                ||= 
             params[:format]                       ||= 
@@ -148,13 +145,14 @@ class OnBoard
           content_type 'text/html', :charset => 'utf-8'
           return erb(
             (h[:path] + '.html').to_sym,
-            :layout => layout,
-            :locals => {
-              :objects => h[:objects], 
-              :icondir => IconDir, 
+            :layout   => layout,
+            :locals   => {
+              :objects  => h[:objects], 
+              :icondir  => IconDir, 
               :iconsize => IconSize,
-              :msg => h[:msg],
-              :title => h[:title]
+              :msg      => h[:msg],
+              :title    => h[:title],
+              :formats  => (h[:formats] || @@formats),
             }.merge(h[:locals] || {}) , 
           )
 
@@ -204,29 +202,23 @@ class OnBoard
         end  
       end
 
-      def multiple_choices(h)
+      def multiple_choices(h={}) 
         status(300)
         paths = []
-        @@formats.each do |fmt|
+        formats = h[:formats] || @@formats
+        formats.each do |fmt|
           paths << request.path_info.sub(/\.[^\.]*$/, '.' + fmt) 
         end
-        @@formats.each do |fmt|
+        formats.each do |fmt|
+          args_h = {
+            :path     => '300',
+            :format   => fmt,
+            :formats  => formats
+          }
           if request.env["HTTP_ACCEPT"] [fmt] # "contains"
-            return format(
-              :path => '300',
-              :format => fmt,
-              :objects => {
-                :paths => paths, 
-              }
-            )
+            return format args_h
           end
-          format(
-            :path => '300',
-            :format => 'html',
-            :objects => {
-                :paths => paths, 
-            }          
-          )
+          format args_h
         end
       end
 
