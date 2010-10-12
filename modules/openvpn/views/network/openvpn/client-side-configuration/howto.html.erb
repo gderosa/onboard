@@ -1,10 +1,46 @@
 <h2><%= title %></h2>
 
 <h3>1. Install OpenVPN</h3>
+<% if params['os'] == 'windows' %>
+  <p>If you haven&rsquo;t done it already, go the 
+  <a href="http://openvpn.net/index.php/open-source/downloads.html">
+    OpenVPN download page</a>, download the Windows Installer and run it.</a>
+<% elsif params['os'] =~  /linux|unix/ %>
+  <p>Your Linux distro, BSD flavour etc., most probably provides
+  an <span class="product-name">OpenVPN</span> pre-compiled software package.
+  Chek your OS documentation.</p>
+  <p>If you wish to compile <span class="product-name">OpenVPN</span> 
+  by yourself, download the source package from the 
+  <a href="http://openvpn.net/index.php/open-source/downloads.html">
+    OpenVPN download page</a> and read <a href="http://openvpn.net/index.php/open-source/documentation/install.html">this</a>.</p>
+<% end %>
 
-<h3>2. Download Configuration Files and Certificates</h3>
+<h3>2. Download Configuration Files and Certificates archive</h3>
+<%
+  archive_extension = case params[:os]
+  when 'windows'    then 'zip'
+  when /unix|linux/ then 'tar.gz'
+  end
+  download_href = request.fullpath.sub /\/\w+\.html/, ".#{archive_extension}" 
+%>
+<table>
+  <tr>
+    <td style="padding:0.4em;"><a class="img" href="<%= download_href %>"><img style="vertical-align:middle; " alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
+    <th scope="row">Download</th>
+  </tr>
+</table>
+
 
 <h3>3.Test your configuration</h3>
+<p>Unpack the above archive into your Desktop or other temporary directory
+of your choice.</p>
+<p>Identify the OpenVPN config file by the OpenVPN icon 
+<img 
+  alt="OpenVPN icon" 
+  style="height:1.5em;" 
+  src="/icons/openvpn/openvpn_icon.png"/>
+or the <kbd>.ovpn</kbd> extension.</p>
+
 
 <h3>4. Deploy!</h3>
 
