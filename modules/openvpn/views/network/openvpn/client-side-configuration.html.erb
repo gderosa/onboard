@@ -54,17 +54,18 @@
 
   <h3>Choose the address this server will be reached at</h3>
   <p>
-    <em class="term">Address</em> may be one of your 
-    <a href="/network/interfaces.html">network interfaces</a> address, unless
+    <em class="term">Address</em> is typically the global / public IP
+    of this machine. It
+    may be one of your 
+    <a href="/network/interfaces.html">network interfaces</a> addresses, 
+    unless
     this machine is behind another Internet connection router which performs
     <a href="http://en.wikipedia.org/wiki/Port_forwarding">
       DNAT/Port Forwarding</a>. 
   </p>
   <p>
-    <em class="term">Port</em> is generally the same listed above 
-    (under "Local Port")
-    for the VPN you choose; but, again, check the DNAT
-    configuration of your external DSL router, if any.
+    <em class="term">Port</em> is, by default, the same listed above under 
+    "Local Port". Leave blank if unsure.  
   </p>
   <p><table>
     <thead>
@@ -76,7 +77,7 @@
     <tbody>
       <tr>
         <td style="padding:0.3em;"><input type="text" name="address"/></td>
-        <td style="padding:0.3em; text-align:center;"><input type="text" name="port" size="5" value="1194"/></td>
+        <td style="padding:0.3em; text-align:center;"><input type="text" name="port" size="5"/></td>
       </tr>
     </tbody>
   </table></p>
