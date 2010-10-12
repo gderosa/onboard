@@ -29,8 +29,14 @@ class OnBoard
     # Several options are not enabled by default if you inherit from 
     # Sinatra::Base .
     enable :methodoverride, :static, :show_exceptions
+    
     set :root, OnBoard::ROOTDIR
-    set :public, OnBoard::ROOTDIR + '/public'
+
+    # Sinatra::Base#static! has been overwritten to allow multiple path
+    set :public, 
+        Dir.glob(OnBoard::ROOTDIR + '/modules/*/public') +      
+        Dir.glob(OnBoard::ROOTDIR + '/public')
+
     set :views, OnBoard::ROOTDIR + '/views'
 
     case environment
