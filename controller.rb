@@ -34,8 +34,8 @@ class OnBoard
 
     # Sinatra::Base#static! has been overwritten to allow multiple path
     set :public, 
-        Dir.glob(OnBoard::ROOTDIR + '/modules/*/public') +      
-        Dir.glob(OnBoard::ROOTDIR + '/public')
+        Dir.glob(OnBoard::ROOTDIR + '/public')            +
+        Dir.glob(OnBoard::ROOTDIR + '/modules/*/public')      
 
     set :views, OnBoard::ROOTDIR + '/views'
 
