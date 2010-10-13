@@ -1,5 +1,5 @@
 <% 
-  require 'rack/utils'
+  # require 'rack/utils'
 
   vpn = objects[:vpn]     # the vpn server instance (an Hash) 
   certs = objects[:certs] # another Hash (of Hashes) (keys are SSL CN-s) 
@@ -50,12 +50,10 @@
             ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
                 cert['subject'] )  
 
-        new_get_params = get_params.merge('cn' => cn) 
-        query_string = ::Rack::Utils.build_query new_get_params
+        #new_get_params = get_params.merge('cn' => cn) 
+        #query_string = ::Rack::Utils.build_query new_get_params
         href = 
-            request.path_info.sub /\/\w+\.html$/, ".#{archive_extension}" +
-            '?'                                                           + 
-            query_string
+          "#{cn.gsub(' ', '_')}.#{archive_extension}?#{request.query_string}"
       %>
       <tr>
         <td style="text-align:center; padding:0.4em;"><a class="img" href="<%= href %>"><img style="vertical-align:middle; " alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
