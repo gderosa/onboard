@@ -37,7 +37,7 @@ class OnBoard
         :module   => 'openvpn',
         :path     => '/network/openvpn/client-side-configuration/howto',
         :format   => params[:format], 
-        :formats  => %w{html rb},
+        :formats  => %w{html rb} & @@formats, # exclude 'rb' in production
         :objects  => vpn,
         :title    => 'Cient-side configuration: short guide'
       )   
@@ -51,7 +51,7 @@ class OnBoard
         :module   => 'openvpn',
         :path     => '/network/openvpn/client-side-configuration/howto',
         :format   => params[:format], 
-        :formats  => %w{html rb},
+        :formats  => %w{html rb} & @@formats, # exclude 'rb' in production
         :objects  => vpn,
         :title    => 'Cient-side configuration: short guide'
       )   
