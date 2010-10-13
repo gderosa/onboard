@@ -14,9 +14,9 @@
 
 <form 
   method="GET" 
-  action="/network/openvpn/client-side-configuration/howto.html">
+  action="/network/openvpn/client-side-configuration/sslcert.html">
 
-  <h3>Choose an OpenVPN (server) process</h3>
+  <h3>Choose the (server) VPN</h3>
 
   <table>
     <thead>
@@ -53,10 +53,13 @@
   </table>
 
   <h3>Choose the address this server will be reached at</h3>
+  <%
+    address = 'IP address / hostname'
+    port    = 'UDP / TCP port'
+  %>
   <p>
-    <em class="term">Address</em> is typically the global / public IP
-    of this machine. It
-    may be one of your 
+  <em class="term"><%= address %></em> is typically the 
+    public IP of this machine. It may be one of your 
     <a href="/network/interfaces.html">network interfaces</a> addresses, 
     unless
     this machine is behind another Internet connection router which performs
@@ -64,14 +67,15 @@
       DNAT/Port Forwarding</a>. 
   </p>
   <p>
-    <em class="term">Port</em> is, by default, the same listed above under 
-    "Local Port". Leave blank if unsure.  
+    <em class="term"><%= port %></em>: leave blank if unsure; by default, 
+    it will get the same value listed above, under 
+    <em class="term">Local Port</em>, for the VPN you choose. 
   </p>
   <p><table>
     <thead>
       <tr>
-        <th>Address/Host Name</th>
-        <th>UDP/TCP Port</th>
+        <th><%= address  %></th>
+        <th><%= port     %></th>
       </tr>
     </thead>
     <tbody>
@@ -92,6 +96,7 @@
       <span style="vertical-align: middle;">Unix-like</span> 
     </span>
   </fieldset>
-  <h3>Submit</h3>
-  <button type="submit"/>Submit</button>
+
+  <h3>Go next: choose the SSL certificate</h3>
+  <button type="submit"/>&raquo; Next!</button>
 </form>
