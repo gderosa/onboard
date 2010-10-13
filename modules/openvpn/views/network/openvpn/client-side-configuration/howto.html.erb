@@ -83,9 +83,22 @@ of your choice.</p>
 or the <kbd>.ovpn</kbd> extension.</p>
 <p>Right-click &rarr; <em>Start OpenVPN on this config file</em>.</p>
 
-<p>Now you shokd be able to ping the remote virtual IP 
+<p>Now you should be able to ping the remote virtual IP 
 <kbd><%= vpn.data['virtual_address'] %></kbd>. 
-If you have any problem try reading this.</p>
+If you have any problem try reading 
+<a href="http://openvpn.net/index.php/open-source/documentation/install.html?start=1">this</a> or
+<a href="http://openvpn.net/index.php/open-source/faq.html#catid79">this</a>.
+</p>
 
 <h3>Deploy!</h3>
+<p>Move all configuration and ssl files extracted from the 
+<kbd>.<%= archive_extension %></kbd> archive into 
+<kbd>\Program Files\OpenVPN\config</kbd>
+</p>
 
+<p>Go to <em>Control Panel</em> &rarr; <em>Administrative Tools</em>
+&rarr; <em>Services</em>; find the <em>OpenVPN Service</em>, start it
+and make it start automatically on system boot.
+</p>
+
+<p>More info <a href="http://openvpn.net/index.php/open-source/documentation/install.html?start=1#running_as_windows_service">here</a>.</p>
