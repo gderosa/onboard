@@ -55,6 +55,7 @@ class OnBoard
       end
       not_found unless vpn
       content_type 'text/plain'
+      attachment
       format_file(
         :module => 'openvpn',
         :path => '/network/openvpn/client-side-configuration/client.conf',

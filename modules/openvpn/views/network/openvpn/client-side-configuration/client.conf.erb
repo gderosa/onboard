@@ -2,7 +2,7 @@
   # locals
   #   vpn, client_cn
   
-  unless params['port'] and params['port'] =~ /^\s*$/
+  unless params['port'] and params['port'] =~ /\S/
     params['port'] = vpn.data['port']
   end
 %>
