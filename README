@@ -51,6 +51,10 @@ will need header files from a package named ruby-dev or something alike)
 
 gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets hierarchical_menu --no-ri --no-rdoc
 
+Gem version specific requirements:
+
+  * facets >= 2.9.0
+
 --
 
 Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append 
