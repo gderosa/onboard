@@ -202,6 +202,18 @@ class OnBoard
         end  
       end
 
+      # much simpler version, no multiple formats here
+      def format_file(h)
+        if h[:module] 
+          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
+        end
+        return erb(
+          h[:path].to_sym,
+          :layout   => false,
+          :locals   => h[:locals] 
+        )
+      end
+     
       def multiple_choices(h={}) 
         status(300)
         paths = []

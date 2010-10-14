@@ -48,12 +48,22 @@ class OnBoard
       )   
     end
 
-    #get '/network/openvpn/client-side-configuration/:client/:name.:format' do
-    #  vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
-    #    vpn_.data['uuid'] == params['vpn_uuid']
-    #  end
-    #  "stub"
-    #end
+    # no web page here, just config files etc., do not call format helper
+    get '/network/openvpn/client-side-configuration/client/:name.conf' do
+      vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
+        vpn_.data['uuid'] == params['vpn_uuid']
+      end
+      not_found unless vpn
+      content_type 'text/plain'
+      format_file(
+        :module => 'openvpn',
+        :path => '/network/openvpn/client-side-configuration/client.conf',
+        :locals => {
+          :vpn => vpn,
+          :client_cn => params[:name]
+        }
+      )
+    end
 
   end
 

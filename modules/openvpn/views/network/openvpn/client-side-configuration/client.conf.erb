@@ -1,6 +1,7 @@
 <%
-  vpn = objects[:vpn]
-
+  # locals
+  #   vpn, client_cn
+  
   unless params['port'] and params['port'] =~ /^\s*$/
     params['port'] = vpn.data['port']
   end
@@ -93,9 +94,13 @@ persist-tun
 # a separate .crt/.key file pair
 # for each client.  A single ca
 # file can be used for all clients.
-ca <%= vpn.data['ca']['subject'].gsub(' ', '_') %>.crt
-cert <%= vpn.data['cert']['subject'].gsub(' ', '_') %>.crt
-key <%= vpn.data['cert']['subject'].gsub(' ', '_') %>.key <%# keep un-DRY %>
+<%
+  ca_filename = vpn.data['ca']['subject']['CN'].gsub(' ', '_')
+  subject_filename = client_cn.gsub(' ', '_')
+%>
+ca <%= ca_filename %>.crt
+cert <%= subject_filename %>.crt
+key <%= subject_filename %>.key 
 
 # Verify server certificate by checking
 # that the certicate has the nsCertType
