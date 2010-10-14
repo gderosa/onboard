@@ -557,7 +557,6 @@ EOF
           end
         end
 
-
         def find_routes
           ary = []
           @@all_routes.routes.each do |route|
@@ -568,6 +567,15 @@ EOF
             end
           end
           data['routes'] = ary
+        end
+
+        def find_client_certificates(opts={})
+          Crypto::SSL::getAllCerts(opts).select do |key, value| #Facets
+            cert = value['cert']
+            cert['issuer'] == vpn.data['ca']['subject'] and not
+            cert['subject'] == vpn.data['cert']['subject']
+                # exclude the server cert itself
+          end
         end
 
         def parse_conffile(opts={})  
