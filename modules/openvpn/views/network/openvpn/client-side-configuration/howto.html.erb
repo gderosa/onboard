@@ -1,3 +1,7 @@
+<% 
+  vpn = objects[:vpn] # the vpn server instance (an Hash) 
+%>
+
 <h2><%= title %></h2>
 
 <h3>1. Install OpenVPN</h3>
@@ -42,8 +46,9 @@ of your choice.</p>
 or the <kbd>.ovpn</kbd> extension.</p>
 <p>Right-click &rarr; <em>Start OpenVPN on this config file</em>.</p>
 
-<p>Now you shokd be able to ping the remote virtual IP. If you have any
-problem try reading this.</p>
+<p>Now you shokd be able to ping the remote virtual IP 
+<kbd><%= vpn.data['virtual_address'] %></kbd>. 
+If you have any problem try reading this.</p>
 
 <h3>4. Deploy!</h3>
 
