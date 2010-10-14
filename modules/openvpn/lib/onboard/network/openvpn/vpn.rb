@@ -572,8 +572,8 @@ EOF
         def find_client_certificates(opts={})
           Crypto::SSL::getAllCerts(opts).select do |key, value| #Facets
             cert = value['cert']
-            cert['issuer'] == vpn.data['ca']['subject'] and not
-            cert['subject'] == vpn.data['cert']['subject']
+            cert['issuer'] == data['ca']['subject'] and not
+            cert['subject'] == data['cert']['subject']
                 # exclude the server cert itself
           end
         end
