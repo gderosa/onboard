@@ -30,7 +30,13 @@ client
 # unless you partially or fully disable
 # the firewall for the TUN/TAP interface.
 ;dev tap
-dev <%= vpn.data['dev'] %>
+:dev tun
+dev <%= vpn.data['dev-type'] %> 
+<%#
+  Yeah. No matter what the interface name is on the client side.
+  The important is TUN vs TAP. So, OpenVPN will automatically choose
+  an ifname *and* set the proper type.
+%>
 
 # Windows needs the TAP-Win32 adapter name
 # from the Network Connections panel

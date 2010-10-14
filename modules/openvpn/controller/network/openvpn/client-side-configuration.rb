@@ -48,13 +48,13 @@ class OnBoard
       )   
     end
 
-    # no web page here, just config files etc., do not call format helper
-    get '/network/openvpn/client-side-configuration/client/:name.conf' do
+    # no web page here, just config files etc.
+    get '/network/openvpn/client-side-configuration/files/:name.conf' do
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
       not_found unless vpn
-      content_type 'text/plain'
+      content_type 'text/x-conf'
       attachment
       format_file(
         :module => 'openvpn',
