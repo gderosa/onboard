@@ -1,3 +1,4 @@
+require 'facets/hash'
 require 'sinatra/base'
 
 class OnBoard
@@ -29,15 +30,25 @@ class OnBoard
     end
 
     get '/network/openvpn/client-side-configuration/howto.:format' do
-      vpn = Network::OpenVPN::VPN.getAll.select do |vpn_| 
+      vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
+      certs = Crypto::SSL::getAllCerts.select do |key, value| # Facets 
+        cert = value['cert']
+        cert['issuer'] == vpn.data['ca']['subject'] and not
+        cert['subject'] == vpn.data['cert']['subject'] 
+            # exclude the server cert itself
+      end 
+      objects = {
+        :vpn   => vpn,
+        :certs => certs
+      }
       format(
         :module   => 'openvpn',
         :path     => '/network/openvpn/client-side-configuration/howto',
         :format   => params[:format], 
         :formats  => %w{html rb} & @@formats, # exclude 'rb' in production
-        :objects  => vpn,
+        :objects  => objects,
         :title    => 'Cient-side configuration: short guide'
       )   
     end
