@@ -33,12 +33,7 @@ class OnBoard
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
-      certs = Crypto::SSL::getAllCerts.select do |key, value| # Facets 
-        cert = value['cert']
-        cert['issuer'] == vpn.data['ca']['subject'] and not
-        cert['subject'] == vpn.data['cert']['subject'] 
-            # exclude the server cert itself
-      end 
+      certs = vpn.find_client_certificates
       objects = {
         :vpn   => vpn,
         :certs => certs
@@ -52,6 +47,13 @@ class OnBoard
         :title    => 'Cient-side configuration: short guide'
       )   
     end
+
+    #get '/network/openvpn/client-side-configuration/:client/:name.:format' do
+    #  vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
+    #    vpn_.data['uuid'] == params['vpn_uuid']
+    #  end
+    #  "stub"
+    #end
 
   end
 
