@@ -95,6 +95,29 @@
   <a href="http://openvpn.net/index.php/open-source/faq.html#catid79">this</a>.
   </p>
 <% elsif params['os'] == 'unix' %>
+  <p>Unpack the above archive somewhere and issue (typically as root):
+  <blockquote><pre class="code">openvpn client.conf</pre></blockquote>
+  where <code>client.conf</code> shall be replaced by the actual 
+  <code>.conf</code> filename you&rsquo;ll find in the archive.
+  
+  
+  
+  </p>
+  <p>Identify the OpenVPN config file by the OpenVPN icon 
+  <img 
+    alt="OpenVPN icon" 
+    style="height:1.2em;" 
+    src="/icons/openvpn/openvpn_icon.png"/>
+  or the <kbd>.ovpn</kbd> extension.</p>
+  <p>Right-click &rarr; <em>Start OpenVPN on this config file</em>.</p>
+
+  <p>Now you should be able to ping the remote virtual IP 
+  <kbd><%= vpn.data['virtual_address'] %></kbd>. 
+  If you have any problem try reading 
+  <a href="http://openvpn.net/index.php/open-source/documentation/install.html?start=1">this</a> or
+  <a href="http://openvpn.net/index.php/open-source/faq.html#catid79">this</a>.
+  </p>
+ 
 <% else %>
   <p class="error"><%= no_os_msg %></p>
 <% end %>
