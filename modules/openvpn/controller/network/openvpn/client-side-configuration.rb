@@ -1,4 +1,5 @@
 require 'facets/hash'
+require 'zippy'
 require 'sinatra/base'
 
 class OnBoard
@@ -51,12 +52,19 @@ class OnBoard
     # no web page here, just config files 
     get %r{/network/openvpn/client-side-configuration/files/(.*)\.(conf|ovpn|zip)} do
       name, file_extension = params[:captures]
+      client_cn = name
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
       not_found unless vpn
 
-      ca_filename = vpn.data['ca']['subject']['CN'].gsub(' ', '_')
+      ca_cn = vpn.data['ca']['subject']['CN']
+      ca_filename = ca_cn.gsub(' ', '_')
+      # NOTE: no certificate check here!!! (TODO) 
+      ca_filepath_orig = 
+          File.exists?("#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt") ?
+          "#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt" :
+          Crypto::SSL::CACERT 
       subject_filename = name.gsub(' ', '_') 
           # params['name'] is the client CN
       clientside_configuration = vpn.clientside_configuration(
@@ -73,7 +81,16 @@ class OnBoard
         attachment
         clientside_configuration
       when 'zip'
-        "ZIP!" # stub
+        zip = Zippy.new(
+          "#{subject_filename}.ovpn"  => clientside_configuration,
+          "#{subject_filename}.crt"   => File.read(
+              "#{Crypto::SSL::CERTDIR}/#{client_cn}.crt"),
+          "#{subject_filename}.key"   => File.read(
+              "#{Crypto::SSL::KEYDIR}/#{client_cn}.key"),
+          "#{ca_filename}.crt"        => File.read(ca_filepath_orig)
+        )
+        content_type 'application/zip'
+        zip.data
       else
         not_found
       end
