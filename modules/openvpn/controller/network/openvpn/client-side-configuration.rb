@@ -49,8 +49,8 @@ class OnBoard
     end
 
     # no web page here, just config files 
-    get %r{/network/openvpn/client-side-configuration/files/(.*)\.(conf|ovpn)} do
-      name = params[:captures][0] 
+    get %r{/network/openvpn/client-side-configuration/files/(.*)\.(conf|ovpn|zip)} do
+      name, file_extension = params[:captures]
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
@@ -59,24 +59,24 @@ class OnBoard
       ca_filename = vpn.data['ca']['subject']['CN'].gsub(' ', '_')
       subject_filename = name.gsub(' ', '_') 
           # params['name'] is the client CN
-
-      content_type 'text/x-conf'
-      attachment
-      vpn.clientside_configuration(
+      clientside_configuration = vpn.clientside_configuration(
         :ca     => "#{ca_filename }.crt",
         :cert   => "#{subject_filename}.crt",
         :key    => "#{subject_filename}.key",
         :remote => params['address'],
         :port   => params['port']
       )
-      #format_file(
-      #  :module => 'openvpn',
-      #  :path => '/network/openvpn/client-side-configuration/client.conf',
-      #  :locals => {
-      #    :vpn => vpn,
-      #    :client_cn => params[:name]
-      #  }
-      #)
+      
+      case file_extension
+      when 'conf', 'ovpn'
+        content_type 'text/x-conf'
+        attachment
+        clientside_configuration
+      when 'zip'
+        "ZIP!" # stub
+      else
+        not_found
+      end
     end
 
   end
