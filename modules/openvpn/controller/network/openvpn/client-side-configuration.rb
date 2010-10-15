@@ -50,8 +50,8 @@ class OnBoard
     end
 
     # no web page here, just config files 
-    get %r{/network/openvpn/client-side-configuration/files/(.*)\.(conf|ovpn|zip)} do
-      name, file_extension = params[:captures]
+    get %r{/network/openvpn/client-side-configuration/files/(.*)\.(zip|tgz)} do
+      name, requested_file_extension = params[:captures]
       client_cn = name
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
@@ -74,20 +74,23 @@ class OnBoard
         :remote => params['address'],
         :port   => params['port']
       )
+      ovpn_conf_ext = 'conf'
+      ovpn_conf_ext = 'ovpn' if params['os'] == 'windows'
       
-      case file_extension
-      when 'conf', 'ovpn'
-        content_type 'text/x-conf'
-        attachment
-        clientside_configuration
+      case requested_file_extension
+      #when 'conf', 'ovpn'
+      #  content_type 'text/x-conf'
+      #  attachment
+      #  clientside_configuration
       when 'zip'
         zip = Zippy.new(
-          "#{subject_filename}.ovpn"  => clientside_configuration,
-          "#{subject_filename}.crt"   => File.read(
+          "#{subject_filename}.#{ovpn_conf_ext}"  => clientside_configuration,
+          "#{subject_filename}.crt"               => File.read(
               "#{Crypto::SSL::CERTDIR}/#{client_cn}.crt"),
-          "#{subject_filename}.key"   => File.read(
+          "#{subject_filename}.key"               => File.read(
               "#{Crypto::SSL::KEYDIR}/#{client_cn}.key"),
-          "#{ca_filename}.crt"        => File.read(ca_filepath_orig)
+          "#{ca_filename}.crt"                    => File.read(
+              ca_filepath_orig)
         )
         content_type 'application/zip'
         zip.data
