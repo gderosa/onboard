@@ -8,6 +8,7 @@ autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
 autoload :Escape,     'escape'
+autoload :ERB,        'erb'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/extensions/openssl'
@@ -1034,6 +1035,18 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
         def logfile
           find_file(@data_internal['log'] || @data_internal['log-append'])
+        end
+
+        def clientside_configuration(h)
+          vpn     = self
+          remote  = h[:remote]
+          ca      = h[:ca]
+          cert    = h[:cert]
+          key     = h[:key]
+          port    = h[:port] 
+          tmpl = ERB.new File.read(  
+              File.join ROOTDIR, 'templates/client.conf.erb')
+          tmpl.result(binding) 
         end
 
         protected

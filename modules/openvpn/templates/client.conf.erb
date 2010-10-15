@@ -1,9 +1,6 @@
 <%
-  # locals
-  #   vpn, client_cn
-  
-  unless params['port'] and params['port'] =~ /\S/
-    params['port'] = vpn.data['port']
+  unless port and port.to_i > 0
+    port = vpn.data['port']
   end
 %>
 
@@ -54,7 +51,7 @@ proto <%= vpn.data['proto'] %>
 # The hostname/IP and port of the server.
 # You can have multiple remote entries
 # to load balance between the servers.
-remote <%= params['address'] %> <%= params['port'] %>
+remote <%= remote %> <%= port %>
 ;remote my-server-2 1194
 
 # Choose a random host from the remote
@@ -100,13 +97,9 @@ persist-tun
 # a separate .crt/.key file pair
 # for each client.  A single ca
 # file can be used for all clients.
-<%
-  ca_filename = vpn.data['ca']['subject']['CN'].gsub(' ', '_')
-  subject_filename = client_cn.gsub(' ', '_')
-%>
-ca <%= ca_filename %>.crt
-cert <%= subject_filename %>.crt
-key <%= subject_filename %>.key 
+ca    <%= ca %>
+cert  <%= cert %>
+key   <%= key %>
 
 # Verify server certificate by checking
 # that the certicate has the nsCertType

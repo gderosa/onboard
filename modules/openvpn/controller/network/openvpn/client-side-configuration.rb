@@ -54,16 +54,28 @@ class OnBoard
         vpn_.data['uuid'] == params['vpn_uuid']
       end
       not_found unless vpn
+
+      ca_filename = vpn.data['ca']['subject']['CN'].gsub(' ', '_')
+      subject_filename = params['name'].gsub(' ', '_') 
+          # params['name'] is the client CN
+
       content_type 'text/x-conf'
       attachment
-      format_file(
-        :module => 'openvpn',
-        :path => '/network/openvpn/client-side-configuration/client.conf',
-        :locals => {
-          :vpn => vpn,
-          :client_cn => params[:name]
-        }
+      vpn.clientside_configuration(
+        :ca     => "#{ca_filename }.crt",
+        :cert   => "#{subject_filename}.crt",
+        :key    => "#{subject_filename}.key",
+        :remote => params['address'],
+        :port   => params['port']
       )
+      #format_file(
+      #  :module => 'openvpn',
+      #  :path => '/network/openvpn/client-side-configuration/client.conf',
+      #  :locals => {
+      #    :vpn => vpn,
+      #    :client_cn => params[:name]
+      #  }
+      #)
     end
 
   end
