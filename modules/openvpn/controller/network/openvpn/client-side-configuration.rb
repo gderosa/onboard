@@ -48,15 +48,16 @@ class OnBoard
       )   
     end
 
-    # no web page here, just config files etc.
-    get '/network/openvpn/client-side-configuration/files/:name.conf' do
+    # no web page here, just config files 
+    get %r{/network/openvpn/client-side-configuration/files/(.*)\.(conf|ovpn)} do
+      name = params[:captures][0] 
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
       not_found unless vpn
 
       ca_filename = vpn.data['ca']['subject']['CN'].gsub(' ', '_')
-      subject_filename = params['name'].gsub(' ', '_') 
+      subject_filename = name.gsub(' ', '_') 
           # params['name'] is the client CN
 
       content_type 'text/x-conf'
