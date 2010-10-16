@@ -60,11 +60,13 @@ class OnBoard
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
+
       not_found unless vpn
 
       ca_cn = vpn.data['ca']['subject']['CN']
       ca_filename = ca_cn.gsub(' ', '_')
-      # NOTE: no certificate check here!!! (TODO) 
+      # NOTE: no certificate check here!!! (TODO: 
+      # do in howto.html? instert a msg in the archive? use HTTP status?) 
       ca_filepath_orig = 
           File.exists?("#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt") ?
           "#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt" :
