@@ -1,4 +1,7 @@
+require 'zlib'
+require 'stringio'
 require 'facets/hash'
+require 'archive/tar/minitar'
 require 'zippy'
 require 'sinatra/base'
 
@@ -50,7 +53,7 @@ class OnBoard
     end
 
     # no web page here, just config files 
-    get %r{/network/openvpn/client-side-configuration/files/(.*)\.(zip|tgz)} do
+    get %r{/network/openvpn/client-side-configuration/files/(.*)\.(zip|tgz|tar\.gz)} do
       name, requested_file_extension = params[:captures]
       client_cn = name
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
@@ -76,12 +79,28 @@ class OnBoard
       )
       ovpn_conf_ext = 'conf'
       ovpn_conf_ext = 'ovpn' if params['os'] == 'windows'
+
+      files = [
+        {
+          :name     => "#{subject_filename}.#{ovpn_conf_ext}",
+          :content  => clientside_configuration
+        },
+        {
+          :name     => "#{subject_filename}.crt",
+          :content  => File.read("#{Crypto::SSL::CERTDIR}/#{client_cn}.crt")
+        },
+        {
+          :name     => "#{subject_filename}.key",
+          :content  => File.read("#{Crypto::SSL::KEYDIR}/#{client_cn}.key"),
+          :mode     => 0400 # private key security
+        },
+        {
+          :name     => "#{ca_filename}.crt",
+          :content  => File.read(ca_filepath_orig)
+        }
+      ]
       
       case requested_file_extension
-      #when 'conf', 'ovpn'
-      #  content_type 'text/x-conf'
-      #  attachment
-      #  clientside_configuration
       when 'zip'
         zip = Zippy.new(
           "#{subject_filename}.#{ovpn_conf_ext}"  => clientside_configuration,
@@ -94,6 +113,24 @@ class OnBoard
         )
         content_type 'application/zip'
         zip.data
+      when 'tgz', 'tar.gz'
+        content_type 'application/x-gzip'
+        StringIO.open do |sio|
+          gz = Zlib::GzipWriter.new(sio)
+          Archive::Tar::Minitar::Writer.open(gz) do |tar|
+            #tar.add_file_simple('aaa', :size => len, :mode => 0644, :mtime => Time.now){|f| f.write text}
+            files.each do |h|
+              tar.add_file_simple(
+                h[:name],
+                :size   => h[:content].length,
+                :mode   => (h[:mode] || 0644), 
+                :mtime  => Time.now
+              ){|f| f.write h[:content]} 
+            end
+          end
+          gz.close
+          sio.string
+        end
       else
         not_found
       end
