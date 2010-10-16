@@ -37,6 +37,7 @@ class OnBoard
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_| 
         vpn_.data['uuid'] == params['vpn_uuid']
       end
+      not_found unless vpn
       certs = vpn.find_client_certificates
       objects = {
         :vpn   => vpn,
@@ -102,23 +103,15 @@ class OnBoard
       
       case requested_file_extension
       when 'zip'
-        zip = Zippy.new(
-          "#{subject_filename}.#{ovpn_conf_ext}"  => clientside_configuration,
-          "#{subject_filename}.crt"               => File.read(
-              "#{Crypto::SSL::CERTDIR}/#{client_cn}.crt"),
-          "#{subject_filename}.key"               => File.read(
-              "#{Crypto::SSL::KEYDIR}/#{client_cn}.key"),
-          "#{ca_filename}.crt"                    => File.read(
-              ca_filepath_orig)
-        )
+        zip_h = {}
+        files.each{|file_h| zip_h[file_h[:name]] = file_h[:content]} 
         content_type 'application/zip'
-        zip.data
-      when 'tgz', 'tar.gz'
+        Zippy.new(zip_h).data 
+      when 'tgz', 'tar.gz' # sadly, there's nothing like Zippy for tar.gz
         content_type 'application/x-gzip'
         StringIO.open do |sio|
           gz = Zlib::GzipWriter.new(sio)
           Archive::Tar::Minitar::Writer.open(gz) do |tar|
-            #tar.add_file_simple('aaa', :size => len, :mode => 0644, :mtime => Time.now){|f| f.write text}
             files.each do |h|
               tar.add_file_simple(
                 h[:name],
