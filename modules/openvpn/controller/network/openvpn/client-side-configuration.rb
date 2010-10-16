@@ -67,6 +67,8 @@ class OnBoard
       ca_filename = ca_cn.gsub(' ', '_')
       # NOTE: no certificate check here!!! (TODO: 
       # do in howto.html? instert a msg in the archive? use HTTP status?) 
+      # Actually a check is done in howto.html but just on X509::Name part,
+      # not cryptographically...
       ca_filepath_orig = 
           File.exists?("#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt") ?
           "#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt" :
