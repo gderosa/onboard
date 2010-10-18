@@ -1,5 +1,6 @@
 require 'erb'
 require 'openssl'
+require 'facets/hash'
 require 'onboard/extensions/openssl'
 
 class OnBoard
@@ -41,11 +42,36 @@ class OnBoard
           return h
         end
 
-        def getAllCerts
-          h = {}
-          Dir.glob CERTDIR + '/*.crt' do |certfile|
-            name = File.basename(certfile).sub(/\.crt$/, '')
-            keyfile = KEYDIR + '/' + name + '.key'
+        def getAllCerts(opt_h={})
+          opt_h_default = {
+            :certs  => {
+              :dir    => CERTDIR,
+              :ext    => 'crt'
+            },
+            :keys   => {
+              :dir    => KEYDIR,
+              :ext    => 'key'
+            },
+            :crls   => {
+              :ext    => 'crl'
+            }
+          }
+          opt_h = opt_h_default.deep_merge opt_h
+          opt_h[:crls][:dir] ||= opt_h[:certs][:dir] 
+          
+          h = {} # return value
+
+          # sugar
+          certdir = opt_h[:certs][:dir]
+          certext = opt_h[:certs][:ext]
+          keydir  = opt_h[:keys][:dir]
+          keyext  = opt_h[:keys][:ext] 
+          crldir  = opt_h[:crls][:dir]
+          crlext  = opt_h[:crls][:ext] 
+
+          Dir.glob "#{certdir}/*.#{certext}" do |certfile|
+            name = File.basename(certfile).sub(/\.#{certext}$/, '')
+            keyfile = "#{keydir}/#{name}.#{keyext}"
             begin
               certobj = OpenSSL::X509::Certificate.new(File.read certfile)
               signed_by_our_CA = false
@@ -63,8 +89,8 @@ class OnBoard
             # CRL:
             # very simple match by filename, no OpenSSL check 
             # (was made at file upload... somewhat :-P) 
-            if File.readable? "#{CERTDIR}/#{name}.crl"
-              h[name]['crl'] = "#{name}.crl"
+            if File.readable? "#{crldir}/#{name}.#{crlext}"
+              h[name]['crl'] = "#{name}.#{crlext}"
             end
             
             if File.exists? keyfile 

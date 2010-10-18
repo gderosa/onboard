@@ -43,30 +43,19 @@ class OnBoard
         }
       }
 
-	    # sort by muliple criteria
-  	  # http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
-    	#
-			# in practice, you are sorting an Enumerable made up of Arrays
-				
-#			#	First, order by type, according to a prefered order; then
-#			#	order by MAC address, but put interfaces with no MAC address at the end;
-#			#	finally, order by name.
-#			PREFERRED_ORDER = lambda do |iface|
-#	      [
-#  	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-#    	    (iface.mac ? iface.mac.raw : 0xffffffffffff),
-#					iface.name
-#      	]
-#			end
+      # sort by muliple criteria
+# http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
+      #
+      # in practice, you are sorting an Enumerable made up of Arrays
 
- 			#	First, order by type, according to a prefered order; then
-			#	order by name, but put interfaces with no MAC address at the end.
-			PREFERRED_ORDER = lambda do |iface|
-	      [
-  	      OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
-    	    (iface.mac ? iface.name : "zzz_#{iface.name}")
+      # First, order by type, according to a prefered order; then
+      # order by name, but put interfaces with no MAC address at the end.
+      PREFERRED_ORDER = lambda do |iface|
+        [
+          OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
+          (iface.mac ? iface.name : "zzz_#{iface.name}")
       	]
-			end
+      end
     
       # Class methods.
 
@@ -88,6 +77,7 @@ class OnBoard
         end
         
         def getAll_layer2 
+
           ary = []
           netif_h = nil
 
@@ -181,8 +171,17 @@ class OnBoard
               pid             = $1
               cmd             = $2
               args            = $4.strip
-              iface           = ary.detect {|i| args.include? i.name}
-	      next unless iface
+              ifaces = ary.select do |i| 
+                args =~ /\s#{i.name}$/      or  # ends as " eth0"
+                args =~ /\s\-\w#{i.name}$/  or  # ends as " -ieth0"
+                args =~ /\s#{i.name}\s/     or  # contains " eth0 "
+                args =~ /\s\-\w#{i.name}\s/     # contains " -ieth0 "
+              end
+              if ifaces.length > 1
+                fail "fix your regexps: looks like a dhcp client process is managing more than one interface: #{ifaces.map{|i| i.name}.join}"
+              end
+              iface = ifaces[0]
+              next unless iface
               iface.ipassign  = {
                 :method         => :dhcp,
                 :pid            => pid,
@@ -401,34 +400,6 @@ class OnBoard
 
       def is_bridged?; bridged_to; end
 
-      def data
-        h = {}
-        %w{name misc qdisc state type vendor model}.each do |property|
-          h[property] = eval "@#{property}" if eval "@#{property}"
-        end
-        h['active']   = @active   # may be true or false
-        %w{n mtu}.each do |property|
-          h[property] = (eval "@#{property}").to_i
-        end
-        %w{mac}.each do |property|
-          h[property] = (eval "@#{property}").data if eval "@#{property}"
-        end
-        h['ip'] = case @ip
-                  when Array
-                    @ip.map {|ip| ip.data} 
-                  else
-                    nil
-                  end
-        h['ipassign'] = {
-          'method'      => @ipassign[:method].to_s,
-          'pid'         => @ipassign[:pid].to_i,
-          'cmd'         => @ipassign[:cmd],
-          'args'        => @ipassign[:args] 
-        }
-        h['wifi_properties'] = @wifi_properties
-        return h
-      end
-
       def modify_from_HTTP_request(h)
         if h['active'] =~ /on|yes|1/
           #Command.run "ip link set #{@name} up", :sudo unless @active # DRY!
@@ -528,6 +499,33 @@ class OnBoard
         TYPES[@type.to_s][:human_readable] or @type.to_s
       end
 
+      def to_h
+        h = {}
+        %w{name misc qdisc state type vendor model}.each do |property|
+          h[property] = eval "@#{property}" if eval "@#{property}"
+        end
+        h['active']   = @active   # may be true or false
+        %w{n mtu}.each do |property|
+          h[property] = (eval "@#{property}").to_i
+        end
+        %w{mac}.each do |property|
+          h[property] = (eval "@#{property}") if eval "@#{property}"
+        end
+        h['ip'] = @ip
+        h['ipassign'] = {
+          'method'      => @ipassign[:method].to_s,
+          'pid'         => @ipassign[:pid].to_i,
+          'cmd'         => @ipassign[:cmd],
+          'args'        => @ipassign[:args] 
+        }
+        h['wifi_properties'] = @wifi_properties
+        return h
+      end
+      alias data to_h
+
+      def to_json(*a); to_h.to_json(*a); end
+      def to_yaml(*a); to_h.to_yaml(*a); end
+     
       private
 
       def set_pciid_from_sysfs

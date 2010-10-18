@@ -73,6 +73,10 @@ class OnBoard
         @@categories[name] = description
       end
 
+      def self.to_json(*a); @@logs.to_json(*a); end
+
+      def self.to_yaml(*a); @@logs.to_yaml(*a); end
+
       attr_reader :meta
 
       def initialize(h) # keeps one of the elements of @@logs
@@ -90,6 +94,12 @@ class OnBoard
           'tail'        => tail() 
         }  
       end
+
+      alias to_h data
+
+      def to_json(*a); to_h.to_json(*a); end
+
+      def to_yaml(*a); to_h.to_yaml(*a); end
 
       # Native Unix tools are faster, so use them!
       def tail(n=Tail_n)

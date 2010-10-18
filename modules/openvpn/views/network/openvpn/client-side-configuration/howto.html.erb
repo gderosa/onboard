@@ -1,0 +1,133 @@
+<% 
+  # require 'rack/utils'
+
+  vpn = objects[:vpn]     # the vpn server instance (an Hash) 
+  certs = objects[:certs] # another Hash (of Hashes) (keys are SSL CN-s) 
+
+  get_params = request.GET
+
+  no_os_msg = 
+    'You did not provide a valid operating system family name for your client.'
+
+%>
+
+<h2><%= title %></h2>
+
+<h3>Install OpenVPN</h3>
+<% if params['os'] == 'windows' %>
+  <p>If you haven&rsquo;t done it already, go the 
+  <a href="http://openvpn.net/index.php/open-source/downloads.html">
+    OpenVPN download page</a>, download the Windows Installer and run it.</a>
+<% elsif params['os'] ==  'unix' %>
+  <p>Your Linux distro, BSD flavour etc., most probably provides
+  an <span class="product-name">OpenVPN</span> pre-compiled software package.
+  Chek your OS documentation.</p>
+  <p>If you wish to compile <span class="product-name">OpenVPN</span> 
+  by yourself, download the source package from the 
+  <a href="http://openvpn.net/index.php/open-source/downloads.html">
+    OpenVPN download page</a> and read <a href="http://openvpn.net/index.php/open-source/documentation/install.html">this</a>.</p>
+<% else %>
+  <p class="error"><%= no_os_msg %></p>
+<% end %>
+
+<h3>Download Configuration archives (SSL files included)</h3>
+<%
+  archive_extension = case params[:os]
+  when 'windows'    then 'zip'
+  when 'unix'       then 'tar.gz'
+  else                   'zip'
+  end
+  #download_href = request.fullpath.sub /\/\w+\.html/, ".#{archive_extension}" 
+%>
+<table>
+  <thead>
+    <tr>
+      <th>Download</th>
+      <th>Client &ldquo;Common Name&rdquo;</th>
+      <th>Subject details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% certs.each_value do |value| %>
+      <% 
+        cert                  = value['cert'] 
+        cn                    = cert['subject']['CN']
+        subject_html_info     = 
+            ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
+                cert['subject'] )  
+
+        #new_get_params = get_params.merge('cn' => cn) 
+        #query_string = ::Rack::Utils.build_query new_get_params
+        href = 
+          "files/#{cn}.#{archive_extension}?#{request.query_string}"
+      %>
+      <tr>
+        <td style="text-align:center; padding:0.4em;"><a class="img" href="<%= href %>"><img style="vertical-align:middle; " alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
+        <td><%= html_escape cert['subject']['CN'] %></td>
+        <td>
+          <%= 
+            ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
+                cert['subject'] )
+          %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<h3>Test your configuration</h3>
+<% if params['os'] == 'windows' %>
+  <p>Unpack the above archive into your Desktop or other temporary directory
+  of your choice.</p>
+  <p>Identify the OpenVPN config file by the OpenVPN icon 
+  <img 
+    alt="OpenVPN icon" 
+    style="height:1.2em;" 
+    src="/icons/openvpn/openvpn_icon.png"/>
+  or the <kbd>.ovpn</kbd> extension.</p>
+  <p>Right-click &rarr; <em>Start OpenVPN on this config file</em>.</p>
+
+  <p>Now you should be able to ping the remote virtual IP 
+  <kbd><%= vpn.data['virtual_address'] %></kbd>. 
+  If you have any problem try reading 
+  <a href="http://openvpn.net/index.php/open-source/documentation/install.html?start=1">this</a> or
+  <a href="http://openvpn.net/index.php/open-source/faq.html#catid79">this</a>.
+  </p>
+<% elsif params['os'] == 'unix' %>
+  <p>Unpack the above archive somewhere and issue (typically as root):
+  <blockquote><pre class="code">openvpn client.conf</pre></blockquote>
+  where <code>client.conf</code> shall be replaced by the actual 
+  <code>.conf</code> filename you&rsquo;ll find in the archive.
+  </p>
+  <p>Now you should be able to ping the remote virtual IP 
+  <kbd><%= vpn.data['virtual_address'] %></kbd>.</p>
+<% else %>
+  <p class="error"><%= no_os_msg %></p>
+<% end %>
+
+<h3>Deploy!</h3>
+<% if params['os'] == 'windows' %>
+  <p>Move all configuration and ssl files extracted from the 
+  <kbd>.<%= archive_extension %></kbd> archive into 
+  <kbd>\Program Files\OpenVPN\config</kbd>
+  </p>
+
+  <p>Go to <em>Control Panel</em> &rarr; <em>Administrative Tools</em>
+  &rarr; <em>Services</em>; find the <em>OpenVPN Service</em>, start it
+  and make it start automatically on system boot.
+  </p>
+
+  <p>More info <a href="http://openvpn.net/index.php/open-source/documentation/install.html?start=1#running_as_windows_service">here</a>.</p>
+
+<% elsif params['os'] == 'unix' %>
+  <p>Move all the files from the archive into the sistem-wide 
+  <em class="product-name">OpenVPN</em>
+  configuration directory, which is tipically <code>/etc/openvpn</code> .</p>
+  <p>Services setup may vary among Operating Systems and Distributions; check
+  your docs to know how to start the OpenVPN daemon manually and/or
+  on system reboot.
+  </p>
+<% else %>
+  <p class="error"><%= no_os_msg %></p>
+<% end %>

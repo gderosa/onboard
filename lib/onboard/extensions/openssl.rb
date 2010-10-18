@@ -1,3 +1,5 @@
+autoload :Digest, 'digest'
+
 require 'openssl'
 
 module OpenSSL
@@ -30,6 +32,19 @@ module OpenSSL
 
     class Certificate
 
+      def fingerprint(h={}) 
+        h_default = {
+          :digest => :SHA1,
+          :hex    => false
+        }
+        h = h_default.update h
+        if h[:hex]
+          Digest::const_get(h[:digest])::hexdigest to_der
+        else
+          Digest::const_get(h[:digest])::digest to_der
+        end
+      end
+
       def ca?
         to_h['is_ca'] 
       end
@@ -46,8 +61,13 @@ module OpenSSL
           'is_ca'               => false,
           'is_server'           => false,
           'issuer'              => issuer.to_h,
-          'subject'             => subject.to_h#,
-          #'public_key'          => public_key().to_s
+          'subject'             => subject.to_h,
+          #'fingerprint'         => { # costly!
+          #  'sha1'                => fingerprint(
+          #                              :digest => :SHA1, :hex => true),
+          #  'md5'                 => fingerprint(
+          #                              :digest => :MD5, :hex => true)
+          #}
         }
 
         extensions.each do |ext|

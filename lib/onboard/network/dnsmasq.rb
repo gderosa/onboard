@@ -120,6 +120,11 @@ class OnBoard
         }
       end
 
+      def to_h; @data; end
+
+      def to_json(*a); to_h.to_json(*a); end
+      def to_yaml(*a); to_h.to_yaml(*a); end
+
       def parse_dhcp_conf
         return false unless File.readable? CONFDIR + '/new/dhcp.conf'
         File.open CONFDIR + '/new/dhcp.conf' do |file|

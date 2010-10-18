@@ -261,7 +261,7 @@ class OnBoard
             # same, and this may confuse you :-(
 
             # TODO TODO TODO: get rid of messy iptables -L output and rely
-            # on iptables[6]-save only
+            # on iptables[6]-save only  ?
 
             chain.rules << rule_ary
                 # Array of Array
@@ -296,6 +296,10 @@ class OnBoard
         end
         return h
       end
+      alias to_h data
+
+      def to_json(*a); to_h.to_json(*a); end
+      def to_yaml(*a); to_h.to_yaml(*a); end
 
       class Table
         attr_accessor :chains
