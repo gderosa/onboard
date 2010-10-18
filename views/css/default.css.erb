@@ -1,6 +1,7 @@
 <% 
   superhighlight  = "#080"
   highlight       = "#44b" 
+  almostblack     = "#222"
   lowlight        = "#777" 
   superlowlight   = "#bbb" 
   hover           = "color: white; background: #{highlight};" 
@@ -102,6 +103,12 @@ input[type="text"] {
 input[type="text"][readonly] {
   background: transparent;
   color: <%= lowlight %>;
+}
+
+input[type="text"].humantext {
+  font-family: inherit;
+  /* color: inherit; */
+  color: <%= almostblack %>;
 }
 
 textarea {
