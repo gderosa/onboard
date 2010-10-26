@@ -339,6 +339,15 @@ class OnBoard
         return {:ok => true} 
       end
 
+      def blocked?(domain)
+        ips = @data['conf']['dns']['domains'][domain]            
+        ips.length > 0 and (ips - ['0.0.0.0', '::']  == [])
+      end
+
+      def block!(domain)
+        @data['conf']['dns']['domains'][domain] = ['0.0.0.0', '::']
+      end
+
     end
   end
 end
