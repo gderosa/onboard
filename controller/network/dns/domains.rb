@@ -19,10 +19,9 @@ class OnBoard
       )
     end
 
-=begin
-    put "/network/dns.:format" do
+    put "/network/dns/domains.:format" do
       dnsmasq = OnBoard::Network::Dnsmasq.new
-      msg = dnsmasq.write_dns_conf_from_HTTP_request(params)
+      msg = dnsmasq.write_domains_conf_from_HTTP_request(params)
       if msg[:err]  
         status 409 
       else
@@ -31,7 +30,9 @@ class OnBoard
       
       # read updated conf
       dnsmasq = OnBoard::Network::Dnsmasq.new
-      dnsmasq.parse_dns_conf
+      dnsmasq.parse_dns_conf(
+        "#{Network::Dnsmasq::CONFDIR_CURRENT}/domains.conf"
+      )
       dnsmasq.parse_dns_cmdline
       format(
         :path     => 'network/dns',
@@ -41,7 +42,6 @@ class OnBoard
         :title    => 'DNS'
       )
     end
-=end
 
   end
 end
