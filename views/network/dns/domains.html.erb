@@ -41,15 +41,17 @@
       </tr>
     </thead>
     <tbody>
-      <% objects.data['conf']['dns']['domains'].each_pair do |name, ip| %>
-        <tr>
-          <td>
-            <input type="text" name="domain[]" value="<%= name %>"/>
-          </td>
-          <td>
-            <input type="text" name="ip[]" value="<%= ip %>"/>
-          </td>
-        </tr>
+      <% objects.data['conf']['dns']['domains'].each_pair do |name, ips| %>
+        <% ips.each do |ip| %>
+          <tr>
+            <td>
+              <input type="text" name="domain[]" value="<%= name %>"/>
+            </td>
+            <td>
+              <input type="text" name="ip[]" value="<%= ip %>"/>
+            </td>
+          </tr>
+        <% end %>
       <% end %>
       <% add_domains.times do %>
         <tr>

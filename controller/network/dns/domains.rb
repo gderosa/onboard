@@ -35,11 +35,11 @@ class OnBoard
       )
       dnsmasq.parse_dns_cmdline
       format(
-        :path     => 'network/dns',
+        :path     => 'network/dns/domains',
         :format   => params[:format],
         :objects  => dnsmasq,
         :msg      => msg,
-        :title    => 'DNS'
+        :title    => 'DNS: domains'
       )
     end
 
