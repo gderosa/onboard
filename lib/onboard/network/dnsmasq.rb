@@ -7,47 +7,48 @@ class OnBoard
   module Network
     class Dnsmasq
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
+      CONFDIR_CURRENT = "#{CONFDIR}/new"
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
       CONFFILES = %w{dnsmasq.conf dhcp.conf dns.conf domains.conf}
 
       def self.save
         CONFFILES.each do |file|
-          FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}" if
-              File.exists? "#{CONFDIR}/new/#{file}"
+          FileUtils.copy "#{CONFDIR_CURRENT}/#{file}", "#{CONFDIR}/#{file}" if
+              File.exists? "#{CONFDIR_CURRENT}/#{file}"
         end
       end
 
       # "#{CONFDIR}"            # saved configuration
-      # "#{CONFDIR}/new"        # current configuration
+      # "#{CONFDIR_CURRENT}"        # current configuration
       # "#{DEFAULTS_CONFDIR}"   # "factory" defaults
       def self.restore
-        OnBoard::System::Command.run "mkdir -p #{CONFDIR}/new"
+        OnBoard::System::Command.run "mkdir -p #{CONFDIR_CURRENT}"
         CONFFILES.each do |file|
           unless File.exists? "#{CONFDIR}/#{file}"
             FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR}/"
           end
-          FileUtils.copy "#{CONFDIR}/#{file}", "#{CONFDIR}/new/#{file}"
+          FileUtils.copy "#{CONFDIR}/#{file}", "#{CONFDIR_CURRENT}/#{file}"
         end
         # 'new' subdirectory is always the current config dir
         # do not copy new/*.conf to parent directory if you don't want
         # persistence        
-        OnBoard::PLATFORM::restart_dnsmasq("#{CONFDIR}/new")
+        OnBoard::PLATFORM::restart_dnsmasq("#{CONFDIR_CURRENT}")
       end
 
       def self.init_conf
         need_restart = false
-        unless File.exists? "#{CONFDIR}/new"
-          FileUtils.mkdir_p "#{CONFDIR}/new"
+        unless File.exists? "#{CONFDIR_CURRENT}"
+          FileUtils.mkdir_p "#{CONFDIR_CURRENT}"
           need_restart = true
         end
         CONFFILES.each do |file|
-          unless File.exists? "#{CONFDIR}/new/#{file}"
-            FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR}/new/#{file}"
+          unless File.exists? "#{CONFDIR_CURRENT}/#{file}"
+            FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR_CURRENT}/#{file}"
             need_restart = true
           end
         end
         if need_restart
-          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR}/new"  
+          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR_CURRENT}"  
         end
       end
 
@@ -108,7 +109,8 @@ class OnBoard
             'dns'         => {  # explicitly configured
               'nameservers' => [],
               'searchdomain'=> '',
-              'localdomain' => ''
+              'localdomain' => '',
+              'domains'     => {}
             }
           },
           'leases'      => [],
@@ -190,28 +192,35 @@ class OnBoard
       end
 
       # Repeat Yourself :-P # TODO's ?
-      def parse_dns_conf
-        return false unless File.readable? CONFDIR + '/new/dns.conf'
-        File.open CONFDIR + '/new/dns.conf' do |file|
+      def parse_dns_conf(filename="#{CONFDIR_CURRENT}/dns.conf")
+        return false unless File.readable? filename
+        File.open filename do |file|
           file.each_line do |line|
             next if line =~ /^\s*#/
             line.strip!
             # The following regexes are too 'rigid' to parse conf file 
             # not written by ourselves, but should be ok for our needs.
-            if line =~ /^\s*server\s*=\s*([^,\s#]+)\s*#\s?(.*)$/
+            case line
+            when /^\s*server\s*=\s*([^,\s#]+)\s*#\s?(.*)$/
               @data['conf']['dns']['nameservers'] << {
                 'ip'      => $1,
                 'comment' => $2
               }
-            elsif line =~ /^\s*server\s*=\s*([^,\s#]+)/
+            when /^\s*server\s*=\s*([^,\s#]+)/
               @data['conf']['dns']['nameservers'] << {
                 'ip'      => $1,
                 'comment' => ''
               }
-            elsif line =~ /^\s*domain\s*=\s*([^,\s#]+)/
+            when /^\s*domain\s*=\s*([^,\s#]+)/
               @data['conf']['dns']['searchdomain'] << $1
-            elsif line =~ /^\s*local\s*=\s*\/([^,\s#]+)\//
+            when /^\s*local\s*=\s*\/([^,\s#]+)\//
               @data['conf']['dns']['localdomain'] << $1
+            when %r{^\s*address\s*=\s*/(([\w\.\-]+/)+)([a-fA-F\d\.:]+)\s*$}
+              domains = $1.split('/')
+              ip      = $3
+              domains.each do |domain|
+                @data['conf']['dns']['domains'][domain] = ip
+              end
             end
           end
         end
