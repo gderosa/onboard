@@ -8,11 +8,10 @@ class OnBoard
     class Dnsmasq
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
-
-      # TODO: DRY
+      CONFFILES = %w{dnsmasq.conf dhcp.conf dns.conf domains.conf}
 
       def self.save
-        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
+        CONFFILES.each do |file|
           FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}" if
               File.exists? "#{CONFDIR}/new/#{file}"
         end
@@ -23,7 +22,7 @@ class OnBoard
       # "#{DEFAULTS_CONFDIR}"   # "factory" defaults
       def self.restore
         OnBoard::System::Command.run "mkdir -p #{CONFDIR}/new"
-        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
+        CONFFILES.each do |file|
           unless File.exists? "#{CONFDIR}/#{file}"
             FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR}/"
           end
@@ -41,7 +40,7 @@ class OnBoard
           FileUtils.mkdir_p "#{CONFDIR}/new"
           need_restart = true
         end
-        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
+        CONFFILES.each do |file|
           unless File.exists? "#{CONFDIR}/new/#{file}"
             FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR}/new/#{file}"
             need_restart = true
