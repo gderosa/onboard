@@ -9,7 +9,7 @@ class OnBoard
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
       CONFDIR_CURRENT = "#{CONFDIR}/new"
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
-      CONFFILES = %w{dnsmasq.conf dhcp.conf dns.conf domains.conf}
+      CONFFILES = %w{dnsmasq.conf dhcp.conf dns.conf domains.conf mx.conf}
 
       def self.save
         CONFFILES.each do |file|
