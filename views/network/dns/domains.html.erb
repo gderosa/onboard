@@ -1,4 +1,6 @@
+
 <%
+  dnsmasq = objects
   add_domains = 1
   if params['add_domains'].respond_to? :to_i 
     if params['add_domains'].to_i > 0
@@ -8,7 +10,7 @@
 %>
 
 <style type="text/css">
-  input[name="domain[]"] {
+  input[name="domains[][name]"] { 
     width: 36ex;
   }
 </style>
@@ -33,6 +35,11 @@
 <form method="POST" action="<%= request.path_info %>">
   <input type="hidden" name="_method" value="put"/>
   <h3>Domains</h3>
+  <p>
+    Here you can block domains (check the 
+    &ldquo;<span class="term">Block?</span>&rdquo; box) or make
+    them be resolved with specified IP addresses.
+  </p>
   <table>
     <thead>
       <tr>
@@ -42,34 +49,51 @@
       </tr>
     </thead>
     <tbody>
-      <% objects.data['conf']['dns']['domains'].each_pair do |name, ips| %>
-        <% ips.each do |ip| %>
+      <% dnsmasq.data['conf']['dns']['domains'].each_pair do |name, ips| %>
+        <% if dnsmasq.blocked?(name) %>
           <tr>
             <td>
-              <input type="text" name="domain[]" value="<%= name %>"/>
+              <input type="text" name="domains[][name]" value="<%= name %>"/>
             </td>
             <td>
-              <input type="text" name="ip[]" value="<%= ip %>"/>
+              <input type="text" name="domains[][ip]" value="" readonly/>
             </td>
             <td style="text-align:center;">
-              <input type="checkbox" name="block[]" <%= 'checked' if objects.blocked?(name) %>/>
-            </td>
+              <input type="checkbox" name="domains[][block]" checked/>
+            </td>  
           </tr>
+        <% else %>
+          <% ips.each do |ip| %>
+            <tr>
+              <td>
+                <input type="text" name="domains[][name]" value="<%= name %>"/>
+              </td>
+              <td>
+                <input type="text" name="domains[][ip]" value="<%= ip %>"/>
+              </td>
+              <td style="text-align:center;">
+                <input type="checkbox" name="domains[][block]" />
+              </td>
+            </tr>
+          <% end %>
         <% end %>
       <% end %>
       <% add_domains.times do %>
         <tr>
-          <td><input type="text" name="domain[]"/></td>
-          <td><input type="text" name="ip[]"/></td>
-          <td style="text-align:center;">x</td>
+          <td><input type="text" name="domains[][name]"/></td>
+          <td><input type="text" name="domains[][ip]"/></td>
+          <td style="text-align:center;">
+            <input type="checkbox" name="domains[][block]" />
+          </td>
         </tr>
       <% end %>
     </tbody>
   </table>
   <div class="optional" style="margin: 0.75ex 1ex;">
-    <a href="?add_domains=<%= add_domains * 2 %>">
-      Add more domains
-    </a>       
+    Add <a href="?add_domains=<%= add_domains * 2 %>">more domains</a>       
+    <% if add_domains > 1 %>
+      | <a href="?add_domains=<%= add_domains / 2 %>">less domains</a>
+    <% end %>
   </div>
 
   <h3> &nbsp; <!-- Commit changes --></h3>
