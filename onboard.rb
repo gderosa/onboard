@@ -99,7 +99,11 @@ class OnBoard
       if File.directory? dir_fullpath and not dir =~ /^\./
         file = dir_fullpath + '/load.rb'
         if File.readable? file
-          load dir_fullpath + '/load.rb'
+          if File.exists? dir_fullpath + '/.disable'
+            puts "Module #{dir}: disabled!"
+          else
+            load dir_fullpath + '/load.rb'
+          end
         else
           STDERR.puts "Warning: Couldn't load modules/#{dir}/load.rb: Skipped!"
         end
