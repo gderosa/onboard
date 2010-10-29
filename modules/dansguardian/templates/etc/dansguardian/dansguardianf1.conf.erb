@@ -25,20 +25,20 @@ groupmode = 1
 #groupname = ''
 
 # Content filtering files location
-bannedphraselist = '/etc/dansguardian/lists/bannedphraselist'
-weightedphraselist = '/etc/dansguardian/lists/weightedphraselist'
-exceptionphraselist = '/etc/dansguardian/lists/exceptionphraselist'
-bannedsitelist = '/etc/dansguardian/lists/bannedsitelist'
-greysitelist = '/etc/dansguardian/lists/greysitelist'
-exceptionsitelist = '/etc/dansguardian/lists/exceptionsitelist'
-bannedurllist = '/etc/dansguardian/lists/bannedurllist'
-greyurllist = '/etc/dansguardian/lists/greyurllist'
-exceptionurllist = '/etc/dansguardian/lists/exceptionurllist'
-exceptionregexpurllist = '/etc/dansguardian/lists/exceptionregexpurllist'
-bannedregexpurllist = '/etc/dansguardian/lists/bannedregexpurllist'
-picsfile = '/etc/dansguardian/lists/pics'
-contentregexplist = '/etc/dansguardian/lists/contentregexplist'
-urlregexplist = '/etc/dansguardian/lists/urlregexplist'
+bannedphraselist = '<%= dg.root %>/lists/bannedphraselist'
+weightedphraselist = '<%= dg.root %>/lists/weightedphraselist'
+exceptionphraselist = '<%= dg.root %>/lists/exceptionphraselist'
+bannedsitelist = '<%= dg.root %>/lists/bannedsitelist'
+greysitelist = '<%= dg.root %>/lists/greysitelist'
+exceptionsitelist = '<%= dg.root %>/lists/exceptionsitelist'
+bannedurllist = '<%= dg.root %>/lists/bannedurllist'
+greyurllist = '<%= dg.root %>/lists/greyurllist'
+exceptionurllist = '<%= dg.root %>/lists/exceptionurllist'
+exceptionregexpurllist = '<%= dg.root %>/lists/exceptionregexpurllist'
+bannedregexpurllist = '<%= dg.root %>/lists/bannedregexpurllist'
+picsfile = '<%= dg.root %>/lists/pics'
+contentregexplist = '<%= dg.root %>/lists/contentregexplist'
+urlregexplist = '<%= dg.root %>/lists/urlregexplist'
 
 # Filetype filtering
 #
@@ -52,14 +52,14 @@ urlregexplist = '/etc/dansguardian/lists/urlregexplist'
 # (on | off)
 #
 blockdownloads = off
-exceptionextensionlist = '/etc/dansguardian/lists/exceptionextensionlist'
-exceptionmimetypelist = '/etc/dansguardian/lists/exceptionmimetypelist'
+exceptionextensionlist = '<%= dg.root %>/lists/exceptionextensionlist'
+exceptionmimetypelist = '<%= dg.root %>/lists/exceptionmimetypelist'
 #
 # Use the following lists to block specific kinds of file downloads.
 # The two exception lists above can be used to override these.
 #
-#bannedextensionlist = '/etc/dansguardian/lists/bannedextensionlist'
-#bannedmimetypelist = '/etc/dansguardian/lists/bannedmimetypelist'
+#bannedextensionlist = '<%= dg.root %>/lists/bannedextensionlist'
+#bannedmimetypelist = '<%= dg.root %>/lists/bannedmimetypelist'
 bannedextensionlist = '/dev/null'
 bannedmimetypelist = '/dev/null'
 
@@ -67,16 +67,16 @@ bannedmimetypelist = '/dev/null'
 # In either file filtering mode, the following list can be used to override
 # MIME type & extension blocks for particular domains & URLs (trusted download sites).
 #
-exceptionfilesitelist = '/etc/dansguardian/lists/exceptionfilesitelist'
-exceptionfileurllist = '/etc/dansguardian/lists/exceptionfileurllist'
+exceptionfilesitelist = '<%= dg.root %>/lists/exceptionfilesitelist'
+exceptionfileurllist = '<%= dg.root %>/lists/exceptionfileurllist'
 
 # Categorise without blocking:
 # Supply categorised lists here and the category string shall be logged against
 # matching requests, but matching these lists does not perform any filtering
 # action.
-#logsitelist = '/etc/dansguardian/lists/logsitelist'
-#logurllist = '/etc/dansguardian/lists/logurllist'
-#logregexpurllist = '/etc/dansguardian/lists/logregexpurllist'
+#logsitelist = '<%= dg.root %>/lists/logsitelist'
+#logurllist = '<%= dg.root %>/lists/logurllist'
+#logregexpurllist = '<%= dg.root %>/lists/logregexpurllist'
 
 # Outgoing HTTP header rules:
 # Optional lists for blocking based on, and modification of, outgoing HTTP
@@ -87,8 +87,8 @@ exceptionfileurllist = '/etc/dansguardian/lists/exceptionfileurllist'
 # Headers are matched/replaced on a line-by-line basis, not as a contiguous
 # block.
 # Use for example, to remove cookies or prevent certain user-agents.
-headerregexplist = '/etc/dansguardian/lists/headerregexplist'
-bannedregexpheaderlist = '/etc/dansguardian/lists/bannedregexpheaderlist'
+headerregexplist = '<%= dg.root %>/lists/headerregexplist'
+bannedregexpheaderlist = '<%= dg.root %>/lists/bannedregexpheaderlist'
 
 # Naughtyness limit
 # This the limit over which the page will be blocked.  Each weighted phrase is given

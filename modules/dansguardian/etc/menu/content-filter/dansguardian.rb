@@ -4,7 +4,7 @@ class OnBoard
     :n    => 2
   })
   MENU_ROOT.add_path('/content-filter/dg', {
-    :href => '/content-filter/dg',
+    :href => '/content-filter/dansguardian',
     :name => 'DansGuardian',
     :desc => 'DansGuardian Web Content Filtering',
   })

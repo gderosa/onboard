@@ -19,7 +19,7 @@ reportinglevel = 3
 # and easier to customise the access denied page.
 # The language file is used no matter what setting however.
 #
-languagedir = '/etc/dansguardian/languages'
+languagedir = '<%= dg.root %>/languages'
 
 # language to use from languagedir.
 language = 'ukenglish'
@@ -151,13 +151,13 @@ custombannedimagefile = '/usr/share/dansguardian/transparent1x1.gif'
 # to a group.  The more filter groups the more copies of the lists will be in RAM so
 # use as few as possible.
 filtergroups = 1
-filtergroupslist = '/etc/dansguardian/lists/filtergroupslist'
+filtergroupslist = '<%= dg.root %>/lists/filtergroupslist'
 
 
 
 # Authentication files location
-bannediplist = '/etc/dansguardian/lists/bannediplist'
-exceptioniplist = '/etc/dansguardian/lists/exceptioniplist'
+bannediplist = '<%= dg.root %>/lists/bannediplist'
+exceptioniplist = '<%= dg.root %>/lists/exceptioniplist'
 
 
 
@@ -409,9 +409,9 @@ trickledelay = 10
 # one is forced to match as the default, regardless of user agent
 # and other matching mechanisms.
 #
-downloadmanager = '/etc/dansguardian/downloadmanagers/fancy.conf'
-#downloadmanager = '/etc/dansguardian/downloadmanagers/trickle.conf'
-downloadmanager = '/etc/dansguardian/downloadmanagers/default.conf'
+downloadmanager = '<%= dg.root %>/downloadmanagers/fancy.conf'
+#downloadmanager = '<%= dg.root %>/downloadmanagers/trickle.conf'
+downloadmanager = '<%= dg.root %>/downloadmanagers/default.conf'
 
 
 
@@ -425,12 +425,12 @@ downloadmanager = '/etc/dansguardian/downloadmanagers/default.conf'
 # Some of the scanner(s) require 3rd party software and libraries eg clamav.
 # See the individual plugin conf file for more options (if any).
 #
-contentscanner = '/etc/dansguardian/contentscanners/clamav.conf'
-#contentscanner = '/etc/dansguardian/contentscanners/clamdscan.conf'
-#!! Unimplemented !! contentscanner = '/etc/dansguardian/contentscanners/kavav.conf'
-#!! Not compiled !! contentscanner = '/etc/dansguardian/contentscanners/kavdscan.conf'
-#contentscanner = '/etc/dansguardian/contentscanners/icapscan.conf'
-#contentscanner = '/etc/dansguardian/contentscanners/commandlinescan.conf'
+contentscanner = '<%= dg.root %>/contentscanners/clamav.conf'
+#contentscanner = '<%= dg.root %>/contentscanners/clamdscan.conf'
+#!! Unimplemented !! contentscanner = '<%= dg.root %>/contentscanners/kavav.conf'
+#!! Not compiled !! contentscanner = '<%= dg.root %>/contentscanners/kavdscan.conf'
+#contentscanner = '<%= dg.root %>/contentscanners/icapscan.conf'
+#contentscanner = '<%= dg.root %>/contentscanners/commandlinescan.conf'
 
 
 
@@ -466,11 +466,11 @@ contentscanexceptions = off
 #
 # If you do not use multiple filter groups, you need not specify this option.
 #
-#authplugin = '/etc/dansguardian/authplugins/proxy-basic.conf'
-#authplugin = '/etc/dansguardian/authplugins/proxy-digest.conf'
-#authplugin = '/etc/dansguardian/authplugins/proxy-ntlm.conf'
-#authplugin = '/etc/dansguardian/authplugins/ident.conf'
-#authplugin = '/etc/dansguardian/authplugins/ip.conf'
+#authplugin = '<%= dg.root %>/authplugins/proxy-basic.conf'
+#authplugin = '<%= dg.root %>/authplugins/proxy-digest.conf'
+#authplugin = '<%= dg.root %>/authplugins/proxy-ntlm.conf'
+#authplugin = '<%= dg.root %>/authplugins/ident.conf'
+#authplugin = '<%= dg.root %>/authplugins/ip.conf'
 
 
 

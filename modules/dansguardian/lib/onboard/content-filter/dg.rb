@@ -1,3 +1,4 @@
+require 'onboard/extensions/erb'
 require 'onboard/content-filter/dg/constants'
 
 class OnBoard
@@ -8,12 +9,10 @@ class OnBoard
         CONFDIR
       end
 
-      def mkconf
+      def write_all
         dg = self
-        Dir.glob("#{CONFTEMPLATEDIR}/**/*.erb").each do |file|
-          file =~ %r{^#{CONFTEMPLATEDIR}/(.*)$} 
-          subpath = $1
-          puts $1
+        ERB::recurse CONFTEMPLATEDIR, binding, '.erb' do |subpath|
+          "#{CONFDIR}/#{subpath}" 
         end
       end
 
