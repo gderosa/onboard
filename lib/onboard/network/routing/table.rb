@@ -16,6 +16,9 @@ class OnBoard
 
         # Create if it doesn't exist
         unless File.exists? RT_TABLES_CONFFILE
+          unless Dir.exists? File.dirname RT_TABLES_CONFFILE
+            FileUtils.mkdir_p File.dirname RT_TABLES_CONFFILE
+          end
           File.open RT_TABLES_CONFFILE, 'w' do |f|
           end
         end
@@ -167,14 +170,17 @@ class OnBoard
         # TODO! should be an instance method!
         def self.change_name_and_comment(number, name='', comment='')
           old_text = File.read RT_TABLES_CONFFILE
+          found = false
           File.open RT_TABLES_CONFFILE, 'w' do |f|
             old_text.each_line do |line|
               if line =~ /^\s*#{number}([^\d].*)?$/
                 f.puts "#{number} #{name} # #{comment}" 
+                found = true
               else
                 f.write line
               end
             end
+            f.puts "#{number} #{name} # #{comment}" if not found
           end
           return {:ok => true}
         end
@@ -286,6 +292,10 @@ class OnBoard
             'routes'  => @routes.map {|x| x.data}
           }
         end
+        alias to_h data
+
+        def to_json(*a); to_h.to_json(*a); end
+        def to_yaml(*a); to_h.to_yaml(*a); end
 
         def ip_route_flush
           msg = OnBoard::System::Command.run "ip route flush table #{@id}", :sudo

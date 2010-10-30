@@ -1,0 +1,5 @@
+templates/ is different than views/
+
+Here are non-web templates; they live outside of Sinatra and
+know nothing about helpers, params, request and so on.
+

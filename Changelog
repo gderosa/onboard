@@ -1,0 +1,53 @@
+2010.10.03
+
+* Dns(masq): customize/block domains
+
+2010.10.02
+
+* OpenVPN client-side configuration wizard
+
+2010.10.01
+
+* Improved JSON/YAML support
+
+* "Alternate formats" bar
+
+2010.10
+
+* OpenVPN: push routes to "All Clients" 
+
+* OpenVPN: code re-arrangement
+
+2010.09.01
+
+* Minor/implementation: use stdlib for JSON pretty-printed output
+
+2010.09
+
+* JavaScript menus based on hierarchical_menu gem
+
+2010.08
+
+* A separate, writeable directory for configuration, log, pids and so on.
+
+* Export configuration.
+
+2010.07
+
+* OpenVPN 
+	* Virtual Ethernets (TAP), allowing IPv6 and bridging 
+	* TAP configured persistently like normal ethernets
+
+2010.06
+
+* Policy routing based on: 
+	* source address 
+	* input interface
+	* input bridge port
+	* QoS classification (via netfilter packet mangling)
+
+2009.12
+
+* First release, with OpenVPN and SSL/X509 management.
+
+

@@ -1,8 +1,14 @@
+# So autoload works well with gems
+require 'rubygems'
+gem 'uuid'
+gem 'escape'
+
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
 autoload :Escape,     'escape'
+autoload :ERB,        'erb'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/extensions/openssl'
@@ -10,6 +16,7 @@ require 'onboard/extensions/openssl'
 require 'onboard/system/process'
 require 'onboard/network/interface'
 require 'onboard/network/routing/table'
+require 'onboard/network/openvpn/convert'
 require 'onboard/network/openvpn/process'
 require 'onboard/network/openvpn/interface/name'
 
@@ -28,11 +35,12 @@ class OnBoard
       UPSCRIPT ||= OpenVPN::ROOTDIR + '/etc/scripts/up'
 
       class VPN
-        CONFDIR = ROOTDIR + '/etc/config/network/openvpn/vpn'
+        CONFDIR = OnBoard::CONFDIR + '/network/openvpn/vpn'
 
         System::Log.register_category 'openvpn', 'OpenVPN'
 
         def self.save
+          FileUtils.mkdir_p CONFDIR unless Dir.exists? CONFDIR
           @@all_vpn = getAll() unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
           File.open(
@@ -55,7 +63,7 @@ class OnBoard
         end
 
         def self.restore
-          datafile = ROOTDIR + '/etc/config/network/openvpn/vpn/vpn.dat'
+          datafile = DATADIR + '/etc/config/network/openvpn/vpn/vpn.dat'
           return false unless File.readable? datafile
           current_VPNs = getAll()
           Marshal.load(File.read datafile).each do |h|
@@ -301,7 +309,7 @@ EOF
               x.data['portable_id'] == params['portable_id'] 
             end
           end
-          if vpn  # the VPN has been found by portable_id (preferred method)
+          if vpn  # the VPN has been found by portable_id (preferred method?)
             if params['stop']
               return vpn.stop()
             elsif params['start']
@@ -319,21 +327,9 @@ EOF
         end
 
         # Turn the OpenVPN command line into a "virtual" configuration file
-        def self.cmdline2conf(cmdline_ary)
-          line_ary = []
-          text = ""
-          cmdline_ary.each do |arg|
-            if arg =~ /\-\-(\S+)/ 
-              text << line_ary.join(' ') << "\n" if line_ary.length > 0
-              line_ary = [$1] 
-            elsif line_ary.length > 0
-              line_ary << arg
-            end
-          end
-          text << line_ary.join(' ') << "\n" if line_ary.length > 0
-          return text
+        def self.cmdline2conf(cmdline_ary) # delegate
+          Convert.cmdline2conf(cmdline_ary)
         end
-       
 
         attr_reader :data
         attr_writer :data
@@ -375,6 +371,12 @@ EOF
           find_routes()
         end
 
+        alias to_h data
+
+        def to_json(*a); to_h.to_json(*a); end
+
+        def to_yaml(*a); to_h.to_yaml(*a); end
+
         def modify_from_HTTP_request(params)
           if @data['server'] and @data_internal['client-config-dir']
 
@@ -391,8 +393,8 @@ EOF
                 FileUtils.rm "#{@data_internal['client-config-dir']}/#{client['CN']}" 
                 next
               end
+
               routes      = client['routes'].lines.map{|x| x.strip}
-              push_routes = client['push_routes'].lines.map{|x| x.strip}
 
               client_config_file = 
 "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
@@ -409,16 +411,11 @@ EOF
                   @data['explicitly_configured_routes'] << h unless
                       @data['explicitly_configured_routes'].include? h
                 end
-                push_routes.each do |push_route|
-                  # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
-                  begin
-                    ip = IPAddr.new(push_route)
-                  rescue ArgumentError
-                    next
-                  end
-                  f.puts %Q{push "route #{ip} #{ip.netmask}"}  
-                end
+
+                f.puts Convert.textarea2push_routes client['push_routes']
+
               end
+
             end
 
             # now edit the vpn server config file
@@ -427,13 +424,15 @@ EOF
             File.foreach(@data_internal['conffile']) do |line|
               text << line unless 
                   line =~ /^\s*route\s+(\S+)\s+(\S)/ or
-                  line =~ /^\s*client-to-client\s*$/
+                  line =~ /^\s*client-to-client\s*(#.*)?$/ or
+                  line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
             end
             # add new one
             @data['explicitly_configured_routes'].each do |route_h|
               text << "route #{route_h['net']} #{route_h['mask']}\n"
             end
             text << "client-to-client\n" if params['client_to_client'] == 'on'
+            text << Convert.textarea2push_routes(params['push_routes'])
             File.open @data_internal['conffile'], 'w' do |f|
               f.write text
             end
@@ -559,7 +558,6 @@ EOF
           end
         end
 
-
         def find_routes
           ary = []
           @@all_routes.routes.each do |route|
@@ -570,6 +568,15 @@ EOF
             end
           end
           data['routes'] = ary
+        end
+
+        def find_client_certificates(opts={})
+          Crypto::SSL::getAllCerts(opts).select do |key, value| #Facets
+            cert = value['cert']
+            cert['issuer'] == data['ca']['subject'] and not
+            cert['subject'] == data['cert']['subject']
+                # exclude the server cert itself
+          end
         end
 
         def parse_conffile(opts={})  
@@ -652,6 +659,12 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               h = {'net' => $1, 'mask' => $2} # TODO? 'gateway', 'metric' (RTFM)
               @data['explicitly_configured_routes'] << h unless
                   @data['explicitly_configured_routes'].include? h
+            end
+            # TODO: DRY with parse_client_config code: How?
+            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
+              @data['push'] ||= {}
+              @data['push']['routes'] ||= []
+              @data['push']['routes'] << {'net' => $1, 'mask' => $2}
             end
 
             # "private" options with no args
@@ -1022,6 +1035,18 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
         def logfile
           find_file(@data_internal['log'] || @data_internal['log-append'])
+        end
+
+        def clientside_configuration(h)
+          vpn     = self
+          remote  = h[:remote]
+          ca      = h[:ca]
+          cert    = h[:cert]
+          key     = h[:key]
+          port    = h[:port] 
+          tmpl = ERB.new File.read(  
+              File.join ROOTDIR, 'templates/client.conf.erb')
+          tmpl.result(binding) 
         end
 
         protected

@@ -49,7 +49,11 @@ Gems:
 C/C++ build environment; and, if you installed a pre-packaged ruby, you
 will need header files from a package named ruby-dev or something alike)
 
-gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets --no-ri --no-rdoc
+gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets hierarchical_menu --no-ri --no-rdoc
+
+Gem version specific requirements:
+
+  * facets >= 2.9.0
 
 --
 
@@ -60,13 +64,7 @@ the configuration to the Linux machine /etc/sysctl.conf file.
 
 Optional add-ons:
 
-You can get pretty-printed JSON output via JsonPrinter 
-by Mark McGranaghan. To get it, change to the lib/ directory (or your
-system's site_ruby dir), then:
-
-git clone git://github.com/techcrunch/json_printer.git
-
-You can also take advantage of Ya2YAML by Akira FUNAI to get native 
+You can take advantage of Ya2YAML by Akira FUNAI to get native 
 UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
 and encode them in base64). 
 

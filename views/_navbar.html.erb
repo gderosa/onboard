@@ -1,4 +1,5 @@
 <%
+  require 'uri'
   require 'rack/utils'
   require 'onboard/extensions/sinatra/base'
 
@@ -43,17 +44,18 @@
           <% end %>
         <% end %>
         <span style="margin-left:2em;">
-          <span <%= 'style="display:none;"' if request.referer.sub(/^\w+:\/\//, '') == request.url.sub(/^\w+:\/\//, '') or request.env['REQUEST_METHOD'] == 'GET' %>>
+          <% referrer_path = URI.parse(request.referer).path %>
+          <span <%= 'style="display:none;"' if referrer_path == request.path_info or request.env['REQUEST_METHOD'] == 'GET' %>>
             <% 
             # ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^  
             # When using https proxy, request.url may be uncorrecly 
             # set to http:// instead of https://. Work around this by ignoring
-            # the protocol part (but not what comes after the ? mark). 
+            # the protocol part.
             %>
             | <a href="<%= request.referer %>">Back</a>
           </span>
           <span <%= 'style="visibility:hidden;"' unless routed? request.path_info, 'GET' %>>
-            | <a href="<%= request.path_info %>">Refresh</a>
+            | <a href="<%= request.fullpath %>">Refresh</a>
           </span>
         </span>
       </div>

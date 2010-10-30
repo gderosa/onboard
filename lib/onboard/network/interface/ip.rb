@@ -98,7 +98,7 @@ class OnBoard
         extend ::Forwardable
         def_delegators :@addr, :loopback?, :multicast?, :link_local?
 
-        def data
+        def to_h
           h       = {}
           %w{addr}.each do |p| # net and netmask are redundant (see prefixlen)
             h[p]  = (eval "@#{p}").to_s
@@ -112,6 +112,10 @@ class OnBoard
           end
           return h
         end
+        alias data to_h
+
+        def to_json(*a); to_h.to_json(*a); end
+        def to_yaml(*a); to_h.to_yaml(*a); end
 
         # Detection of invalid IP addresses is too SLOW in the standard 
         # IPAddr library, so we implemented our own check. # TODO such a
@@ -153,6 +157,7 @@ class OnBoard
             end
             return :ipv4
           elsif addr =~ /^[\da-f:]+$/i                              # IPv6
+            return :ipv6 if addr == '::'
             return false if addr =~ /::.*::/
             return false if addr =~ /:::/
             return false unless addr =~ /[\da-f]/i

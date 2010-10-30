@@ -13,20 +13,30 @@ require 'logger'
 require 'pp'
 
 require 'onboard/extensions/object'
+require 'onboard/extensions/object/deep'
 require 'onboard/extensions/sinatra/base'
 require 'onboard/menu/node'
 require 'onboard/passwd'
 
 class OnBoard
   class Controller < ::Sinatra::Base
+
+    class ArgumentError < ArgumentError; end
+
     # Extensions must be explicitly registered in modular style apps.
     register ::Sinatra::R18n
 
     # Several options are not enabled by default if you inherit from 
     # Sinatra::Base .
     enable :methodoverride, :static, :show_exceptions
+    
     set :root, OnBoard::ROOTDIR
-    set :public, OnBoard::ROOTDIR + '/public'
+
+    # Sinatra::Base#static! has been overwritten to allow multiple path
+    set :public, 
+        Dir.glob(OnBoard::ROOTDIR + '/public')            +
+        Dir.glob(OnBoard::ROOTDIR + '/modules/*/public')      
+
     set :views, OnBoard::ROOTDIR + '/views'
 
     case environment
@@ -145,6 +155,11 @@ class OnBoard
     
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
+        # try to guess if not provided
+        h[:format]                                ||= 
+            params[:format]                       ||= 
+            request.path_info =~ /\.(\w+$)/ && $1
+
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
         end
@@ -158,14 +173,15 @@ class OnBoard
           content_type 'text/html', :charset => 'utf-8'
           return erb(
             (h[:path] + '.html').to_sym,
-            :layout => layout,
-            :locals => {
-              :objects => h[:objects], 
-              :icondir => IconDir, 
+            :layout   => layout,
+            :locals   => {
+              :objects  => h[:objects], 
+              :icondir  => IconDir, 
               :iconsize => IconSize,
-              :msg => h[:msg],
-              :title => h[:title]
-            } 
+              :msg      => h[:msg],
+              :title    => h[:title],
+              :formats  => (h[:formats] || @@formats),
+            }.merge(h[:locals] || {}) , 
           )
 
         when 'json', 'yaml'
@@ -173,11 +189,11 @@ class OnBoard
           # strings as they are.
           if h[:format] == 'json'
             content_type  'application/json'
-          else  # elsif h[:format] == 'yaml' would be redundant...
-            if $ya2yaml_1_9compatible_available
-              content_type 'application/json', :charset => 'utf-8'
+          elsif h[:format] == 'yaml' # "explicit is better than implicit" :-)
+            if $ya2yaml_available
+              content_type 'application/x-yaml', :charset => 'utf-8'
             else
-              content_type 'application/json' # base64(ASCII) used by std lib
+              content_type 'application/x-yaml' # base64(ASCII) used by std lib
             end
           end
           # The following is common to YAML and JSON.
@@ -195,14 +211,8 @@ class OnBoard
             headers x_headers                                           if 
                 x_headers.length > 0
           end
-          if h[:objects].class == Array and h[:objects][0].respond_to? :data
-            # we assume that array is made up of objects of the same class
-            return (h[:objects].map {|obj| obj.data}).to_(h[:format]) 
-          elsif h[:objects].respond_to? :data
-            return h[:objects].data.to_(h[:format])
-          else
-            return h[:objects].to_(h[:format])
-          end
+
+          return h[:objects].deep_rekey{|k| k.to_s}.to_(h[:format]) 
 
         when 'rb'
           if options.environment == :development
@@ -212,33 +222,43 @@ class OnBoard
             multiple_choices(h)
           end
         else
-          multiple_choices(h)
+          if h[:partial]
+            raise ArgumentError, "You requested a partial but you did not provide a valid :format. You may want something like :format => 'html' in #{caller[0]}"
+          else
+            multiple_choices(h)
+          end
         end  
       end
 
-      def multiple_choices(h)
+      # much simpler version, no multiple formats here
+      def format_file(h)
+        if h[:module] 
+          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
+        end
+        return erb(
+          h[:path].to_sym,
+          :layout   => false,
+          :locals   => h[:locals] 
+        )
+      end
+     
+      def multiple_choices(h={}) 
         status(300)
         paths = []
-        @@formats.each do |fmt|
+        formats = h[:formats] || @@formats
+        formats.each do |fmt|
           paths << request.path_info.sub(/\.[^\.]*$/, '.' + fmt) 
         end
-        @@formats.each do |fmt|
+        formats.each do |fmt|
+          args_h = {
+            :path     => '300',
+            :format   => fmt,
+            :formats  => formats
+          }
           if request.env["HTTP_ACCEPT"] [fmt] # "contains"
-            return format(
-              :path => '300',
-              :format => fmt,
-              :objects => {
-                :paths => paths, 
-              }
-            )
+            return format args_h
           end
-          format(
-            :path => '300',
-            :format => 'html',
-            :objects => {
-                :paths => paths, 
-            }          
-          )
+          format args_h
         end
       end
 

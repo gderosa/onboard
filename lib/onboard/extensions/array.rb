@@ -1,4 +1,5 @@
 class Array
+  
   # Returns true if all elements of other are elements of self
   # [1, 2, 3, 4, 5].include_ary? [2, 3] # ==> true
   # [1, 2, 3, 4, 5].include_ary? [2, 6] # ==> false
@@ -8,8 +9,27 @@ class Array
     end
     return true
   end
+  
   alias include_many? include_ary?
+  
   def sum
     inject {|sum, n| sum + n } 
   end
+
+  def <(other)
+    (self <=> other) == -1
+  end
+
+  def <=(other)
+    (self <=> other) == -1 or (self <=> other) == 0
+  end
+
+  def >=(other)
+    (self <=> other) == +1 or (self <=> other) == 0
+  end
+
+  def >(other)
+    (self <=> other) == +1
+  end
+
 end

@@ -8,9 +8,11 @@ require 'json'
 require 'yaml'
 require 'logger'
 require 'pp' 
+require 'etc'
 
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
+require 'onboard/system/command'
 
 require 'onboard/platform/debian'
 
@@ -19,25 +21,41 @@ begin
 rescue LoadError
 end
 
+if Process.uid == 0
+  fail 'OnBoard should not be run as root: use an user who can sudo with no-password instead!'
+end
+
 class OnBoard
-  LONGNAME ||= 'OnBoard'
-  VERSION = '2010.07'
+  LONGNAME          ||= 'OnBoard'
+  VERSION           = '2010.10.03'
+
+  PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
+
+  ROOTDIR           = File.dirname File.expand_path(__FILE__)
+  DATADIR = RWDIR = (
+      ENV['ONBOARD_RWDIR'] or 
+      ENV['ONBOARD_DATADIR'] or 
+      File.join(ENV['HOME'], '.onboard')
+  )
+  CONFDIR           = File.join RWDIR, '/etc/config'
+  LOGDIR            = File.join RWDIR, '/var/log'
+  LOGFILE_BASENAME  = 'onboard.log'
+  LOGFILE_PATH      = File.join LOGDIR, LOGFILE_BASENAME
  
-  ROOTDIR = File.dirname File.expand_path(__FILE__)
-  CONFDIR = ROOTDIR + '/etc/config'
-
-  PLATFORM = Platform::Debian # TODO? make it configurable? get rid of Platform?
-
-  LOGGER = Logger.new(ROOTDIR + '/' + 'onboard.log')
-
+  FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
+  # NOTE: we are re-defining a constant!
+  # ...really, it should not be a constant... :-(
+  # TODO TODO TODO ...
+  LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log')
+  
   LOGGER.formatter = proc { |severity, datetime, progname, msg|
     "#{datetime} #{severity}: #{msg}\n"
   }
 
   LOGGER.level = Logger::INFO
   LOGGER.level = Logger::DEBUG if 
-      $0 == __FILE__ or 
-      ENV['ONBOARD_ENVIRONMENT'] =~ /^dev(el(opment)?)?/i
+      $0 == __FILE__ and not
+      ENV['ONBOARD_ENVIRONMENT'] =~ /production/i
       # this is required because there is no Sinatra environment until
       # controller.rb is loaded (where OnBoard::Controller inherits 
       # from Sinatra::Base)
@@ -63,9 +81,14 @@ class OnBoard
     end
   end
 
+  def self.web?
+    return true unless ARGV.include? '--no-web'
+    return false
+  end
+
   def self.prepare
     # menu
-    unless ARGV.include? '--no-web'
+    if web?
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
     end
@@ -118,13 +141,15 @@ class OnBoard
       print "loading: #{script}... " and STDOUT.flush
       load script and puts ' OK'
     end
+
+    System::Command.run 'sync'
   end
 
 end
 
 OnBoard.prepare
 
-unless ARGV.include? '--no-web'
+if OnBoard.web?
   require OnBoard::ROOTDIR + '/controller.rb'
   if $0 == __FILE__
     OnBoard::Controller.run!

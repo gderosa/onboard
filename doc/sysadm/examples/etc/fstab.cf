@@ -1,0 +1,18 @@
+LABEL=ROOT_FS / ext3 ro,noatime 0 0 # Voyage Linux uses ROOT_FS
+LABEL=VAR /var xfs defaults,noatime 0 0
+#LABEL=SWAP none swap sw 0 0 # not recommended on SSDs
+
+tmpfs /tmp tmpfs defaults 0 0
+tmpfs /var/tmp tmpfs defaults 0 0
+tmpfs /var/run tmpfs defaults 0 0
+#tmpfs /var/log tmpfs defaults 0 0 # consider this for your CF's durability
+
+# Take care:
+#
+# * a sync scrypt to preserve data in /var/tmp (and /var/log) ? 
+#   (as in Voyage Linux http://linux.voyage.hk) 
+#
+# * on system boot, create required dirs in /var/log for various services 
+#   if you mount it as tmpfs
+
+
