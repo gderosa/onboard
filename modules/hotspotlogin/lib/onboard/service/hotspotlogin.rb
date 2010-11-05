@@ -10,6 +10,11 @@ class OnBoard
 
       CONFFILE = File.join CONFDIR, 'current/hotspotlogin.conf.yaml'
       DEFAULT_CONFFILE = File.join CONFDIR, 'defaults/hotspotlogin.conf.yaml'
+
+      unless File.exists? CONFFILE
+        FileUtils.cp DEFAULT_CONFFILE, CONFFILE
+      end
+
       VARRUN = File.join ROOTDIR, 'var/run'
       VARLOG = File.join ROOTDIR, 'var/log'
       PIDFILE = File.join VARRUN, 'hotspotlogin.pid'

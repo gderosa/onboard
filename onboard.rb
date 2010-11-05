@@ -117,7 +117,7 @@ class OnBoard
         STDOUT.flush
         begin
           load script and puts "OK"
-        rescue
+        rescue Exception
           exception = $!
 
           puts exception.inspect
