@@ -175,8 +175,8 @@ class OnBoard
           end
         end
 
-        def validate_conffile  
-          self.class.validate_conffile(:file => @conffile)
+        def validate_conffile(h={})
+          self.class.validate_conffile(h.merge(:file => @conffile))
         end
 
         def write_tmp_conffile_and_validate(opt_h={}) 
