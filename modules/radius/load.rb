@@ -1,3 +1,7 @@
+# Not implemented and/or supported in this release
+
+=begin
+
 require 'fileutils'
 
 class OnBoard
@@ -14,4 +18,4 @@ class OnBoard
   end
 end
 
-
+=end
