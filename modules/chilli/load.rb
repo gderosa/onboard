@@ -3,7 +3,7 @@ class OnBoard
     module AccessControl
       class Chilli
         ROOTDIR = File.dirname(__FILE__)
-        CONFDIR = File.join ROOTDIR, '/etc/config'
+        CONFDIR = File.join OnBoard::CONFDIR, '/network/access-control/chilli'
         $LOAD_PATH.unshift  ROOTDIR + '/lib'
         if OnBoard.web?
           OnBoard.find_n_load ROOTDIR + '/etc/menu'

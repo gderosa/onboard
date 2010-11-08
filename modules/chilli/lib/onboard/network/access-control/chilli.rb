@@ -11,7 +11,7 @@ class OnBoard
       class Chilli
 
         DEFAULT_SYS_CONF_FILE = '/etc/chilli.conf'
-        DEFAULT_NEW_CONF_FILE = "#{CONFDIR}/defaults/chilli.conf"
+        DEFAULT_NEW_CONF_FILE = "#{ROOTDIR}/etc/defaults/chilli.conf"
         CURRENT_CONF_GLOB     = "#{CONFDIR}/current/chilli.conf.?*"
         SAVED_DAT_FILE        = "#{CONFDIR}/saved/chilli.dat"
         DEFAULT_COAPORT       = 3779
@@ -241,6 +241,7 @@ class OnBoard
         end
 
         def write_conffile(opt_h={})  
+          FileUtils.mkdir_p File.dirname @conffile if @conffile
           if opt_h[:tmp] 
             f = Tempfile.new 'chilli-test'
           else
@@ -272,9 +273,11 @@ class OnBoard
         end
 
         # true if the config file is a subdirectory of 
-        # OnBoard::Network::AccessControl::Chilli::CONFDIR
+        # OnBoard::Network::AccessControl::Chilli::CONFDIR or
+        # defaults conf dir...
         def managed?
-          return true if @conffile[CONFDIR] 
+          return true if 
+              @conffile[CONFDIR] or @conffile[ROOTDIR + '/etc/defaults']
           return false
         end
 
