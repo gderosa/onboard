@@ -53,7 +53,8 @@ gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape
 
 Gem version specific requirements:
 
-  * facets >= 2.9.0
+  * facets            >= 2.9.0
+  * hierarchical_menu >= 0.1.4
 
 --
 
