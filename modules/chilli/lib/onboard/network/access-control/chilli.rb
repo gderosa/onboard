@@ -19,6 +19,7 @@ class OnBoard
         class BadRequest < RuntimeError; end
 
         def self.save
+          FileUtils.mkdir_p File.dirname SAVED_DAT_FILE
           all = getAll
           File.open SAVED_DAT_FILE, 'w' do |f|
             f.write Marshal.dump(getAll) 
