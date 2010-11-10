@@ -4,7 +4,7 @@ class OnBoard
   module Service
     class HotSpotLogin
       ROOTDIR = File.dirname(__FILE__)
-      CONFDIR = File.join ROOTDIR, '/etc/config'
+      CONFDIR = File.join CONFDIR, '/services/hotspotlogin'
       $LOAD_PATH.unshift  ROOTDIR + '/lib'
       if OnBoard.web?
         OnBoard.find_n_load ROOTDIR + '/etc/menu'

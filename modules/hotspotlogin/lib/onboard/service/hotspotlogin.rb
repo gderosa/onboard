@@ -9,15 +9,20 @@ class OnBoard
     class HotSpotLogin # TODO: should be a module... no instances...
 
       CONFFILE = File.join CONFDIR, 'current/hotspotlogin.conf.yaml'
-      DEFAULT_CONFFILE = File.join CONFDIR, 'defaults/hotspotlogin.conf.yaml'
+      DEFAULT_CONFFILE = File.join(
+        ROOTDIR, '/etc/defaults/hotspotlogin.conf.yaml')
 
+      unless Dir.exists? File.dirname CONFFILE
+        FileUtils.mkdir_p File.dirname CONFFILE
+      end
+        
       unless File.exists? CONFFILE
         FileUtils.cp DEFAULT_CONFFILE, CONFFILE
       end
 
-      VARRUN = File.join ROOTDIR, 'var/run'
-      VARLOG = File.join ROOTDIR, 'var/log'
-      PIDFILE = File.join VARRUN, 'hotspotlogin.pid'
+      VARRUN = '/var/run' # take advantage of tmpfs (strongly suggested)
+      VARLOG = OnBoard::LOGDIR # do we need a subdirectory?
+      PIDFILE = File.join VARRUN, 'onboard-hotspotlogin.pid'
       LOGFILE = File.join VARLOG, 'hotspotlogin.log'
       SAVEFILE = "#{CONFDIR}/saved/hotspotlogin.yaml"
 
@@ -27,6 +32,9 @@ class OnBoard
       class << self
         
         def save # use YAML, not Marshal, this time
+          unless Dir.exists? File.dirname SAVEFILE
+            FileUtils.mkdir_p File.dirname SAVEFILE
+          end
           File.open SAVEFILE, 'w' do |f|
             f.write data.to_yaml
           end
