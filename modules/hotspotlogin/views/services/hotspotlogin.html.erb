@@ -1,12 +1,13 @@
 <% 
   # encoding: utf-8
-%>
-<% 
+
   hslogin       = objects 
   running       = hslogin['running']
   userpassword  = hslogin['conf']['userpassword']
   port          = hslogin['conf']['port']
   uamsecret     = hslogin['conf']['uamsecret']
+
+  defaults      = hslogin['defaults']
 %>
 
 <h2>HotSpot Login page</h2>
@@ -39,6 +40,13 @@
     </tr>
   </tbody>
 </table>
+<h4>Please note:</h4>
+<p>
+  It&rsquo;s strongly advised to put this daemon behind an HTTPS reverse 
+  proxy, so it should be reached at something like 
+  <code style="margin-left:0.5ex">
+    https://<%= request.host %>/hotspotlogin</code> .
+</p>
 </form>
 
 <form method="POST">
@@ -47,7 +55,13 @@
 <table>
   <tbody>
     <tr>
-      <th scope="row">TCP port</th>
+      <th scope="row">
+        TCP port
+        <div class="optinfo">
+          You&rsquo;re suggested to keep the default value of
+          <code><%= defaults['port'] %></code>
+        </div>
+      </th>
       <td><input class="rwtext" type="text" name="port" value="<%= port %>" size="4"/></td>
     </tr>
     <% if uamsecret and uamsecret.length > 0 %>

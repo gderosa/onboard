@@ -72,8 +72,9 @@ end
 
         def data
           {
-            'conf' => read_conf,
-            'running' => running?
+            'defaults'  => read_defaults,
+            'conf'      => read_conf,
+            'running'   => running?
           }
         end
 
@@ -94,6 +95,10 @@ end
 
         def read_conf
           YAML.load(File.read(CONFFILE))
+        end
+
+        def read_defaults
+          YAML.load(File.read(DEFAULT_CONFFILE))
         end
 
         def change_from_HTTP_request!(params)
