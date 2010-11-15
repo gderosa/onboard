@@ -5,6 +5,7 @@
   running       = hslogin['running']
   userpassword  = hslogin['conf']['userpassword']
   port          = hslogin['conf']['port']
+  interval      = hslogin['conf']['interval'] 
   uamsecret     = hslogin['conf']['uamsecret']
 
   defaults      = hslogin['defaults']
@@ -52,6 +53,7 @@
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
 <h3>Configuration</h3>
+<h4>General</h4>
 <table>
   <tbody>
     <tr>
@@ -85,7 +87,20 @@
     </tr>
   </tbody>
 </table>
-<button type="submit" name="change" value="change">Change</button>
+<h4>End user interface</h4>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">Autorefresh interval (seconds)</th>
+      <td><input type="text" class="rwtext" name="interval" value="<%= interval %>"></td>
+    </tr>
+  </tbody>
+</table>
+<button 
+  style="margin-top:2ex;" 
+  type="submit" 
+  name="change" 
+  value="change">Change</button>
 </form>
 
 

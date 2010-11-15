@@ -104,6 +104,7 @@ end
         def change_from_HTTP_request!(params)
           conf_h = read_conf
           conf_h['port']      = params['port'].to_i if params['port']
+          conf_h['interval']  = params['interval'].to_i if params['interval']
 
           if 
               conf_h['uamsecret'] and 
