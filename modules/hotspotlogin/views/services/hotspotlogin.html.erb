@@ -53,7 +53,7 @@
 </p>
 </form>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_method" value="put"/>
 <h3>Configuration</h3>
 <h4>General</h4>
@@ -96,6 +96,12 @@
     <tr>
       <th scope="row">Autorefresh interval (seconds)</th>
       <td><input type="text" class="rwtext" name="interval" value="<%= interval %>"></td>
+    </tr>
+    <tr>
+      <th scope="row">Logo</th>
+      <td>
+        <input type="file" name="logo"/>
+      </td>
     </tr>
   </tbody>
 </table>
