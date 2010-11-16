@@ -9,6 +9,9 @@
   uamsecret     = hslogin['conf']['uamsecret']
 
   defaults      = hslogin['defaults']
+
+  interval = hslogin['defaults']['interval'] if 
+      (!interval or interval =~ /^\s*$/)
 %>
 
 <h2>HotSpot Login page</h2>
