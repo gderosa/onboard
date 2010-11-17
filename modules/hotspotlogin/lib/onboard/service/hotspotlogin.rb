@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'yaml'
 require 'hotspotlogin' # http://rubygems.org/gems/hotspotlogin
 
@@ -21,11 +22,12 @@ class OnBoard
         FileUtils.cp DEFAULT_CONFFILE, CONFFILE
       end
 
-      VARRUN = '/var/run' # take advantage of tmpfs (strongly suggested)
-      VARLOG = OnBoard::LOGDIR # do we need a subdirectory?
-      PIDFILE = File.join VARRUN, 'onboard-hotspotlogin.pid'
-      LOGFILE = File.join VARLOG, 'hotspotlogin.log'
-      SAVEFILE = "#{CONFDIR}/saved/hotspotlogin.yaml"
+      VARRUN    = '/var/run' # take advantage of tmpfs (strongly suggested)
+      VARLOG    = OnBoard::LOGDIR # do we need a subdirectory?
+      PIDFILE   = File.join VARRUN, 'onboard-hotspotlogin.pid'
+      LOGFILE   = File.join VARLOG, 'hotspotlogin.log'
+      SAVEFILE  = "#{CONFDIR}/saved/hotspotlogin.yaml"
+      VARWWW    = "#{RWDIR}/var/www/hotspotlogin"
 
       class BadRequest < ArgumentError; end
       class AlreadyRunning < RuntimeError; end
@@ -137,6 +139,13 @@ end
           end
           
           conf_h['userpassword'] = (params['userpassword'] == 'on')
+          
+          # logo
+          FileUtils.mkdir_p VARWWW unless Dir.exists? VARWWW
+          logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
+          FileUtils.mv(params['logo'][:tempfile], logo_path) 
+          conf_h['logo'] = logo_path
+          
           File.open CONFFILE, 'w' do |f|
             f.write conf_h.to_yaml
           end
