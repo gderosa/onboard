@@ -21,6 +21,9 @@
   custom_footer_content = nil
   custom_footer_content = File.read custom_footer if File.file? custom_footer
 
+  textrows = 5
+  textcols = 40
+
 %>
 
 <h2>HotSpot Login page</h2>
@@ -115,13 +118,13 @@
     <tr>
       <th scope="row">Custom text</th>
       <td>
-        <textarea name="custom_text"><%= custom_text_content %></textarea>
+        <textarea name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_text_content %></textarea>
       </td>
     </tr>
     <tr>
       <th scope="row">Custom footer</th>
       <td>
-        <textarea name="custom_footer"><%= custom_footer_content %></textarea>
+        <textarea name="custom_footer" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_footer_content %></textarea>
       </td>
     </tr>
   </tbody>
