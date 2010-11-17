@@ -17,8 +17,13 @@ class OnBoard
     end
 
     get '/services/hotspotlogin/logo_preview' do
-      # this will take care of MIME type and 404 Not Found ;-)
-      send_file Service::HotSpotLogin.read_conf['logo']
+      file = Service::HotSpotLogin.read_conf['logo']
+      if file
+        send_file file
+      else
+        cache_control :no_cache
+        not_found
+      end
     end
 
     put '/services/hotspotlogin.:format' do

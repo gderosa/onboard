@@ -148,14 +148,23 @@ end
           conf_h['userpassword'] = (params['userpassword'] == 'on')
           
           # logo
-          if params['logo'] 
+          # TODO: delete stale files or manage a collection/library of logos?
+          if params['delete'] and params['delete']['logo'] == 'on'
+            conf_h['logo'] = nil
+          elsif params['logo'] 
             logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
             FileUtils.mv(params['logo'][:tempfile], logo_path) 
             conf_h['logo'] = logo_path
           end
 
           # custom text
-          if params['custom_text']
+          if params['delete'] and params['delete']['custom_text']
+            if File.file? CUSTOMTEXT_HTMLFRAGMENT
+              File.open CUSTOMTEXT_HTMLFRAGMENT, 'w' do |f|
+                # do nothing, flush file
+              end
+            end
+          elsif params['custom_text']
             File.open CUSTOMTEXT_HTMLFRAGMENT, 'w' do |f|
               f.write params['custom_text']
             end
@@ -163,7 +172,13 @@ end
           end
 
           # custom footer
-          if params['custom_footer']
+          if params['delete'] and params['delete']['custom_footer']
+            if File.file? CUSTOMFOOTER_HTMLFRAGMENT
+              File.open CUSTOMFOOTER_HTMLFRAGMENT, 'w' do |f|
+                # do nothing, flush file
+              end
+            end
+          elsif params['custom_footer']
             File.open CUSTOMFOOTER_HTMLFRAGMENT, 'w' do |f|
               f.write params['custom_footer']
             end
