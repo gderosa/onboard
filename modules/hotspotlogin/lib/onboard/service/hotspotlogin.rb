@@ -12,15 +12,7 @@ class OnBoard
 
       CONFFILE = File.join CONFDIR, 'current/hotspotlogin.conf.yaml'
       DEFAULT_CONFFILE = File.join(
-        ROOTDIR, '/etc/defaults/hotspotlogin.conf.yaml')
-
-      unless Dir.exists? File.dirname CONFFILE
-        FileUtils.mkdir_p File.dirname CONFFILE
-      end
-        
-      unless File.exists? CONFFILE
-        FileUtils.cp DEFAULT_CONFFILE, CONFFILE
-      end
+      ROOTDIR, '/etc/defaults/hotspotlogin.conf.yaml')
 
       VARRUN    = '/var/run' # take advantage of tmpfs (strongly suggested)
       VARLOG    = OnBoard::LOGDIR # do we need a subdirectory?
@@ -28,6 +20,19 @@ class OnBoard
       LOGFILE   = File.join VARLOG, 'hotspotlogin.log'
       SAVEFILE  = "#{CONFDIR}/saved/hotspotlogin.yaml"
       VARWWW    = "#{RWDIR}/var/www/hotspotlogin"
+      CUSTOMTEXT_HTMLFRAGMENT   =
+                  "#{VARWWW}/custom_text.html"
+      CUSTOMFOOTER_HTMLFRAGMENT =
+                  "#{VARWWW}/custom_footer.html"
+      
+      # TODO: move this in some specific place
+      unless Dir.exists? File.dirname CONFFILE
+        FileUtils.mkdir_p File.dirname CONFFILE
+      end        
+      unless File.exists? CONFFILE
+        FileUtils.cp DEFAULT_CONFFILE, CONFFILE
+      end
+      FileUtils.mkdir_p VARWWW unless Dir.exists? VARWWW
 
       class BadRequest < ArgumentError; end
       class AlreadyRunning < RuntimeError; end
@@ -141,11 +146,28 @@ end
           conf_h['userpassword'] = (params['userpassword'] == 'on')
           
           # logo
-          FileUtils.mkdir_p VARWWW unless Dir.exists? VARWWW
-          logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
-          FileUtils.mv(params['logo'][:tempfile], logo_path) 
-          conf_h['logo'] = logo_path
-          
+          if params['logo'] 
+            logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
+            FileUtils.mv(params['logo'][:tempfile], logo_path) 
+            conf_h['logo'] = logo_path
+          end
+
+          # custom text
+          if params['custom_text']
+            File.open CUSTOMTEXT_HTMLFRAGMENT, 'w' do |f|
+              f.write params['custom_text']
+            end
+            conf_h['custom-text'] = CUSTOMTEXT_HTMLFRAGMENT
+          end
+
+          # custom footer
+          if params['custom_footer']
+            File.open CUSTOMFOOTER_HTMLFRAGMENT, 'w' do |f|
+              f.write params['custom_footer']
+            end
+            conf_h['custom-footer'] = CUSTOMFOOTER_HTMLFRAGMENT
+          end
+         
           File.open CONFFILE, 'w' do |f|
             f.write conf_h.to_yaml
           end

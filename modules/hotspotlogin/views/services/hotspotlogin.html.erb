@@ -7,11 +7,20 @@
   port          = hslogin['conf']['port']
   interval      = hslogin['conf']['interval'] 
   uamsecret     = hslogin['conf']['uamsecret']
+  custom_text   = hslogin['conf']['custom-text']
+  custom_footer = hslogin['conf']['custom-footer']
 
   defaults      = hslogin['defaults']
 
-  interval = hslogin['defaults']['interval'] if 
+  interval      = hslogin['defaults']['interval'] if 
       (!interval or interval =~ /^\s*$/)
+    
+  custom_text_content   = nil
+  custom_text_content   = File.read custom_text   if File.file? custom_text
+
+  custom_footer_content = nil
+  custom_footer_content = File.read custom_footer if File.file? custom_footer
+
 %>
 
 <h2>HotSpot Login page</h2>
@@ -101,6 +110,18 @@
       <th scope="row">Logo</th>
       <td>
         <input type="file" name="logo"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Custom text</th>
+      <td>
+        <textarea name="custom_text"><%= custom_text_content %></textarea>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Custom footer</th>
+      <td>
+        <textarea name="custom_footer"><%= custom_footer_content %></textarea>
       </td>
     </tr>
   </tbody>
