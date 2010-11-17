@@ -114,8 +114,10 @@ end
 
         def change_from_HTTP_request!(params)
           conf_h = read_conf
-          conf_h['port']      = params['port'].to_i if params['port']
-          conf_h['interval']  = params['interval'].to_i if params['interval']
+          conf_h['port']      = # don't use priviliged ports 
+            params['port'].to_i if params['port'].to_i > 1024
+          conf_h['interval']  = 
+            params['interval'].to_i if params['interval'].to_i > 0
 
           if 
               conf_h['uamsecret'] and 
