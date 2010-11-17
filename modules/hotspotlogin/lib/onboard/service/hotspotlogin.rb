@@ -1,6 +1,7 @@
 require 'yaml'
 require 'hotspotlogin' # http://rubygems.org/gems/hotspotlogin
 
+
 require 'onboard/system/command'
 require 'onboard/system/process'
 
@@ -98,7 +99,10 @@ end
         end
 
         def read_defaults
-          YAML.load(File.read(DEFAULT_CONFFILE))
+          # hotspotlogin should provide its defaults in some way
+          # to non-Ruby programs too: maybe --dump-defaults-yaml ?
+          ::HotSpotLogin::DEFAULT_CONFIG.update(      # "upstream" defaults
+              YAML.load(File.read(DEFAULT_CONFFILE))) # "our" defaults
         end
 
         def change_from_HTTP_request!(params)
