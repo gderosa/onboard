@@ -16,6 +16,11 @@ class OnBoard
       )
     end
 
+    get '/services/hotspotlogin/logo_preview' do
+      # this will take care of MIME type and 404 Not Found ;-)
+      send_file Service::HotSpotLogin.read_conf['logo']
+    end
+
     put '/services/hotspotlogin.:format' do
       msg = {:ok => true}
       begin

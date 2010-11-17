@@ -1,6 +1,4 @@
 <% 
-  # encoding: utf-8
-
   hslogin       = objects 
   running       = hslogin['running']
   userpassword  = hslogin['conf']['userpassword']
@@ -22,9 +20,15 @@
   custom_footer_content = File.read custom_footer if File.file? custom_footer
 
   textrows = 5
-  textcols = 40
+  textcols = 38
 
 %>
+
+<style type="text/css">
+  table tr th, table tr th[scope="row"] {
+    font-size: 90%;
+  }
+</style>
 
 <h2>HotSpot Login page</h2>
 
@@ -104,15 +108,30 @@
 </table>
 <h4>End user interface</h4>
 <table>
+  <thead>
+    <tr>
+      <th colspan="2" style="background:transparent;"></th>
+      <th style="width: <%= textcols %>ex;">Preview</th>
+      <th>Delete?</th>
+    </tr>
+  </thead>
   <tbody>
     <tr>
       <th scope="row">Autorefresh interval (seconds)</th>
       <td><input type="text" class="rwtext" name="interval" value="<%= interval %>"></td>
+      <td></td>
+      <td></td>
     </tr>
     <tr>
       <th scope="row">Logo</th>
       <td>
         <input type="file" name="logo"/>
+      </td>
+      <td style="text-align: center;">
+        <img src="/services/hotspotlogin/logo_preview"/>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[logo]"/>
       </td>
     </tr>
     <tr>
@@ -120,11 +139,23 @@
       <td>
         <textarea name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_text_content %></textarea>
       </td>
+      <td>
+        <%= custom_text_content %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[custom_text]"/>
+      </td>
     </tr>
     <tr>
       <th scope="row">Custom footer</th>
       <td>
         <textarea name="custom_footer" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_footer_content %></textarea>
+      </td>
+      <td>
+        <%= custom_footer_content %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[custom_footer]"/>
       </td>
     </tr>
   </tbody>
