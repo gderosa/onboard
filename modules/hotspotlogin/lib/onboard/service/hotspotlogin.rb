@@ -46,6 +46,7 @@ class OnBoard
           File.open SAVEFILE, 'w' do |f|
             f.write data.to_yaml
           end
+          FileUtils.chmod 0640, SAVEFILE
         end
 
         def restore
@@ -54,6 +55,7 @@ class OnBoard
             File.open CONFFILE, 'w' do |f|
               f.write saved_data['conf'].to_yaml
             end
+            FileUtils.chmod 0640, CONFFILE
             if saved_data['running'] and not running?
               start!
             end
@@ -188,6 +190,7 @@ end
           File.open CONFFILE, 'w' do |f|
             f.write conf_h.to_yaml
           end
+          FileUtils.chmod 0640, CONFFILE
         end
       end
 
