@@ -113,8 +113,12 @@ class OnBoard
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
     if ARGV.include? '--restore' 
       restore_scripts = 
-          Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           +
-          Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
+          Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           #+
+          #Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
+      Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
+        next if File.file? "#{module_dir}/.disable"
+        restore_scripts += Dir.glob("#{module_dir}/etc/restore/[0-9][0-9]*.rb")
+      end
       restore_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
       restore_scripts.each do |script|
         print "loading: #{script}... "
