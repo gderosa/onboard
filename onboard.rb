@@ -116,7 +116,7 @@ class OnBoard
           Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           #+
           #Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
       Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
-        next if File.file? "#{module_dir}/.disable"
+        next if File.exists? "#{module_dir}/.disable"
         restore_scripts += Dir.glob("#{module_dir}/etc/restore/[0-9][0-9]*.rb")
       end
       restore_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
@@ -145,9 +145,12 @@ class OnBoard
     find_n_load ROOTDIR + '/etc/save/'
 
     # modules
-    Dir.glob(ROOTDIR + '/modules/*/etc/save/*.rb').each do |script| 
-      print "loading: #{script}... " and STDOUT.flush
-      load script and puts ' OK'
+    Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
+      next if File.exists? "#{module_dir}/.disable"
+      Dir.glob("#{module_dir}/etc/save/*.rb").each do |script| 
+        print "loading: #{script}... " and STDOUT.flush
+        load script and puts ' OK'
+      end
     end
 
     System::Command.run 'sync'
