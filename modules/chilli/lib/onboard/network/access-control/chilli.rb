@@ -210,8 +210,10 @@ class OnBoard
           end
 
           # actual set of @conf['dhcpstart'] and @conf['dhcpend']
-          @conf['dhcpstart']  = (ip_dhcp_start - ip_net).to_i.to_s
-          @conf['dhcpend']    = (ip_dhcp_end   - ip_net).to_i.to_s
+          if (ip_dhcp_start and ip_dhcp_end and ip_net)
+            @conf['dhcpstart']  = (ip_dhcp_start - ip_net).to_i.to_s
+            @conf['dhcpend']    = (ip_dhcp_end   - ip_net).to_i.to_s
+          end
         end
 
         def dynaconf
