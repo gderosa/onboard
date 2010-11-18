@@ -1,3 +1,12 @@
+2010.11
+
+* Captive portal
+  * hotspotlogin module
+    * strongly founded on CoovaChilli features, namely JSON interface
+  * chilli module
+    * no wpa, statip and mac auth, just web hotspot login
+  * requires a RADIUS server (not managed by OnBoard yet)
+
 2010.10.03
 
 * Dns(masq): customize/block domains
