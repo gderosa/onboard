@@ -1,3 +1,7 @@
+2010.11.01
+
+* You can disable a module by creating modules/module_name/.disable
+
 2010.11
 
 * Captive portal
