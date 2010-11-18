@@ -1,0 +1,5 @@
+Based on installation/configuration of FreeRADIUS by Debian Lenny package,
+with slight modifications.
+
+It's complicated, maybe it may/should be simplified? 
+(we use basic features, after all).
