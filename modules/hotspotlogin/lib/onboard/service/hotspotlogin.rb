@@ -160,7 +160,9 @@ end
           end
 
           # custom headline
-          if params['custom_headline']
+          if params['delete'] and params['delete']['custom_headline']
+            conf_h['custom-headline'] = nil
+          elsif params['custom_headline']
             conf_h['custom-headline'] = params['custom_headline']
           end
           

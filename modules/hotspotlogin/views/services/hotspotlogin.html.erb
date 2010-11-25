@@ -144,7 +144,13 @@
         <div class="optinfo">e.g. Your Organization Name</div>
       </th>
       <td>
-        <input type="text" class="rwtext" name="custom_headline" value="<%= custom_headline_content %>"/> 
+        <input type="text" size="<%= textcols %>" class="rwtext" name="custom_headline" value="<%= custom_headline_content %>"/> 
+      </td>
+      <td style="text-align: center;">
+        <h4><%= custom_headline_content %></h4>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[custom_headline]"/>
       </td>
     </tr>
     <tr>
