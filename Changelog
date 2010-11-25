@@ -1,3 +1,9 @@
+2010.11.02
+
+* HotSpotLogin fixes:
+  * "Your Org. Name" field (aka --custom-headline)
+  * prevent logo image caching by browsers, via ?nocache=<unique-id> 
+
 2010.11.01
 
 * You can disable a module by creating modules/module_name/.disable
@@ -48,16 +54,16 @@
 2010.07
 
 * OpenVPN 
-	* Virtual Ethernets (TAP), allowing IPv6 and bridging 
-	* TAP configured persistently like normal ethernets
+  * Virtual Ethernets (TAP), allowing IPv6 and bridging 
+  * TAP configured persistently like normal ethernets
 
 2010.06
 
 * Policy routing based on: 
-	* source address 
-	* input interface
-	* input bridge port
-	* QoS classification (via netfilter packet mangling)
+  * source address 
+  * input interface
+  * input bridge port
+  * QoS classification (via netfilter packet mangling)
 
 2009.12
 
