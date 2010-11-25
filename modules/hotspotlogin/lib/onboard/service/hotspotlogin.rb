@@ -159,6 +159,11 @@ end
             conf_h['logo'] = logo_path
           end
 
+          # custom headline
+          if params['custom_headline']
+            conf_h['custom-headline'] = params['custom_headline']
+          end
+          
           # custom text
           if params['delete'] and params['delete']['custom_text']
             if File.file? CUSTOMTEXT_HTMLFRAGMENT

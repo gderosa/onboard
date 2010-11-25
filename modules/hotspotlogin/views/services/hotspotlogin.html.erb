@@ -1,23 +1,27 @@
 <% 
-  hslogin       = objects 
-  running       = hslogin['running']
-  userpassword  = hslogin['conf']['userpassword']
-  port          = hslogin['conf']['port']
-  interval      = hslogin['conf']['interval'] 
-  uamsecret     = hslogin['conf']['uamsecret']
-  custom_text   = hslogin['conf']['custom-text']
-  custom_footer = hslogin['conf']['custom-footer']
+  hslogin         = objects 
+  running         = hslogin['running']
+  userpassword    = hslogin['conf']['userpassword']
+  port            = hslogin['conf']['port']
+  interval        = hslogin['conf']['interval'] 
+  uamsecret       = hslogin['conf']['uamsecret']
+  custom_headline = hslogin['conf']['custom-headline'] 
+  custom_text     = hslogin['conf']['custom-text']
+  custom_footer   = hslogin['conf']['custom-footer']
 
-  defaults      = hslogin['defaults']
+  defaults        = hslogin['defaults']
 
-  interval      = hslogin['defaults']['interval'] if 
+  interval        = hslogin['defaults']['interval'] if 
       (!interval or interval =~ /^\s*$/)
     
-  custom_text_content   = nil
-  custom_text_content   = File.read custom_text   if File.file? custom_text
+  # sugar/name-consistency: not a file    
+  custom_headline_content = custom_headline 
+      
+  custom_text_content     = nil
+  custom_text_content     = File.read custom_text   if File.file? custom_text
 
-  custom_footer_content = nil
-  custom_footer_content = File.read custom_footer if File.file? custom_footer
+  custom_footer_content   = nil
+  custom_footer_content   = File.read custom_footer if File.file? custom_footer
 
   textrows = 5
   textcols = 38
@@ -132,6 +136,15 @@
       </td>
       <td style="text-align: center;">
         <input type="checkbox" name="delete[logo]"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Custom headline
+        <div class="optinfo">e.g. Your Organization Name</div>
+      </th>
+      <td>
+        <input type="text" class="rwtext" name="custom_headline" value="<%= custom_headline_content %>"/> 
       </td>
     </tr>
     <tr>
