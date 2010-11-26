@@ -1,6 +1,3 @@
-# Not implemented and/or supported in this release
-
-
 require 'fileutils'
 
 class OnBoard
