@@ -36,7 +36,10 @@ class OnBoard
         ) 
       end
 
-      def self.db_disconnect; @@db.disconnect; end
+      def self.db_disconnect
+        @@db.disconnect if
+            class_variable_defined? :@@db and @@db
+      end
 
       def self.db_reconnect
         db_disconnect
