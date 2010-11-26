@@ -12,6 +12,36 @@
 
   nas_port_type   = dictionary.find_attribute_by_name 'NAS-Port-Type'
   nas_port_types  = nas_port_type.values
+
+  interface = nil
+  if chilli and chilli.conf['dhcpif'] =~ /\S/ 
+    interface = interfaces.detect{|i| i.name == chilli.conf['dhcpif']} 
+  end
+
+  
+  nas_port_type_selected_value = nil
+
+  if 
+      chilli                                    and 
+      chilli.conf['radiusnasporttype']          and 
+      chilli.conf['radiusnasporttype'].to_i > 0
+
+    nas_port_type_selected_value = nas_port_types.detect do |v|
+      v.id = chilli.conf['radiusnasporttype'].to_i
+    end
+
+  elsif interface
+    nas_port_type_selected_value = case interface.type
+                                   when 'ether'
+                                     nas_port_types.detect do |v|
+                                       v.name =~ /Ethernet/
+                                     end
+                                   when 'wi-fi'
+                                     nas_port_types.detect do |v|
+                                       v.name =~ /802\.11/
+                                     end
+                                   end
+  end
 %>
 
 <!-- 
@@ -38,8 +68,8 @@
     <tr>
       <th scope="row">Interface</th>
       <td>
-        <% if chilli and chilli.conf['dhcpif'] =~ /\S/ %>
-          <input type="text" name="conf[dhcpif]" value="<%= chilli.conf['dhcpif'] %>" readonly />
+        <% if interface %>
+          <input type="text" name="conf[dhcpif]" value="<%= interface.name %>" readonly />
         <% else %>
           <select name="conf[dhcpif]"> 
             <option value="" class="lowlight">[choose one]</option>
@@ -110,8 +140,9 @@
       <th scope="row" title="NAS-Port-Type RADIUS attribute">NAS Port Type</th>
       <td>
         <select name="conf[radiusnasporttype]">
+          <option class="lowlight" value="">(auto)</option>
           <% nas_port_types.each do |npt| %>
-            <option value="<%= npt.id %>"><%= npt.name %></option>
+            <option value="<%= npt.id %>" <%= 'selected' if npt.id == nas_port_type_selected_value.id %>><%= npt.name %></option>
           <% end %>
         </select>
       </td>
