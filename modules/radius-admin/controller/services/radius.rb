@@ -8,7 +8,7 @@ class OnBoard
 
     get '/services/radius/config.:format' do
       format(
-        :module => 'radius',
+        :module => 'radius-admin',
         :path => '/services/radius/config',
         :format => params[:format],
         :objects  => Service::RADIUS.read_conf
@@ -25,7 +25,7 @@ class OnBoard
       Service::RADIUS.write_conf h
       Service::RADIUS.db_reconnect
       format(
-        :module => 'radius',
+        :module => 'radius-admin',
         :path => '/services/radius/config',
         :format => params[:format],
         :objects  => h
@@ -36,7 +36,7 @@ class OnBoard
       params[:page] = 1 unless params[:page]
       params[:per_page] = 10 unless params[:per_page] # TODO: use a constant
       format(
-        :module => 'radius',
+        :module => 'radius-admin',
         :path => '/services/radius/accounting',
         :format => params[:format],
         :objects  => Service::RADIUS::Accounting.get(params) 
