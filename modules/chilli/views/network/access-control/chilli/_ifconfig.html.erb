@@ -1,13 +1,17 @@
 <% 
   require 'onboard/network/interface'
+  require 'onboard/network/aaa/radius'
 
   # Used both for captive portals creation and editing
 
-  chilli = objects 
-
-  interfaces = 
+  chilli          = objects
+  interfaces      = 
       OnBoard::Network::Interface.getAll().sort{|x,y| x.name <=> y.name} 
+  dictionary      =
+      OnBoard::Network::AAA::RADIUS::dictionary(:rfc2865) 
 
+  nas_port_type   = dictionary.find_attribute_by_name 'NAS-Port-Type'
+  nas_port_types  = nas_port_type.values
 %>
 
 <!-- 
@@ -89,7 +93,17 @@
       <th scope="row">RADIUS password</th>
       <td><input type="password" name="conf[radiussecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
-   
+    <tr style="height:1ex;"></tr>
+    <tr>
+      <th scope="row" title="NAS-Port-Type RADIUS attribute">NAS Port Type</th>
+      <td>
+        <select name="conf[radiusnasporttype]">
+          <% nas_port_types.each do |npt| %>
+            <option value="<%= npt.id %>"><%= npt.name %></option>
+          <% end %>
+        </select>
+      </td>
+    </tr>
   </tbody>
 </table>
 
