@@ -21,7 +21,6 @@ class OnBoard
       if file
         send_file file
       else
-        cache_control :no_cache
         not_found
       end
     end
