@@ -140,9 +140,9 @@
       <th scope="row" title="NAS-Port-Type RADIUS attribute">NAS Port Type</th>
       <td>
         <select name="conf[radiusnasporttype]">
-          <option class="lowlight" value="">(auto)</option>
+          <option value="">(auto)</option>
           <% nas_port_types.each do |npt| %>
-            <option value="<%= npt.id %>" <%= 'selected' if npt.id == nas_port_type_selected_value.id %>><%= npt.name %></option>
+            <option value="<%= npt.id %>" <%= 'selected' if nas_port_type_selected_value and npt.id == nas_port_type_selected_value.id %>><%= npt.name %></option>
           <% end %>
         </select>
       </td>
