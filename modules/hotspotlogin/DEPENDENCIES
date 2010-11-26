@@ -1,8 +1,1 @@
-Gems:
-
 gem install hotspotlogin uuid
-
-OnBoard modules:
-
-radius-core (include files from a radiustar fork)
-
