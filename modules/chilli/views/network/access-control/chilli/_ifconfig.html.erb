@@ -147,6 +147,14 @@
         </select>
       </td>
     </tr>
+    <tr>
+      <th scope="row" title="NAS-Identifier RADIUS attribute">
+        NAS Identifier
+      </th>
+      <td>
+      <input type="text" name="conf[radiusnasid]" title="Choose a name" <% if chilli and chilli.conf['radiusnasid'] %> value="<%= chilli.conf['radiusnasid'] %>" <% end %> />
+      </td>
+    </tr>
   </tbody>
 </table>
 
