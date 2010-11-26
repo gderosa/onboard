@@ -149,10 +149,15 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 .warn   {border: 1px yellow dashed; font-style: italic; font-size:105%;}
 .info   {border: 1px #4b0 dotted;}
 
-.optinfo {
+.optional, .optinfo {
   text-align:   left;
   font-weight:  normal;
   font-style:   italic;
+  font-size: smaller;
+}
+
+.optinfo kbd, .optinfo code {
+  font-style: normal;
 }
 
 strong {
@@ -295,6 +300,12 @@ table tr td {
   padding: 0 0.4em;
 }
 
+table tr td.separator {
+  background: transparent;
+  border: 0;
+  height: 0.3em;
+}
+
 table tr td ul, table tr th ul {
   margin: 0.3em 0 0 0;
   padding: 0 0 0 1.15em;
@@ -319,8 +330,8 @@ button[disabled] {
 }
 
 button[disabled] img { /* CSS3 */ 
-  opacity:0.4; /* Firefox */
-  filter:alpha(opacity=40); /* MSIE */
+  opacity: 0.4; /* Firefox */
+  filter: alpha(opacity=40); /* MSIE */
 }
 
 ul li ul li .hmenu-content  {

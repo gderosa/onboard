@@ -1,0 +1,13 @@
+Assumptions:
+
+* one instance per network interface (which is absolutely reasonable) 
+
+* only configuration file is parsed, no command line options (except --conf)
+
+Based on CoovaChilli[1], maybe it works with other Chillispot-compatible NACs.
+
+[1] http://www.coova.org
+
+
+
+

@@ -4,7 +4,7 @@ class OnBoard
     :children => %r{^/network/openvpn/.*},
     :name => 'OpenVPN',
     :desc => 'Virtual Private Networks',
-    :n    => 2
+    :n    => 0
   })
   MENU_ROOT.add_path('/network/openvpn/client-side-configuration', {
     :href => '/network/openvpn/client-side-configuration',

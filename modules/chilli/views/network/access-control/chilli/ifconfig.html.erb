@@ -1,0 +1,41 @@
+<% chilli = objects %>
+<h2>Network Access Controller on interface: <%= chilli.conf['dhcpif'] %> <% unless chilli.managed? %>(not managed)<% end %></h2>
+<p class="credits">Based on <a href="http://coova.org/CoovaChilli">CoovaChilli</a>.</p>
+
+  <%=
+    erb(
+      :"/_messages.html",
+      {
+        :layout => false,
+        :locals => {
+          :msg => msg,
+          :status => status
+        }
+      }
+    )
+  %>
+
+<h3>Configuration</h3>
+
+<% if chilli.managed? %><form method="POST"><% end %>
+  <input type="hidden" name="_method" value="put"/>
+  <%=
+    format(
+      :module   => 'chilli',
+      :path     => '/network/access-control/chilli/_ifconfig',
+      :partial  => true,
+      :objects  => chilli,
+      :format   => 'html',
+      :msg      => msg
+    )
+  %>
+  <% if chilli.managed? %>  
+    <div style="margin-top: 1em;">
+      <button type="submit">Change!</button>
+      <% if chilli.running? %>
+        <span style="font-style:italic;">(<input type="checkbox" name="do_not_restart" checked/> Do not restart &mdash; configuration changes will take effect later)</span>
+      <% end %>
+    </div>
+  </form>
+<% end %>
+

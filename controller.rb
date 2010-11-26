@@ -112,7 +112,7 @@ class OnBoard
         countries.keys.sort_by {|x| countries[x]}
       end
 
-      # Icons
+      # Icons and buttons
       def yes_no_icon(object, *opts)
         if object
           "<img alt=\"#{i18n.yes}\" src=\"#{IconDir}/#{IconSize}/emblems/emblem-default.png\"/>"
@@ -123,6 +123,34 @@ class OnBoard
             ""
           end
         end
+      end
+      def action_button(action, *attributes)
+        h = attributes[0] || {} 
+        raise ArgumentError, "Invalid action: #{action.inspect}" unless 
+            [:start, :stop, :config, :reload, :restart].include? action
+        type = h[:type] || case action
+        when :start, :stop, :reload
+          'submit'
+        when :config
+          'button'
+        end
+        name = h[:name] || action.to_s 
+        value = h[:value] || name
+        disabled = h[:disabled] ? 'disabled' : ''
+        title = h[:title] || name
+        title = title.capitalize 
+        alt = h[:alt] || title
+        image = case action
+                when :start
+                  "#{IconDir}/#{IconSize}/actions/media-playback-start.png"
+                when :stop
+                  "#{IconDir}/#{IconSize}/actions/media-playback-stop.png"
+                when :config
+                  "#{IconDir}/#{IconSize}/actions/system-run.png"
+                when :reload, :restart
+                  "#{IconDir}/#{IconSize}/actions/reload.png"
+                end
+        return %Q{<button type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
       end
     
       # Following method should be called PROVIDED that the resource exists.
