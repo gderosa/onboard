@@ -8,7 +8,7 @@ class OnBoard
       # edit users database or view accounting data.
       module RADIUS
         ROOTDIR = File.dirname(__FILE__)
-        DICTIONARYDIR = "#{ROOTDIR}/data"
+        DATADIR = "#{ROOTDIR}/data"
         $LOAD_PATH.unshift  ROOTDIR + '/lib'
       end
     end
