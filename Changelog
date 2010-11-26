@@ -1,3 +1,12 @@
+2010.11.03
+
+* Chilli Improvements:
+  * NAS-Port-Type w/ autodetection
+  * NAS-Identifier
+
+* new module: radius-core
+  * a support module including files from a Radiustar fork
+
 2010.11.02
 
 * HotSpotLogin fixes:
