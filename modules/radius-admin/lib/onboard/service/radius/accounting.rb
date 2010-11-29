@@ -12,8 +12,12 @@ class OnBoard
             page      = params[:page].to_i
             per_page  = params[:per_page].to_i
             {
-              'rows' => RADIUS.db[:radacct].paginate(page, per_page).to_a,
-              'total_items' => RADIUS.db[:radacct].count
+              'rows'        => 
+                  RADIUS.db[:radacct].paginate(page, per_page).to_a,
+              'total_items' => 
+                  RADIUS.db[:radacct].count,
+              'page'        => page,
+              'per_page'    => per_page
             }
           end
 

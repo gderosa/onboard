@@ -1,6 +1,8 @@
 <% 
   rows        = objects['rows'] 
   total_items = objects['total_items']  
+  page        = objects['page']
+  per_page    = objects['per_page']
 %>
 <% 
   if rows[0]
@@ -35,8 +37,8 @@
     :"_paginator.html",
     :layout => false,
     :locals => {
-      :page => params['page'],
-      :per_page => params['per_page'],
+      :page => page,
+      :per_page => per_page,
       :total_items => total_items
     }
   )

@@ -2,6 +2,7 @@ require 'yaml'
 require 'sinatra/base'
 
 require 'onboard/service/radius'
+require 'onboard/pagination'
 
 class OnBoard
   class Controller < Sinatra::Base
@@ -33,8 +34,11 @@ class OnBoard
     end
 
     get '/services/radius/accounting.:format' do
-      params[:page] = 1 unless params[:page]
-      params[:per_page] = 3 unless params[:per_page] # TODO: use a constant
+      [:page, :per_page].each do |key|
+        unless params[key] and params[key].to_i > 0
+          params[key] = OnBoard::Pagination::DEFAULTS[key]
+        end
+      end
       format(
         :module => 'radius-admin',
         :path => '/services/radius/accounting',
