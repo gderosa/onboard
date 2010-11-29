@@ -11,11 +11,18 @@ class OnBoard
           def get(params)
             page      = params[:page].to_i
             per_page  = params[:per_page].to_i
+            select    = RADIUS.db[:radacct].select(
+              :Radacctid, :Username, 
+              :Nasipaddress, :Nasporttype, 
+              :Acctstarttime, :Acctstoptime, :Acctsessiontime,
+              :Acctinputoctets, :Acctoutputoctets,
+              :Calledstationid, :Callingstationid,
+              :Acctterminatecause,
+              :Framedipaddress
+            )
             {
-              'rows'        => 
-                  RADIUS.db[:radacct].paginate(page, per_page).to_a,
-              'total_items' => 
-                  RADIUS.db[:radacct].count,
+              'rows'        => select.paginate(page, per_page).to_a,
+              'total_items' => select.count,
               'page'        => page,
               'per_page'    => per_page
             }
