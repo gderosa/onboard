@@ -4,7 +4,7 @@
 #   per_page
 #   total_items
 
-#require 'rack/utils'
+require 'rack/utils'
 
 pages = ( total_items.to_f / per_page.to_f ).ceil
 
@@ -12,6 +12,6 @@ pages = ( total_items.to_f / per_page.to_f ).ceil
 
 <div class="paginator">
   <% (1..pages).each do |page_n| %>
-    <%= page_n %> 
+    <a href="?<%= Rack::Utils.build_query request.GET.merge('page' => page_n) %>"><%= page_n %></a> 
   <% end %>
 </div>
