@@ -1,4 +1,7 @@
-<% rows = objects %>
+<% 
+  rows        = objects['rows'] 
+  total_items = objects['total_items']  
+%>
 <% 
   if rows[0]
     columns = rows[0].keys 
@@ -26,3 +29,15 @@
     <% end %>
   </tbody>
 </table>
+
+<%= 
+  erb(
+    :"_paginator.html",
+    :layout => false,
+    :locals => {
+      :page => params['page'],
+      :per_page => params['per_page'],
+      :total_items => total_items
+    }
+  )
+%>

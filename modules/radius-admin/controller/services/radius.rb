@@ -34,12 +34,12 @@ class OnBoard
 
     get '/services/radius/accounting.:format' do
       params[:page] = 1 unless params[:page]
-      params[:per_page] = 10 unless params[:per_page] # TODO: use a constant
+      params[:per_page] = 3 unless params[:per_page] # TODO: use a constant
       format(
         :module => 'radius-admin',
         :path => '/services/radius/accounting',
         :format => params[:format],
-        :objects  => Service::RADIUS::Accounting.get(params) 
+        :objects  => Service::RADIUS::Accounting.get(params)           
       )
     end
 

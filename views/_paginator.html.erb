@@ -1,0 +1,19 @@
+<% 
+# variables:
+#   page
+#   per_page
+#   total_items
+
+#require 'rack/utils'
+
+per_page = 3
+
+pages = ( total_items.to_f / per_page.to_f ).ceil
+
+%>
+
+<div class="paginator">
+  <% (1..pages).each do |page_n| %>
+    <%= page_n %> 
+  <% end %>
+</div>
