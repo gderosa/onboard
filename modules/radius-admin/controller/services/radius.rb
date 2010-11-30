@@ -33,6 +33,15 @@ class OnBoard
       )
     end
 
+    get '/services/radius/users.:format' do
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/users',
+        :format   => params[:format],
+        :objects  => Service::RADIUS::User.get_all # no CamelCase here :)
+      )
+    end
+
     get '/services/radius/accounting.:format' do
       [:page, :per_page].each do |key|
         unless params[key] and params[key].to_i > 0
