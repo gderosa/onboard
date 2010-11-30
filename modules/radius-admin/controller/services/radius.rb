@@ -1,8 +1,8 @@
 require 'yaml'
 require 'sinatra/base'
 
-require 'onboard/service/radius'
 require 'onboard/pagination'
+require 'onboard/service/radius'
 
 class OnBoard
   class Controller < Sinatra::Base

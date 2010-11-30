@@ -6,6 +6,7 @@ class OnBoard
     module RADIUS
       
       autoload :Accounting, 'onboard/service/radius/accounting'
+      autoload :User,       'onboard/service/radius/user'
 
       CONFFILE = File.join CONFDIR, 'current/radius.conf.yaml'
 
