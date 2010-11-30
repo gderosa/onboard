@@ -1,8 +1,14 @@
-<% 
-  rows        = objects['rows'] 
-  total_items = objects['total_items']  
-  page        = objects['page']
-  per_page    = objects['per_page']
+<%
+  require 'facets/hash'
+  require 'onboard/service/radius'
+
+  rows          = objects['rows'] 
+  total_items   = objects['total_items']  
+  page          = objects['page']
+  per_page      = objects['per_page']
+
+  conf          = OnBoard::Service::RADIUS.read_conf
+  view_columns  = conf['accounting']['columns'].invert.symbolize_keys
 %>
 <% 
   if rows[0]
@@ -11,13 +17,20 @@
     columns = ['no info available yet']
   end
 %>
+<style type="text/css">
+  table tr th {
+    /* font-size: 70%; */
+    padding: 0.2em 0;
+  }
+</style>
+
 <h2>RADIUS Accounting</h2>
 
 <table>
   <thead>
     <tr>
       <% columns.each do |column| %>
-        <th><%= column.to_s.capitalize %></th>
+        <th><%= view_columns[column] %></th>
       <% end %>
     </tr>
   </thead>
