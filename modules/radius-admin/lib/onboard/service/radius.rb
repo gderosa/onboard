@@ -5,6 +5,7 @@ class OnBoard
   module Service
     module RADIUS
       
+      autoload :DEFAULTS,   'onboard/service/radius/defaults'
       autoload :Accounting, 'onboard/service/radius/accounting'
       autoload :User,       'onboard/service/radius/user'
 
@@ -12,9 +13,9 @@ class OnBoard
 
       def self.read_conf
         if File.readable? CONFFILE
-          YAML.load(File.read CONFFILE)
+          DEFAULTS.update YAML.load(File.read CONFFILE)
         else
-          {}
+          DEFAULTS
         end
       end
 

@@ -9,9 +9,11 @@ class OnBoard
         class << self
         
           def get(params)
+            conf      = RADIUS.read_conf
+            table     = conf['accounting']['table'].to_sym
             page      = params[:page].to_i
             per_page  = params[:per_page].to_i
-            select    = RADIUS.db[:radacct].select(
+            select    = RADIUS.db[table].select(
               :Radacctid, :Username, 
               :Nasipaddress, :Nasporttype, 
               :Acctstarttime, :Acctstoptime, :Acctsessiontime,
