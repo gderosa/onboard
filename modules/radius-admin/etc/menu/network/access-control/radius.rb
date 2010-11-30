@@ -34,5 +34,10 @@ class OnBoard
     :n    => 10
   })
 
+  MENU_ROOT.add_path('/network/access-control/radius/users', {
+    :href => '/services/radius/users',
+    :name => 'Users',
+  })
+
 end
 
