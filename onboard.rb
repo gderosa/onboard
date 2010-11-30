@@ -37,6 +37,7 @@ class OnBoard
       ENV['ONBOARD_DATADIR'] or 
       File.join(ENV['HOME'], '.onboard')
   )
+  FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
   CONFDIR           = File.join RWDIR, '/etc/config'
   LOGDIR            = File.join RWDIR, '/var/log'
   LOGFILE_BASENAME  = 'onboard.log'
