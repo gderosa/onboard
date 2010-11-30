@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'sequel'
 
 class OnBoard
@@ -17,6 +18,9 @@ class OnBoard
       end
 
       def self.write_conf(h)
+        unless Dir.exists? File.dirname CONFFILE
+          FileUtils.mkdir_p File.dirname CONFFILE
+        end
         File.open CONFFILE, 'w' do |f|
           f.write h.to_yaml
         end

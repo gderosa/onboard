@@ -4,7 +4,8 @@ class OnBoard
   module Service
     module RADIUS
       ROOTDIR = File.dirname(__FILE__)
-      CONFDIR = File.join ROOTDIR, '/etc/config'
+      CONFDIR = File.join ::OnBoard::CONFDIR, '/services/radius'
+      FileUtils.mkdir_p CONFDIR unless Dir.exists? CONFDIR
       $LOAD_PATH.unshift  ROOTDIR + '/lib'
       if OnBoard.web?
         OnBoard.find_n_load ROOTDIR + '/etc/menu'
