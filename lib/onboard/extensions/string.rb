@@ -1,4 +1,11 @@
 class String
+
+  class << self
+    def random_binary(n_bytes)
+      ( Array.new(n_bytes){ rand(0x100) } ).pack('c*') 
+    end
+  end
+
   # add a trailing slash if not present, handy for URLs etc.
   def trailing_slash
     sub /([^\/]$)/, '\1/'
