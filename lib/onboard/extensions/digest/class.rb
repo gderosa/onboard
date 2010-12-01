@@ -8,7 +8,7 @@ module Digest
     unless self.methods.include? :base64digest
       # From Ruby 1.9.2 source
       def self.base64digest(str, *args)
-        [digest(str, *args)].pack('m0') 
+        [self.digest(str, *args)].pack('m0') 
       end
     end
 
