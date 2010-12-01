@@ -19,10 +19,6 @@ module Digest
       end
     end
 
-    # Now, the true extension
-
-    alias digest_orig   digest
-    alias digest_orig!  digest! 
-
   end
 end
+
