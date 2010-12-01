@@ -1,3 +1,5 @@
+=begin
+
 require 'digest/md5'
 
 module Digest
@@ -24,3 +26,5 @@ module Digest
 
   end
 end
+
+=end
