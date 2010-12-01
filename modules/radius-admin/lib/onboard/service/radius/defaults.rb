@@ -24,7 +24,22 @@ class OnBoard
             'Calling-Station-Id'    => 'Callingstationid',
             'Acct-Terminate-Cause'  => 'Acctterminatecause',
           }
+        },
+
+        'check'                 => {
+          'table'                 => 'radcheck',
+          'columns'               => {
+            'Id'                    => 'id',
+
+            'User-Name'             => 'username', 
+              # not really a RADIUS attribute, just for naming consistency...  
+
+            'Attribute'             => 'attribute',
+            'Operator'              => 'op',
+            'Value'                 => 'value'
+          }
         }
+
       }
     end
   end
