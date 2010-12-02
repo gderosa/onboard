@@ -6,11 +6,16 @@
 %>
 
 <style type="text/css">
-  th select, th .optinfo {
-    width: 30ex;
+  table tr th[scope="row"] {
+    font-size: 95%;
   }
-  table tr td,  {
+  th select, th .optinfo {
+    width: 40ex;
+  }
+  table tr td  {
     vertical-align: top;
+  }
+  table tr td, table tr th {
     padding: 1ex;
   }
 </style>
@@ -23,7 +28,7 @@
   <table>
     <tbody>
       <tr>
-        <th scope="row"><span>User-Name</span></th>
+        <th scope="row">User-Name</th>
         <td><input type="text" name="check[User-Name]"/></td>
       </tr>
       <tr>
