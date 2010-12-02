@@ -1,3 +1,4 @@
+require 'onboard/extensions/string'
 require 'onboard/extensions/digest'
 
 class OnBoard
@@ -8,6 +9,9 @@ class OnBoard
         ENCRYPT = {
           'Cleartext-Password'  => 
               lambda{|s| s},
+
+          'Crypt-Password'      => 
+              lambda{|s| s.salted_crypt}, # autogenerate a random salt
 
           'MD5-Password'        => 
               lambda{|s| Digest::MD5.hexdigest s},

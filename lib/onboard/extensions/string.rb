@@ -4,6 +4,22 @@ class String
     def random_binary(n_bytes)
       ( Array.new(n_bytes){ rand(0x100) } ).pack('c*') 
     end
+    def random(n_chars, set)
+      ary = set.to_a # any Enumerable
+      s = ''
+      n_chars.times do
+        s << ary[rand(ary.length)]
+      end
+      return s
+    end
+  end
+
+  # Lke String#crypt, but a random salt is auto-generated
+  def salted_crypt
+    crypt String.random(
+      2,
+      ('a'..'z').to_a + ('A'..'Z').to_a  + ('0'..'9').to_a + ['/', '.']   
+    )
   end
 
   # add a trailing slash if not present, handy for URLs etc.
