@@ -57,6 +57,14 @@ class Hash
     return h
   end
 
+  def symbolize_values
+    h = {}
+    each_pair do |k, v|
+      h[k] = v.to_sym
+    end
+    return h
+  end
+
 end
 
 
