@@ -21,10 +21,12 @@
   custom_headline_content = custom_headline 
       
   custom_text_content     = nil
-  custom_text_content     = File.read custom_text   if File.file? custom_text
+  custom_text_content     = File.read custom_text   if 
+      custom_text and File.readable? custom_text
 
   custom_footer_content   = nil
-  custom_footer_content   = File.read custom_footer if File.file? custom_footer
+  custom_footer_content   = File.read custom_footer if 
+      custom_footer and File.readable? custom_footer
 
   textrows = 5
   textcols = 38
