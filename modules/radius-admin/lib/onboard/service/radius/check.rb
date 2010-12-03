@@ -13,6 +13,10 @@ class OnBoard
             conf      = RADIUS.read_conf
             table     = conf['check']['table'].to_sym
             col       = conf['check']['columns'].symbolize_values
+            if params['check']['User-Password'] != 
+                params['confirm']['check']['User-Password']
+              raise PasswordsDoNotMatch, 'Passwords do not match!'
+            end
             if RADIUS.db[table].where(
                 col['User-Name'] => params['check']['User-Name'] ).any?
               raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"

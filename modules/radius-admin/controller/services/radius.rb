@@ -50,6 +50,9 @@ class OnBoard
       rescue Service::RADIUS::Conflict
         status 409
         msg[:err] = $!
+      rescue Service::RADIUS::BadRequest
+        status 400
+        msg[:err] = $!
       end
       format(
         :module   => 'radius-admin',

@@ -89,15 +89,15 @@ form {
   margin: 0;
 }
 
-input[type="text"], textarea {
-  color: <%= highlight %>;
+input[type="password"], input[type="text"], textarea {
+  padding: 2px;
+  background: white;
+  font-family: <%= monospace %>;
   font-size: inherit;
 }
 
-input[type="text"] {
-  font-family: <%= monospace %>;
-  padding: 2px;
-  background: white;
+input[type="text"], textarea {
+  color: <%= highlight %>;
 }
 
 input[type="text"][readonly] {

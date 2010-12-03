@@ -18,6 +18,9 @@
   table tr td, table tr th {
     padding: 1ex;
   }
+  input {
+    width: 24ex;
+  }
 </style>
 
 <%= message_partial(msg) %>
@@ -50,7 +53,15 @@
             only if clients authenticate using <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a>.
           </div>
         </th>
-        <td><input type="text" name="check[User-Password]"/></td>
+        <td>
+          <div style="margin-top:0;"> 
+            <input type="password" name="check[User-Password]"/>
+          </div>
+          <div style="margin-top:0.7em;">
+            <input type="password" name="confirm[check][User-Password]"/><br/>
+            <span class="optinfo">(confirm)</span>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>
