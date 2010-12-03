@@ -4,10 +4,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib'
 
 require 'rubygems'
 require 'find'
-require 'json'
-require 'yaml'
 require 'logger'
-require 'pp' 
 require 'etc'
 
 require 'onboard/exceptions'
