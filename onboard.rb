@@ -162,7 +162,8 @@ end
 OnBoard.prepare
 
 if OnBoard.web?
-  require OnBoard::ROOTDIR + '/controller.rb'
+  require 'onboard/controller'
+  require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run!
   end
