@@ -11,16 +11,15 @@ class OnBoard
       def normalize_params(params)
         h = {}
         DEFAULTS.each_pair do |k, v|
-          unless params[k] and params[k].to_i > 0
+          if params[k] and params[k].to_i > 0
+            h[k] = params[k]
+          else
             h[k] = v
           end
         end
-        params.update h
+        return h
       end
-
-      def normalize_params!(params)
-        params = normalize_params(params)
-      end
+      alias normalize normalize_params
 
     end
 

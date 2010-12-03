@@ -54,11 +54,7 @@ class OnBoard
     end
 
     get '/services/radius/accounting.:format' do
-      [:page, :per_page].each do |key|
-        unless params[key] and params[key].to_i > 0
-          params[key] = OnBoard::Pagination::DEFAULTS[key]
-        end
-      end
+      params.update Pagination.normalize(params)
       format(
         :module => 'radius-admin',
         :path => '/services/radius/accounting',
