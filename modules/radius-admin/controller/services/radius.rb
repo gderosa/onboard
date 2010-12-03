@@ -34,11 +34,12 @@ class OnBoard
     end
 
     get '/services/radius/users.:format' do
+      use_pagination_defaults
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users',
         :format   => params[:format],
-        :objects  => nil # no CamelCase here :)
+        :objects  => Service::RADIUS::Check.get(params)
       )
     end
 
