@@ -21,7 +21,7 @@ require 'onboard/passwd'
 class OnBoard
   class Controller < ::Sinatra::Base
 
-    class ArgumentError < ArgumentError; end
+    class ArgumentError < ArgumentError; end # who uses this?
 
     # Extensions must be explicitly registered in modular style apps.
     register ::Sinatra::R18n

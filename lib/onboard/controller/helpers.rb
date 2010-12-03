@@ -217,6 +217,21 @@ class OnBoard
         end
       end
 
+      def handle_errors(&blk)
+        msg = {}
+        begin
+          blk.call
+          msg[:ok] = true
+        rescue OnBoard::BadRequest
+          status 400
+          msg[:err] = $!
+        rescue OnBoard::Conflict
+          status 409
+          msg[:err] = $!
+        end
+        return msg
+      end
+
     end
   end
 end

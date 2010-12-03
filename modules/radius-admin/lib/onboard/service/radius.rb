@@ -12,8 +12,8 @@ class OnBoard
 
       CONFFILE = File.join CONFDIR, 'current/radius.conf.yaml'
 
-      class Conflict            < RuntimeError; end
-      class BadRequest          < RuntimeError; end
+      class Conflict            < Conflict;     end
+      class BadRequest          < BadRequest;   end
       class UserAlreadyExists   < Conflict;     end
       class PasswordsDoNotMatch < BadRequest;   end
 
