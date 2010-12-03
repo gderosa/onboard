@@ -17,6 +17,7 @@ require 'onboard/extensions/object/deep'
 require 'onboard/extensions/sinatra/base'
 require 'onboard/menu/node'
 require 'onboard/passwd'
+require 'onboard/pagination'
 
 class OnBoard
   class Controller < ::Sinatra::Base
@@ -230,6 +231,10 @@ class OnBoard
           msg[:err] = $!
         end
         return msg
+      end
+
+      def use_pagination_defaults
+        params.update OnBoard::Pagination.normalize(params)
       end
 
     end

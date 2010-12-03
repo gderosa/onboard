@@ -54,7 +54,7 @@ class OnBoard
     end
 
     get '/services/radius/accounting.:format' do
-      params.update Pagination.normalize(params)
+      use_pagination_defaults
       format(
         :module => 'radius-admin',
         :path => '/services/radius/accounting',
