@@ -3,22 +3,29 @@
 
   best_passwd_type  = 'SSHA1-Password'
   passwd_types      = OnBoard::Service::RADIUS::Passwd::TYPES
+
+  columns       = objects['columns']  
+  rows          = objects['rows']
+  total_items   = objects['total_items']
+  page          = objects['page']
+  per_page      = objects['per_page']
+
 %>
 
 <style type="text/css">
-  table tr th[scope="row"] {
+  table#new-user tr th[scope="row"] {
     font-size: 95%;
   }
-  th select, th .optinfo {
+  table#new-user tr th select, table#new-user tr th .optinfo {
     width: 40ex;
   }
-  table tr td  {
+  table#new-user tr td  {
     vertical-align: top;
   }
-  table tr td, table tr th {
+  table#new-user tr td, table tr th {
     padding: 1ex;
   }
-  input {
+  table#new-user tr td input {
     width: 24ex;
   }
 </style>
@@ -27,10 +34,32 @@
 
 <h2>RADIUS Users</h2>
 
+<table>
+  <thead>
+    <tr>
+      <th>User-Name</th>
+      <th>
+        Attribute
+        <div class="optinfo" style="text-align:center;">(password type)</div>
+      </th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% rows.each do |row| %>
+      <tr>
+        <td><%= row[columns['User-Name'].to_sym] %></td>
+        <td><%= row[columns['Attribute'].to_sym] %></td>
+        <td><%= row[columns['Value'].to_sym] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
 <h3>Create new user</h3>
 
 <form method="POST">
-  <table>
+  <table id="new-user">
     <tbody>
       <tr>
         <th scope="row">User-Name</th>

@@ -49,7 +49,7 @@ class OnBoard
         :module   => 'radius-admin',
         :path     => '/services/radius/users',
         :format   => params[:format],
-        :objects  => nil,
+        :objects  => Service::RADIUS::Check.get(params),
         :msg      => msg
       )
     end
