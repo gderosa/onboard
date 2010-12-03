@@ -12,6 +12,10 @@ class OnBoard
 
       CONFFILE = File.join CONFDIR, 'current/radius.conf.yaml'
 
+      class Conflict < RuntimeError; end
+      class BadRequest < RuntimeError; end
+      class UserAlreadyExists < Conflict; end
+
       class << self
         def conf
           unless class_variable_defined? :@@conf and @@conf

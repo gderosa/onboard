@@ -13,6 +13,10 @@ class OnBoard
             conf      = RADIUS.read_conf
             table     = conf['check']['table'].to_sym
             col       = conf['check']['columns'].symbolize_values
+            if RADIUS.db[table].where(
+                col['User-Name'] => params['check']['User-Name'] ).any?
+              raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
+            end
             RADIUS.db[table].insert(
               col['User-Name']  => params['check']['User-Name'],
               col['Operator']   => ':=',

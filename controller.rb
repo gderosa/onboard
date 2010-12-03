@@ -230,6 +230,19 @@ class OnBoard
         end  
       end
 
+      def message_partial(msg={:ok=>true}) 
+        erb(
+          :"/_messages.html",
+          {
+            :layout => false,
+            :locals => {
+              :msg => msg,
+              :status => status
+            }
+          }
+        )
+      end
+
       # much simpler version, no multiple formats here
       def format_file(h)
         if h[:module] 

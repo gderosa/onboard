@@ -43,11 +43,20 @@ class OnBoard
     end
 
     post '/services/radius/users.:format' do
+      msg = {}
+      begin
+        insert = Service::RADIUS::Check.insert(params)
+        msg[:ok] = true
+      rescue Service::RADIUS::Conflict
+        status 409
+        msg[:err] = $!
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users',
         :format   => params[:format],
-        :objects  => Service::RADIUS::Check.insert(params)    
+        :objects  => insert,
+        :msg      => msg
       )
     end
 
