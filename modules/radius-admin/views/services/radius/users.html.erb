@@ -56,6 +56,18 @@
   </tbody>
 </table>
 
+<%=
+  erb(
+    :"_paginator.html",
+    :layout => false,
+    :locals => {
+      :page => page,
+      :per_page => per_page,
+      :total_items => total_items
+    }
+  )
+%>
+
 <h3>Create new user</h3>
 
 <form method="POST">
