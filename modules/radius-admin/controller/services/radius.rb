@@ -38,7 +38,7 @@ class OnBoard
         :module   => 'radius-admin',
         :path     => '/services/radius/users',
         :format   => params[:format],
-        :objects  => Service::RADIUS::User.get_all # no CamelCase here :)
+        :objects  => nil # no CamelCase here :)
       )
     end
 

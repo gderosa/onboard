@@ -7,7 +7,6 @@ class OnBoard
       
       autoload :DEFAULTS,     'onboard/service/radius/defaults'
       autoload :Accounting,   'onboard/service/radius/accounting'
-      autoload :User,         'onboard/service/radius/user'
       autoload :Check,        'onboard/service/radius/check'
       autoload :Passwd,       'onboard/service/radius/passwd'
 
