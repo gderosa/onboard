@@ -18,7 +18,7 @@ class OnBoard
             per_page  = params[:per_page].to_i
             select    = RADIUS.db[table].select(
               *columns.symbolize_all.values
-            )
+            ).order_by columns['User-Name'].to_sym
             {
               'columns'     => columns,
               'rows'        => select.paginate(page, per_page).to_a,
