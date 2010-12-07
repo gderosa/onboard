@@ -44,6 +44,7 @@ class OnBoard
     end
 
     post '/services/radius/users.:format' do
+      use_pagination_defaults
       msg = handle_errors{Service::RADIUS::Check.insert(params)} 
       format(
         :module   => 'radius-admin',
