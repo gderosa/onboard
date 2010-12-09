@@ -10,12 +10,15 @@ pages = ( total_items.to_f / per_page.to_f ).ceil
 
 %>
 
-<div class="paginator">
-  <% (1..pages).each do |page_n| %>
-    <% if page.to_i == page_n %>
-      <%= page_n %>
-    <% else %>
-      <a href="?<%= Rack::Utils.build_query request.GET.merge('page' => page_n) %>"><%= page_n %></a> 
+<% if pages > 1 %>
+  <div class="paginator">
+    <% (1..pages).each do |page_n| %>
+      <% if page.to_i == page_n %>
+        <%= page_n %>
+      <% else %>
+        <a href="?<%= Rack::Utils.build_query request.GET.merge('page' => page_n) %>"><%= page_n %></a> 
+      <% end %>
     <% end %>
-  <% end %>
-</div>
+  </div>
+<% end %>
+
