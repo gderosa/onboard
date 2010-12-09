@@ -233,8 +233,8 @@ class OnBoard
         return msg
       end
 
-      def use_pagination_defaults
-        params.update OnBoard::Pagination.normalize(params)
+      def use_pagination_defaults()
+        params.update OnBoard::Pagination.normalize(params) 
       end
 
     end

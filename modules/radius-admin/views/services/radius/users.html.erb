@@ -4,14 +4,10 @@
   best_passwd_type  = 'SSHA1-Password'
   passwd_types      = OnBoard::Service::RADIUS::Passwd::TYPES
 
-  #columns       = objects['columns']  
-  #rows          = objects['rows']
-
-  users         = objects['users']
-
-  total_items   = objects['total_items']
-  page          = objects['page']
-  per_page      = objects['per_page']
+  users             = objects['users']
+  page              = objects['page']
+  per_page          = objects['per_page']
+  total_items       = objects['total_items']
 
 %>
 
@@ -40,11 +36,11 @@
 
 <h2>RADIUS Users</h2>
 
-<h3>users list</h3>
+<h3>Users list</h3>
 
 <% users.each_with_index do |user, i| %>
   <% 
-    html = %q{<a href="users/#{user['name']}.html">#{user['name']}</a>} 
+    html = %Q{<a href="users/#{user.name}.html">#{user.name}</a>} 
   %>
   <%= html %><% unless i == users.length - 1 %>, <% end %>
 <% end %>

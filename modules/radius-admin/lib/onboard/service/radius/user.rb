@@ -6,61 +6,46 @@ require 'onboard/extensions/hash'
 class OnBoard
   module Service
     module RADIUS
-      module Check
+      class User
 
         class << self
 
           def get(params)
             conf      = RADIUS.read_conf
             table     = conf['check']['table'].to_sym
-            columns   = conf['check']['columns']
-            page      = params[:page].to_i
+            column    = conf['check']['columns']['User-Name'].to_sym
+            page      = params[:page].to_i 
             per_page  = params[:per_page].to_i
-            select    = RADIUS.db[table].select(
-              *columns.symbolize_all.values
-            ).order_by columns['User-Name'].to_sym
+            select    = RADIUS.db[table].select(column).group_by(column)
+            users     = select.paginate(page, per_page).map{|h| h[column]} 
+
             {
-              'columns'     => columns,
-              'rows'        => select.paginate(page, per_page).to_a,
               'total_items' => select.count,
               'page'        => page,
-              'per_page'    => per_page
+              'per_page'    => per_page,
+              'users'       => users.map{|u| new(u)} 
             }
           end
-
         
-          def insert(params)
-            conf      = RADIUS.read_conf
-            table     = conf['check']['table'].to_sym
-            col       = conf['check']['columns'].symbolize_values
-            if params['check']['User-Password'] != 
-                params['confirm']['check']['User-Password']
-              raise PasswordsDoNotMatch, 'Passwords do not match!'
-            end
-            if RADIUS.db[table].where(
-                col['User-Name'] => params['check']['User-Name'] ).any?
-              raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
-            end
-            RADIUS.db[table].insert(
-              col['User-Name']  => params['check']['User-Name'],
-              col['Operator']   => ':=',
-              col['Attribute']  => params['check']['Password-Type'],
-              col['Value']      => RADIUS.compute_password(
-                :type             => params['check']['Password-Type'],
-                :cleartext        => params['check']['User-Password']
-              ),
-            )
-            RADIUS.db[table].insert(
-              col['User-Name']  => params['check']['User-Name'],
-              col['Operator']   => ':=',
-              col['Attribute']  => 'Auth-Type',
-              col['Value']      => params['check']['Auth-Type'],
-            ) if params['check']['Auth-Type'] =~ /\S/
-          end
-
         end
+
+        attr_reader :name
+
+        def initialize(username)
+          @name = username
+        end
+
+        def to_h
+          {
+            'name' => @name
+          }
+        end
+
+        def to_json(*args); to_h.to_json(*args); end
+        def to_yaml(*args); to_h.to_yaml(*args); end
 
       end
     end
   end
-end 
+end
+
