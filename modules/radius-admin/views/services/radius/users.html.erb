@@ -1,4 +1,4 @@
-<% 
+<% # -*- coding: UTF-8 -*-
   require 'onboard/service/radius/passwd'
 
   best_passwd_type  = 'SSHA1-Password'
@@ -38,13 +38,22 @@
 
 <h3>Users list</h3>
 
-<% users.each_with_index do |user, i| %>
-  <% 
-    html = %Q{<a href="users/#{user.name}.html">#{user.name}</a>} 
-  %>
-  <%= html %><% unless i == users.length - 1 %>, <% end %>
-<% end %>
-
+<table>
+  <thead>
+    <tr>
+      <th>
+        Name
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% users.each do |user| %>
+      <tr>
+        <td><a href="users/<%= user.name %>.html"><%= user.name %></a></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 <%=
   erb(
     :"_paginator.html",

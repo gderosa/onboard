@@ -1,3 +1,5 @@
+require 'rack/utils'
+
 require 'sequel'
 require 'sequel/extensions/pagination'
 
@@ -39,7 +41,7 @@ class OnBoard
             end
             if RADIUS.db[table].where(
                 col['User-Name'] => params['check']['User-Name'] ).any?
-              raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
+              raise UserAlreadyExists, "User '#{Rack::Utils::escape_html params['check']['User-Name']}' already exists!"
             end
             RADIUS.db[table].insert(
               col['User-Name']  => params['check']['User-Name'],
