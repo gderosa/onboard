@@ -28,6 +28,9 @@
   table#new-user tr td input {
     width: 24ex;
   }
+  table#new-user tr th div.optinfo {
+    margin-top: 0.2em;
+  }
 </style>
 
 <%= message_partial(msg) %>
@@ -89,7 +92,7 @@
             <% end %>
           </select>
           <div class="optinfo">
-            Password types reflect the way passwords are encrypted in the
+            Password types reflect the way they are encrypted in the
             database. The strongest method is SSHA1. Cleartext should be used
             only if clients authenticate using <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a>.
           </div>
@@ -102,6 +105,26 @@
             <input type="password" name="confirm[check][User-Password]"/><br/>
             <span class="optinfo">(confirm)</span>
           </div>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row" style="font-style:italic;">
+          User is
+          <div class="optinfo">
+            Technically, sets the <code>Auth-Type</code> RADIUS attribute 
+            (more info&nbsp;<a 
+              href="http://wiki.freeradius.org/Auth-Type">here</a>).
+          </div>
+        </th>
+        <td>
+          <fieldset>
+            <input type="radio" name="Auth-Type" value="Reject"/>
+              Disabled<br/>
+            <input type="radio" name="Auth-Type" value="" checked/>
+              Enabled<br/>
+            <input type="radio" name="Auth-Type" value="Accept"/>
+              Always accepted (guest user)
+          </fieldset>
         </td>
       </tr>
     </tbody>
