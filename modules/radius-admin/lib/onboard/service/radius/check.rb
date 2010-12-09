@@ -50,6 +50,12 @@ class OnBoard
                 :cleartext        => params['check']['User-Password']
               ),
             )
+            RADIUS.db[table].insert(
+              col['User-Name']  => params['check']['User-Name'],
+              col['Operator']   => ':=',
+              col['Attribute']  => 'Auth-Type',
+              col['Value']      => params['check']['Auth-Type'],
+            ) if params['check']['Auth-Type'] =~ /\S/
           end
 
         end
