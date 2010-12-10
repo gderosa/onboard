@@ -1,7 +1,7 @@
 <h2>Users and Passwords</h2>
 <h3>Administrator’s password</h3>
 <%= 
-  erb(
+  erubis(
     :"/_messages.html",
     {
       :layout => false,
