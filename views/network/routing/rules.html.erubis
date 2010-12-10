@@ -16,21 +16,9 @@
 
 <h2><%= title %></h2>
 
-<!--
-  <pre>
-    <%= 
-      # html_escape params.pretty_inspect 
-    %>
-  </pre>
-  <pre>
-    <%= 
-      # html_escape all_rules.map{|x| x.data}.pretty_inspect 
-    %>
-  </pre>
--->
 
 <%= 
-  erb(
+  erubis(
     :"_messages.html",
     {
       :layout => false,
@@ -45,7 +33,7 @@
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <%=
-    erb(
+    erubis(
       :"network/routing/_rules.html",
       {
         :layout => false,
@@ -65,7 +53,7 @@
 
 <form method="POST">
   <%=
-    erb(
+    erubis(
       :"network/routing/_rules.html",
       {
         :layout => false,

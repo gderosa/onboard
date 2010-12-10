@@ -49,7 +49,7 @@
         
         <td>
           <%= 
-            erb(
+            erubis(
               :"/network/_interface_chooser.html",
               {
                 :layout => false,
@@ -65,7 +65,7 @@
         </td>
         <td>
           <%= 
-            erb(
+            erubis(
               :"/network/_interface_chooser.html",
               {
                 :layout => false,
@@ -82,7 +82,7 @@
 
         <td>
           <%= 
-            erb(
+            erubis(
               :"/network/routing/_table_chooser.html",
               {
                 :layout => false,

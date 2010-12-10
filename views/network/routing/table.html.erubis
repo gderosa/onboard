@@ -13,14 +13,6 @@
 
 %>
 
-<!-- 
-<h2>
-  Routing Table: 
-    <%= 
-      # name || number 
-    %>
-</h2> 
--->
 <h2><%= title %></h2>
 
 <% 
@@ -39,7 +31,7 @@
 <% end %>
 
   <%=
-    erb(
+    erubis(
       :"/_messages.html",
       {
         :layout => false,

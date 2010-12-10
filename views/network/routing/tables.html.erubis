@@ -10,7 +10,7 @@
 <h2><%= title %></h2>
 
 <%= 
-  erb(
+  erubis(
     :"_messages.html",
     {
       :layout => false,
@@ -22,7 +22,7 @@
 <h3>System tables</h3>
 
 <%= 
-  erb(
+  erubis(
     :"network/routing/_tables.html",
     {
       :layout => false,
@@ -38,7 +38,7 @@
 <h3>Custom tables</h3>
 
 <%= 
-  erb(
+  erubis(
     :"network/routing/_tables.html",
     {
       :layout => false,
