@@ -10,13 +10,23 @@ class OnBoard
 
         class << self
 
+          def setup
+            @@conf      ||= RADIUS.read_conf
+            @@sqltable  ||= @@conf['check']['table'].to_sym
+            @@columns   ||= @@conf['check']['columns'].symbolize_values
+          end
+
+          def setup!
+            @@conf = @@sqltable = @@columns = nil
+            setup
+          end
+
           def get(params)
-            conf      = RADIUS.read_conf
-            table     = conf['check']['table'].to_sym
-            column    = conf['check']['columns']['User-Name'].to_sym
+            setup
+            column    = @@conf['check']['columns']['User-Name'].to_sym
             page      = params[:page].to_i 
             per_page  = params[:per_page].to_i
-            select    = RADIUS.db[table].select(column).group_by(column)
+            select    = RADIUS.db[@@sqltable].select(column).group_by(column)
             users     = select.paginate(page, per_page).map do |h| 
               h[column].force_encoding 'utf-8'
             end
@@ -34,7 +44,7 @@ class OnBoard
         attr_reader :name
 
         def initialize(username)
-          @name = username
+          @name             = username
         end
 
         def to_h
