@@ -10,7 +10,7 @@ require 'find'
 require 'json'
 require 'yaml'
 require 'logger'
-require 'pp'
+require 'rack/utils'
 
 require 'onboard/extensions/object'
 require 'onboard/extensions/object/deep'
