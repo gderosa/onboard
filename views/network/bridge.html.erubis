@@ -34,10 +34,10 @@
           <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
         </td>
         <% %w{state mtu}.each do |field| %>
-          <td><div><%= html_escape netif.data[field] %></div></td>
+          <td><div><%== netif.data[field] %></div></td>
         <% end %>
         <td>
-          <div><code><%= html_escape netif.data['mac'] %></code></div>
+          <div><code><%== netif.data['mac'] %></code></div>
         </td>
         <td>
           <% some_ip_printed = false %>
@@ -121,7 +121,7 @@
               <button title="Remove from the bridge" type="submit" name="brctl[delif][<%= objects[:bridge].name %>][<%= netif.name %>]" value="yes"><img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="remove"/></button>
             </td>
             <%=
-              erb(
+              erubis(
                 :"network/_interfaces_row.html",
                 {
                   :layout => false,
@@ -153,7 +153,7 @@
               <button title="Add interface to the bridge" type="submit" name="brctl[addif][<%= objects[:bridge].name %>][<%= netif.name %>]" value="yes"><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="add"/></button>
             </td>
             <%=
-              erb(
+              erubis(
                 :"network/_interfaces_row.html",
                 {
                   :layout => false,

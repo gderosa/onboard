@@ -19,7 +19,7 @@
       </thead>
       <tbody>
         <%=
-            erb(
+            erubis(
               :"network/_interfaces_rows.html",
               {
                 :layout => false,

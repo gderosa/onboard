@@ -7,7 +7,7 @@
 <% if objects.class == Array %>
   <h2><%= title %></h2>
   <%= 
-    erb(
+    erubis(
       :"network/_interfaces_table.html", 
       {
         :layout => false, 
@@ -20,7 +20,7 @@
       <% netif = objects %>
       <h2>Network interface: <%= netif.name %></h2>
       <div class="item">
-        <pre><%= html_escape netif.pretty_inspect  %></pre>
+        <pre><%== netif.pretty_inspect  %></pre>
       </div>
 
       <a href="<%= request.path_info.to_dir + '/ip.html' %>">

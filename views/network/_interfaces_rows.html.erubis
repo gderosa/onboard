@@ -20,7 +20,7 @@
           %>
           <tr title="<%= title %>">
             <%=
-              erb(
+              erubis(
                 :"network/_interfaces_row.html",
                 {
                   :layout => false,
