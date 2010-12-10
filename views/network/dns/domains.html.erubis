@@ -20,7 +20,7 @@
 <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html">Dnsmasq</a>.</p>
 
   <%=
-    erb(
+    erubis(
       :"/_messages.html",
       {
         :layout => false,
