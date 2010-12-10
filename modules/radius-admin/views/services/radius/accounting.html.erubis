@@ -46,7 +46,7 @@
 </table>
 
 <%= 
-  erb(
+  erubis(
     :"_paginator.html",
     :layout => false,
     :locals => {
