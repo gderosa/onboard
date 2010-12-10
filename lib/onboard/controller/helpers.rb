@@ -113,7 +113,6 @@ class OnBoard
             layout = :"layout.html"
           end
           content_type 'text/html', :charset => 'utf-8'
-          p layout
           return erubis(
             (h[:path] + '.html').to_sym,
             :layout   => layout,
