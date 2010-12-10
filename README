@@ -49,7 +49,7 @@ Gems:
 C/C++ build environment; and, if you installed a pre-packaged ruby, you
 will need header files from a package named ruby-dev or something alike)
 
-gem install rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets hierarchical_menu --no-ri --no-rdoc
+gem install erubis rack rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets hierarchical_menu --no-ri --no-rdoc
 
 Gem version specific requirements:
 
