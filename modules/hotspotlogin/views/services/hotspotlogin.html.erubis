@@ -42,7 +42,7 @@
 <h2>HotSpot Login page</h2>
 
 <%=
-  erb(
+  erubis(
     :"/_messages.html",
     {
       :layout => false,
