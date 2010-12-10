@@ -8,7 +8,7 @@
       <ul>
       <% ary.each do |logh| %>
         <li>
-          <a href="logs/<%= logh['id'] or url_encode(logh['path']) %>.html"><%= logh['path'] %></a>
+          <a href="logs/<%= logh['id'] or Rack::Utils.escape(logh['path']) %>.html"><%= logh['path'] %></a>
         </li>
       <% end %>
       </ul>
@@ -19,6 +19,6 @@
   <% log = objects %>
   <h2>Log: <%= log.data['meta']['path'] %></h2>
   <%= 
-      erb(:"system/_log.html", :layout => false, :locals => {:log => log})  
+      erubis(:"system/_log.html", :layout => false, :locals => {:log => log})  
   %>
 <% end %>
