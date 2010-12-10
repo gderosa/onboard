@@ -22,7 +22,7 @@
 <h2>OpenVPN</h2>
 
 <%=
-  erb(
+  erubis(
     :"/_messages.html",
     {
       :layout => false,
@@ -119,13 +119,13 @@
         <td rowspan="<%= rowspan %>">
           <select name="cert">
             <% nonserver.each_pair do |name, h| %>
-              <option value="<%= name %>"><%= html_escape name %></option>
+              <option value="<%= name %>"><%== name %></option>
             <% end %>
             <% server.each_pair do |name, h| %>
-              <option class="lowlight" value="<%= name %>"><%= html_escape name %></option>
+              <option class="lowlight" value="<%= name %>"><%== name %></option>
             <% end %>
             <% bad.each_pair do |name, h| %>
-              <option title="Certificate with errors!" class="error" disabled><%= html_escape name %></option>
+              <option title="Certificate with errors!" class="error" disabled><%== name %></option>
             <% end %>
           </select>
         </td>
@@ -134,12 +134,12 @@
             <% if ssl['ca'] %>
               <% name = ssl['ca']['subject']['CN'] %>
               <option style="font-weight:bold;" class="highlight" value="__default__" selected>
-                <%= html_escape name %>
+                <%== name %>
               </option>
             <% end %>
             <% ssl['certs'].each_pair do |name, h| %>
               <% if h['cert']['is_ca'] %>
-                <option value="<%= name %>"><%= html_escape name %></option>
+                <option value="<%= name %>"><%==  name %></option>
               <% end %>
             <% end %>
           </select>
@@ -257,12 +257,12 @@
             %>
             <optgroup label="Server Certificates">
               <%  good.each_pair do |name, h| %>
-                <option value="<%= name %>"><%= html_escape name %></option>
+                <option value="<%= name %>"><%== name %></option>
               <% end %>
             </optgroup>
             <optgroup title="Not recommended for a VPN server!" label="Not server-type Certs.">
               <% bad.each_pair do |name, h| %>
-                <option class="lowlight" value="<%= name %>"><%= html_escape name %></option>
+                <option class="lowlight" value="<%= name %>"><%== name %></option>
               <% end %>
             </optgroup>
           </select>
@@ -272,12 +272,12 @@
             <% if ssl['ca'] %>
               <% name = ssl['ca']['subject']['CN'] %>
               <option style="font-weight:bold;" class="highlight" value="__default__" selected>
-                <%= html_escape name %>
+                <%== name %>
               </option>
             <% end %>
             <% ssl['certs'].each_pair do |name, h| %>
               <% if h['cert']['is_ca'] %>
-                <option value="<%= name %>"><%= html_escape name %></option>
+                <option value="<%= name %>"><%== name %></option>
               <% end %>
             <% end %>
           </select>

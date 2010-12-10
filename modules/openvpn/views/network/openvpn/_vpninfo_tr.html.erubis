@@ -103,7 +103,7 @@ locals automatically provided by format() helper:
           rescue
             begin
               errortext = "Certificate error: "
-              text = html_escape vpn.data['cert']['err']
+              text = Rack::Utils.escape_html vpn.data['cert']['err']
               cssclass = "error"
               cssclass2 = "lowlight"
             rescue
@@ -188,10 +188,10 @@ locals automatically provided by format() helper:
             <%= errortext %>
             <% if text.respond_to? :each %>
               <% text.each do |t| %>
-                <div><%= html_escape t %></div>
+                <div><%== t %></div>
               <% end %>
             <% else %>
-              <%= html_escape text %>
+              <%== text %>
             <% end %>
           </span>
         </td>

@@ -63,7 +63,7 @@
       %>
       <tr>
         <td style="text-align:center; padding:0.4em;"><a class="img" href="<%= href %>"><img style="vertical-align:middle; " alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
-        <td><%= html_escape cert['subject']['CN'] %></td>
+        <td><%== cert['subject']['CN'] %></td>
         <td>
           <%= 
             ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(

@@ -22,7 +22,7 @@
     <% elsif msg[:log] %>
       <div class="error">
         Something went wrong. 
-<a href="/system/logs/<%= url_encode msg[:log] %>.html">Check the log</a> 
+<a href="/system/logs/<%= Rack::Utils.escape msg[:log] %>.html">Check the log</a> 
         for more details.
       </div>
     <% elsif msg[:err_html] =~ /\S/ %>

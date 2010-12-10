@@ -80,7 +80,7 @@
                 ''
             %>
             <td>
-              <textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off><%= html_escape text %></textarea>
+              <textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
             </td>
             <td></td>
           </tr>
@@ -97,13 +97,13 @@
                   # end
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['iroutes'])
                 %>
-                <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= html_escape text %></textarea> 
+                <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea> 
               </td>
               <td>
                 <% 
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['push']['routes'])
                 %>
-                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= html_escape text %></textarea>
+                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
               </td>
               <td style="text-align: center;">
                 <input type="checkbox" name="clients[][delete]"/> 
@@ -174,7 +174,7 @@
 
 <h3><span class="product-name">OpenVPN</span> log</h3>
 <%=
-  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
+  erubis(:"system/_log.html", :layout => false, :locals => {:log => log})
 %>
 
 
