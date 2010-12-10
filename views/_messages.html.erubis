@@ -16,8 +16,8 @@
   <% if not msg[:ok] %>
     <% if msg[:stderr] =~ /\S/ %>
       <div class="error">
-        <em>Command &ldquo;<code><%= html_escape msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
-        <pre><%= html_escape msg[:stderr].strip %></pre>
+        <em>Command &ldquo;<code><%= msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
+        <pre><%= msg[:stderr].strip %></pre>
       </div>
     <% elsif msg[:log] %>
       <div class="error">
@@ -28,7 +28,7 @@
     <% elsif msg[:err_html] =~ /\S/ %>
       <div class="error"><%= msg[:err_html] %></div>
     <% elsif msg[:err].to_s =~ /\S/ %>
-      <pre class="error"><%= html_escape msg[:err].to_s %></pre>
+      <pre class="error"><%= msg[:err].to_s %></pre>
     <% end %>
   <% end %>
   <% if msg[:warn] =~ /\S/ %>

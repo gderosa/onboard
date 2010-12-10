@@ -1,16 +1,15 @@
-# encoding: utf-8
+# encoding: UTF-8
 
 require 'rubygems'
 require 'thin' 
 require 'sinatra/base'
 require 'sinatra/r18n'
 require 'locale'
-require 'erb'
+require 'erubis'
 require 'find'
 require 'json'
 require 'yaml'
 require 'logger'
-require 'pp'
 
 require 'onboard/extensions/object'
 require 'onboard/extensions/object/deep'
@@ -114,7 +113,8 @@ class OnBoard
             layout = :"layout.html"
           end
           content_type 'text/html', :charset => 'utf-8'
-          return erb(
+          p layout
+          return erubis(
             (h[:path] + '.html').to_sym,
             :layout   => layout,
             :locals   => {
@@ -174,7 +174,7 @@ class OnBoard
       end
 
       def message_partial(msg={:ok=>true}) 
-        erb(
+        erubis(
           :"/_messages.html",
           {
             :layout => false,
@@ -191,7 +191,7 @@ class OnBoard
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
         end
-        return erb(
+        return erubis(
           h[:path].to_sym,
           :layout   => false,
           :locals   => h[:locals] 

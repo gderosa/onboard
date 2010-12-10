@@ -5,7 +5,7 @@ require 'thin'
 require 'sinatra/base'
 require 'sinatra/r18n'
 require 'locale'
-require 'erb'
+require 'erubis'
 require 'find'
 require 'json'
 require 'yaml'
@@ -59,8 +59,6 @@ class OnBoard
     IconDir = '/icons/gnome/gnome-icon-theme-2.18.0'
     IconSize = '16x16'
     
-    include ERB::Util
-
     @@formats = %w{html json yaml} # order matters
     @@formats << 'rb' if development?
 
