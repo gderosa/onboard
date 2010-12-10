@@ -28,7 +28,7 @@ class OnBoard
 
     # Several options are not enabled by default if you inherit from 
     # Sinatra::Base .
-    enable :methodoverride, :static, :show_exceptions
+    enable :method_override, :static, :show_exceptions
     
     set :root, OnBoard::ROOTDIR
 

@@ -69,6 +69,7 @@
 <h3>Create new user</h3>
 
 <form method="POST">
+  <input type="hidden" name="_method" value="post"/>
   <table id="new-user">
     <tbody>
       <tr>

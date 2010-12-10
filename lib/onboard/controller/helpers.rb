@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'thin' 
+require 'rack/utils'
 require 'sinatra/base'
 require 'sinatra/r18n'
 require 'locale'
@@ -234,6 +235,15 @@ class OnBoard
 
       def use_pagination_defaults()
         params.update OnBoard::Pagination.normalize(params) 
+      end
+
+      def query_string_merge(h)
+        # Rack::Request#GET doesn't play well when :method_ovveride
+        # is enabled in Sinatra. 
+        get_params = Rack::Utils.parse_query(request.query_string)
+        Rack::Utils.build_query(
+          get_params.merge(h) 
+        )
       end
 
     end
