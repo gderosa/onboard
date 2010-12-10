@@ -3,7 +3,7 @@
 <h2>DHCP Server</h2>
 
   <%=
-    erb(
+    erubis(
       :"/_messages.html",
       {
         :layout => false,
@@ -186,7 +186,7 @@
           <td style="<%= style %>"><%= lease['name'] %></td>
           <td style="<%= style %>"><%= lease['mac'] %></td>
           <td style="<%= style %>"><%= lease['ip'] %></td>
-          <td style="<%= style %>"><%= expiry %></td> <% #... here %>
+          <td style="<%= style %>"><%= expiry %></td> <%#... here %>
         </tr>
       <% end %>
     </tbody>
