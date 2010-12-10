@@ -1,5 +1,6 @@
 <% # encoding: utf-8
   
+  require 'rack/utils'
   require 'i18n_data' 
   require 'date'
 
@@ -56,7 +57,7 @@
     <% objects['certs'].each_pair do |name, cert| %>
       <tr>
         <td style="text-align: center;">
-          <form method="POST" action="/crypto/easy-rsa/certs/<%= url_encode name %>.crt">
+          <form method="POST" action="/crypto/easy-rsa/certs/<%= Rack::Utils.escape name %>.crt">
             <input type="hidden" name="_method" value="delete"/>
             <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
               <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
@@ -66,7 +67,7 @@
         <% if cert['cert']['err'] and not cert['cert']['ok'] %>
           <td colspan="0" class="error">Certificate Error for &ldquo;<code><%= name %>.crt</code>&rdquo;: <code><%= cert['cert']['err'] %></code></td>
         <% else %>
-          <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= url_encode name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
+          <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= Rack::Utils.escape name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
           <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
           <td><%= '<strong class="superhighlight" title="Signed by our internal Certificate Authority">' if cert['signed_by_our_CA'] %><%= cert['cert']['issuer']['CN'] %><%= '</strong>' if cert['signed_by_our_CA'] %></td>
           <td>
@@ -279,10 +280,10 @@
         <td style="text-align:center;">
           <select name="C">
             <% country_codes_by_name.each do |cc| %>
-              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%= html_escape countries[cc] %>">
+              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%== countries[cc] %>">
                 <%
                   truncate = 18
-                  country_html = html_escape countries[cc][0..truncate] 
+                  country_html = Rack::Utils.escape_html countries[cc][0..truncate] 
                       # truncate to not mess the page layout
                       #
                   country_html << "&hellip;" if countries[cc].length > truncate
