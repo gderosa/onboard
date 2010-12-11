@@ -155,7 +155,7 @@ class OnBoard
                 x_headers.length > 0
           end
 
-          return h[:objects].deep_rekey{|k| k.to_s}.to_(h[:format]) 
+          return h[:objects].to_(h[:format]) 
 
         when 'rb'
           if options.environment == :development
