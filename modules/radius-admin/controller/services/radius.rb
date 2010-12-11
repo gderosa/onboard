@@ -57,7 +57,7 @@ class OnBoard
 
     get '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
-      user.retrieve_attributes_from Service::RADIUS.db
+      user.retrieve_attributes_from_db
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users/user',

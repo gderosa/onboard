@@ -12,12 +12,14 @@ class OnBoard
 
           def setup
             @@conf      ||= RADIUS.read_conf
-            @@sqltable  ||= @@conf['check']['table'].to_sym
-            @@columns   ||= @@conf['check']['columns'].symbolize_values
+            @@chktable  ||= @@conf['check']['table'].to_sym
+            @@chkcols   ||= @@conf['check']['columns'].symbolize_values
+            @@rpltable  ||= @@conf['reply']['table'].to_sym
+            @@rplcols   ||= @@conf['reply']['columns'].symbolize_values
           end
 
           def setup!
-            @@conf = @@sqltable = @@columns = nil
+            @@conf = @@chktable = @@chkcols = @@rpltable = @@rplcols = nil
             setup
           end
 
@@ -26,9 +28,9 @@ class OnBoard
             column    = @@conf['check']['columns']['User-Name'].to_sym
             page      = params[:page].to_i 
             per_page  = params[:per_page].to_i
-            select    = RADIUS.db[@@sqltable].select(column).group_by(column)
+            select    = RADIUS.db[@@chktable].select(column).group_by(column)
             users     = select.paginate(page, per_page).map do |h| 
-              h[column].force_encoding 'utf-8'
+              h[column]
             end
 
             {
@@ -43,8 +45,15 @@ class OnBoard
 
         attr_reader :name
 
+        def setup;  self.class.setup;   end
+        def setup!; self.class.setup!;  end
+
         def initialize(username)
           @name             = username
+        end
+
+        def retrieve_attributes_from_db
+          setup
         end
 
         def to_h
