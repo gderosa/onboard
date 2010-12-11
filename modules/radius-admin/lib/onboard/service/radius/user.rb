@@ -1,6 +1,7 @@
 require 'sequel'
 require 'sequel/extensions/pagination'
 
+require 'onboard/extensions/object/deep'
 require 'onboard/extensions/hash'
 
 class OnBoard
@@ -54,16 +55,28 @@ class OnBoard
 
         def retrieve_attributes_from_db
           setup
+          @check = RADIUS.db[@@chktable].where(
+            @@chkcols['User-Name'] => @name
+          ).to_a
+          @reply = RADIUS.db[@@chktable].where(
+            @@chkcols['User-Name'] => @name
+          ).to_a
         end
 
         def to_h
           {
-            'name' => @name
+            :name  => @name,
+            :check => @check,
+            :reply => @reply,
           }
         end
 
-        def to_json(*args); to_h.to_json(*args); end
-        def to_yaml(*args); to_h.to_yaml(*args); end
+        def to_json(*args)
+          to_h.deep_rekey{|k|k.to_s}.to_json(*args)
+        end
+        def to_yaml(*args)
+          to_h.deep_rekey{|k|k.to_s}.to_yaml(*args)
+        end
 
       end
     end
