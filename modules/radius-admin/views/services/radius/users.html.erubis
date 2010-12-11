@@ -1,4 +1,5 @@
-<% # -*- coding: UTF-8 -*-
+<%# -*- coding: UTF-8 -*-%>
+<%
   require 'onboard/service/radius/passwd'
 
   best_passwd_type  = 'SSHA1-Password'

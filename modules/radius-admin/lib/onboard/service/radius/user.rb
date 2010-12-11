@@ -31,7 +31,7 @@ class OnBoard
             per_page  = params[:per_page].to_i
             select    = RADIUS.db[@@chktable].select(column).group_by(column)
             users     = select.paginate(page, per_page).map do |h| 
-              h[column]
+              h[column].force_encoding 'utf-8'
             end
 
             {
