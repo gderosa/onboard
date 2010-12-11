@@ -72,7 +72,7 @@ class OnBoard
         end
 
         def to_json(*args)
-          to_h.deep_rekey{|k|k.to_s}.to_json(*args)
+          to_h.to_json(*args)
         end
         def to_yaml(*args)
           to_h.deep_rekey{|k|k.to_s}.to_yaml(*args)
