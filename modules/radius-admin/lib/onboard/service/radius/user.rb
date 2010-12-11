@@ -44,7 +44,7 @@ class OnBoard
         
         end
 
-        attr_reader :name
+        attr_reader :name, :check, :reply
 
         def setup;  self.class.setup;   end
         def setup!; self.class.setup!;  end
@@ -58,7 +58,7 @@ class OnBoard
           @check = RADIUS.db[@@chktable].where(
             @@chkcols['User-Name'] => @name
           ).to_a
-          @reply = RADIUS.db[@@chktable].where(
+          @reply = RADIUS.db[@@rpltable].where(
             @@chkcols['User-Name'] => @name
           ).to_a
         end

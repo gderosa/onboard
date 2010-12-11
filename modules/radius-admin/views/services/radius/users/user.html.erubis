@@ -1,0 +1,34 @@
+<% 
+  user    = objects['user']
+  conf    = objects['conf']
+  chkcols = conf['check']['columns']
+  rplcols = conf['reply']['columns']
+%>
+<h2>RADIUS user: <%= user.name %></h2>
+
+<h3>Check attributes</h3>
+<table>
+  <% user.check.each do |row| %>
+    <tr>
+      <% %w{Attribute Operator Value}.each do |col| %>
+        <td>
+          <%== row[ chkcols[col].to_sym ] %> 
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<h3>Reply attributes</h3>
+<table>
+  <% user.reply.each do |row| %>
+    <tr>
+      <% %w{Attribute Operator Value}.each do |col| %>
+        <td>
+          <%== row[ rplcols[col].to_sym ] %> 
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+

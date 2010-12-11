@@ -62,7 +62,10 @@ class OnBoard
         :module   => 'radius-admin',
         :path     => '/services/radius/users/user',
         :format   => params[:format],
-        :objects  => user,
+        :objects  => {
+          'conf'    => Service::RADIUS.conf,
+          'user'    => user
+        },
       )
     end
 
