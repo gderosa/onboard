@@ -9,29 +9,7 @@
   page              = objects['page']
   per_page          = objects['per_page']
   total_items       = objects['total_items']
-
 %>
-
-<style type="text/css">
-  table#new-user tr th[scope="row"] {
-    font-size: 95%;
-  }
-  table#new-user tr th select, table#new-user tr th .optinfo {
-    width: 40ex;
-  }
-  table#new-user tr td  {
-    vertical-align: top;
-  }
-  table#new-user tr td, table tr th {
-    padding: 1ex;
-  }
-  table#new-user tr td input {
-    width: 24ex;
-  }
-  table#new-user tr th div.optinfo {
-    margin-top: 0.2em;
-  }
-</style>
 
 <%= message_partial(msg) %>
 
@@ -65,62 +43,15 @@
 
 <h3>Create new user</h3>
 
-<form method="POST">
-  <input type="hidden" name="_method" value="post"/>
-  <table id="new-user">
-    <tbody>
-      <tr>
-        <th scope="row">User-Name</th>
-        <td><input type="text" name="check[User-Name]"/></td>
-      </tr>
-      <tr>
-        <th scope="row">
-          <select name="check[Password-Type]">
-            <% passwd_types.each do |passwd_type| %>
-              <% selected = 
-                  (passwd_type == best_passwd_type ? 'selected' : '') %>
-                <option <%= selected %> value="<%= passwd_type %>">
-                  <%= passwd_type %>
-                </option>
-            <% end %>
-          </select>
-          <div class="optinfo">
-            Password types reflect the way they are encrypted in the
-            database. The strongest method is SSHA1. Cleartext should be used
-            only if clients authenticate using <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a>.
-          </div>
-        </th>
-        <td>
-          <div style="margin-top:0;"> 
-            <input type="password" name="check[User-Password]"/>
-          </div>
-          <div style="margin-top:0.7em;">
-            <input type="password" name="confirm[check][User-Password]"/><br/>
-            <span class="optinfo">(confirm)</span>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row" style="font-style:italic;">
-          User is
-          <div class="optinfo">
-            Technically, sets the <code>Auth-Type</code> RADIUS attribute 
-            (more info&nbsp;<a 
-              href="http://wiki.freeradius.org/Auth-Type">here</a>).
-          </div>
-        </th>
-        <td>
-          <fieldset>
-            <input type="radio" name="check[Auth-Type]" value="Reject"/>
-              Disabled<br/>
-            <input type="radio" name="check[Auth-Type]" value="" checked/>
-              Enabled<br/>
-            <input type="radio" name="check[Auth-Type]" value="Accept"/>
-              Always accepted (guest user)
-          </fieldset>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <button type="submit">Create</button>
-</form>
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/users/_form',
+    :locals => {
+      :passwd_types     => passwd_types,
+      :best_passwd_type => best_passwd_type,
+    }
+  )
+%>
+
+

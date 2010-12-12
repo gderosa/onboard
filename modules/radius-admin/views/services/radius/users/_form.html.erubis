@@ -1,16 +1,4 @@
 <%# -*- coding: UTF-8 -*-%>
-<%
-  require 'onboard/service/radius/passwd'
-
-  best_passwd_type  = 'SSHA1-Password'
-  passwd_types      = OnBoard::Service::RADIUS::Passwd::TYPES
-
-  users             = objects['users']
-  page              = objects['page']
-  per_page          = objects['per_page']
-  total_items       = objects['total_items']
-
-%>
 
 <style type="text/css">
   table#new-user tr th[scope="row"] {
