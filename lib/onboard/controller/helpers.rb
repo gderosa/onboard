@@ -173,6 +173,22 @@ class OnBoard
         end  
       end
 
+      def partial(h)
+        format(
+          h.update(
+            :format   => 'html',
+            :partial  => true
+          )
+        )
+      end
+
+      def paginator(h)
+        partial(
+          :path     => '_paginator',
+          :locals   => h
+        )
+      end
+
       def message_partial(msg={:ok=>true}) 
         erubis(
           :"/_messages.html",
