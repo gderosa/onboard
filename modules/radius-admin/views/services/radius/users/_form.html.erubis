@@ -4,31 +4,17 @@
   user ||= nil
 %>
 
-<style type="text/css">
-  table#new-user tr th[scope="row"] {
-    font-size: 95%;
-  }
-  table#new-user tr th select, table#new-user tr th .optinfo {
-    width: 40ex;
-  }
-  table#new-user tr td  {
-    vertical-align: top;
-  }
-  table#new-user tr td, table tr th {
-    padding: 1ex;
-  }
-  table#new-user tr td input {
-    width: 24ex;
-  }
-  table#new-user tr th div.optinfo {
-    margin-top: 0.2em;
-  }
-</style>
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/users/_form_style'
+  )
+%>
 
 
 <form method="POST">
   <input type="hidden" name="_method" value="post"/>
-  <table id="new-user">
+  <table class="raduserform">
     <tbody>
       <tr>
         <th scope="row">User-Name</th> 

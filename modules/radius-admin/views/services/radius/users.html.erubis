@@ -43,6 +43,7 @@
 
 <h3>Create new user</h3>
 
+<h4>Check Attributes</h4>
 <%= 
   partial(
     :module => 'radius-admin',
@@ -54,4 +55,15 @@
   )
 %>
 
+<h4>Reply Attributes</h4>
+<%=
+=begin  
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/users/_form_reply',
+    :locals => {
+    }
+  )
+=end
+%>
 
