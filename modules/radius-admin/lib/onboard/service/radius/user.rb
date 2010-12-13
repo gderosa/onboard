@@ -69,6 +69,7 @@ class OnBoard
               @@rplcols['User-Name']  => @name,
               @@rplcols['Attribute']  => attribute
             ).delete
+            next unless value =~ /\S/
             RADIUS.db[@@rpltable].insert(
               @@rplcols['User-Name']  => @name,
               @@rplcols['Attribute']  => attribute,
@@ -78,7 +79,11 @@ class OnBoard
           end
         end
 
+        def update_passwd(params)
+        end
+
         def update(params)
+          update_passwd(params)
           update_reply_attributes(params)
         end
 
