@@ -78,12 +78,51 @@ class OnBoard
             )
           end
         end
+        
+        def update_check_attributes(params) # no passwords
+          params['check'].each_pair do |attribute, value|
+            next if attribute =~ /-Password$/ or attribute =~ /^Password-/
+            RADIUS.db[@@chktable].filter(
+              @@chkcols['User-Name']  => @name,
+              @@chkcols['Attribute']  => attribute
+            ).delete
+            # Do not skip anything like Auth-Type = "" 
+            RADIUS.db[@@chktable].insert(
+              @@chkcols['User-Name']  => @name,
+              @@chkcols['Attribute']  => attribute,
+              @@chkcols['Operator']   => ':=',
+              @@chkcols['Value']      => value
+            )
+          end
+        end
 
         def update_passwd(params)
+          if params['check']['User-Password'] !=
+              params['confirm']['check']['User-Password']
+            raise PasswordsDoNotMatch, 'Passwords do not match!'
+          end
+          return unless params['check']['User-Password'] =~ /\S/
+          # so an incorrect Password-Type would raise an exception
+          encrypted_passwd = RADIUS.compute_password(
+            :type             => params['check']['Password-Type'],
+            :cleartext        => params['check']['User-Password']
+          )
+          RADIUS.db[@@chktable].filter(
+            @@chkcols['User-Name']  => @name
+          ).filter(
+            @@chkcols['Attribute'].like '%-Password'
+          ).delete
+          RADIUS.db[@@chktable].insert(
+            @@chkcols['User-Name']  => @name,
+            @@chkcols['Attribute']  => params['check']['Password-Type'],
+            @@chkcols['Operator']   => ':=',
+            @@chkcols['Value']      => encrypted_passwd
+          )
         end
 
         def update(params)
           update_passwd(params)
+          update_check_attributes(params)
           update_reply_attributes(params)
         end
 

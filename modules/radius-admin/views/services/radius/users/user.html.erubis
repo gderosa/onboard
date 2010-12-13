@@ -4,7 +4,7 @@
   chkcols = conf['check']['columns']
   rplcols = conf['reply']['columns']
 %>
-
+<%= message_partial(msg) %>
 <%=
   partial(
     :module => 'radius-admin',
