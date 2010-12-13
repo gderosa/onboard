@@ -119,6 +119,7 @@ class OnBoard
               row[@@rplcols['Value']]
           end
         end
+        alias attribute find_attribute_value_by_name
 
         def password_type
           row = find_attribute :check do |attrib, op, val|
