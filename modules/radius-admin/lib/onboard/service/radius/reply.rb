@@ -21,6 +21,7 @@ class OnBoard
               raise UserAlreadyExists, "User '#{Rack::Utils::escape_html params['check']['User-Name']}' already exists!"
             end
             params['reply'].each_pair do |attribute, value|
+              next unless value =~ /\S/
               RADIUS.db[table].insert(
                 col['User-Name']  => params['check']['User-Name'],
                 col['Operator']   => ':=',
