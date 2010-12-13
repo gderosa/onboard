@@ -5,7 +5,7 @@
   lowlight        = "#777" 
   superlowlight   = "#bbb" 
   hover           = "color: white; background: #{highlight};" 
-  lightbg         = "#faf4d0" 
+  lightbg         = "#f8f0c0" 
   serif           = %q{"Times New Roman", Times, Georgia, serif}
   sans_serif      = %q{Helvetica, Arial, sans-serif}
   monospace       = %q{monospace}

@@ -1,0 +1,46 @@
+<%#-*- coding: UTF-8 -*-%>
+
+<%
+  user ||= nil
+%>
+
+  <table class="raduserform">
+    <tbody>
+      <tr>
+        <th scope="row">Reply-Message</th> 
+        <td>
+          <% if user %>
+            <input type="text" readonly name="check[Reply-Message]" value="<%= user.reply_message %>">
+          <% else %>
+            <input type="text" name="check[Reply-Message]"/>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          Session-Tineout
+          <div class="optinfo">Max connection time (seconds)</div>
+        </th> 
+        <td>
+          <% if user %>
+            <input type="text" readonly name="check[Reply-Message]" value="<%= user.session_timeout %>">
+          <% else %>
+            <input type="text" name="check[Session-Timeout]"/>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          Idle-Timeout
+          <div class="optinfo">Max inactivity time (seconds)</div>
+        </th> 
+        <td>
+          <% if user %>
+            <input type="text" readonly name="check[Idle-Timeout]" value="<%= user.idle_timeout %>">
+          <% else %>
+            <input type="text" name="check[Idle-Timeout]"/>
+          <% end %>
+        </td>
+      </tr>
+    </tbody>
+  </table>

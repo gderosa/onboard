@@ -1,4 +1,10 @@
 <%# -*- coding: UTF-8 -*-%>
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style'
+  )
+%>
 <%
   require 'onboard/service/radius/passwd'
 
@@ -43,27 +49,26 @@
 
 <h3>Create new user</h3>
 
-<h4>Check Attributes</h4>
-<%= 
-  partial(
-    :module => 'radius-admin',
-    :path   => 'services/radius/users/_form',
-    :locals => {
-      :passwd_types     => passwd_types,
-      :best_passwd_type => best_passwd_type,
-    }
-  )
-%>
-
-<h4>Reply Attributes</h4>
-<%=
-=begin  
-  partial(
-    :module => 'radius-admin',
-    :path   => 'services/radius/users/_form_reply',
-    :locals => {
-    }
-  )
-=end
-%>
+<form class="raduserform" method="POST">
+  <h4>Check Attributes</h4>
+  <input type="hidden" name="_method" value="post"/>
+  <%= 
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/users/_form_check',
+      :locals => {
+        :passwd_types     => passwd_types,
+        :best_passwd_type => best_passwd_type,
+      }
+    )
+  %>
+  <h4>Reply Attributes</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/users/_form_reply',
+    )
+  %>
+  <button type="submit">Create</button>
+</form>
 

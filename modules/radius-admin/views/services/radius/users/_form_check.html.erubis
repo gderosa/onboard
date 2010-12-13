@@ -4,16 +4,6 @@
   user ||= nil
 %>
 
-<%= 
-  partial(
-    :module => 'radius-admin',
-    :path   => 'services/radius/users/_form_style'
-  )
-%>
-
-
-<form method="POST">
-  <input type="hidden" name="_method" value="post"/>
   <table class="raduserform">
     <tbody>
       <tr>
@@ -46,7 +36,7 @@
           </select>
           <div class="optinfo">
             <% if user %>
-              Password will be automatically encrypted as needed. Leave the 
+              Password will be automatically encrypted if required. Leave the 
               fields blank to leave the password unchanged. 
             <% else %>
               Password types reflect the way they are encrypted in the
@@ -55,7 +45,7 @@
             <% end %>
           </div>
         </th>
-        <td>
+        <td style="vertical-align: top;">
           <div style="margin-top:0;"> 
             <input type="password" name="check[User-Password]"/>
           </div>
@@ -103,5 +93,3 @@
       </tr>
     </tbody>
   </table>
-  <button type="submit">Create</button>
-</form>

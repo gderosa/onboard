@@ -23,19 +23,21 @@
       <div id="onboard-menu">
         <%= 
           OnBoard::MENU_ROOT.to_html_ul do |node, output|
-            if request.path_info ==  node.content[:href]
-              output[:href] = nil
-              output[:extra_class] = "hmenu-selected"
-            # That's why I love Ruby: node.content[:children] may
-            # be a String, a Regexp or even a block of code! (lambda) 
-            elsif node.content[:children] === request.path_info              
-              output[:extra_class] = "hmenu-selected" unless
-                  # do not highlight if any descendant matches already
-                  node.any? do |n| 
-                    n.content[:href]      ==  request.path_info or
-                    n.content[:children]  === request.path_info and
-                    n                     !=  node # exclude itself
-                  end
+            if node.content
+              if request.path_info ==  node.content[:href]
+                output[:href] = nil
+                output[:extra_class] = "hmenu-selected"
+              # That's why I love Ruby: node.content[:children] may
+              # be a String, a Regexp or even a block of code! (lambda) 
+              elsif node.content[:children] === request.path_info              
+                output[:extra_class] = "hmenu-selected" unless
+                    # do not highlight if any descendant matches already
+                    node.any? do |n| 
+                      n.content[:href]      ==  request.path_info or
+                      n.content[:children]  === request.path_info and
+                      n                     !=  node # exclude itself
+                    end
+              end
             end
           end
         %>
