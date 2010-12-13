@@ -63,6 +63,10 @@ class OnBoard
           ).to_a
         end
 
+        def update(params)
+          # stub
+        end
+
         #   user.find_attribute do |attrib, op, val|
         #     attrib =~ /-Password$/
         #   end
@@ -75,7 +79,7 @@ class OnBoard
         #     attrib == 'Idle-Timeout' and val < 1800
         #   end
         #
-        # Returns an Hash (Sequel row).
+        # Returns an Hash.
         #
         def find_attribute(tbl, &blk) 
           retrieve_attributes_from_db unless @check # @reply MIGHT be empty...
@@ -103,6 +107,19 @@ class OnBoard
           end
         end
 
+        def find_attribute_value_by_name(tbl, attrname)
+          row = find_attribute tbl do |attrib, op, val|
+            attrib == attrname
+          end
+          return nil unless row
+          return case tbl
+            when :check
+              row[@@chkcols['Value']]
+            when :reply
+              row[@@rplcols['Value']]
+          end
+        end
+
         def password_type
           row = find_attribute :check do |attrib, op, val|
             attrib =~ /-Password$/ 
@@ -111,10 +128,7 @@ class OnBoard
         end
 
         def auth_type
-          row = find_attribute :check do |attrib, op, val|
-            attrib == 'Auth-Type'
-          end
-          row ? row[@@chkcols['Value']] : nil
+          find_attribute_value_by_name(:check, 'Auth-Type')
         end
 
         def to_h

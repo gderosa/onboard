@@ -72,6 +72,21 @@ class OnBoard
       )
     end
 
+    put '/services/radius/users/:userid.:format' do
+      user = Service::RADIUS::User.new(params[:userid])
+      user.retrieve_attributes_from_db
+      msg = handle_errors{user.update(params)} 
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/users/user',
+        :format   => params[:format],
+        :objects  => {
+          'conf'    => Service::RADIUS.conf,
+          'user'    => user
+        }
+      )
+    end
+
     get '/services/radius/accounting.:format' do
       use_pagination_defaults
       format(
