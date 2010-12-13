@@ -44,7 +44,7 @@
 <%= 
   partial(
     :module => 'radius-admin',
-    :path   => 'services/radius/users/_form',
+    :path   => 'services/radius/users/_form_edit',
     :locals => {:user => user}
   )
 %>

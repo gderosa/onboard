@@ -1,0 +1,26 @@
+<%
+  user ||= nil
+%>
+<form class="raduserform" method="POST">
+  <input type="hidden" name="_method" value="post">
+  <h4>Check Attributes</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/users/_form_check',
+      :locals => {
+        :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
+        :best_passwd_type => 'SSHA1-Password',
+        :user             => user
+      }
+    )
+  %>
+  <h4>Reply Attributes</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/users/_form_reply',
+    )
+  %>
+  <button type="submit">Create!</button>
+</form>
