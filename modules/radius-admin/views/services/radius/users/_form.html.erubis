@@ -1,5 +1,9 @@
 <%# -*- coding: UTF-8 -*-%>
 
+<%
+  user ||= nil
+%>
+
 <style type="text/css">
   table#new-user tr th[scope="row"] {
     font-size: 95%;
@@ -27,24 +31,42 @@
   <table id="new-user">
     <tbody>
       <tr>
-        <th scope="row">User-Name</th>
-        <td><input type="text" name="check[User-Name]"/></td>
+        <th scope="row">User-Name</th> 
+        <td>
+          <% if user %>
+            <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">
+          <% else %>
+            <input type="text" name="check[User-Name]"/>
+          <% end %>
+        </td>
       </tr>
       <tr>
         <th scope="row">
           <select name="check[Password-Type]">
+            <% 
+              if user and user.password_type 
+                selected = user.password_type
+              else
+                selected = best_passwd_type
+              end
+            %>
             <% passwd_types.each do |passwd_type| %>
-              <% selected = 
-                  (passwd_type == best_passwd_type ? 'selected' : '') %>
-                <option <%= selected %> value="<%= passwd_type %>">
-                  <%= passwd_type %>
-                </option>
+              <option 
+                  <%= 'selected' if passwd_type == selected %> 
+                  value="<%= passwd_type %>">
+                <%= passwd_type %>
+              </option>
             <% end %>
           </select>
           <div class="optinfo">
-            Password types reflect the way they are encrypted in the
-            database. The strongest method is SSHA1. Cleartext should be used
-            only if clients authenticate using <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a>.
+            <% if user %>
+              Password will be automatically encrypted as needed. Leave the 
+              fields blank to leave the password unchanged. 
+            <% else %>
+              Password types reflect the way they are encrypted in the
+              database. The strongest method is SSHA1. Cleartext should be used
+              only if clients authenticate using <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a>.
+            <% end %>
           </div>
         </th>
         <td>
@@ -68,12 +90,28 @@
         </th>
         <td>
           <fieldset>
-            <input type="radio" name="check[Auth-Type]" value="Reject"/>
-              Disabled<br/>
-            <input type="radio" name="check[Auth-Type]" value="" checked/>
-              Enabled<br/>
-            <input type="radio" name="check[Auth-Type]" value="Accept"/>
-              Always accepted (guest user)
+            <% 
+              selected_auth_type = ''
+              if user and user.auth_type
+                selected_auth_type = user.auth_type
+              end
+
+              human_friendly = {
+                'Reject'  => 'Disabled',
+                ''        => 'Enabled',
+                'Accept'  => 'Always accepted (guest user)'
+              }
+            %>
+            <% ['Reject', '', 'Accept'].each do |auth_type| %>
+              <input 
+                  type="radio" 
+                  name="check[Auth-Type]" 
+                  value="<%= auth_type %>"
+                  <%= 'checked' if auth_type == selected_auth_type %>/>
+              <%# puts "#{selected_auth_type} : #{auth_type}" %>
+              <%= human_friendly[auth_type] %>
+              <br/>
+            <% end %>
           </fieldset>
         </td>
       </tr>

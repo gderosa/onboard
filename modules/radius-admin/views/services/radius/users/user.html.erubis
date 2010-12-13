@@ -32,3 +32,17 @@
   <% end %>
 </table>
 
+<h3>Edit User</h3>
+
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/users/_form',
+    :locals => {
+      :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
+      :best_passwd_type => 'SSHA1-Password',
+      :user             => user
+    }
+  )
+%>
+

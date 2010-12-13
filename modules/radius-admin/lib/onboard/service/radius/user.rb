@@ -63,6 +63,60 @@ class OnBoard
           ).to_a
         end
 
+        #   user.find_attribute do |attrib, op, val|
+        #     attrib =~ /-Password$/
+        #   end
+        #
+        #   user.find_attribute do |attr, op, val|
+        #     attrib == 'Auth-Type'
+        #   end
+        #
+        #   user.find_attribute do |attr, op, val|
+        #     attrib == 'Idle-Timeout' and val < 1800
+        #   end
+        #
+        # Returns an Hash (Sequel row).
+        #
+        def find_attribute(tbl, &blk) 
+          retrieve_attributes_from_db unless @check # @reply MIGHT be empty...
+          case tbl
+          when :check
+            row = @check.find do |h| 
+              blk.call( 
+                       h[@@chkcols['Attribute']],
+                       h[@@chkcols['Operator']],
+                       h[@@chkcols['Value']],
+                      )
+            end
+            return row ? row : nil
+          when :reply
+            row = @reply.find do |h| 
+              blk.call( 
+                       h[@@rplcols['Attribute']],
+                       h[@@rplcols['Operator']],
+                       h[@@rplcols['Value']],
+                      )
+            end
+            return row ? row : nil
+          else
+            raise ArgumentError, "Valid tables are :check and :reply"
+          end
+        end
+
+        def password_type
+          row = find_attribute :check do |attrib, op, val|
+            attrib =~ /-Password$/ 
+          end
+          row ? row[@@chkcols['Attribute']] : nil
+        end
+
+        def auth_type
+          row = find_attribute :check do |attrib, op, val|
+            attrib == 'Auth-Type'
+          end
+          row ? row[@@chkcols['Value']] : nil
+        end
+
         def to_h
           {
             :name  => @name,
