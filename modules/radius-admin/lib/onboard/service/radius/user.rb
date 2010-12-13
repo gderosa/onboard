@@ -63,8 +63,23 @@ class OnBoard
           ).to_a
         end
 
+        def update_reply_attributes(params)
+          params['reply'].each_pair do |attribute, value|
+            RADIUS.db[@@rpltable].filter(
+              @@rplcols['User-Name']  => @name,
+              @@rplcols['Attribute']  => attribute
+            ).delete
+            RADIUS.db[@@rpltable].insert(
+              @@rplcols['User-Name']  => @name,
+              @@rplcols['Attribute']  => attribute,
+              @@rplcols['Operator']   => ':=',
+              @@rplcols['Value']      => value
+            )
+          end
+        end
+
         def update(params)
-          # stub
+          update_reply_attributes(params)
         end
 
         #   user.find_attribute do |attrib, op, val|

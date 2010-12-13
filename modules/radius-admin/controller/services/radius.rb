@@ -75,7 +75,10 @@ class OnBoard
     put '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
       user.retrieve_attributes_from_db
-      msg = handle_errors{user.update(params)} 
+      msg = handle_errors do 
+        user.update(params)
+        user.retrieve_attributes_from_db
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users/user',
