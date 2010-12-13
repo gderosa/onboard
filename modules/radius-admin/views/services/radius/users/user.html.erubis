@@ -41,26 +41,11 @@
 </table>
 
 <h3>Edit User</h3>
-<form class="raduserform" method="POST">
-  <input type="hidden" name="_method" value="put">
-  <h4>Check Attributes</h4>
-  <%=
-    partial(
-      :module => 'radius-admin',
-      :path   => 'services/radius/users/_form_check',
-      :locals => {
-        :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
-        :best_passwd_type => 'SSHA1-Password',
-        :user             => user
-      }
-    )
-  %>
-  <h4>Reply Attributes</h4>
-  <%=
-    partial(
-      :module => 'radius-admin',
-      :path   => 'services/radius/users/_form_reply',
-    )
-  %>
-  <button type="submit">Change!</button>
-</form>
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/users/_form',
+    :locals => {:user => user}
+  )
+%>
+

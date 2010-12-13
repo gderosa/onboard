@@ -9,24 +9,16 @@
       <tr>
         <th scope="row">Reply-Message</th> 
         <td>
-          <% if user %>
-            <input type="text" readonly name="check[Reply-Message]" value="<%= user.reply_message %>">
-          <% else %>
-            <input type="text" name="check[Reply-Message]"/>
-          <% end %>
+          <input type="text" name="reply[Reply-Message]"/>
         </td>
       </tr>
       <tr>
         <th scope="row">
-          Session-Tineout
+          Session-Timeout
           <div class="optinfo">Max connection time (seconds)</div>
         </th> 
         <td>
-          <% if user %>
-            <input type="text" readonly name="check[Reply-Message]" value="<%= user.session_timeout %>">
-          <% else %>
-            <input type="text" name="check[Session-Timeout]"/>
-          <% end %>
+          <input type="text" name="reply[Session-Timeout]"/>
         </td>
       </tr>
       <tr>
@@ -35,11 +27,25 @@
           <div class="optinfo">Max inactivity time (seconds)</div>
         </th> 
         <td>
-          <% if user %>
-            <input type="text" readonly name="check[Idle-Timeout]" value="<%= user.idle_timeout %>">
-          <% else %>
-            <input type="text" name="check[Idle-Timeout]"/>
-          <% end %>
+          <input type="text" name="reply[Idle-Timeout]"/>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          WISPr-Bandwidth-Max-Down
+          <div class="optinfo">Max Downstream bandwidth (bits/sec)</div>
+        </th>
+        <td>
+          <input type="text" name="reply[WISPr-Bandwidth-Max-Down]"/>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          WISPr-Bandwidth-Max-Up
+          <div class="optinfo">Max Upstream bandwidth (bits/sec)</div>
+        </th>
+        <td>
+          <input type="text" name="reply[WISPr-Bandwidth-Max-Up]"/>
         </td>
       </tr>
     </tbody>
