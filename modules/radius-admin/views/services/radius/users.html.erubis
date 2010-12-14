@@ -51,7 +51,9 @@ a "guest" user). Otherwise a password is generally required.</p>
       %>
       <tr>
         <td class="<%= csstclass %>">
-          <a href="users/<%= user.name %>.html"><%= user.name %></a>
+          <a title="Click to edit" href="users/<%= user.name %>.html">
+            <%= user.name %>
+          </a>
         </td>
         <td class="<%= csstclass %>">
           <% if user.auth_type %>

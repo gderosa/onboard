@@ -14,6 +14,10 @@
 
 <h2>RADIUS user: <%= user.name %></h2>
 
+<!-- TODO TODO TODO -->
+<!-- A separate page for advanced/raw attributes editing -->
+
+<!--
 <h3>Check attributes</h3>
 <table>
   <% user.check.each do |row| %>
@@ -39,13 +43,16 @@
     </tr>
   <% end %>
 </table>
+-->
 
-<h3>Edit User</h3>
 <%= 
   partial(
     :module => 'radius-admin',
     :path   => 'services/radius/users/_form_edit',
-    :locals => {:user => user}
+    :locals => {
+      :user     => user,
+      :heading  => 3
+    }
   )
 %>
 

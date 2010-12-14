@@ -1,9 +1,10 @@
 <%
-  user ||= nil
+  user    ||= nil
+  heading ||= 4
 %>
 <form class="raduserform" method="POST">
   <input type="hidden" name="_method" value="put">
-  <h4>Check Attributes</h4>
+  <h<%= heading%>>Check Attributes</h<%= heading%>>
   <%=
     partial(
       :module => 'radius-admin',
@@ -15,7 +16,7 @@
       }
     )
   %>
-  <h4>Reply Attributes</h4>
+  <h<%= heading%>>Reply Attributes</h<%= heading%>>
   <%=
     partial(
       :module => 'radius-admin',
