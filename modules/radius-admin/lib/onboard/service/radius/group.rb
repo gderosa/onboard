@@ -1,3 +1,5 @@
+require 'onboard/extensions/hash'
+
 class OnBoard
   module Service
     module RADIUS

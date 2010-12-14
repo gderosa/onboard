@@ -86,6 +86,15 @@ class OnBoard
               'Value'                 => 'value'
             }
           },
+
+          'usermap'               => {
+            'table'                 => 'radusergroup',
+            'columns'               => {
+              'User-Name'             => 'username',
+              'Group-Name'            => 'groupname',
+              'Priority'              => 'priority'
+            },
+          },
         },
  
 

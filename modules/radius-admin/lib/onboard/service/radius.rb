@@ -11,6 +11,7 @@ class OnBoard
       autoload :Reply,        'onboard/service/radius/reply'
       autoload :Passwd,       'onboard/service/radius/passwd'
       autoload :User,         'onboard/service/radius/user'
+      autoload :Group,        'onboard/service/radius/group'
 
       CONFFILE = File.join CONFDIR, 'current/radius.conf.yaml'
 
