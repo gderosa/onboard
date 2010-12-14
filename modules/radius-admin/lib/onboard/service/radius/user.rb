@@ -86,7 +86,7 @@ class OnBoard
               @@chkcols['User-Name']  => @name,
               @@chkcols['Attribute']  => attribute
             ).delete
-            # Do not skip anything like Auth-Type = "" 
+            next unless value =~ /\S/
             RADIUS.db[@@chktable].insert(
               @@chkcols['User-Name']  => @name,
               @@chkcols['Attribute']  => attribute,
