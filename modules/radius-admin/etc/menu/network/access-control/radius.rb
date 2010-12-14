@@ -23,21 +23,28 @@ class OnBoard
   MENU_ROOT.add_path('/network/access-control/radius/config', {
     :href => '/services/radius/config', 
     :name => 'Configuration',
-    #:desc => '',
-    :n    => 0
+    :n    => 10
   })
 
   MENU_ROOT.add_path('/network/access-control/radius/accounting', {
     :href => '/services/radius/accounting', 
     :name => 'Accounting',
     :desc => 'Track users consumption of network resources',
-    :n    => 10
+    :n    => 20
   })
 
   MENU_ROOT.add_path('/network/access-control/radius/users', {
     :href     => '/services/radius/users',
     :name     => 'Users',
-    :children => %r{/services/radius/users/.+$}
+    :children => %r{/services/radius/users/.+$},
+    :n        => 30
+  })
+
+  MENU_ROOT.add_path('/network/access-control/radius/groups', {
+    :href     => '/services/radius/groups',
+    :name     => 'Groups',
+    :children => %r{/services/radius/groups/.+$},
+    :n        => 40
   })
 
 end
