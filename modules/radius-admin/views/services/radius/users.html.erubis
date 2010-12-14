@@ -23,18 +23,43 @@
 
 <h3>Users list</h3>
 
+<p style="font-style:italic;">Auth-Type = "Reject" means that the user 
+is DISABLED. A value of
+"Accept" means always athorized, even without a password (a way to implement
+a "guest" user). Otherwise a password is generally required.</p>
+
 <table>
   <thead>
     <tr>
+      <th>User-Name</th>
       <th>
-        Name
+        Auth-Type
       </th>
     </tr>
   </thead>
   <tbody>
     <% users.each do |user| %>
+      <% 
+        csstclass = case user.auth_type
+                    when 'Reject'
+                      'bg_off'
+                    when 'Accept'
+                      'bg_high'
+                    else
+                      ''
+                    end
+      %>
       <tr>
-        <td><a href="users/<%= user.name %>.html"><%= user.name %></a></td>
+        <td class="<%= csstclass %>">
+          <a href="users/<%= user.name %>.html"><%= user.name %></a>
+        </td>
+        <td class="<%= csstclass %>">
+          <% if user.auth_type %>
+            <%= user.auth_type %>
+          <% else %>
+            <span class="lowlight">(auto)</span>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>

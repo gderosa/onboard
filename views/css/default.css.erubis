@@ -6,6 +6,8 @@
   superlowlight   = "#bbb" 
   hover           = "color: white; background: #{highlight};" 
   lightbg         = "#f8f0c0" 
+  lightbg_off     = "#eedddd"
+  lightbg_high    = "#ddeedd"
   serif           = %q{"Times New Roman", Times, Georgia, serif}
   sans_serif      = %q{Helvetica, Arial, sans-serif}
   monospace       = %q{monospace}
@@ -299,6 +301,14 @@ table tr td {
   border: 0;
   background: <%= lightbg %>;
   padding: 0 0.4em;
+}
+
+.bg_off {
+  background: <%= lightbg_off %>;
+}
+
+.bg_high {
+  background: <%= lightbg_high %>;
 }
 
 table tr td.separator {
