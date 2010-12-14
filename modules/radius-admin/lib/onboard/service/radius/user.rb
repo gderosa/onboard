@@ -81,7 +81,11 @@ class OnBoard
         
         def update_check_attributes(params) # no passwords
           params['check'].each_pair do |attribute, value|
+            # passwords are managed by #update_password
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
+            # inerting User-Name attribute doesn't make sense: there's 
+            # already @@chkcols['User-Name'] column
+            next if attribute == 'User-Name'
             RADIUS.db[@@chktable].filter(
               @@chkcols['User-Name']  => @name,
               @@chkcols['Attribute']  => attribute

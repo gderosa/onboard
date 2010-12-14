@@ -26,7 +26,7 @@
 <p style="font-style:italic;">Auth-Type = "Reject" means that the user 
 is DISABLED. A value of
 "Accept" means always athorized, even without a password (a way to implement
-a "guest" user). Otherwise a password is generally required.</p>
+a "guest" user). Otherwise, a password is generally required.</p>
 
 <table>
   <thead>
