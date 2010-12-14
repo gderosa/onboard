@@ -268,6 +268,10 @@ table tr th, fieldset, .term, kbd {
   background: <%= lightbg %>;
 }
 
+table tr td fieldset {
+  background: inherit;
+}
+
 table tr th, fieldset, .term {
   font-size: 80%;
   font-weight: bold;
