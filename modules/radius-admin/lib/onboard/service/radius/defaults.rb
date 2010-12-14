@@ -26,33 +26,68 @@ class OnBoard
           }
         },
 
-        'check'                 => {
-          'table'                 => 'radcheck',
-          'columns'               => {
-            'Id'                    => 'id',
+        'user'                  => {
 
-            'User-Name'             => 'username', 
-              # not really a RADIUS attribute, just for naming consistency...  
+          'check'                 => {
+            'table'                 => 'radcheck',
+            'columns'               => {
+              'Id'                    => 'id',
 
-            'Attribute'             => 'attribute',
-            'Operator'              => 'op',
-            'Value'                 => 'value'
-          }
+              'User-Name'             => 'username', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
+
+          'reply'                 => {
+            'table'                 => 'radreply',
+            'columns'               => {
+              'Id'                    => 'id',
+              
+              'User-Name'             => 'username', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
         },
 
-        'reply'                 => {
-          'table'                 => 'radreply',
-          'columns'               => {
-            'Id'                    => 'id',
-            
-            'User-Name'             => 'username', 
-              # not really a RADIUS attribute, just for naming consistency...  
+        'group'                 => {
 
-            'Attribute'             => 'attribute',
-            'Operator'              => 'op',
-            'Value'                 => 'value'
-          }
+          'check'                 => {
+            'table'                 => 'radcheck',
+            'columns'               => {
+              'Id'                    => 'id',
+
+              'User-Name'             => 'username', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
+
+          'reply'                 => {
+            'table'                 => 'radreply',
+            'columns'               => {
+              'Id'                    => 'id',
+              
+              'User-Name'             => 'username', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
         },
+ 
 
       }
     end

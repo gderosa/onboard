@@ -1,22 +1,18 @@
-require 'sequel'
-require 'sequel/extensions/pagination'
-
-require 'onboard/extensions/object/deep'
-require 'onboard/extensions/hash'
-
 class OnBoard
   module Service
     module RADIUS
-      class User
+      class Group
 
         class << self
 
           def setup
             @@conf      ||= RADIUS.read_conf
-            @@chktable  ||= @@conf['user']['check']['table'].to_sym
-            @@chkcols   ||= @@conf['user']['check']['columns'].symbolize_values
-            @@rpltable  ||= @@conf['user']['reply']['table'].to_sym
-            @@rplcols   ||= @@conf['user']['reply']['columns'].symbolize_values
+            @@chktable  ||= @@conf['group']['check']['table'].to_sym
+            @@chkcols   ||= @@conf['group']['check']['columns'].symbolize_values
+            @@rpltable  ||= @@conf['group']['reply']['table'].to_sym
+            @@rplcols   ||= @@conf['group']['reply']['columns'].symbolize_values
+            @@maptable  ||= @@conf['group']['usermap']['table']
+            @@mapcols   ||= @@conf['group']['usermap']['columns']
           end
 
           def setup!
@@ -26,7 +22,7 @@ class OnBoard
 
           def get(params)
             setup
-            column    = @@conf['user']['check']['columns']['User-Name'].to_sym
+            column    = @@conf['check']['columns']['User-Name'].to_sym
             page      = params[:page].to_i 
             per_page  = params[:per_page].to_i
             select    = RADIUS.db[@@chktable].select(column).group_by(column)

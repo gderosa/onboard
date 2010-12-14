@@ -43,6 +43,17 @@ class OnBoard
       )
     end
 
+    get '/services/radius/groups.:format' do
+      use_pagination_defaults
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/groups',
+        :format   => params[:format],
+        :objects  => Service::RADIUS::Group.get(params)
+      )
+    end
+   
+
     post '/services/radius/users.:format' do
       use_pagination_defaults
       msg = handle_errors{Service::RADIUS::Check.insert(params)} 
