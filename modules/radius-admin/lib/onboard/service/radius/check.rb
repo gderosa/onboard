@@ -43,15 +43,17 @@ class OnBoard
                 col['User-Name'] => params['check']['User-Name'] ).any?
               raise UserAlreadyExists, "User '#{Rack::Utils::escape_html params['check']['User-Name']}' already exists!"
             end
-            RADIUS.db[table].insert(
-              col['User-Name']  => params['check']['User-Name'],
-              col['Operator']   => ':=',
-              col['Attribute']  => params['check']['Password-Type'],
-              col['Value']      => RADIUS.compute_password(
-                :type             => params['check']['Password-Type'],
-                :cleartext        => params['check']['User-Password']
-              ),
-            )
+            if params['check']['Password-Type'] =~ /\S/
+              RADIUS.db[table].insert(
+                col['User-Name']  => params['check']['User-Name'],
+                col['Operator']   => ':=',
+                col['Attribute']  => params['check']['Password-Type'],
+                col['Value']      => RADIUS.compute_password(
+                  :type             => params['check']['Password-Type'],
+                  :cleartext        => params['check']['User-Password']
+                ),
+              )
+            end
             RADIUS.db[table].insert(
               col['User-Name']  => params['check']['User-Name'],
               col['Operator']   => ':=',

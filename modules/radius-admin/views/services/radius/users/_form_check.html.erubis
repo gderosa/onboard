@@ -26,6 +26,7 @@
                 selected = best_passwd_type
               end
             %>
+            <option value="">(no password)</option>
             <% passwd_types.each do |passwd_type| %>
               <option 
                   <%= 'selected' if passwd_type == selected %> 
@@ -34,7 +35,7 @@
               </option>
             <% end %>
           </select>
-          <div class="optinfo">
+          <p class="optinfo">
             <% if user %>
               Password will be automatically encrypted if required. Leave the 
               fields blank to leave the password unchanged. 
@@ -43,7 +44,11 @@
               database. The strongest method is SSHA1. Cleartext should be used
               only if clients authenticate using <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a>.
             <% end %>
-          </div>
+          </p>
+          <p class="optinfo">
+            Choose "no password" if you want Authentication to be performed
+            on a per-group basis only.
+          </p>
         </th>
         <td style="vertical-align: top;">
           <div style="margin-top:0;"> 

@@ -14,8 +14,8 @@ class OnBoard
 
           def insert(params)
             conf      = RADIUS.read_conf
-            table     = conf['reply']['table'].to_sym
-            col       = conf['reply']['columns'].symbolize_values
+            table     = conf['user']['reply']['table'].to_sym
+            col       = conf['user']['reply']['columns'].symbolize_values
             if RADIUS.db[table].where(
                 col['User-Name'] => params['check']['User-Name'] ).any?
               raise UserAlreadyExists, "User '#{Rack::Utils::escape_html params['check']['User-Name']}' already exists!"
