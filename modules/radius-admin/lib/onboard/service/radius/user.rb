@@ -63,6 +63,10 @@ class OnBoard
           ).to_a
         end
 
+        def found?
+          @check.length + @reply.length > 0
+        end
+
         def update_reply_attributes(params)
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(
@@ -105,23 +109,27 @@ class OnBoard
               params['confirm']['check']['User-Password']
             raise PasswordsDoNotMatch, 'Passwords do not match!'
           end
-          return unless params['check']['User-Password'] =~ /\S/
-          # so an incorrect Password-Type would raise an exception
-          encrypted_passwd = RADIUS.compute_password(
-            :type             => params['check']['Password-Type'],
-            :cleartext        => params['check']['User-Password']
-          )
+          if params['check']['Password-Type'] =~ /\S/
+            return unless params['check']['User-Password'] =~ /\S/
+            # so an incorrect Password-Type would raise an exception
+            encrypted_passwd = RADIUS.compute_password(
+              :type             => params['check']['Password-Type'],
+              :cleartext        => params['check']['User-Password']
+            )
+          end
           RADIUS.db[@@chktable].filter(
             @@chkcols['User-Name']  => @name
           ).filter(
             @@chkcols['Attribute'].like '%-Password'
           ).delete
-          RADIUS.db[@@chktable].insert(
-            @@chkcols['User-Name']  => @name,
-            @@chkcols['Attribute']  => params['check']['Password-Type'],
-            @@chkcols['Operator']   => ':=',
-            @@chkcols['Value']      => encrypted_passwd
-          )
+          if params['check']['Password-Type'] =~ /\S/
+            RADIUS.db[@@chktable].insert(
+              @@chkcols['User-Name']  => @name,
+              @@chkcols['Attribute']  => params['check']['Password-Type'],
+              @@chkcols['Operator']   => ':=',
+              @@chkcols['Value']      => encrypted_passwd
+            )
+          end
         end
 
         def update(params)
