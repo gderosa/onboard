@@ -1,3 +1,5 @@
+require 'sequel/extensions/pagination'
+
 require 'onboard/extensions/hash'
 
 class OnBoard
