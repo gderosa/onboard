@@ -20,25 +20,20 @@ class OnBoard
           end
 
           def setup!
-            @@conf = @@chktable = @@chkcols = @@rpltable = @@rplcols = nil
+            @@conf = 
+                @@chktable = @@chkcols = 
+                @@rpltable = @@rplcols = 
+                @@maptable = @@mapcols = nil
             setup
           end
 
           def get(params)
             setup
-            column    = @@conf['check']['columns']['User-Name'].to_sym
-            page      = params[:page].to_i 
-            per_page  = params[:per_page].to_i
-            select    = RADIUS.db[@@chktable].select(column).group_by(column)
-            users     = select.paginate(page, per_page).map do |h| 
-              h[column].force_encoding 'utf-8'
-            end
-
             {
               'total_items' => select.count,
               'page'        => page,
               'per_page'    => per_page,
-              'users'       => users.map{|u| new(u)} 
+              'groups'      => groups.map{|u| new(u)} 
             }
           end
         
