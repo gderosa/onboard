@@ -20,8 +20,12 @@
         <th scope="row">
           <select name="check[Password-Type]">
             <% 
-              if user and user.password_type 
-                selected = user.password_type
+              if user 
+                if user.password_type 
+                  selected = user.password_type
+                else
+                  selected = ''
+                end
               else
                 selected = best_passwd_type
               end

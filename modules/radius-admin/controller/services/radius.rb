@@ -92,6 +92,9 @@ class OnBoard
         user.update(params)
         user.retrieve_attributes_from_db
       end
+      unless user.found?
+        msg[:warn] = "User has no longer any attribute!"
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users/user',
