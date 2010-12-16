@@ -1,4 +1,10 @@
 <%# -*- coding: UTF-8 -*-%>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style'
+  )
+%>
 <%
   groups      = objects['groups']
   page        = objects['page']
@@ -55,6 +61,13 @@
   )
 %>
       
+<h3>Create new group</h3>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/groups/_form_create',
+  )
+%>
 
 
 
