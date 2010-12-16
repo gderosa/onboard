@@ -35,6 +35,9 @@ a "guest" user). Otherwise, a password is generally required.</p>
       <th>
         Auth-Type
       </th>
+      <th>
+        Password Type
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -60,6 +63,13 @@ a "guest" user). Otherwise, a password is generally required.</p>
             <%= user.auth_type %>
           <% else %>
             <span class="lowlight">(auto)</span>
+          <% end %>
+        </td>
+        <td class="<%= csstclass %>">
+          <% if user.password_type %>
+            <%= user.password_type %>
+          <% else %>
+            <span class="lowlight">(none)</span>
           <% end %>
         </td>
       </tr>
