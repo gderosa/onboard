@@ -1,6 +1,7 @@
 require 'sequel/extensions/pagination'
 
 require 'onboard/extensions/hash'
+require 'onboard/extensions/sequel/dataset'
 
 class OnBoard
   module Service
@@ -10,13 +11,20 @@ class OnBoard
         class << self
 
           def setup
-            @@conf      ||= RADIUS.read_conf
-            @@chktable  ||= @@conf['group']['check']['table'].to_sym
-            @@chkcols   ||= @@conf['group']['check']['columns'].symbolize_values
-            @@rpltable  ||= @@conf['group']['reply']['table'].to_sym
-            @@rplcols   ||= @@conf['group']['reply']['columns'].symbolize_values
-            @@maptable  ||= @@conf['group']['usermap']['table']
-            @@mapcols   ||= @@conf['group']['usermap']['columns']
+            @@conf      ||= 
+                RADIUS.read_conf
+            @@chktable  ||= 
+                @@conf['group']['check']['table'].to_sym
+            @@chkcols   ||= 
+                @@conf['group']['check']['columns'].symbolize_values
+            @@rpltable  ||= 
+                @@conf['group']['reply']['table'].to_sym
+            @@rplcols   ||= 
+                @@conf['group']['reply']['columns'].symbolize_values
+            @@maptable  ||= 
+                @@conf['group']['usermap']['table'].to_sym
+            @@mapcols   ||= 
+                @@conf['group']['usermap']['columns'].symbolize_values
           end
 
           def setup!
@@ -28,12 +36,26 @@ class OnBoard
           end
 
           def get(params)
+            page      = params[:page]
+            per_page  = params[:per_page]
             setup
+            q_usergroup   =  
+                RADIUS.db[@@maptable].select(
+                    @@mapcols['Group-Name'] => :groupname) 
+            q_groupcheck  =
+                RADIUS.db[@@chktable].select(
+                    @@chkcols['Group-Name'] => :groupname) 
+            q_groupreply  =
+                RADIUS.db[@@rpltable].select(
+                    @@rplcols['Group-Name'] => :groupname)
+            q_union       = q_usergroup | q_groupcheck | q_groupreply
+            q_paginate    = q_union.paginate(page, per_page)
+            groupnames    = q_paginate.group_by(:groupname).map(:groupname)
             {
-              'total_items' => select.count,
+              'total_items' => q_union.count,
               'page'        => page,
               'per_page'    => per_page,
-              'groups'      => groups.map{|u| new(u)} 
+              'groups'      => groupnames.map{|u| new(u)} 
             }
           end
         
@@ -49,6 +71,7 @@ class OnBoard
         end
 
         def retrieve_attributes_from_db
+=begin
           setup
           @check = RADIUS.db[@@chktable].where(
             @@chkcols['User-Name'] => @name
@@ -56,9 +79,11 @@ class OnBoard
           @reply = RADIUS.db[@@rpltable].where(
             @@chkcols['User-Name'] => @name
           ).to_a
+=end
         end
 
         def update_reply_attributes(params)
+=begin
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(
               @@rplcols['User-Name']  => @name,
@@ -72,9 +97,11 @@ class OnBoard
               @@rplcols['Value']      => value
             )
           end
+=end
         end
         
         def update_check_attributes(params) # no passwords
+=begin
           params['check'].each_pair do |attribute, value|
             # passwords are managed by #update_password
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
@@ -93,9 +120,11 @@ class OnBoard
               @@chkcols['Value']      => value
             )
           end
+=end
         end
 
         def update_passwd(params)
+=begin
           if params['check']['User-Password'] !=
               params['confirm']['check']['User-Password']
             raise PasswordsDoNotMatch, 'Passwords do not match!'
@@ -117,12 +146,15 @@ class OnBoard
             @@chkcols['Operator']   => ':=',
             @@chkcols['Value']      => encrypted_passwd
           )
+=end
         end
 
         def update(params)
+=begin
           update_passwd(params)
           update_check_attributes(params)
           update_reply_attributes(params)
+=end
         end
 
         #   user.find_attribute do |attrib, op, val|
@@ -140,6 +172,7 @@ class OnBoard
         # Returns an Hash.
         #
         def find_attribute(tbl, &blk) 
+=begin
           retrieve_attributes_from_db unless @check # @reply MIGHT be empty...
           case tbl
           when :check
@@ -163,9 +196,11 @@ class OnBoard
           else
             raise ArgumentError, "Valid tables are :check and :reply"
           end
+=end
         end
 
         def find_attribute_value_by_name(tbl, attrname)
+=begin
           row = find_attribute tbl do |attrib, op, val|
             attrib == attrname
           end
@@ -176,33 +211,40 @@ class OnBoard
             when :reply
               row[@@rplcols['Value']]
           end
+=end
         end
         alias attribute find_attribute_value_by_name
 
         def password_type
+=begin
           row = find_attribute :check do |attrib, op, val|
             attrib =~ /-Password$/ 
           end
           row ? row[@@chkcols['Attribute']] : nil
+=end
         end
 
         def auth_type
+=begin
           find_attribute_value_by_name(:check, 'Auth-Type')
+=end
         end
 
         def to_h
+=begin
           {
             :name  => @name,
             :check => @check,
             :reply => @reply,
           }
+=end
         end
 
         def to_json(*args)
-          to_h.to_json(*args)
+          #to_h.to_json(*args)
         end
         def to_yaml(*args)
-          to_h.deep_rekey{|k|k.to_s}.to_yaml(*args)
+          #to_h.deep_rekey{|k|k.to_s}.to_yaml(*args)
         end
 
       end

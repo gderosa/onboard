@@ -60,11 +60,11 @@ class OnBoard
         'group'                 => {
 
           'check'                 => {
-            'table'                 => 'radcheck',
+            'table'                 => 'radgroupcheck',
             'columns'               => {
               'Id'                    => 'id',
 
-              'User-Name'             => 'username', 
+              'Group-Name'            => 'groupname', 
                 # not really a RADIUS attribute, just for naming consistency...  
 
               'Attribute'             => 'attribute',
@@ -74,11 +74,11 @@ class OnBoard
           },
 
           'reply'                 => {
-            'table'                 => 'radreply',
+            'table'                 => 'radgroupreply',
             'columns'               => {
               'Id'                    => 'id',
               
-              'User-Name'             => 'username', 
+              'Group-Name'            => 'groupname', 
                 # not really a RADIUS attribute, just for naming consistency...  
 
               'Attribute'             => 'attribute',
