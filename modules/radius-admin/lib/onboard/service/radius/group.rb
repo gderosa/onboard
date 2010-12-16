@@ -36,8 +36,8 @@ class OnBoard
           end
 
           def get(params)
-            page      = params[:page]
-            per_page  = params[:per_page]
+            page      = params[:page].to_i
+            per_page  = params[:per_page].to_i
             setup
             q_usergroup   =  
                 RADIUS.db[@@maptable].select(
@@ -71,15 +71,13 @@ class OnBoard
         end
 
         def retrieve_attributes_from_db
-=begin
           setup
           @check = RADIUS.db[@@chktable].where(
-            @@chkcols['User-Name'] => @name
+            @@chkcols['Group-Name'] => @name
           ).to_a
           @reply = RADIUS.db[@@rpltable].where(
-            @@chkcols['User-Name'] => @name
+            @@chkcols['Group-Name'] => @name
           ).to_a
-=end
         end
 
         def update_reply_attributes(params)
@@ -172,7 +170,6 @@ class OnBoard
         # Returns an Hash.
         #
         def find_attribute(tbl, &blk) 
-=begin
           retrieve_attributes_from_db unless @check # @reply MIGHT be empty...
           case tbl
           when :check
@@ -196,11 +193,9 @@ class OnBoard
           else
             raise ArgumentError, "Valid tables are :check and :reply"
           end
-=end
         end
 
         def find_attribute_value_by_name(tbl, attrname)
-=begin
           row = find_attribute tbl do |attrib, op, val|
             attrib == attrname
           end
@@ -211,7 +206,6 @@ class OnBoard
             when :reply
               row[@@rplcols['Value']]
           end
-=end
         end
         alias attribute find_attribute_value_by_name
 
@@ -225,9 +219,7 @@ class OnBoard
         end
 
         def auth_type
-=begin
           find_attribute_value_by_name(:check, 'Auth-Type')
-=end
         end
 
         def to_h

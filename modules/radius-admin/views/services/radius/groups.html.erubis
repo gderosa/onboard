@@ -1,2 +1,60 @@
 <%# -*- coding: UTF-8 -*-%>
+<%
+  groups      = objects['groups']
+  page        = objects['page']
+  per_page    = objects['per_page']
+  total_items = objects['total_items']
+%>
+<%= message_partial(msg) %>
+
+<h2>RADIUS Groups</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Group Name</th>
+      <th>
+        Auth-Type
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% groups.each do |group| %>
+      <%
+        csstclass = case group.auth_type
+                    when 'Reject'
+                      'bg_off'
+                    when 'Accept'
+                      'bg_high'
+                    else
+                      ''
+                    end
+      %>
+      <tr>
+        <td class="<%= csstclass %>">
+          <a title="Click to edit" href="users/<%= group.name %>.html">
+            <%= group.name %>
+          </a>
+        </td>
+        <td class="<%= csstclass %>">
+          <% if group.auth_type %>
+            <%= group.auth_type %>
+          <% else %>
+            <span class="lowlight">(auto)</span>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%=
+  paginator(
+    :page => page,
+    :per_page => per_page,
+    :total_items => total_items
+  )
+%>
+      
+
+
 
