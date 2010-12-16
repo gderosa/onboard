@@ -28,6 +28,9 @@ is DISABLED. A value of
 "Accept" means always athorized, even without a password (a way to implement
 a "guest" user). Otherwise, a password is generally required.</p>
 
+<p style="font-style:italic;">Password Type = none generally implies that the 
+authentication is made on a per-group basis.</p>
+
 <table>
   <thead>
     <tr>
