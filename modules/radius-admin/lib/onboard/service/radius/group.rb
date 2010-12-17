@@ -72,7 +72,7 @@ class OnBoard
             if  ['', nil].include? params['check']['Group-Password'] and
                 ['', nil].include? params['check']['Auth-Type']     and not
                 ['', nil].include? params['check']['Password-Type']
-              raise EmptyPassword, 'Cannot accept an empy password if group authentication is Enabled and a Password Type has been set.'
+              raise EmptyPassword, 'Cannot accept an empy password if group password authentication is enabled.'
             end
 
             # All is ok, proceed.
