@@ -20,6 +20,7 @@ class OnBoard
       class BadRequest          < BadRequest;   end
       class UserAlreadyExists   < Conflict;     end
       class PasswordsDoNotMatch < BadRequest;   end
+      class EmptyPassword       < BadRequest;   end
 
       class << self
         def conf

@@ -49,6 +49,11 @@ class OnBoard
                 @@columns['User-Name'] => params['check']['User-Name'] ).any?
               raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
             end
+            if  ['', nil].include? params['check']['User-Password'] and
+                ['', nil].include? params['check']['Auth-Type']     and not
+                ['', nil].include? params['check']['Password-Type']
+              raise EmptyPassword, 'Cannot accept an empy password if user authentication is Enabled and a Password Type has been set.'
+            end
 
             # All is ok, proceed.
             #
