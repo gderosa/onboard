@@ -58,7 +58,9 @@ class OnBoard
       use_pagination_defaults
       msg = handle_errors{Service::RADIUS::Check.insert(params)} 
       if msg[:ok] and not msg[:err]
-        msg = handle_errors{Service::RADIUS::Reply.insert(params)}
+        name  = params['check']['User-Name']
+        user  = Service::RADIUS::User.new(name)
+        msg   = handle_errors{user.update_reply_attributes(params)} 
       end
       format(
         :module   => 'radius-admin',
