@@ -58,7 +58,67 @@ class OnBoard
               'groups'      => groupnames.map{|u| new(u)} 
             }
           end
-        
+
+          def insert(params)
+            setup
+            if params['check']['Group-Password'] !=
+                params['confirm']['check']['Group-Password']
+              raise PasswordsDoNotMatch, 'Passwords do not match!'
+            end
+            if RADIUS.db[@@chktable].where(
+                @@chkcols['Group-Name'] => params['check']['Group-Name'] ).any?
+              raise GroupAlreadyExists, "Group '#{params['check']['Group-Name']}' already exists!"
+            end
+            if  ['', nil].include? params['check']['Group-Password'] and
+                ['', nil].include? params['check']['Auth-Type']     and not
+                ['', nil].include? params['check']['Password-Type']
+              raise EmptyPassword, 'Cannot accept an empy password if group authentication is Enabled and a Password Type has been set.'
+            end
+
+            # All is ok, proceed.
+            #
+            # First, insert a dummy attribute into check table, which may be
+            # useful if you want to create an attribute-less group...
+
+            insert_dummy_attributes(params)
+
+            # Now, the "real" attributes.
+
+            if params['check']['Password-Type'] =~ /\S/
+              RADIUS.db[@@chktable].insert(
+                @@chkcols['Group-Name'] => params['check']['Group-Name'],
+                # Use '=' operator instead of ':=', so if an attribute
+                # is already set for the specific user, it will take 
+                # precedence.
+                @@chkcols['Operator']   => '=',
+                @@chkcols['Attribute']  => params['check']['Password-Type'],
+                @@chkcols['Value']      => RADIUS.compute_password(
+                  :type             => params['check']['Password-Type'],
+                  :cleartext        => params['check']['Group-Password']
+                ),
+              )
+            end
+            RADIUS.db[@@chktable].insert(
+              @@chkcols['Group-Name'] => params['check']['Group-Name'],
+              @@chkcols['Operator']   => '=',
+              @@chkcols['Attribute']  => 'Auth-Type',
+              @@chkcols['Value']      => params['check']['Auth-Type'],
+            ) if params['check']['Auth-Type'] =~ /\S/
+          end
+
+          def insert_dummy_attributes(params)
+            # In fact, there's no need to explicitly insert 'Group',
+            # because there's already a @@columns['User-Name'] column.
+            # For the rationale of this method, read comments inside
+            # the insert method.
+            RADIUS.db[@@chktable].insert(
+              @@chkcols['Group-Name'] => params['check']['Group-Name'],
+              @@chkcols['Operator']   => '=',
+              @@chkcols['Attribute']  => 'Group',
+              @@chkcols['Value']      => params['check']['Group-Name']
+            )
+          end
+
         end
 
         attr_reader :name, :check, :reply
@@ -81,21 +141,19 @@ class OnBoard
         end
 
         def update_reply_attributes(params)
-=begin
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(
-              @@rplcols['User-Name']  => @name,
+              @@rplcols['Group-Name'] => @name,
               @@rplcols['Attribute']  => attribute
             ).delete
             next unless value =~ /\S/
             RADIUS.db[@@rpltable].insert(
-              @@rplcols['User-Name']  => @name,
+              @@rplcols['Group-Name'] => @name,
               @@rplcols['Attribute']  => attribute,
-              @@rplcols['Operator']   => ':=',
+              @@rplcols['Operator']   => '=',
               @@rplcols['Value']      => value
             )
           end
-=end
         end
         
         def update_check_attributes(params) # no passwords

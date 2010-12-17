@@ -19,6 +19,7 @@ class OnBoard
       class Conflict            < Conflict;     end
       class BadRequest          < BadRequest;   end
       class UserAlreadyExists   < Conflict;     end
+      class GroupAlreadyExists  < Conflict;     end
       class PasswordsDoNotMatch < BadRequest;   end
       class EmptyPassword       < BadRequest;   end
 

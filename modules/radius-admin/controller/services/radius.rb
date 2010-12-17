@@ -71,6 +71,24 @@ class OnBoard
       )
     end
 
+    post '/services/radius/groups.:format' do
+      use_pagination_defaults
+      msg = handle_errors{Service::RADIUS::Group.insert(params)} 
+      if msg[:ok] and not msg[:err]
+        name  = params['check']['Group-Name']
+        group = Service::RADIUS::Group.new(name)  
+        msg   = handle_errors{group.update_reply_attributes(params)} 
+      end
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/groups',
+        :format   => params[:format],
+        :objects  => Service::RADIUS::Group.get(params),
+        :msg      => msg
+      )
+    end
+
+
     get '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
       user.retrieve_attributes_from_db
