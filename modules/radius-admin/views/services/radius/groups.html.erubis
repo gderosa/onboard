@@ -38,7 +38,7 @@
       %>
       <tr>
         <td class="<%= csstclass %>">
-          <a title="Click to edit" href="users/<%= group.name %>.html">
+          <a title="Click to edit" href="groups/<%= group.name %>.html">
             <%= group.name %>
           </a>
         </td>

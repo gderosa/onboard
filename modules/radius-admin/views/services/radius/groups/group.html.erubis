@@ -1,0 +1,29 @@
+<% 
+  group   = objects['group']
+  conf    = objects['conf']
+  chkcols = conf['group']['check']['columns']
+  rplcols = conf['group']['reply']['columns'] 
+%>
+<%= message_partial(msg) %>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style' # same style of users
+  )
+%>
+
+<h2>RADIUS group: <%= group.name %></h2>
+
+
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/groups/_form_edit',
+    :locals => {
+      :group    => group,
+      :heading  => 3
+    }
+  )
+%>
+
+

@@ -104,6 +104,24 @@ class OnBoard
       )
     end
 
+    get '/services/radius/groups/:groupid.:format' do
+      use_pagination_defaults # member users list
+      group = Service::RADIUS::Group.new(params[:groupid])
+      group.retrieve_attributes_from_db
+      not_found unless group.found?
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/groups/group',
+        :format   => params[:format],
+        :objects  => {
+          'conf'    => Service::RADIUS.conf,
+          'group'   => group #,
+          #'members' => group.members(params)
+        },
+      )
+    end
+   
+
     put '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
       user.retrieve_attributes_from_db

@@ -140,6 +140,10 @@ class OnBoard
           ).to_a
         end
 
+        def found?
+          @check.length + @reply.length > 0
+        end
+
         def update_reply_attributes(params)
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(

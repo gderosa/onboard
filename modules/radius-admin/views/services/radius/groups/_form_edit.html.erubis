@@ -1,0 +1,28 @@
+<%
+  group   ||= nil
+  heading ||= 4
+%>
+<form class="raduserform" method="POST"> <!-- same style of users -->
+  <input type="hidden" name="_method" value="put">
+  <h<%= heading%>>Check Attributes</h<%= heading%>>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/groups/_form_check',
+      :locals => {
+        :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
+        :best_passwd_type => '',
+        :group            => group
+      }
+    )
+  %>
+  <h<%= heading%>>Reply Attributes</h<%= heading%>>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/groups/_form_reply',
+      :locals => {:group => group}
+    )
+  %>
+  <button type="submit">Change!</button>
+</form>
