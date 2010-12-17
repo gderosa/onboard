@@ -14,8 +14,8 @@ class OnBoard
 
           def get(params)
             conf      = RADIUS.read_conf
-            table     = conf['check']['table'].to_sym
-            columns   = conf['check']['columns']
+            table     = conf['user']['check']['table'].to_sym
+            columns   = conf['user']['check']['columns']
             page      = params[:page].to_i
             per_page  = params[:per_page].to_i
             select    = RADIUS.db[table].select(
@@ -33,8 +33,8 @@ class OnBoard
         
           def insert(params)
             conf      = RADIUS.read_conf
-            table     = conf['check']['table'].to_sym
-            col       = conf['check']['columns'].symbolize_values
+            table     = conf['user']['check']['table'].to_sym
+            col       = conf['user']['check']['columns'].symbolize_values
             if params['check']['User-Password'] != 
                 params['confirm']['check']['User-Password']
               raise PasswordsDoNotMatch, 'Passwords do not match!'
