@@ -49,6 +49,20 @@ class OnBoard
                 @@columns['User-Name'] => params['check']['User-Name'] ).any?
               raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
             end
+
+            # All is ok, proceed.
+            #
+            # First, insert a dummy attribute into check table, which is
+            # useful to create an attribute-less user: this may make sense
+            # for a number of reasons, for example a "stub" user which will
+            # be configured later (and of course won't be authorized right 
+            # now), or for a user who will be authenicated only on a 
+            # per-group basis.
+
+            insert_dummy_attributes(params)
+
+            # Now, the "real" attributes.
+
             if params['check']['Password-Type'] =~ /\S/
               RADIUS.db[@@table].insert(
                 @@columns['User-Name']  => params['check']['User-Name'],
@@ -66,6 +80,19 @@ class OnBoard
               @@columns['Attribute']  => 'Auth-Type',
               @@columns['Value']      => params['check']['Auth-Type'],
             ) if params['check']['Auth-Type'] =~ /\S/
+          end
+
+          def insert_dummy_attributes(params)
+            # In fact, there's no need to explicitly insert 'User-Name',
+            # because there's already a @@columns['User-Name'] column.
+            # For the rationale of this method, read comments inside 
+            # the insert method.
+            RADIUS.db[@@table].insert(
+              @@columns['User-Name']  => params['check']['User-Name'],
+              @@columns['Operator']   => ':=',
+              @@columns['Attribute']  => 'User-Name',
+              @@columns['Value']      => params['check']['User-Name']
+            )
           end
 
         end
