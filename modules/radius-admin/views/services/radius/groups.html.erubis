@@ -36,13 +36,13 @@
                       ''
                     end
       %>
-      <tr>
-        <td class="<%= csstclass %>">
+      <tr class="<%= csstclass %>">
+        <td>
           <a title="Click to edit" href="groups/<%= group.name %>.html">
             <%= group.name %>
           </a>
         </td>
-        <td class="<%= csstclass %>">
+        <td>
           <% if group.auth_type %>
             <%= group.auth_type %>
           <% else %>
