@@ -156,7 +156,7 @@ class OnBoard
           per_page      = params[:per_page].to_i
           q_members     = RADIUS.db[@@maptable].where(
             @@mapcols['Group-Name'] => @name
-          )
+          ).order_by @@mapcols['User-Name']
           member_rows   = q_members.paginate(page, per_page)
           member_names  = member_rows.map(@@mapcols['User-Name'])
           {
