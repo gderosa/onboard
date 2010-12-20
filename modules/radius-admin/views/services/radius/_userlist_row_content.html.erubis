@@ -1,7 +1,10 @@
 <%#-*- coding: UTF-8 -*-%>
+<% 
+  subdir ||= 'users'
+%>
 
         <td>
-          <a title="Click to edit" href="/services/radius/users/<%= user.name %>.html">
+          <a title="Click to edit" href="/services/radius/<%= subdir %>/<%= user.name %>.html">
             <%= user.name %>
           </a>
         </td>

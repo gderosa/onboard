@@ -1,4 +1,8 @@
 <%#-*- coding: UTF-8 -*-%>
+<%
+  subdir ||= 'users'
+%>
+
 
       <% 
         csstclass = case user.auth_type
@@ -15,7 +19,10 @@
           partial(
             :module => 'radius-admin',
             :path   => 'services/radius/_userlist_row_content',
-            :locals => {:user => user} 
+            :locals => {
+              :user   => user,
+              :subdir => subdir
+            } 
           )
         %>
       </tr>

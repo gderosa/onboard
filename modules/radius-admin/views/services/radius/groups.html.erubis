@@ -19,37 +19,22 @@
   <thead>
     <tr>
       <th>Group Name</th>
-      <th>
-        Auth-Type
-      </th>
+      <th>Auth-Type</th>
+      <th>Password Type</th>
     </tr>
   </thead>
   <tbody>
     <% groups.each do |group| %>
-      <%
-        csstclass = case group.auth_type
-                    when 'Reject'
-                      'bg_off'
-                    when 'Accept'
-                      'bg_high'
-                    else
-                      ''
-                    end
+      <%= # users list and groups list share UI representation
+        partial(
+          :module => 'radius-admin',
+          :path   => 'services/radius/_userlist_row',
+          :locals => {
+            :user   => group,
+            :subdir => 'groups'
+          }
+        )
       %>
-      <tr class="<%= csstclass %>">
-        <td>
-          <a title="Click to edit" href="groups/<%= group.name %>.html">
-            <%= group.name %>
-          </a>
-        </td>
-        <td>
-          <% if group.auth_type %>
-            <%= group.auth_type %>
-          <% else %>
-            <span class="lowlight">(auto)</span>
-          <% end %>
-        </td>
-      </tr>
     <% end %>
   </tbody>
 </table>
