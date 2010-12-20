@@ -109,6 +109,7 @@ class OnBoard
               params['confirm']['check']['User-Password']
             raise PasswordsDoNotMatch, 'Passwords do not match!'
           end
+          validate_empty_password(params)
           if params['check']['Password-Type'] =~ /\S/
             return unless params['check']['User-Password'] =~ /\S/
             # so an incorrect Password-Type would raise an exception
@@ -201,6 +202,14 @@ class OnBoard
 
         def auth_type
           find_attribute_value_by_name(:check, 'Auth-Type')
+        end
+
+        def validate_empty_password(params)
+          # if password type is not being changed, leaving the password
+          # fields blank simply means "leave the password unchanged".
+          if password_type != params['check']['Password-Type']
+            RADIUS::Check.validate_empty_password(params)
+          end
         end
 
         def to_h
