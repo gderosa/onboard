@@ -1,7 +1,7 @@
 <%#-*- coding: UTF-8 -*-%>
 
         <td>
-          <a title="Click to edit" href="users/<%= user.name %>.html">
+          <a title="Click to edit" href="/services/radius/users/<%= user.name %>.html">
             <%= user.name %>
           </a>
         </td>
