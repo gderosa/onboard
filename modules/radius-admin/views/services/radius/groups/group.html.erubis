@@ -1,6 +1,7 @@
 <% 
   group   = objects['group']
   conf    = objects['conf']
+  members = objects['members']
   chkcols = conf['group']['check']['columns']
   rplcols = conf['group']['reply']['columns'] 
 %>
@@ -14,6 +15,17 @@
 
 <h2>RADIUS group: <%= group.name %></h2>
 
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/groups/_members',
+    :locals => {
+      :group    => group,
+      :heading  => 3,
+      :members  => members
+    }
+  )
+%>
 
 <%= 
   partial(

@@ -1,0 +1,37 @@
+<h<%= heading %>>Members</h<%= heading %>> 
+
+<table>
+  <thead>
+    <tr>
+      <th>User-Name</th>
+      <th>
+        Auth-Type
+      </th>
+      <th>
+        Password Type
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% members['users'].each do |user| %>
+      <%=
+        partial(
+          :module => 'radius-admin',
+          :path   => 'services/radius/_userlist_row',
+          :locals => {
+            :user   => user
+          }
+        )
+      %>
+    <% end %>
+  </tbody>
+</table>
+<%=
+  paginator(
+    :page => members['page'],
+    :per_page => members['per_page'],
+    :total_items => members['total_items']
+  )
+%>
+
+
