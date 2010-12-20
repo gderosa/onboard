@@ -146,6 +146,7 @@ class OnBoard
     end
 
     put '/services/radius/groups/:groupid.:format' do
+      use_pagination_defaults
       group = Service::RADIUS::Group.new(params[:groupid])
       group.retrieve_attributes_from_db
       not_found unless group.found?
@@ -163,7 +164,8 @@ class OnBoard
         :msg      => msg,
         :objects  => {
           'conf'    => Service::RADIUS.conf,
-          'group'    => group
+          'group'     => group,
+          'members'   => group.get_members(params)
         }
       )
     end
