@@ -148,7 +148,13 @@ class OnBoard
         end
 
         def found?
-          @check.length + @reply.length > 0
+          any_attributes  = ( @check.length + @reply.length > 0 )
+
+          any_members     = RADIUS.db[@@maptable].where(
+              @@mapcols['Group-Name'] => @name
+          ).any?
+
+          any_attributes or any_members
         end
 
         def update_reply_attributes(params)
