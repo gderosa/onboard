@@ -147,6 +147,26 @@ class OnBoard
           ).to_a
         end
 
+        # Group members, as opposed to group attributes, might be thousands,
+        # so pagination is necessary - and holding (paginated) results
+        # into an instance variable does not make much sense.
+        def get_members(params)
+          setup
+          page          = params[:page].to_i
+          per_page      = params[:per_page].to_i
+          q_members     = RADIUS.db[@@maptable].where(
+            @@mapcols['Group-Name'] => @name
+          )
+          member_rows   = q_members.paginate(page, per_page)
+          member_names  = member_rows.map(@@mapcols['User-Name'])
+          {
+            'total_items' => q_members.count,
+            'page'        => page,
+            'per_page'    => per_page,
+            'users'       => member_names.map{|u| User.new(u)} 
+          }
+        end
+
         def found?
           any_attributes  = ( @check.length + @reply.length > 0 )
 
@@ -308,10 +328,10 @@ class OnBoard
         end
 
         def to_json(*args)
-          #to_h.to_json(*args)
+          to_h.to_json(*args)
         end
         def to_yaml(*args)
-          #to_h.deep_rekey{|k|k.to_s}.to_yaml(*args)
+          to_h.deep_rekey{|k|k.to_s}.to_yaml(*args)
         end
 
       end

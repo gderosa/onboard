@@ -115,8 +115,8 @@ class OnBoard
         :format   => params[:format],
         :objects  => {
           'conf'    => Service::RADIUS.conf,
-          'group'   => group #,
-          #'members' => group.members(params)
+          'group'   => group,
+          'members' => group.get_members(params) 
         },
       )
     end
