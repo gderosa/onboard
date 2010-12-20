@@ -69,11 +69,8 @@ class OnBoard
                 @@chkcols['Group-Name'] => params['check']['Group-Name'] ).any?
               raise GroupAlreadyExists, "Group '#{params['check']['Group-Name']}' already exists!"
             end
-            if  ['', nil].include? params['check']['Group-Password'] and
-                ['', nil].include? params['check']['Auth-Type']     and not
-                ['', nil].include? params['check']['Password-Type']
-              raise EmptyPassword, 'Cannot accept an empy password if group password authentication is enabled.'
-            end
+
+            validate_empty_password(params) # raises exception if appropriate
 
             # All is ok, proceed.
             #
@@ -117,6 +114,16 @@ class OnBoard
               @@chkcols['Attribute']  => 'Group',
               @@chkcols['Value']      => params['check']['Group-Name']
             )
+          end
+
+          # Accept empty passwords only with Auth-Type == Reject or Accept.
+          # Raise an exception otherwise.
+          def validate_empty_password(params)
+            if  ['', nil].include? params['check']['Group-Password'] and
+                ['', nil].include? params['check']['Auth-Type']     and not
+                ['', nil].include? params['check']['Password-Type']
+              raise EmptyPassword, 'Cannot accept an empy password if group password authentication is enabled.'
+            end
           end
 
         end
@@ -183,23 +190,28 @@ class OnBoard
               params['confirm']['check']['Group-Password']
             raise PasswordsDoNotMatch, 'Passwords do not match!'
           end
-          return unless params['check']['Group-Password'] =~ /\S/
-          # so an incorrect Password-Type would raise an exception
-          encrypted_passwd = RADIUS.compute_password(
-            :type             => params['check']['Password-Type'],
-            :cleartext        => params['check']['Group-Password']
-          )
+          validate_empty_password(params) 
+          if params['check']['Password-Type'] =~ /\S/
+            return unless params['check']['Group-Password'] =~ /\S/
+            # so an incorrect Password-Type would raise an exception
+            encrypted_passwd = RADIUS.compute_password(
+              :type             => params['check']['Password-Type'],
+              :cleartext        => params['check']['Group-Password']
+            )
+          end
           RADIUS.db[@@chktable].filter(
             @@chkcols['Group-Name']  => @name
           ).filter(
             @@chkcols['Attribute'].like '%-Password'
           ).delete
-          RADIUS.db[@@chktable].insert(
-            @@chkcols['Group-Name']  => @name,
-            @@chkcols['Attribute']  => params['check']['Password-Type'],
-            @@chkcols['Operator']   => ':=',
-            @@chkcols['Value']      => encrypted_passwd
-          )
+          if params['check']['Password-Type'] =~ /\S/
+            RADIUS.db[@@chktable].insert(
+              @@chkcols['Group-Name']  => @name,
+              @@chkcols['Attribute']  => params['check']['Password-Type'],
+              @@chkcols['Operator']   => ':=',
+              @@chkcols['Value']      => encrypted_passwd
+            )
+          end
         end
 
         def update(params)
@@ -271,6 +283,14 @@ class OnBoard
 
         def auth_type
           find_attribute_value_by_name(:check, 'Auth-Type')
+        end
+
+        def validate_empty_password(params)
+          # if password type is not being changed, leaving the password
+          # fields blank simply means "leave the password unchanged". 
+          if password_type != params['check']['Password-Type']
+            self.class.validate_empty_password(params)
+          end
         end
 
         def to_h
