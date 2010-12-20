@@ -45,37 +45,15 @@ authentication is made on a per-group basis.</p>
   </thead>
   <tbody>
     <% users.each do |user| %>
-      <% 
-        csstclass = case user.auth_type
-                    when 'Reject'
-                      'bg_off'
-                    when 'Accept'
-                      'bg_high'
-                    else
-                      ''
-                    end
+      <%= 
+        partial(
+          :module => 'radius-admin',
+          :path   => 'services/radius/_userlist_row',
+          :locals => {
+            :user   => user
+          }
+        )
       %>
-      <tr>
-        <td class="<%= csstclass %>">
-          <a title="Click to edit" href="users/<%= user.name %>.html">
-            <%= user.name %>
-          </a>
-        </td>
-        <td class="<%= csstclass %>">
-          <% if user.auth_type %>
-            <%= user.auth_type %>
-          <% else %>
-            <span class="lowlight">(auto)</span>
-          <% end %>
-        </td>
-        <td class="<%= csstclass %>">
-          <% if user.password_type %>
-            <%= user.password_type %>
-          <% else %>
-            <span class="lowlight">(none)</span>
-          <% end %>
-        </td>
-      </tr>
     <% end %>
   </tbody>
 </table>

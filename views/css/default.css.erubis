@@ -307,11 +307,11 @@ table tr td {
   padding: 0 0.4em;
 }
 
-.bg_off {
+tr.bg_off td, tr.bg_off th {
   background: <%= lightbg_off %>;
 }
 
-.bg_high {
+tr.bg_high td, tr.bg_high th {
   background: <%= lightbg_high %>;
 }
 
