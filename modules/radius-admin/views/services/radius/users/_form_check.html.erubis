@@ -64,22 +64,22 @@
           </div>
         </td>
       </tr>
-      <tr>
-        <%
-          # DO Repeat Yourself :-)
-          csstclass = ''
-          if user
-            csstclass = case user.auth_type
-                        when 'Reject'
-                          'bg_off'
-                        when 'Accept'
-                          'bg_high'
-                        else
-                          ''
-                        end 
-          end
-        %>
-        <th class="<%= csstclass %>" scope="row" style="font-style:italic;">
+
+      <%
+        csstclass = ''
+        if user
+          csstclass = case user.auth_type
+                      when 'Reject'
+                        'bg_off'
+                      when 'Accept'
+                        'bg_high'
+                      else
+                        ''
+                      end 
+        end
+      %>
+      <tr class="<%= csstclass %>">
+        <th scope="row" style="font-style:italic;">
           User is
           <div class="optinfo">
             Technically, sets the <code>Auth-Type</code> RADIUS attribute 
@@ -87,7 +87,7 @@
               href="http://wiki.freeradius.org/Auth-Type">here</a>).
           </div>
         </th>
-        <td class="<%= csstclass %>">
+        <td>
           <fieldset>
             <% 
               selected_auth_type = ''
