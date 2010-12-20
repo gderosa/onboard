@@ -108,7 +108,7 @@ class OnBoard
 
           def insert_dummy_attributes(params)
             # In fact, there's no need to explicitly insert 'Group',
-            # because there's already a @@columns['User-Name'] column.
+            # because there's already a @@columns['Group-Name'] column.
             # For the rationale of this method, read comments inside
             # the insert method.
             RADIUS.db[@@chktable].insert(
@@ -161,60 +161,51 @@ class OnBoard
         end
         
         def update_check_attributes(params) # no passwords
-=begin
           params['check'].each_pair do |attribute, value|
             # passwords are managed by #update_password
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
-            # inerting User-Name attribute doesn't make sense: there's 
-            # already @@chkcols['User-Name'] column
-            next if attribute == 'User-Name'
             RADIUS.db[@@chktable].filter(
-              @@chkcols['User-Name']  => @name,
+              @@chkcols['Group-Name']  => @name,
               @@chkcols['Attribute']  => attribute
             ).delete
             next unless value =~ /\S/
             RADIUS.db[@@chktable].insert(
-              @@chkcols['User-Name']  => @name,
+              @@chkcols['Group-Name']  => @name,
               @@chkcols['Attribute']  => attribute,
-              @@chkcols['Operator']   => ':=',
+              @@chkcols['Operator']   => '=', # so user attr w/ ':=' prevail
               @@chkcols['Value']      => value
             )
           end
-=end
         end
 
         def update_passwd(params)
-=begin
-          if params['check']['User-Password'] !=
-              params['confirm']['check']['User-Password']
+          if params['check']['Group-Password'] !=
+              params['confirm']['check']['Group-Password']
             raise PasswordsDoNotMatch, 'Passwords do not match!'
           end
-          return unless params['check']['User-Password'] =~ /\S/
+          return unless params['check']['Group-Password'] =~ /\S/
           # so an incorrect Password-Type would raise an exception
           encrypted_passwd = RADIUS.compute_password(
             :type             => params['check']['Password-Type'],
-            :cleartext        => params['check']['User-Password']
+            :cleartext        => params['check']['Group-Password']
           )
           RADIUS.db[@@chktable].filter(
-            @@chkcols['User-Name']  => @name
+            @@chkcols['Group-Name']  => @name
           ).filter(
             @@chkcols['Attribute'].like '%-Password'
           ).delete
           RADIUS.db[@@chktable].insert(
-            @@chkcols['User-Name']  => @name,
+            @@chkcols['Group-Name']  => @name,
             @@chkcols['Attribute']  => params['check']['Password-Type'],
             @@chkcols['Operator']   => ':=',
             @@chkcols['Value']      => encrypted_passwd
           )
-=end
         end
 
         def update(params)
-=begin
           update_passwd(params)
           update_check_attributes(params)
           update_reply_attributes(params)
-=end
         end
 
         #   user.find_attribute do |attrib, op, val|
@@ -272,12 +263,10 @@ class OnBoard
         alias attribute find_attribute_value_by_name
 
         def password_type
-=begin
           row = find_attribute :check do |attrib, op, val|
             attrib =~ /-Password$/ 
           end
           row ? row[@@chkcols['Attribute']] : nil
-=end
         end
 
         def auth_type
@@ -285,13 +274,11 @@ class OnBoard
         end
 
         def to_h
-=begin
           {
             :name  => @name,
             :check => @check,
             :reply => @reply,
           }
-=end
         end
 
         def to_json(*args)

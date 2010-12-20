@@ -145,6 +145,30 @@ class OnBoard
       )
     end
 
+    put '/services/radius/groups/:groupid.:format' do
+      group = Service::RADIUS::Group.new(params[:groupid])
+      group.retrieve_attributes_from_db
+      not_found unless group.found?
+      msg = handle_errors do 
+        group.update(params)
+        group.retrieve_attributes_from_db
+      end
+      unless group.found?
+        msg[:warn] = "User has no longer any attribute!"
+      end
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/groups/group',
+        :format   => params[:format],
+        :msg      => msg,
+        :objects  => {
+          'conf'    => Service::RADIUS.conf,
+          'group'    => group
+        }
+      )
+    end
+   
+
     get '/services/radius/accounting.:format' do
       use_pagination_defaults
       format(
