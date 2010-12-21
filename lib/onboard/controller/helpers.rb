@@ -262,6 +262,11 @@ class OnBoard
         )
       end
 
+      # backward-compatibility for code based on ERB::Util
+      def url_encode(str)
+        Rack::Utils.escape(str) 
+      end
+
     end
   end
 end
