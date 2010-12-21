@@ -270,6 +270,13 @@ class OnBoard
           end
         end
 
+        def remove_member(member)
+          RADIUS.db[@@maptable].filter(
+            @@mapcols['Group-Name'] => @name,
+            @@mapcols['User-Name']  => member
+          ).delete
+        end
+
         def update(params)
           if params['update_members']
             alread_exist = []
@@ -284,6 +291,15 @@ class OnBoard
             if alread_exist.any? 
               raise Warning, "The folowing users are already part of group #{@name} : #{alread_exist.join(', ')}."
             end
+
+            if params['remove'].respond_to? :each_pair
+              params['remove'].each_pair do |name, value|
+                if %w{on yes 1}.include? value
+                  remove_member name
+                end
+              end
+            end
+
           else # update attributes by default
             update_passwd(params)
             update_check_attributes(params)
