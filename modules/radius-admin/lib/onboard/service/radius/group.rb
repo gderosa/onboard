@@ -366,15 +366,17 @@ class OnBoard
 
         def delete!
           setup
-          RADIUS.db[@@maptable].where(
-            @@mapcols['Group-Name'] => @name
-          ).delete
-          RADIUS.db[@@chktable].where(
-            @@chkcols['Group-Name'] => @name
-          ).delete
-          RADIUS.db[@@rpltable].where(
-            @@rplcols['Group-Name'] => @name
-          ).delete
+          RADIUS.db.transaction do
+            RADIUS.db[@@maptable].where(
+              @@mapcols['Group-Name'] => @name
+            ).delete
+            RADIUS.db[@@chktable].where(
+              @@chkcols['Group-Name'] => @name
+            ).delete
+            RADIUS.db[@@rpltable].where(
+              @@rplcols['Group-Name'] => @name
+            ).delete
+          end
         end
 
         def to_h
