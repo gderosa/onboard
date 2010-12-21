@@ -9,7 +9,7 @@ class OnBoard
       autoload :Accounting,   'onboard/service/radius/accounting'
       autoload :Check,        'onboard/service/radius/check'
       #autoload :Reply,        'onboard/service/radius/reply'
-        # user User#update_reply_attributes instead, even on User creation
+        # use User#update_reply_attributes instead, even on User creation
       autoload :Passwd,       'onboard/service/radius/passwd'
       autoload :User,         'onboard/service/radius/user'
       autoload :Group,        'onboard/service/radius/group'

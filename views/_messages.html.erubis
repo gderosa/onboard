@@ -31,7 +31,7 @@
       <pre class="error"><%= msg[:err].to_s %></pre>
     <% end %>
   <% end %>
-  <% if msg[:warn] =~ /\S/ %>
+  <% if msg[:warn].to_s =~ /\S/ %>
     <pre class="warn"><%= msg[:warn] %></pre>
   <% end %>
 <% end %>

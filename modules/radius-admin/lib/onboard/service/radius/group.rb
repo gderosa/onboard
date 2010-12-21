@@ -240,10 +240,40 @@ class OnBoard
           end
         end
 
+        def add_member(member, priority=1)
+          if RADIUS.db[@@maptable].filter(
+            @@mapcols['Group-Name'] => @name,
+            @@mapcols['User-Name']  => member
+          ).any?
+            raise UserAlreadyExists
+          else
+            RADIUS.db[@@maptable].insert(
+              @@mapcols['Group-Name'] => @name,
+              @@mapcols['User-Name']  => member,
+              @@mapcols['Priority']   => priority
+            )
+          end
+        end
+
         def update(params)
-          update_passwd(params)
-          update_check_attributes(params)
-          update_reply_attributes(params)
+          if params['update_members']
+            alread_exist = []
+            new_members = params['add_members'].split(/[ ,\n]+/m)
+            new_members.each do |member|
+              begin
+                add_member member
+              rescue UserAlreadyExists
+                alread_exist << member
+              end
+            end
+            if alread_exist.any? 
+              raise Warning, "The folowing users are already part of group #{@name} : #{alread_exist.join(', ')}."
+            end
+          else # update attributes by default
+            update_passwd(params)
+            update_check_attributes(params)
+            update_reply_attributes(params)
+          end
         end
 
         #   user.find_attribute do |attrib, op, val|

@@ -245,6 +245,8 @@ class OnBoard
         rescue OnBoard::Conflict
           status 409
           msg[:err] = $!
+        rescue OnBoard::Warning
+          msg[:warn] = $!
         end
         return msg
       end
