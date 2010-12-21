@@ -263,7 +263,7 @@ class OnBoard
         def update(params)
           if params['update_members']
             alread_exist = []
-            new_members = params['add_members'].split(/[ ,\n]+/m)
+            new_members = params['add_members'].split(/[ ,;\r\n]+/m)
             new_members.each do |member|
               begin
                 add_member member

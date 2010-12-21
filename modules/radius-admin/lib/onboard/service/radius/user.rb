@@ -1,6 +1,7 @@
 require 'sequel'
 require 'sequel/extensions/pagination'
 
+require 'onboard/extensions/sequel/dataset'
 require 'onboard/extensions/object/deep'
 require 'onboard/extensions/hash'
 
@@ -164,10 +165,35 @@ class OnBoard
           end
         end
 
+        def update_group_membership(params)
+          Group.setup
+          groupnames = params['groups'].split(/[ ,;\n\r]+/m)  
+          oldrows = RADIUS.db[Group.maptable].filter(
+            Group.mapcols['User-Name'] => @name
+          ).to_a
+          newrows = []
+          groupnames.each_with_index do |groupname, n|
+            priority = n + 1
+            newrows << {
+              Group.mapcols['User-Name']  => @name,
+              Group.mapcols['Group-Name'] => groupname,
+              Group.mapcols['Priority']   => priority
+            }
+          end
+          delete = oldrows - newrows
+          insert = newrows - oldrows
+          delete.each{|row| RADIUS.db[Group.maptable].filter(row).delete}
+          insert.each{|row| RADIUS.db[Group.maptable].insert(row)} 
+        end
+
         def update(params)
-          update_passwd(params)
-          update_check_attributes(params)
-          update_reply_attributes(params)
+          if params['update_groups']
+            update_group_membership(params)
+          else
+            update_passwd(params)
+            update_check_attributes(params)
+            update_reply_attributes(params)
+          end
         end
 
         #   user.find_attribute do |attrib, op, val|

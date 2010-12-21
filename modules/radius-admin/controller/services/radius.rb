@@ -35,11 +35,16 @@ class OnBoard
 
     get '/services/radius/users.:format' do
       use_pagination_defaults
+      raduserinfo = Service::RADIUS::User.get(params)
+      users = raduserinfo['users']
+      users.each do |u| 
+        u.retrieve_attributes_from_db if !u.check or u.check.length == 0
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users',
         :format   => params[:format],
-        :objects  => Service::RADIUS::User.get(params)
+        :objects  => raduserinfo
       )
     end
 
@@ -110,6 +115,12 @@ class OnBoard
       group = Service::RADIUS::Group.new(params[:groupid])
       group.retrieve_attributes_from_db
       not_found unless group.found?
+      member_info = group.get_members(params)
+      members = member_info['users']
+      members.each do |member|
+        member.retrieve_attributes_from_db if 
+            !member.check or member.check.length == 0
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups/group',
@@ -117,7 +128,7 @@ class OnBoard
         :objects  => {
           'conf'    => Service::RADIUS.conf,
           'group'   => group,
-          'members' => group.get_members(params) 
+          'members' => member_info
         },
       )
     end
@@ -131,6 +142,7 @@ class OnBoard
       msg = handle_errors do 
         user.update(params)
         user.retrieve_attributes_from_db
+        user.retrieve_group_membership_from_db
       end
       unless user.found?
         msg[:warn] = "User has no longer any attribute!"
