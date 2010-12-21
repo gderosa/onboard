@@ -28,7 +28,7 @@
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <h3>Groups</h3>
-  <p>RADIUS groups this user is member of.</p>
+  <p>RADIUS <a href="/services/radius/groups.html">groups</a> this user is member of.</p>
   <p>
     Comma-separated list, in order of priority e.g. <code>group1, 
     group2</code> . You may also add non existing groups, they will be 
