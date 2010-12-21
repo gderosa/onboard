@@ -54,5 +54,15 @@
     }
   )
 %>
-
-
+<div style="height:2em;"> <!-- separator --> </div>
+<h3>Delete this group</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="delete"/>
+  <table>
+    <tr>
+      <th scope="row">Yes, I am sure</th>
+      <td><input type="checkbox" name="confirm"/></td>
+    </tr>
+  </table>
+  <button type="submit" style="margin-top:1.2em;">Delete!</button>
+</form>

@@ -195,5 +195,20 @@ class OnBoard
       )
     end
 
+    delete '/services/radius/groups/:groupid.:format' do
+      group = Service::RADIUS::Group.new params[:groupid] 
+      if group.found?
+        if params['confirm'] =~ /on|yes|true|1/
+          group.delete!
+          status 303 # HTTP See Other
+          headers 'Location' => "/services/radius/groups.#{params[:format]}" 
+        else
+          status 204 # HTTP No Content # TODO: is this the right code?
+        end
+      else
+        not_found
+      end
+    end
+
   end
 end

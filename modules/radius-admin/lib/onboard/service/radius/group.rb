@@ -173,13 +173,23 @@ class OnBoard
         end
 
         def found?
-          any_attributes  = ( @check.length + @reply.length > 0 )
+          return true if 
+              (@check and @check.any?) or 
+              (@reply and @reply.any?) 
 
-          any_members     = RADIUS.db[@@maptable].where(
+          return true if RADIUS.db[@@maptable].where(
               @@mapcols['Group-Name'] => @name
           ).any?
 
-          any_attributes or any_members
+          return true if RADIUS.db[@@chktable].where(
+              @@chkcols['Group-Name'] => @name
+          ).any?
+
+          return true if RADIUS.db[@@rpltable].where(
+              @@rplcols['Group-Name'] => @name
+          ).any?
+
+          return false
         end
 
         def update_reply_attributes(params)
@@ -352,6 +362,19 @@ class OnBoard
           if password_type != params['check']['Password-Type']
             self.class.validate_empty_password(params)
           end
+        end
+
+        def delete!
+          setup
+          RADIUS.db[@@maptable].where(
+            @@mapcols['Group-Name'] => @name
+          ).delete
+          RADIUS.db[@@chktable].where(
+            @@chkcols['Group-Name'] => @name
+          ).delete
+          RADIUS.db[@@rpltable].where(
+            @@rplcols['Group-Name'] => @name
+          ).delete
         end
 
         def to_h
