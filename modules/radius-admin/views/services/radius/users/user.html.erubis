@@ -14,37 +14,6 @@
 
 <h2>RADIUS user: <%= user.name %></h2>
 
-<!-- TODO TODO TODO -->
-<!-- A separate page for advanced/raw attributes editing -->
-
-<!--
-<h3>Check attributes</h3>
-<table>
-  <% user.check.each do |row| %>
-    <tr>
-      <% %w{Attribute Operator Value}.each do |col| %>
-        <td>
-          <%== row[ chkcols[col].to_sym ] %> 
-        </td>
-      <% end %>
-    </tr>
-  <% end %>
-</table>
-
-<h3>Reply attributes</h3>
-<table>
-  <% user.reply.each do |row| %>
-    <tr>
-      <% %w{Attribute Operator Value}.each do |col| %>
-        <td>
-          <%== row[ rplcols[col].to_sym ] %> 
-        </td>
-      <% end %>
-    </tr>
-  <% end %>
-</table>
--->
-
 <%= 
   partial(
     :module => 'radius-admin',
@@ -55,5 +24,18 @@
     }
   )
 %>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <h3>Groups</h3>
+  <p>
+    Comma-separated list, in order of priority e.g. <code>group1, 
+    group2</code> . You may also add non existing groups, they will be 
+    created for you.
+  </p>
+
+  <p><input type="text" style="width:50ex" name="groups" value="<%= user.grouplist.join(', ') %>"/></p> 
+  <div style="margin-top:2em;"><button type="submit" name="update_groups" value="on">Update group membership!</button></div>
+</form>
 
 

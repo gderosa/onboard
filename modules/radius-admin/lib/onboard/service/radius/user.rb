@@ -56,7 +56,7 @@ class OnBoard
         
         end
 
-        attr_reader :name, :check, :reply
+        attr_reader :name, :check, :reply, :groups
 
         def setup;  self.class.setup;   end
         def setup!; self.class.setup!;  end
@@ -84,7 +84,14 @@ class OnBoard
 
           @groups = RADIUS.db[Group.maptable].where(
             Group.mapcols['User-Name'] => @name
+          ).order_by(
+            Group.mapcols['Priority']
           ).to_a
+        end
+
+        def grouplist
+          Group.setup
+          @groups.map{|h| h[Group.mapcols['Group-Name']]} 
         end
 
         def found?
