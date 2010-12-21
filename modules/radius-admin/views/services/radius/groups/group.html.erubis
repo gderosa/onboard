@@ -31,7 +31,9 @@
 
   <h3>Add members</h3>
   <p>
-  Comma-separated list, e.g. <code>user1, user2, user3</code> . You may
+  Comma-separated list, e.g. <code>user1, user2, user3</code> . Or one
+  per line.</p> 
+  <p>You may
   also add non existing users, which will be configured later (of course,
   they will NOT be authorized to access the network until then).
   </p>
