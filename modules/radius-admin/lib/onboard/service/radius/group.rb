@@ -10,6 +10,11 @@ class OnBoard
 
         class << self
 
+          # TODO: class_reader, class_writer, class_accessor or something
+          def method_missing(id, *args)
+            class_variable_get :"@@#{id}" 
+          end
+
           def setup
             @@conf      ||= 
                 RADIUS.read_conf

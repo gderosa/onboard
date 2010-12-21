@@ -92,6 +92,7 @@ class OnBoard
     get '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
       user.retrieve_attributes_from_db
+      user.retrieve_group_membership_from_db
       not_found unless user.found?
       format(
         :module   => 'radius-admin',
@@ -125,6 +126,7 @@ class OnBoard
     put '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
       user.retrieve_attributes_from_db
+      user.retrieve_group_membership_from_db
       not_found unless user.found?
       msg = handle_errors do 
         user.update(params)

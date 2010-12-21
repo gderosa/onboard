@@ -25,17 +25,29 @@ class OnBoard
           end
 
           def get(params)
-            setup
-            column    = @@conf['user']['check']['columns']['User-Name'].to_sym
-            page      = params[:page].to_i 
-            per_page  = params[:per_page].to_i
-            select    = RADIUS.db[@@chktable].select(column).group_by(column)
-            users     = select.paginate(page, per_page).map do |h| 
-              h[column].force_encoding 'utf-8'
+            User.setup
+            Group.setup
+
+            column      = @@conf['user']['check']['columns']['User-Name'].to_sym
+            page        = params[:page].to_i 
+            per_page    = params[:per_page].to_i
+
+            q_check     = RADIUS.db[@@chktable].select(
+              column      => :username
+            )
+
+            q_usergroup = RADIUS.db[Group.maptable].select(
+              Group.mapcols['User-Name'] => :username
+            )
+
+            union       = (q_check | q_usergroup).group_by :username
+
+            users       = union.paginate(page, per_page).map do |h| 
+              h[:username].force_encoding 'utf-8'
             end
 
             {
-              'total_items' => select.count,
+              'total_items' => union.count,
               'page'        => page,
               'per_page'    => per_page,
               'users'       => users.map{|u| new(u)} 
@@ -50,7 +62,10 @@ class OnBoard
         def setup!; self.class.setup!;  end
 
         def initialize(username)
-          @name             = username
+          @name   = username
+          @check  = []
+          @reply  = []
+          @groups = []
         end
 
         def retrieve_attributes_from_db
@@ -63,8 +78,17 @@ class OnBoard
           ).to_a
         end
 
+        def retrieve_group_membership_from_db
+          User.setup
+          Group.setup
+
+          @groups = RADIUS.db[Group.maptable].where(
+            Group.mapcols['User-Name'] => @name
+          ).to_a
+        end
+
         def found?
-          @check.length + @reply.length > 0
+          @check.any? || @reply.any? || @groups.any? 
         end
 
         def update_reply_attributes(params)
