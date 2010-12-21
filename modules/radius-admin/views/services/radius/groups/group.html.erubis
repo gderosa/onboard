@@ -15,22 +15,37 @@
 
 <h2>RADIUS group: <%= group.name %></h2>
 
-<%= 
-  partial(
-    :module => 'radius-admin',
-    :path   => 'services/radius/groups/_members',
-    :locals => {
-      :group    => group,
-      :heading  => 3,
-      :members  => members
-    }
-  )
-%>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <%= 
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/groups/_members',
+      :locals => {
+        :group    => group,
+        :heading  => 3,
+        :members  => members
+      }
+    )
+  %>
+
+  <h3>Add members</h3>
+  <p>
+  Comma-separated list, e.g. <code>user1, user2, user3</code> . You may
+  also add non existing users, which will be configured later (of course,
+  they will NOT be authorized to access the network until then).
+  </p>
+
+  <p><textarea style="width:40ex" name="add_members"></textarea></p>
+  <div style="margin-top:2em;"><button type="submit" name="update_members" value="on">Update members!</button></div>
+</form>
+
+<div style="height:2em;"> <!-- separator --> </div>
 
 <%= 
   partial(
     :module => 'radius-admin',
-    :path   => 'services/radius/groups/_form_edit',
+    :path   => 'services/radius/groups/_form_edit', # edit attributes
     :locals => {
       :group    => group,
       :heading  => 3
