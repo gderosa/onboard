@@ -10,6 +10,9 @@
       <th>
         Password Type
       </th>
+      <th>
+        Remove?
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -17,7 +20,7 @@
       <%=
         partial(
           :module => 'radius-admin',
-          :path   => 'services/radius/_userlist_row',
+          :path   => 'services/radius/groups/_members_row',
           :locals => {
             :user   => user
           }
