@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'facets/hash'
 require 'sequel'
 
 class OnBoard
@@ -33,7 +34,7 @@ class OnBoard
 
         def read_conf
           if File.readable? CONFFILE
-            DEFAULTS.update YAML.load(File.read CONFFILE)
+            DEFAULTS.deep_merge YAML.load(File.read CONFFILE)
           else
             DEFAULTS
           end
