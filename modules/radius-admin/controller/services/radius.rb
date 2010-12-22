@@ -99,6 +99,7 @@ class OnBoard
       user = Service::RADIUS::User.new(params[:userid])
       user.retrieve_attributes_from_db
       user.retrieve_group_membership_from_db
+      user.retrieve_personal_info_from_db
       not_found unless user.found?
       format(
         :module   => 'radius-admin',

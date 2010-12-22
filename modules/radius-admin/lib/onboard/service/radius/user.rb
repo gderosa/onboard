@@ -96,6 +96,10 @@ class OnBoard
           ).to_a
         end
 
+        def retrieve_personal_info_from_db
+          setup
+        end
+
         def grouplist
           Group.setup
           @groups.map{|h| h[Group.mapcols['Group-Name']]} 

@@ -4,6 +4,16 @@
 %>
 <form class="raduserform" method="POST">
   <input type="hidden" name="_method" value="put">
+  <h<%= heading%>>Personal Informations</h<%= heading%>>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/users/_form_personal',
+      :locals => {
+        :user             => user
+      }
+    )
+  %>
   <h<%= heading%>>Check Attributes</h<%= heading%>>
   <%=
     partial(

@@ -199,9 +199,9 @@ CREATE TABLE IF NOT EXISTS `userinfo` (
   `changeuserinfo` varchar(128) DEFAULT NULL,
   `portalloginpassword` varchar(128) DEFAULT '',
   `enableportallogin` int(32) DEFAULT '0',
-  `creationdate` datetime DEFAULT '0000-00-00 00:00:00',
+  `creationdate` datetime DEFAULT NULL COMMENT '0000-... would crash Sequel',
   `creationby` varchar(128) DEFAULT NULL,
-  `updatedate` datetime DEFAULT '0000-00-00 00:00:00',
+  `updatedate` datetime DEFAULT NULL COMMENT '0000-... would crash Sequel',
   `updateby` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `username` (`username`)
