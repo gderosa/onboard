@@ -175,6 +175,7 @@ CREATE TABLE IF NOT EXISTS `radusergroup` (
 
 --
 -- Table structure for table `userinfo`
+-- (added a `country` columnd to DaloRADIUS schema)
 --
 
 CREATE TABLE IF NOT EXISTS `userinfo` (
@@ -192,6 +193,7 @@ CREATE TABLE IF NOT EXISTS `userinfo` (
   `city` varchar(200) DEFAULT NULL,
   `state` varchar(200) DEFAULT NULL,
   `zip` varchar(200) DEFAULT NULL,
+  `country` varchar(200) DEFAULT NULL,
   `notes` varchar(200) DEFAULT NULL,
   `changeuserinfo` varchar(128) DEFAULT NULL,
   `portalloginpassword` varchar(128) DEFAULT '',

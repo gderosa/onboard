@@ -1,0 +1,49 @@
+<table class="raduserform">
+  <tr>
+    <th scope="row">Name</th>
+    <td>
+      <span class="input-container">
+        <input type="text" name="personal[First-Name]"/>(First Name)</span>
+      <span class="input-container">
+        <input type="text" name="personal[Last-Name]"/>(Last Name)</span>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Email</th>
+    <td><input type="text" name="personal[Email]"/></td>
+  </tr>
+  <tr>
+    <th scope="row">Phone number</th>
+    <td>
+      <span class="input-container">
+        <input type="text" name="personal[Work-Phone]">(Work)</span>
+      <span class="input-container">
+        <input type="text" name="personal[Home-Phone]">(Home)</span>
+      <span class="input-container">
+        <input type="text" name="personal[Mobile-Phone]">(Mobile)</span>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Address</th>
+    <td>
+      <span class="input-container">
+        <input type="text" name="personal[Address]" style="width: 27ex;"/>
+      </span>
+      <span class="input-container">
+        <input type="text" name="personal[City]" style="width: 15ex;"/>(City)
+      </span>
+      <span class="input-container">
+        <input type="text" name="personal[State]" style="width: 2ex;"/>(State/Province)
+      </span>
+      <span class="input-container">
+        <input type="text" name="personal[Postal-Code]" style="width: 5ex;"/>(Zip/Postal Code)
+   
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Notes</th>
+    <td>
+      <textarea style="width: 40ex;" name="personal[Notes]"></textarea>
+    </td>
+  </tr>
+</table>

@@ -369,6 +369,10 @@ select.tt, select option.tt {
   font-family: <%= monospace %>;
 }
 
+span.input-container {
+  margin: 0 1ex 0 0;
+}
+
 .trademark {
   margin-left: 0.2em;
 }

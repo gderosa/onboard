@@ -13,8 +13,8 @@
   table.raduserform tr td, table tr th {
     padding: 1ex;
   }
-  table.raduserform tr td input {
-    width: 24ex;
+  table.raduserform tr td input, table.raduserform tr td input.humantext {
+    width: 160px;
   }
   table.raduserform tr th div.optinfo {
     margin-top: 0.2em;
