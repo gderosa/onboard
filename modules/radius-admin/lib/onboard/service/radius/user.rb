@@ -1,3 +1,4 @@
+require 'facets/hash'
 require 'sequel'
 require 'sequel/extensions/pagination'
 
@@ -63,16 +64,17 @@ class OnBoard
         
         end
 
-        attr_reader :name, :check, :reply, :groups
+        attr_reader :name, :check, :reply, :groups, :personal
 
         def setup;  self.class.setup;   end
         def setup!; self.class.setup!;  end
 
         def initialize(username)
-          @name   = username
-          @check  = []
-          @reply  = []
-          @groups = []
+          @name     = username
+          @check    = []
+          @reply    = []
+          @groups   = []
+          @personal = {}
         end
 
         def retrieve_attributes_from_db
@@ -98,6 +100,11 @@ class OnBoard
 
         def retrieve_personal_info_from_db
           setup
+          @personal = RADIUS.db[@@perstable].select(
+            @@perscols.invert.symbolize_all
+          ).filter(
+              @@perscols['User-Name'] => @name
+          ).first.stringify_keys || {} 
         end
 
         def grouplist
@@ -300,9 +307,10 @@ class OnBoard
 
         def to_h
           {
-            :name  => @name,
-            :check => @check,
-            :reply => @reply,
+            :name     => @name,
+            :check    => @check,
+            :reply    => @reply,
+            :personal => @personal
           }
         end
 

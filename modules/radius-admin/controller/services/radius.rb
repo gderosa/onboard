@@ -145,6 +145,7 @@ class OnBoard
         user.update(params)
         user.retrieve_attributes_from_db
         user.retrieve_group_membership_from_db
+        user.retrieve_personal_info_from_db
       end
       unless user.found?
         msg[:warn] = "User has no longer any attribute!"

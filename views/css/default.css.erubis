@@ -370,7 +370,7 @@ select.tt, select option.tt {
 }
 
 span.input-container {
-  margin: 0 1ex 0 0;
+  margin: 0 1em 0 0;
 }
 
 .trademark {

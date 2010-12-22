@@ -34,5 +34,5 @@
       :locals => {:user => user}
     )
   %>
-  <button type="submit">Update attributes!</button>
+  <button type="submit">Update attributes and personal data!</button>
 </form>
