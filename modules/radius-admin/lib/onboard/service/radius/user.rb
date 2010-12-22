@@ -18,10 +18,16 @@ class OnBoard
             @@chkcols   ||= @@conf['user']['check']['columns'].symbolize_values
             @@rpltable  ||= @@conf['user']['reply']['table'].to_sym
             @@rplcols   ||= @@conf['user']['reply']['columns'].symbolize_values
+            @@perstable ||= @@conf['user']['personal']['table'].to_sym
+            @@perscols  ||= 
+                @@conf['user']['personal']['columns'].symbolize_values
           end
 
           def setup!
-            @@conf = @@chktable = @@chkcols = @@rpltable = @@rplcols = nil
+            @@conf = 
+                @@chktable  = @@chkcols   = 
+                @@rpltable  = @@rplcols   = 
+                @@perstable = @@perscols  = nil
             setup
           end
 
@@ -100,6 +106,7 @@ class OnBoard
         end
 
         def update_reply_attributes(params)
+          setup
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(
               @@rplcols['User-Name']  => @name,
@@ -186,6 +193,23 @@ class OnBoard
           insert.each{|row| RADIUS.db[Group.maptable].insert(row)} 
         end
 
+        def update_personal_data(params)
+          setup
+          match = {@@perscols['User-Name'] => @name}
+          row   = match.clone
+          params['personal'].each_pair do |k, v|
+            row[@@perscols[k]] = v
+          end
+          if RADIUS.db[@@perstable].filter(match).any?
+            row[@@perscols['Update-Date']] = Time.now
+            RADIUS.db[@@perstable].filter(match).update(row) 
+          else
+            row[@@perscols['Update-Date']] = nil # DaloRADIUS-compatible
+            row[@@perscols['Creation-Date']] = Time.now
+            RADIUS.db[@@perstable].insert row
+          end
+        end
+
         def update(params)
           if params['update_groups']
             update_group_membership(params)
@@ -193,6 +217,7 @@ class OnBoard
             update_passwd(params)
             update_check_attributes(params)
             update_reply_attributes(params)
+            update_personal_data(params)
           end
         end
 

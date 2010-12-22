@@ -27,6 +27,27 @@ class OnBoard
         },
 
         'user'                  => {
+          'personal'              => {
+            'table'                 => 'userinfo',
+            'columns'               => {
+              'Id'                    => 'id',
+              'User-Name'             => 'username',
+              'First-Name'            => 'firstname',
+              'Last-Name'             => 'lastname',
+              'Email'                 => 'email',
+              'Work-Phone'            => 'workphone',
+              'Home-Phone'            => 'homephone',
+              'Mobile-Phone'          => 'mobilephone',
+              'Address'               => 'address',
+              'City'                  => 'city',
+              'State'                 => 'state',
+              'Country'               => 'country', # not in DaloRADIUS: use it?
+              'Postal-Code'           => 'zip',
+              'Notes'                 => 'notes',
+              'Creation-Date'         => 'creationdate',
+              'Update-Date'           => 'updatedate'
+            }
+          },
 
           'check'                 => {
             'table'                 => 'radcheck',

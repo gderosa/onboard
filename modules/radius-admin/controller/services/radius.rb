@@ -61,11 +61,12 @@ class OnBoard
 
     post '/services/radius/users.:format' do
       use_pagination_defaults
-      msg = handle_errors{Service::RADIUS::Check.insert(params)} 
-      if msg[:ok] and not msg[:err]
+      msg = handle_errors do
         name  = params['check']['User-Name']
+        Service::RADIUS::Check.insert(params)
         user  = Service::RADIUS::User.new(name)
-        msg   = handle_errors{user.update_reply_attributes(params)} 
+        user.update_reply_attributes(params)
+        user.update_personal_data(params)
       end
       format(
         :module   => 'radius-admin',

@@ -171,7 +171,8 @@ CREATE TABLE IF NOT EXISTS `radusergroup` (
 -- --------------------------------------------------------
 -- The following are non-FreeRADIUS tables: they contain
 -- human-sensible information like personal data or billing
--- info. Compatible with DaloRADIUS http://www.daloradius.com .
+-- info. [Mostly] compatible with DaloRADIUS 
+-- http://www.daloradius.com .
 
 --
 -- Table structure for table `userinfo`
@@ -190,11 +191,11 @@ CREATE TABLE IF NOT EXISTS `userinfo` (
   `homephone` varchar(200) DEFAULT NULL,
   `mobilephone` varchar(200) DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
-  `city` varchar(200) DEFAULT NULL,
+  `city` varchar(200) DEFAULT NULL COMMENT 'not present in DaloRADIUS',
   `state` varchar(200) DEFAULT NULL,
   `zip` varchar(200) DEFAULT NULL,
   `country` varchar(200) DEFAULT NULL,
-  `notes` varchar(200) DEFAULT NULL,
+  `notes` varchar(2048) DEFAULT NULL COMMENT 'larger than DaloRADIUS', 
   `changeuserinfo` varchar(128) DEFAULT NULL,
   `portalloginpassword` varchar(128) DEFAULT '',
   `enableportallogin` int(32) DEFAULT '0',

@@ -6,6 +6,7 @@
 
   <table class="raduserform">
     <tbody>
+      <!--
       <tr>
         <th scope="row">User-Name</th> 
         <td>
@@ -16,6 +17,7 @@
           <% end %>
         </td>
       </tr>
+      -->
       <tr>
         <th scope="row">
           <select name="check[Password-Type]">
