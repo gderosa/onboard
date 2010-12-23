@@ -22,6 +22,7 @@ class OnBoard
       h['dbpass'] = params['dbpass'] if params['dbpass'].length > 0
           # empty password field means 'unchanged'
       Service::RADIUS.write_conf h
+      Service::RADIUS.update_conf!
       Service::RADIUS.db_reconnect
       format(
         :module => 'radius-admin',

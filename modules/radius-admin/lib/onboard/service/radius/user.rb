@@ -79,7 +79,7 @@ class OnBoard
 
         def retrieve_attributes_from_db
           setup
-
+          
           @check = RADIUS.db[@@chktable].select(
             @@chkcols.invert
           ).where(

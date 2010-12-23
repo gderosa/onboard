@@ -2,8 +2,6 @@
   group   = objects['group']
   conf    = objects['conf']
   members = objects['members']
-  chkcols = conf['group']['check']['columns']
-  rplcols = conf['group']['reply']['columns'] 
 %>
 <%= message_partial(msg) %>
 <%=

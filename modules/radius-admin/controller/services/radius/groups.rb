@@ -49,7 +49,6 @@ class OnBoard
         :path     => '/services/radius/groups/group',
         :format   => params[:format],
         :objects  => {
-          'conf'    => Service::RADIUS.conf,
           'group'   => group,
           'members' => member_info
         },
@@ -82,7 +81,6 @@ class OnBoard
         :format   => params[:format],
         :msg      => msg,
         :objects  => {
-          'conf'    => Service::RADIUS.conf,
           'group'     => group,
           'members'   => member_info
         }

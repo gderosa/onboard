@@ -10,7 +10,7 @@ class OnBoard
 
         class << self
 
-          # TODO: class_reader, class_writer, class_accessor or something
+          # TODO: rails-like cattr_accessor's ?
           def method_missing(id, *args)
             class_variable_get :"@@#{id}" 
           end
@@ -144,10 +144,16 @@ class OnBoard
 
         def retrieve_attributes_from_db
           setup
-          @check = RADIUS.db[@@chktable].where(
+
+          @check = RADIUS.db[@@chktable].select(
+            @@chkcols.invert
+          ).where(
             @@chkcols['Group-Name'] => @name
           ).to_a
-          @reply = RADIUS.db[@@rpltable].where(
+
+          @reply = RADIUS.db[@@rpltable].select(
+            @@rplcols.invert
+          ).where(
             @@chkcols['Group-Name'] => @name
           ).to_a
         end
@@ -280,7 +286,8 @@ class OnBoard
         def update(params)
           if params['update_members']
             alread_exist = []
-            new_members = params['add_members'].split(/[ ,;\r\n]+/m)
+            new_members = 
+                params['add_members'].split(/[ ,;\r\n]+/m).reject{|s| s.empty?}
             new_members.each do |member|
               begin
                 add_member member
@@ -326,20 +333,12 @@ class OnBoard
           case tbl
           when :check
             row = @check.find do |h| 
-              blk.call( 
-                       h[@@chkcols['Attribute']],
-                       h[@@chkcols['Operator']],
-                       h[@@chkcols['Value']],
-                      )
+              blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
           when :reply
             row = @reply.find do |h| 
-              blk.call( 
-                       h[@@rplcols['Attribute']],
-                       h[@@rplcols['Operator']],
-                       h[@@rplcols['Value']],
-                      )
+              blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
           else
@@ -352,12 +351,7 @@ class OnBoard
             attrib == attrname
           end
           return nil unless row
-          return case tbl
-            when :check
-              row[@@chkcols['Value']]
-            when :reply
-              row[@@rplcols['Value']]
-          end
+          return row[:Value]
         end
         alias attribute find_attribute_value_by_name
 
@@ -365,7 +359,7 @@ class OnBoard
           row = find_attribute :check do |attrib, op, val|
             attrib =~ /-Password$/ 
           end
-          row ? row[@@chkcols['Attribute']] : nil
+          row ? row[:Attribute] : nil
         end
 
         def auth_type
@@ -397,9 +391,10 @@ class OnBoard
 
         def to_h
           {
-            :name  => @name,
-            :check => @check,
-            :reply => @reply,
+            :name     => @name,
+            :check    => @check,
+            :reply    => @reply,
+            :members  => @members
           }
         end
 
