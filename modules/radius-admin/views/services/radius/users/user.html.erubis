@@ -1,8 +1,5 @@
 <% 
   user    = objects['user']
-  conf    = objects['conf']
-  chkcols = conf['user']['check']['columns']
-  rplcols = conf['user']['reply']['columns'] 
 %>
 <%= message_partial(msg) %>
 <%=

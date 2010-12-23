@@ -6,18 +6,6 @@
 
   <table class="raduserform">
     <tbody>
-      <!--
-      <tr>
-        <th scope="row">User-Name</th> 
-        <td>
-          <% if user %>
-            <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">
-          <% else %>
-            <input type="text" name="check[User-Name]"/>
-          <% end %>
-        </td>
-      </tr>
-      -->
       <tr>
         <th scope="row">
           <select name="check[Password-Type]">

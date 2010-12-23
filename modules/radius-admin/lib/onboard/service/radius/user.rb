@@ -79,11 +79,17 @@ class OnBoard
 
         def retrieve_attributes_from_db
           setup
-          @check = RADIUS.db[@@chktable].where(
+
+          @check = RADIUS.db[@@chktable].select(
+            @@chkcols.invert
+          ).where(
             @@chkcols['User-Name'] => @name
           ).to_a
-          @reply = RADIUS.db[@@rpltable].where(
-            @@chkcols['User-Name'] => @name
+
+          @reply = RADIUS.db[@@rpltable].select(
+            @@rplcols.invert
+          ).where(
+            @@rplcols['User-Name'] => @name
           ).to_a
         end
 
@@ -251,20 +257,12 @@ class OnBoard
           case tbl
           when :check
             row = @check.find do |h| 
-              blk.call( 
-                       h[@@chkcols['Attribute']],
-                       h[@@chkcols['Operator']],
-                       h[@@chkcols['Value']],
-                      )
+              blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
           when :reply
             row = @reply.find do |h| 
-              blk.call( 
-                       h[@@rplcols['Attribute']],
-                       h[@@rplcols['Operator']],
-                       h[@@rplcols['Value']],
-                      )
+              blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
           else
@@ -277,12 +275,7 @@ class OnBoard
             attrib == attrname
           end
           return nil unless row
-          return case tbl
-            when :check
-              row[@@chkcols['Value']]
-            when :reply
-              row[@@rplcols['Value']]
-          end
+          return row[:Value]
         end
         alias attribute find_attribute_value_by_name
 
@@ -290,7 +283,7 @@ class OnBoard
           row = find_attribute :check do |attrib, op, val|
             attrib =~ /-Password$/ 
           end
-          row ? row[@@chkcols['Attribute']] : nil
+          row ? row[:Attribute] : nil
         end
 
         def auth_type

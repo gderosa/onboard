@@ -68,11 +68,16 @@ class OnBoard
         user.update_reply_attributes(params)
         user.update_personal_data(params)
       end
+      raduserinfo = Service::RADIUS::User.get(params)
+      users = raduserinfo['users']
+      users.each do |u| 
+        u.retrieve_attributes_from_db if !u.check or u.check.length == 0
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users',
         :format   => params[:format],
-        :objects  => Service::RADIUS::User.get(params),
+        :objects  => raduserinfo,
         :msg      => msg
       )
     end
@@ -106,7 +111,6 @@ class OnBoard
         :path     => '/services/radius/users/user',
         :format   => params[:format],
         :objects  => {
-          'conf'    => Service::RADIUS.conf,
           'user'    => user
         },
       )
