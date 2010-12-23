@@ -52,6 +52,8 @@ class OnBoard
             
             validate_empty_password(params) # raises exception if appropriate
 
+            Name.validate params['check']['User-Name'] 
+
             # All is ok, proceed.
             #
             # First, insert a dummy attribute into check table, which is
