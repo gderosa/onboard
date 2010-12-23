@@ -10,8 +10,8 @@ class OnBoard
         class << self
 
           def validate(name)
-            unless name =~ /^[a-z0-9-_:]+$/iu
-              raise InvalidCharacters, %Q{Name #{name.inspect} contains invalid characters}
+            unless name =~ /^[a-z0-9\-_:]+$/iu
+              raise InvalidCharacters, %Q{Name #{name.inspect} contains invalid characters.\nOnly use A-Z, a-z, 0-9, '-', '_', ':'. Do not use accented and/or non-English characters.}
             end
           end
 

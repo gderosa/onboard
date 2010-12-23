@@ -174,7 +174,9 @@ class OnBoard
             @@mapcols['Group-Name'] => @name
           ).order_by @@mapcols['User-Name']
           member_rows   = q_members.paginate(page, per_page)
-          member_names  = member_rows.map(@@mapcols['User-Name'])
+          member_names  = member_rows.map(@@mapcols['User-Name']).map do |s| 
+            s.force_encoding 'utf-8'
+          end
           {
             'total_items' => q_members.count,
             'page'        => page,
@@ -273,6 +275,7 @@ class OnBoard
           ).any?
             raise UserAlreadyExists
           else
+            RADIUS::Name.validate member
             RADIUS.db[@@maptable].insert(
               @@mapcols['Group-Name'] => @name,
               @@mapcols['User-Name']  => member,
