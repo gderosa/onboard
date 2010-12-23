@@ -20,7 +20,6 @@ class OnBoard
               columns.symbolize_all.invert
             )
             {
-              'columns'     => columns.keys.map{|s| s.to_sym},
               'rows'        => select.paginate(page, per_page).to_a,
               'total_items' => select.count,
               'page'        => page,
