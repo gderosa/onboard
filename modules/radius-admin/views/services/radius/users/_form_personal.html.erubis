@@ -1,6 +1,13 @@
 <% 
   user      ||= nil
-  personal  ||= ( user ? user.personal : {} )
+  personal  ||= nil
+  unless personal
+    if user
+      personal = (user.personal || {})
+    else
+      personal = {}
+    end
+  end
 %>
 <table class="raduserform">
   <tr>

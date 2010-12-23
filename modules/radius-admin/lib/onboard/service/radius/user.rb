@@ -199,6 +199,7 @@ class OnBoard
           Group.setup
           groupnames = 
               params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}  
+          groupnames.each{|name| Name.validate name} 
           oldrows = RADIUS.db[Group.maptable].filter(
             Group.mapcols['User-Name'] => @name
           ).to_a

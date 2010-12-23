@@ -67,10 +67,10 @@ class OnBoard
       not_found unless user.found?
       msg = handle_errors do 
         user.update(params)
-        user.retrieve_attributes_from_db
-        user.retrieve_group_membership_from_db
-        user.retrieve_personal_info_from_db
       end
+      user.retrieve_attributes_from_db
+      user.retrieve_group_membership_from_db
+      user.retrieve_personal_info_from_db
       unless user.found?
         msg[:warn] = "User has no longer any attribute!"
       end
