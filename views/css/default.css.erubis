@@ -74,6 +74,10 @@ a.altformat {
   font-variant: small-caps;
 }
 
+a.created, a.new {
+  text-decoration: underline;
+}
+
 div#main {
   border: 0;
 	float: right;

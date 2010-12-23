@@ -18,11 +18,15 @@ class OnBoard
    
     post '/services/radius/groups.:format' do
       use_pagination_defaults
-      msg = handle_errors{Service::RADIUS::Group.insert(params)} 
+      name = params['check']['Group-Name']
+      group = Service::RADIUS::Group.new(name) # blank slate
+      msg = handle_errors do 
+        Service::RADIUS::Group.insert(params)
+        group.update_reply_attributes(params) 
+      end
       if msg[:ok] and not msg[:err]
-        name  = params['check']['Group-Name']
-        group = Service::RADIUS::Group.new(name)  
-        msg   = handle_errors{group.update_reply_attributes(params)} 
+        status 201 # Created
+        msg[:info] = %Q{Group <a class="created" href="groups/#{group.name}.#{params[:format]}">#{group.name}</a> has been created!}
       end
       format(
         :module   => 'radius-admin',

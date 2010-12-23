@@ -23,12 +23,16 @@ class OnBoard
 
     post '/services/radius/users.:format' do
       use_pagination_defaults
-      msg = handle_errors do
-        name  = params['check']['User-Name']
+      name  = params['check']['User-Name']
+      user  = Service::RADIUS::User.new(name) # blank slate
+      msg = handle_errors do 
         Service::RADIUS::Check.insert(params)
-        user  = Service::RADIUS::User.new(name)
-        user.update_reply_attributes(params)
+        user.update_reply_attributes(params) 
         user.update_personal_data(params)
+      end
+      if msg[:ok] and not msg[:err] 
+        status 201 # Created
+        msg[:info] = %Q{User <a class="created" href="users/#{user.name}.#{params[:format]}">#{user.name}</a> has been created!}
       end
       raduserinfo = Service::RADIUS::User.get(params)
       users = raduserinfo['users']
