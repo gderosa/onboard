@@ -138,8 +138,8 @@ class OnBoard
         def setup;  self.class.setup;   end
         def setup!; self.class.setup!;  end
 
-        def initialize(username)
-          @name             = username
+        def initialize(groupname)
+          @name = groupname
         end
 
         def retrieve_attributes_from_db
