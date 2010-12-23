@@ -97,7 +97,9 @@ class OnBoard
           User.setup
           Group.setup
 
-          @groups = RADIUS.db[Group.maptable].where(
+          @groups = RADIUS.db[Group.maptable].select(
+            Group.mapcols.invert.symbolize_keys
+          ).where(
             Group.mapcols['User-Name'] => @name
           ).order_by(
             Group.mapcols['Priority']
@@ -106,16 +108,20 @@ class OnBoard
 
         def retrieve_personal_info_from_db
           setup
-          @personal = RADIUS.db[@@perstable].select(
+          row = RADIUS.db[@@perstable].select(
             @@perscols.invert.symbolize_all
           ).filter(
-              @@perscols['User-Name'] => @name
-          ).first.stringify_keys || {} 
+            @@perscols['User-Name'] => @name
+          ).first
+          if row
+            @personal = row.stringify_keys 
+          else 
+            @personal = {} 
+          end
         end
 
         def grouplist
-          Group.setup
-          @groups.map{|h| h[Group.mapcols['Group-Name']]} 
+          @groups.map{|h| h[:"Group-Name"]}   
         end
 
         def found?
@@ -191,7 +197,8 @@ class OnBoard
 
         def update_group_membership(params)
           Group.setup
-          groupnames = params['groups'].split(/[ ,;\n\r]+/m)  
+          groupnames = 
+              params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}  
           oldrows = RADIUS.db[Group.maptable].filter(
             Group.mapcols['User-Name'] => @name
           ).to_a
@@ -303,7 +310,8 @@ class OnBoard
             :name     => @name,
             :check    => @check,
             :reply    => @reply,
-            :personal => @personal
+            :groups   => @groups,
+            :personal => @personal,
           }
         end
 
