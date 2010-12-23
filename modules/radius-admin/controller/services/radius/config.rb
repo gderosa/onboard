@@ -8,9 +8,10 @@ class OnBoard
 
     get '/services/radius/config.:format' do
       format(
-        :module => 'radius-admin',
-        :path => '/services/radius/config',
-        :format => params[:format],
+        :module   => 'radius-admin',
+        :path     => '/services/radius/config',
+        :title    => 'RADIUS Configuration',
+        :format   => params[:format],
         :objects  => Service::RADIUS.read_conf
       )
     end
@@ -24,9 +25,10 @@ class OnBoard
       actual_conf = Service::RADIUS.update_conf! # re-read
       Service::RADIUS.db_reconnect
       format(
-        :module => 'radius-admin',
-        :path => '/services/radius/config',
-        :format => params[:format],
+        :module   => 'radius-admin',
+        :path     => '/services/radius/config',
+        :title    => 'RADIUS Configuration',
+        :format   => params[:format],
         :objects  => actual_conf  
       )
     end

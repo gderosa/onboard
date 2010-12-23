@@ -11,6 +11,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups',
+        :title    => 'RADIUS Groups',
         :format   => params[:format],
         :objects  => Service::RADIUS::Group.get(params)
       )
@@ -31,6 +32,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups',
+        :title    => 'RADIUS Groups',
         :format   => params[:format],
         :objects  => Service::RADIUS::Group.get(params),
         :msg      => msg
@@ -51,6 +53,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups/group',
+        :title    => "RADIUS Group: #{params[:groupid]}",
         :format   => params[:format],
         :objects  => {
           'group'   => group,
@@ -82,6 +85,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups/group',
+        :title    => "RADIUS Group: #{params[:groupid]}",
         :format   => params[:format],
         :msg      => msg,
         :objects  => {
