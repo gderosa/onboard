@@ -71,10 +71,10 @@ class OnBoard
 
         def initialize(username)
           @name     = username
-          @check    = []
-          @reply    = []
-          @groups   = []
-          @personal = {}
+          @check    = nil
+          @reply    = nil
+          @groups   = nil
+          @personal = nil
         end
 
         def retrieve_attributes_from_db
