@@ -1,3 +1,4 @@
+require 'facets/hash'
 require 'sinatra/base'
 
 require 'onboard/service/radius'
@@ -15,20 +16,18 @@ class OnBoard
     end
 
     put '/services/radius/config.:format' do
-      h = Service::RADIUS.read_conf
-      %w{dbhost dbname dbuser}.each do |key|
-        h[key] = params[key]
-      end
-      h['dbpass'] = params['dbpass'] if params['dbpass'].length > 0
+      oldconf = Service::RADIUS.read_conf
+      newconf = oldconf.deep_merge params['conf']
+      newconf['dbpass'] = oldconf['dbpass'] if params['conf']['dbpass'].empty?
           # empty password field means 'unchanged'
-      Service::RADIUS.write_conf h
-      Service::RADIUS.update_conf!
+      Service::RADIUS.write_conf newconf
+      actual_conf = Service::RADIUS.update_conf! # re-read
       Service::RADIUS.db_reconnect
       format(
         :module => 'radius-admin',
         :path => '/services/radius/config',
         :format => params[:format],
-        :objects  => h
+        :objects  => actual_conf  
       )
     end
 

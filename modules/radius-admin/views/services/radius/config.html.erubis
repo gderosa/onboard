@@ -10,19 +10,19 @@
   <tbody>
     <tr>
       <th scope="row">Database host or IP address</th>
-      <td><input class="rwtext" type="text" name="dbhost" value="<%= config['dbhost'] %>"/></td>
+      <td><input class="rwtext" type="text" name="conf[dbhost]" value="<%= config['dbhost'] %>"/></td>
     </tr>
     <tr>
       <th scope="row">Database name</th>
-      <td><input class="rwtext" type="text" name="dbname" value="<%= config['dbname'] %>"/></td>
+      <td><input class="rwtext" type="text" name="conf[dbname]" value="<%= config['dbname'] %>"/></td>
     </tr>
     <tr>
       <th scope="row">Database user</th>
-      <td><input class="rwtext" type="text" name="dbuser" value="<%= config['dbuser'] %>"/></td>
+      <td><input class="rwtext" type="text" name="conf[dbuser]" value="<%= config['dbuser'] %>"/></td>
     </tr>
     <tr>
       <th scope="row">Database password</th>
-      <td title="Empty to leave unchanged"><input class="rwtext" type="password" name="dbpass"/></td>
+      <td title="Empty to leave unchanged"><input class="rwtext" type="password" name="conf[dbpass]"/></td>
     </tr>
   </tbody>
 </table>
