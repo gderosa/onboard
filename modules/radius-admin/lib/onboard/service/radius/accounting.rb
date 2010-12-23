@@ -13,14 +13,14 @@ class OnBoard
           def get(params)
             conf      = RADIUS.read_conf
             table     = conf['accounting']['table'].to_sym
-            columns   = conf['accounting']['columns'].symbolize_all
+            columns   = conf['accounting']['columns']
             page      = params[:page].to_i
             per_page  = params[:per_page].to_i
             select    = RADIUS.db[table].select(
-              *columns.symbolize_all.values
+              columns.symbolize_all.invert
             )
             {
-              'columns'     => columns,
+              'columns'     => columns.keys.map{|s| s.to_sym},
               'rows'        => select.paginate(page, per_page).to_a,
               'total_items' => select.count,
               'page'        => page,

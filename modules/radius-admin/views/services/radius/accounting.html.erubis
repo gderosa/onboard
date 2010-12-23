@@ -7,8 +7,6 @@
   page          = objects['page']
   per_page      = objects['per_page']
 
-  conf          = OnBoard::Service::RADIUS.read_conf
-  view_columns  = conf['accounting']['columns'].invert.symbolize_keys
 %>
 <% 
   if rows[0]
@@ -30,7 +28,7 @@
   <thead>
     <tr>
       <% columns.each do |column| %>
-        <th><%= view_columns[column] %></th>
+        <th><%= column %></th>
       <% end %>
     </tr>
   </thead>
