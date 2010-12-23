@@ -41,21 +41,24 @@ class OnBoard
           end
 
           def get(params)
-            page      = params[:page].to_i
-            per_page  = params[:per_page].to_i
+            page            = params[:page].to_i
+            per_page        = params[:per_page].to_i
             setup
-            q_usergroup   =  
+            q_usergroup     =  
                 RADIUS.db[@@maptable].select(
                     @@mapcols['Group-Name'] => :groupname) 
-            q_groupcheck  =
+            q_groupcheck    =
                 RADIUS.db[@@chktable].select(
                     @@chkcols['Group-Name'] => :groupname) 
-            q_groupreply  =
+            q_groupreply    =
                 RADIUS.db[@@rpltable].select(
                     @@rplcols['Group-Name'] => :groupname)
-            q_union       = q_usergroup | q_groupcheck | q_groupreply
-            q_paginate    = q_union.paginate(page, per_page)
-            groupnames    = q_paginate.group_by(:groupname).map(:groupname)
+            q_union         = q_usergroup | q_groupcheck | q_groupreply
+            q_paginate      = q_union.paginate(page, per_page)
+            groupnames      = 
+                q_paginate.group_by(:groupname).map(:groupname).map do |name|
+                  name.force_encoding 'utf-8'
+                end
             {
               'total_items' => q_union.count,
               'page'        => page,
@@ -76,6 +79,8 @@ class OnBoard
             end
 
             validate_empty_password(params) # raises exception if appropriate
+
+            Name.validate params['check']['Group-Name']
 
             # All is ok, proceed.
             #

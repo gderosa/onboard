@@ -11,7 +11,7 @@ class OnBoard
 
           def validate(name)
             unless name =~ /^[a-z0-9-_:]+$/iu
-              raise InvalidCharacters, %Q{Name "#{name}" contains invalid characters} 
+              raise InvalidCharacters, %Q{Name #{name.inspect} contains invalid characters}
             end
           end
 
