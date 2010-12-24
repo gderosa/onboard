@@ -330,6 +330,10 @@ table tr td ul, table tr th ul {
   padding: 0 0 0 1.15em;
 }
 
+button[type="submit"] {
+  margin: 1ex 0;
+}
+
 table tr td button {
   padding: 1px;
 }
