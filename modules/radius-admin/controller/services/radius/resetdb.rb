@@ -17,9 +17,10 @@ class OnBoard
       )
     end
 
-    get '/services/radius/dbdata.:format' do
-      redirect "/services/radius/resetdb.html" 
-    end
+    # So you don't get a refresh link in the navbar
+    #get '/services/radius/dbdata.:format' do
+    #  redirect "/services/radius/resetdb.html" 
+    #end
 
     delete '/services/radius/dbdata.:format' do
       deleted = []
