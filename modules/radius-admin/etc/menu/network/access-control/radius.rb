@@ -47,5 +47,11 @@ class OnBoard
     :n        => 40
   })
 
+  MENU_ROOT.add_path('/network/access-control/radius/resetdb', {
+    :href     => '/services/radius/resetdb',
+    :name     => 'Reset Database',
+    :n        => 50
+  })
+
 end
 
