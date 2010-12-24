@@ -18,7 +18,7 @@ class OnBoard
     end
 
     get '/services/radius/dbdata.:format' do
-      redirect "/services/radius/resetdb.#{params[:format]}" 
+      redirect "/services/radius/resetdb.html" 
     end
 
     delete '/services/radius/dbdata.:format' do
@@ -38,6 +38,7 @@ class OnBoard
         :path     => '/services/radius/dbdata',
         :title    => 'RADIUS Database reset',
         :format   => params[:format],
+        :formats  => %w{html},
         :objects  => nil,
         :msg      => msg
       )
