@@ -18,7 +18,7 @@ class OnBoard
     end
 
     get '/services/radius/dbdata.:format' do
-      redirect "/services/radius/dbdata.params[:format]" 
+      redirect "/services/radius/resetdb.#{params[:format]}" 
     end
 
     delete '/services/radius/dbdata.:format' do
