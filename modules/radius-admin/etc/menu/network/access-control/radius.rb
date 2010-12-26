@@ -17,6 +17,7 @@ class OnBoard
     #:href => '/services/radius', # nil
     :name => 'RADIUS server',
     :desc => 'Authentication, Authorization and Accounting',
+    :children => %r{/services/radius/.+$},
     :n    => 0
   })
 
