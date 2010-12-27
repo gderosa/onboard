@@ -238,16 +238,14 @@ class OnBoard
         msg = {}
         begin
           blk.call
-          msg[:ok] = true
-        rescue OnBoard::BadRequest
-          status 400
-          msg[:err] = $!
-        rescue OnBoard::Conflict
-          status 409
-          msg[:err] = $!
+        rescue OnBoard::Error
+          e = $!.clone
+          status e.http_status_code
+          msg[:err] = e # will be converted to message string as needed
         rescue OnBoard::Warning
           msg[:warn] = $!
         end
+        msg[:ok] = true unless msg[:err]
         return msg
       end
 
