@@ -8,12 +8,22 @@ class OnBoard
 
     get '/services/radius/accounting.:format' do
       use_pagination_defaults
+      objects = {
+        'rows'        => [],
+        'total_items' => 0,
+        'page'        => 1,
+        'per_page'    => params[:per_page]
+      }
+      msg = handle_errors do
+        objects = Service::RADIUS::Accounting.get(params)
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/accounting',
         :title    => 'RADIUS Accounting',
         :format   => params[:format],
-        :objects  => Service::RADIUS::Accounting.get(params)           
+        :objects  => objects,
+        :msg      => msg
       )
     end
 
