@@ -27,6 +27,9 @@ class OnBoard
             end
             tables
           end
+          def format_error_msg(e)
+            "#{e}\nCheck your RADIUS Database configuration!"
+          end
         end
       end
     end

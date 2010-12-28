@@ -21,7 +21,7 @@
     padding: 0.2em 0;
   }
 </style>
-
+<%= message_partial(msg) %>
 <h2>RADIUS Accounting</h2>
 
 <table>
