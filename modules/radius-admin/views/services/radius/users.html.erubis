@@ -11,10 +11,10 @@
   best_passwd_type  = 'SSHA1-Password'
   passwd_types      = OnBoard::Service::RADIUS::Passwd::TYPES
 
-  users             = objects['users']
-  page              = objects['page']
-  per_page          = objects['per_page']
-  total_items       = objects['total_items']
+  users             = objects['users']        || []
+  page              = objects['page']         || 1
+  per_page          = objects['per_page']     || 1
+  total_items       = objects['total_items']  || 0
 %>
 
 <%= message_partial(msg) %>

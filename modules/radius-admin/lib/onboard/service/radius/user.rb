@@ -50,16 +50,19 @@ class OnBoard
 
             union       = (q_check | q_usergroup).group_by :username
 
-            users       = union.paginate(page, per_page).map do |h| 
-              h[:username].force_encoding 'utf-8'
+            begin
+              users       = union.paginate(page, per_page).map do |h| 
+                h[:username].force_encoding 'utf-8'
+              end
+              return {
+                'total_items' => union.count,
+                'page'        => page,
+                'per_page'    => per_page,
+                'users'       => users.map{|u| new(u)} 
+              }
+            rescue Sequel::DatabaseConnectionError
+              raise ServerError, Db.format_error_msg($!)
             end
-
-            {
-              'total_items' => union.count,
-              'page'        => page,
-              'per_page'    => per_page,
-              'users'       => users.map{|u| new(u)} 
-            }
           end
         
         end

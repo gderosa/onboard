@@ -142,17 +142,14 @@ class OnBoard
           # The following is common to YAML and JSON.
           #
           # Let JSON and YAML clients know about error messages via custom hdrs.
-          # WARN: X-Err and X-Stderr might be large... ! (TODO?) 
+          # WARN: X-Err and X-Stderr might be large... ! (TODO?)
           if h[:msg]
             x_headers = {}
-            x_headers['X-Err']    = h[:msg][:err].gsub("\n", "\\n")     if 
-                h[:msg][:err]     =~ /\S/
-            x_headers['X-Stderr'] = h[:msg][:stderr].gsub("\n", "\\n")  if 
-                h[:msg][:stderr]  =~ /\S/
-            headers x_headers                                           if 
-                x_headers.length > 0
-            headers x_headers                                           if 
-                x_headers.length > 0
+            err                   = h[:msg][:err].to_s
+            stderr                = h[:msg][:stderr].to_s
+            x_headers['X-Err']    = err.gsub("\n", "\\n")     if err    =~ /\S/
+            x_headers['X-Stderr'] = stderr.gsub("\n", "\\n")  if stderr =~ /\S/
+            headers x_headers                                            
           end
 
           return h[:objects].to_(h[:format]) 

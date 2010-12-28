@@ -8,8 +8,11 @@ class OnBoard
 
     get '/services/radius/users.:format' do
       use_pagination_defaults
-      raduserinfo = Service::RADIUS::User.get(params)
-      users = raduserinfo['users']
+      raduserinfo = {}
+      msg = handle_errors do
+        raduserinfo = Service::RADIUS::User.get(params)
+      end
+      users = raduserinfo['users'] || []
       users.each do |u| 
         u.retrieve_attributes_from_db if !u.check or u.check.length == 0
       end
@@ -18,7 +21,8 @@ class OnBoard
         :path     => '/services/radius/users',
         :title    => "RADIUS Users",
         :format   => params[:format],
-        :objects  => raduserinfo
+        :objects  => raduserinfo,
+        :msg      => msg
       )
     end
 
