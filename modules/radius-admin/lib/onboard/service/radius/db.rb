@@ -3,7 +3,6 @@ class OnBoard
     module RADIUS
       module Db
         class << self
-
           def reset_data(params)
             tables = []
             if params['resetdata']
@@ -28,15 +27,6 @@ class OnBoard
             end
             tables
           end
-
-          def handle_errors(&blk)
-            begin
-              blk.call
-            rescue Sequel::DatabaseConnectionError
-              raise OnBoard::ServerError, "Database error: #{$!}\nCheck your database configuration!"
-            end
-          end
-
         end
       end
     end

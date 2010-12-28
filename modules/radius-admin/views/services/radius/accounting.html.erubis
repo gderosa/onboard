@@ -22,8 +22,6 @@
   }
 </style>
 
-<%= message_partial(msg) %> 
-
 <h2>RADIUS Accounting</h2>
 
 <table>

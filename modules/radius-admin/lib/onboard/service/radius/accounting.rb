@@ -2,7 +2,6 @@ require 'sequel'
 require 'sequel/extensions/pagination'
 
 require 'onboard/extensions/hash'
-require 'onboard/service/radius/db'
 
 class OnBoard
   module Service
@@ -20,12 +19,8 @@ class OnBoard
             select    = RADIUS.db[table].select(
               columns.symbolize_all.invert
             )
-            rows      = []
-            RADIUS::Db.handle_errors do
-              rows      = select.paginate(page, per_page).to_a
-            end
             {
-              'rows'        => rows,
+              'rows'        => select.paginate(page, per_page).to_a,
               'total_items' => select.count,
               'page'        => page,
               'per_page'    => per_page
