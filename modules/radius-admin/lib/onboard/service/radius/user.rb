@@ -214,7 +214,12 @@ class OnBoard
           delete = oldrows - newrows
           insert = newrows - oldrows
           delete.each{|row| RADIUS.db[Group.maptable].filter(row).delete}
-          insert.each{|row| RADIUS.db[Group.maptable].insert(row)} 
+          insert.each do |row| 
+            RADIUS.db[Group.maptable].insert(row)
+            g = Group.new row[Group.mapcols['Group-Name']] 
+            g.retrieve_attributes_from_db
+            g.insert_fall_through_if_not_exists
+          end 
         end
 
         def update_personal_data(params)

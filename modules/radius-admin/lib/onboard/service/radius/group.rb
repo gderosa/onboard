@@ -293,6 +293,24 @@ class OnBoard
           ).delete
         end
 
+        # TODO: DRY
+        def insert_fall_through_if_not_exists
+          setup
+          unless @reply.find do |row|
+            row[:Attribute] == 'Fall-Through' and
+            row[:Operator]  =~ /=$/           and
+            row[:Value]     =~ /yes/i
+          end
+            puts "i have to insert fall-through for #{@name}!"
+            RADIUS.db[@@rpltable].insert(
+              @@rplcols['Group-Name'] => @name,
+              @@rplcols['Operator']   => '=',
+              @@rplcols['Attribute']  => 'Fall-Through',
+              @@rplcols['Value']      => 'yes'
+            )
+          end
+        end
+
         def update(params)
           if params['update_members']
             alread_exist = []
