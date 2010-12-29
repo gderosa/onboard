@@ -19,22 +19,12 @@ class OnBoard
             select    = RADIUS.db[table].select(
               columns.symbolize_all.invert
             )
-            begin
-              return {
-                'rows'        => select.paginate(page, per_page).to_a,
-                'total_items' => select.count,
-                'page'        => page,
-                'per_page'    => per_page
-              }
-            rescue Sequel::DatabaseConnectionError
-              return {
-                'error'       => $!.clone,
-                'rows'        => [],
-                'total_items' => 1,
-                'page'        => page,
-                'per_page'    => per_page
-              }
-            end
+            {
+              'rows'        => select.paginate(page, per_page).to_a,
+              'total_items' => select.count,
+              'page'        => page,
+              'per_page'    => per_page
+            }
           end
 
         end

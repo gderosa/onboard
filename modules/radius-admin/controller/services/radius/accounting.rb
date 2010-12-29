@@ -9,12 +9,9 @@ class OnBoard
 
     get '/services/radius/accounting.:format' do
       use_pagination_defaults
-      objects = Service::RADIUS::Accounting.get(params)
-      msg = {}
-      if objects['error']
-        msg = {:err => Service::RADIUS::Db.format_error_msg(objects['error'])}
-      else
-        msg = {:ok => true}
+      msg = objects = {}
+      msg = handle_errors do 
+        objects = Service::RADIUS::Accounting.get(params)
       end
       format(
         :module   => 'radius-admin',

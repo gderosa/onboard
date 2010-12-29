@@ -2,10 +2,10 @@
   require 'facets/hash'
   require 'onboard/service/radius'
 
-  rows          = objects['rows'] 
-  total_items   = objects['total_items']  
-  page          = objects['page']
-  per_page      = objects['per_page']
+  rows          = objects['rows']         || []
+  total_items   = objects['total_items']  || 0
+  page          = objects['page']         || params[:page]      || 1
+  per_page      = objects['per_page']     || params[:per_page]  || 1
 
 %>
 <% 
