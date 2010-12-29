@@ -11,6 +11,11 @@ class OnBoard
       objects = {}
       msg = handle_errors do
         objects = Service::RADIUS::Group.get(params)
+        if objects['groups']
+          objects['groups'].each do |group|
+            group.retrieve_attributes_from_db
+          end
+        end
       end
       format(
         :module   => 'radius-admin',
