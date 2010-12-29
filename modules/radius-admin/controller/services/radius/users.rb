@@ -56,33 +56,37 @@ class OnBoard
 
     get '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
-      user.retrieve_attributes_from_db
-      user.retrieve_group_membership_from_db
-      user.retrieve_personal_info_from_db
-      not_found unless user.found?
+      msg = {}
+      msg = handle_errors do
+        user.retrieve_attributes_from_db
+        user.retrieve_group_membership_from_db
+        user.retrieve_personal_info_from_db
+        not_found unless user.found?
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users/user',
         :title    => "RADIUS User: #{params[:userid]}",
         :format   => params[:format],
         :objects  => {
-          'user'    => user
+          'user'    => user,
         },
+        :msg      => msg
       )
     end
 
     put '/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
-      user.retrieve_attributes_from_db
-      user.retrieve_group_membership_from_db
-      not_found unless user.found?
-      msg = handle_errors do 
+      msg = handle_errors do
+        user.retrieve_attributes_from_db
+        user.retrieve_group_membership_from_db
+        not_found unless user.found?
         user.update(params)
+        user.retrieve_attributes_from_db
+        user.retrieve_group_membership_from_db
+        user.retrieve_personal_info_from_db
       end
-      user.retrieve_attributes_from_db
-      user.retrieve_group_membership_from_db
-      user.retrieve_personal_info_from_db
-      unless user.found?
+      if !user.found? and !msg[:err] 
         msg[:warn] = "User has no longer any attribute!"
       end
       format(

@@ -70,9 +70,9 @@ class OnBoard
 
         def initialize(username)
           @name     = username
-          @check    = nil
-          @reply    = nil
-          @groups   = nil
+          @check    = []
+          @reply    = []
+          @groups   = []
           @personal = nil
         end
 
@@ -260,7 +260,6 @@ class OnBoard
         # Returns an Hash.
         #
         def find_attribute(tbl, &blk) 
-          retrieve_attributes_from_db unless @check # @reply MIGHT be empty...
           case tbl
           when :check
             row = @check.find do |h| 
