@@ -231,6 +231,17 @@ class OnBoard
         end
       end
 
+      def handle_external_errors(e, req)
+        result = nil
+        @@error_handlers ||= {}
+        exception_handlers = @@error_handlers[e.class] || []  
+        exception_handlers.each do |handler|
+          result = handler.call(e, req)
+          return result if result and not result == :pass
+        end
+        # otherwise return nil
+      end
+
       def handle_errors(&blk)
         msg = {}
         begin
@@ -241,6 +252,13 @@ class OnBoard
           msg[:err] = e # will be converted to message string as needed
         rescue OnBoard::Warning
           msg[:warn] = $!
+        rescue StandardError
+          if h = handle_external_errors($!, request) 
+            status h[:status]
+            msg = h[:msg]
+          else
+            raise
+          end
         end
         msg[:ok] = true unless msg[:err]
         return msg

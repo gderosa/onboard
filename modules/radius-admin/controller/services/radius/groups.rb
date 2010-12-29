@@ -8,12 +8,17 @@ class OnBoard
 
     get '/services/radius/groups.:format' do
       use_pagination_defaults
+      objects = {}
+      msg = handle_errors do
+        objects = Service::RADIUS::Group.get(params)
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups',
         :title    => 'RADIUS Groups',
         :format   => params[:format],
-        :objects  => Service::RADIUS::Group.get(params)
+        :objects  => objects,
+        :msg      => msg
       )
     end
    
