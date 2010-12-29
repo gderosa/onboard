@@ -301,7 +301,7 @@ class OnBoard
             row[:Operator]  =~ /=$/           and
             row[:Value]     =~ /yes/i
           end
-            puts "i have to insert fall-through for #{@name}!"
+            LOGGER.info "radius-admin: I am inserting Fall-Through reply attribute for group #{@name}!"
             RADIUS.db[@@rpltable].insert(
               @@rplcols['Group-Name'] => @name,
               @@rplcols['Operator']   => '=',
