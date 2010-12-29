@@ -26,19 +26,98 @@ class OnBoard
           }
         },
 
-        'check'                 => {
-          'table'                 => 'radcheck',
-          'columns'               => {
-            'Id'                    => 'id',
+        'user'                  => {
+          'personal'              => {
+            'table'                 => 'userinfo',
+            'columns'               => {
+              'Id'                    => 'id',
+              'User-Name'             => 'username',
+              'First-Name'            => 'firstname',
+              'Last-Name'             => 'lastname',
+              'Email'                 => 'email',
+              'Work-Phone'            => 'workphone',
+              'Home-Phone'            => 'homephone',
+              'Mobile-Phone'          => 'mobilephone',
+              'Address'               => 'address',
+              'City'                  => 'city',
+              'State'                 => 'state',
+              'Country'               => 'country', # not in DaloRADIUS: use it?
+              'Postal-Code'           => 'zip',
+              'Notes'                 => 'notes',
+              'Creation-Date'         => 'creationdate',
+              'Update-Date'           => 'updatedate'
+            }
+          },
 
-            'User-Name'             => 'username', 
-              # not really a RADIUS attribute, just for naming consistency...  
+          'check'                 => {
+            'table'                 => 'radcheck',
+            'columns'               => {
+              'Id'                    => 'id',
 
-            'Attribute'             => 'attribute',
-            'Operator'              => 'op',
-            'Value'                 => 'value'
-          }
-        }
+              'User-Name'             => 'username', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
+
+          'reply'                 => {
+            'table'                 => 'radreply',
+            'columns'               => {
+              'Id'                    => 'id',
+              
+              'User-Name'             => 'username', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
+        },
+
+        'group'                 => {
+
+          'check'                 => {
+            'table'                 => 'radgroupcheck',
+            'columns'               => {
+              'Id'                    => 'id',
+
+              'Group-Name'            => 'groupname', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
+
+          'reply'                 => {
+            'table'                 => 'radgroupreply',
+            'columns'               => {
+              'Id'                    => 'id',
+              
+              'Group-Name'            => 'groupname', 
+                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Attribute'             => 'attribute',
+              'Operator'              => 'op',
+              'Value'                 => 'value'
+            }
+          },
+
+          'usermap'               => {
+            'table'                 => 'radusergroup',
+            'columns'               => {
+              'User-Name'             => 'username',
+              'Group-Name'            => 'groupname',
+              'Priority'              => 'priority'
+            },
+          },
+        },
+ 
 
       }
     end

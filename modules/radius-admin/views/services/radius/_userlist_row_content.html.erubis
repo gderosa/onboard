@@ -1,0 +1,25 @@
+<%#-*- coding: UTF-8 -*-%>
+<% 
+  subdir ||= 'users'
+%>
+
+        <td>
+          <a title="Click to edit" href="/services/radius/<%= subdir %>/<%= user.name %>.html">
+            <%= user.name %>
+          </a>
+        </td>
+        <td>
+          <% if user.auth_type %>
+            <%= user.auth_type %>
+          <% else %>
+            <span class="lowlight">(auto)</span>
+          <% end %>
+        </td>
+        <td>
+          <% if user.password_type %>
+            <%= user.password_type %>
+          <% else %>
+            <span class="lowlight">(none)</span>
+          <% end %>
+        </td>
+

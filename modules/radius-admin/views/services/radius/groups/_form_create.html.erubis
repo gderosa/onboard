@@ -1,0 +1,41 @@
+<%
+  group ||= nil
+%>
+<!-- no need to create a radusergroup HTML/CSS class -->
+<form class="raduserform" method="POST"> 
+  <input type="hidden" name="_method" value="post">
+  <table class="raduserform">
+    <tbody>
+      <tr>
+        <th scope="row">Group Name</th>
+        <td>
+          <% if group %>
+            <input type="text" readonly name="check[Group-Name]" value="<%= group.name %>">
+          <% else %>
+            <input type="text" name="check[Group-Name]"/>
+          <% end %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h4>Check Attributes (optional)</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/groups/_form_check',
+      :locals => {
+        :passwd_types         => OnBoard::Service::RADIUS::Passwd::TYPES,
+        :default_passwd_type  => '', # no group password
+        :group                => group
+      }
+    )
+  %>
+  <h4>Reply Attributes (optional)</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/groups/_form_reply',
+    )
+  %>
+  <button type="submit">Create!</button>
+</form>

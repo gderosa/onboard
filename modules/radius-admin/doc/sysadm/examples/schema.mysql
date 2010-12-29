@@ -1,0 +1,208 @@
+-- Generation Time: Dec 22, 2010 at 11:17 AM
+-- Server version: 5.1.49
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `radius`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radacct`
+--
+
+CREATE TABLE IF NOT EXISTS `radacct` (
+  `radacctid` bigint(21) NOT NULL AUTO_INCREMENT,
+  `acctsessionid` varchar(64) NOT NULL DEFAULT '',
+  `acctuniqueid` varchar(32) NOT NULL DEFAULT '',
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `realm` varchar(64) DEFAULT '',
+  `nasipaddress` varchar(15) NOT NULL DEFAULT '',
+  `nasportid` varchar(15) DEFAULT NULL,
+  `nasporttype` varchar(32) DEFAULT NULL,
+  `acctstarttime` datetime DEFAULT NULL,
+  `acctstoptime` datetime DEFAULT NULL,
+  `acctsessiontime` int(12) DEFAULT NULL,
+  `acctauthentic` varchar(32) DEFAULT NULL,
+  `connectinfo_start` varchar(50) DEFAULT NULL,
+  `connectinfo_stop` varchar(50) DEFAULT NULL,
+  `acctinputoctets` bigint(20) DEFAULT NULL,
+  `acctoutputoctets` bigint(20) DEFAULT NULL,
+  `calledstationid` varchar(50) NOT NULL DEFAULT '',
+  `callingstationid` varchar(50) NOT NULL DEFAULT '',
+  `acctterminatecause` varchar(32) NOT NULL DEFAULT '',
+  `servicetype` varchar(32) DEFAULT NULL,
+  `framedprotocol` varchar(32) DEFAULT NULL,
+  `framedipaddress` varchar(15) NOT NULL DEFAULT '',
+  `acctstartdelay` int(12) DEFAULT NULL,
+  `acctstopdelay` int(12) DEFAULT NULL,
+  `xascendsessionsvrkey` varchar(10) DEFAULT NULL,
+  `nasid` varchar(256) DEFAULT NULL COMMENT 'why NAS-Identifier is not written into radacct by default?',
+  PRIMARY KEY (`radacctid`),
+  KEY `username` (`username`),
+  KEY `framedipaddress` (`framedipaddress`),
+  KEY `acctsessionid` (`acctsessionid`),
+  KEY `acctsessiontime` (`acctsessiontime`),
+  KEY `acctuniqueid` (`acctuniqueid`),
+  KEY `acctstarttime` (`acctstarttime`),
+  KEY `acctstoptime` (`acctstoptime`),
+  KEY `nasipaddress` (`nasipaddress`)
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radcheck`
+--
+
+CREATE TABLE IF NOT EXISTS `radcheck` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `attribute` varchar(32) NOT NULL DEFAULT '',
+  `op` char(2) NOT NULL DEFAULT '==',
+  `value` varchar(253) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `username` (`username`(32))
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radgroupcheck`
+--
+
+CREATE TABLE IF NOT EXISTS `radgroupcheck` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `attribute` varchar(32) NOT NULL DEFAULT '',
+  `op` char(2) NOT NULL DEFAULT '==',
+  `value` varchar(253) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `groupname` (`groupname`(32))
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radgroupreply`
+--
+
+CREATE TABLE IF NOT EXISTS `radgroupreply` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `attribute` varchar(32) NOT NULL DEFAULT '',
+  `op` char(2) NOT NULL DEFAULT '=',
+  `value` varchar(253) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `groupname` (`groupname`(32))
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radhuntgroup`
+--
+
+CREATE TABLE IF NOT EXISTS `radhuntgroup` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `nasipaddress` varchar(15) NOT NULL DEFAULT '',
+  `nasportid` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `nasipaddress` (`nasipaddress`)
+) CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radpostauth`
+--
+
+CREATE TABLE IF NOT EXISTS `radpostauth` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `pass` varchar(64) NOT NULL DEFAULT '',
+  `reply` varchar(32) NOT NULL DEFAULT '',
+  `authdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radreply`
+--
+
+CREATE TABLE IF NOT EXISTS `radreply` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `attribute` varchar(32) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `op` char(2) CHARACTER SET utf8 NOT NULL DEFAULT '=',
+  `value` varchar(253) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `username` (`username`(32))
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `radusergroup`
+--
+
+CREATE TABLE IF NOT EXISTS `radusergroup` (
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `priority` int(11) NOT NULL DEFAULT '1',
+  KEY `username` (`username`(32))
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- --------------------------------------------------------
+
+-- --------------------------------------------------------
+-- --------------------------------------------------------
+-- The following are non-FreeRADIUS tables: they contain
+-- human-sensible information like personal data or billing
+-- info. [Mostly] compatible with DaloRADIUS 
+-- http://www.daloradius.com .
+
+--
+-- Table structure for table `userinfo`
+-- (added a `country` columnd to DaloRADIUS schema)
+--
+
+CREATE TABLE IF NOT EXISTS `userinfo` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(128) DEFAULT NULL,
+  `firstname` varchar(200) DEFAULT NULL,
+  `lastname` varchar(200) DEFAULT NULL,
+  `email` varchar(200) DEFAULT NULL,
+  `department` varchar(200) DEFAULT NULL,
+  `company` varchar(200) DEFAULT NULL,
+  `workphone` varchar(200) DEFAULT NULL,
+  `homephone` varchar(200) DEFAULT NULL,
+  `mobilephone` varchar(200) DEFAULT NULL,
+  `address` varchar(200) DEFAULT NULL,
+  `city` varchar(200) DEFAULT NULL,
+  `state` varchar(200) DEFAULT NULL,
+  `zip` varchar(200) DEFAULT NULL,
+  `country` varchar(200) DEFAULT NULL COMMENT 'not present in DaloRADIUS',
+  `notes` varchar(2048) DEFAULT NULL COMMENT 'larger than DaloRADIUS', 
+  `changeuserinfo` varchar(128) DEFAULT NULL,
+  `portalloginpassword` varchar(128) DEFAULT '',
+  `enableportallogin` int(32) DEFAULT '0',
+  `creationdate` datetime DEFAULT NULL COMMENT '0000-... would crash Sequel',
+  `creationby` varchar(128) DEFAULT NULL,
+  `updatedate` datetime DEFAULT NULL COMMENT '0000-... would crash Sequel',
+  `updateby` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `username` (`username`)
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;

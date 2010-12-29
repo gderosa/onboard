@@ -1,0 +1,316 @@
+<%
+  require 'onboard/extensions/hash'
+  require 'onboard/extensions/ipaddr'
+  require 'onboard/crypto/ssl'
+
+  ssl = OnBoard::Crypto::SSL.getAll
+
+%>
+
+<style type="text/css">
+  form {
+    display: inline;
+  }
+  button {
+    display: inline;
+  }
+  select {
+    width: 98%;
+  }
+</style>
+
+<h2>OpenVPN</h2>
+
+<%=
+  erubis(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg => msg,
+        :status => status
+      }
+    }
+  )
+%>
+
+<%
+  common_name_description = "Information contained in the cryptographic certificate for the VPN"
+  ifname_form_field = '<input size="15" maxlength="15" type="text" class="rwtext" name="dev"/>'
+%>
+<h3>Running/Configured VPNs</h3>
+<table>
+  <thead>
+    <%= 
+      format(
+        :module   => 'openvpn',
+        :partial  => true,
+        :path     => 'network/openvpn/_vpninfo_thead',
+        :locals   => {
+          :show_actions_column => true,
+          :common_name_description => common_name_description
+        }
+      )
+    %>
+  </thead>
+  <tbody> 
+    <% objects.each_with_index do |vpn, vpn_i| %>
+      <%=
+        format(
+          :module   => 'openvpn',
+          :partial  => true,
+          :path     => 'network/openvpn/_vpninfo_tr',
+          :locals   => {
+            :show_actions_column  => true,
+            :vpn                  => vpn,
+            :vpn_i                => vpn_i
+          }
+        )
+      %>
+    <% end %>
+  </tbody>
+</table>
+
+<h3>Create new VPN (client mode)</h3>
+<form method="POST"> 
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="3">Add?</th>
+        <th colspan="2">
+          SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
+        </th>
+        <th colspan="3">Real Network</th>
+        <th colspan="2">Virtual Interface</th>
+        <th colspan="2">Options</th>
+      </tr>
+      <tr>
+        <th rowspan="2">Certificate (must have Private Key)</th>
+        <th rowspan="2">Trusted Certificate Authority</th>
+        <th rowspan="2">Protocol</th>
+        <th colspan="2">Server</th>
+        <th rowspan="2">Name</th>
+        <th rowspan="2">Type</th>
+        <th rowspan="2">Demand Server-type Certificate for the Server?</th>
+        <th rowspan="2">LZO Compression?</th>
+      </tr>
+      <tr>
+        <th>Host</th>
+        <th>Port</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <% rowspan = (params['failover'] || 1).to_i %>
+        <td rowspan="<%= rowspan %>">
+          <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
+        </td>
+        <%
+          candidates = ssl['certs'].select do |k, v| # 1.9 only
+            (not v['cert']['is_ca']) and v['private_key']
+          end
+          bad, good = candidates.partition_hash do |k, v|
+            v['cert']['err'] or v['private_key']['err']
+          end
+          server, nonserver = good.partition_hash do |k, v|
+            v['cert']['is_server']
+          end
+        %>
+        <td rowspan="<%= rowspan %>">
+          <select name="cert">
+            <% nonserver.each_pair do |name, h| %>
+              <option value="<%= name %>"><%== name %></option>
+            <% end %>
+            <% server.each_pair do |name, h| %>
+              <option class="lowlight" value="<%= name %>"><%== name %></option>
+            <% end %>
+            <% bad.each_pair do |name, h| %>
+              <option title="Certificate with errors!" class="error" disabled><%== name %></option>
+            <% end %>
+          </select>
+        </td>
+        <td rowspan="<%= rowspan %>">
+          <select name="ca">
+            <% if ssl['ca'] %>
+              <% name = ssl['ca']['subject']['CN'] %>
+              <option style="font-weight:bold;" class="highlight" value="__default__" selected>
+                <%== name %>
+              </option>
+            <% end %>
+            <% ssl['certs'].each_pair do |name, h| %>
+              <% if h['cert']['is_ca'] %>
+                <option value="<%= name %>"><%==  name %></option>
+              <% end %>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto[]" style="">
+            <option selected value="udp">UDP</option>
+            <option value="tcp-client">TCP - connect to peer</option>
+            <option disabled value="tcp-server">TCP - wait for connections</option>
+          </select>
+        </td>
+        <td>
+          <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
+        </td>
+        <td>
+          <input type="text" class="rwtext" name="remote_port[]" size="5" maxlength="5" value="1194"/>
+        </td>
+        <td rowspan="<%= rowspan %>">
+          <%= ifname_form_field %>
+        </td>
+        <td rowspan="<%= rowspan %>">
+          <%= 
+            format(
+              :module => 'openvpn',
+              :partial => true,
+              :path => 'network/openvpn/_interface_type_chooser',
+              :format => 'html'
+            )
+          %>
+        </td>
+        <td rowspan="<%= rowspan %>" style="text-align:center;">
+          <input type="checkbox" name="ns-cert-type_server" checked/><br/>
+          <em>(recommended)</em>
+        </td>
+        <td rowspan="<%= rowspan %>" style="text-align: center;">
+          <input type="checkbox" checked name="comp-lzo"/>
+        </td>
+      </tr>
+      <% (rowspan - 1).times do %>
+        <tr>
+          <td>
+            <select title="Same as the server configuration: if unsure, most propably it is UDP" name="proto[]" style="">
+              <option selected value="udp">UDP</option>
+              <option value="tcp-client">TCP - connect to peer</option>
+              <option disabled value="tcp-server">TCP - wait for connections</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" class="rwtext" name="remote_host[]" style="text-align:right;"/>
+          </td>
+          <td>
+            <input type="text" class="rwtext" name="remote_port[]" size="5" maxlength="5" value="1194"/>
+          </td>
+        </tr>
+      <% end %>
+      <tr> <!-- a row to add more server -->
+        <td></td><td></td><td></td>
+        <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
+          (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
+        </td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+
+<h3>Create new VPN (server mode)</h3>
+<form method="POST">
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="3">Add?</th>
+        <th colspan="2">
+          SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
+        </th>
+        <th colspan="2">Real Network</th>
+        <th colspan="3" rowspan="1">Virtual</th>
+        <th rowspan="3">LZO<br/>Compression?</th>
+      </tr>
+      <tr>
+        <th rowspan="2">Certificate (must have Private Key)</th>
+        <th rowspan="2">Trusted Certificate Authority</th>
+        <th rowspan="2">Protocol</th>
+        <th rowspan="2">Local<br/>port</th>
+        <th rowspan="2">
+          Network (Point-to-Point, IPv4 only)
+          <div class="optinfo">
+            If you choose Virtual Ethernet as Interface type, this field will be ignored.
+
+            Virtual ethernets will be configured just like ordinary network devices (<a href="/network/interfaces.html">here</a>)
+          </div>
+        </th>
+        <th colspan="2">Interface</th>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
+        </td>
+        <td>
+          <select name="cert">
+            <% 
+              # ruby1.9 only
+            %>
+            <% 
+              selected = ssl['certs'].select do |k,v| 
+                v['private_key'] and !v['cert']['is_ca']
+              end
+              good, bad = selected.partition_hash {|k,v| v['cert']['is_server']}
+            %>
+            <optgroup label="Server Certificates">
+              <%  good.each_pair do |name, h| %>
+                <option value="<%= name %>"><%== name %></option>
+              <% end %>
+            </optgroup>
+            <optgroup title="Not recommended for a VPN server!" label="Not server-type Certs.">
+              <% bad.each_pair do |name, h| %>
+                <option class="lowlight" value="<%= name %>"><%== name %></option>
+              <% end %>
+            </optgroup>
+          </select>
+        </td>
+        <td>
+          <select name="ca">
+            <% if ssl['ca'] %>
+              <% name = ssl['ca']['subject']['CN'] %>
+              <option style="font-weight:bold;" class="highlight" value="__default__" selected>
+                <%== name %>
+              </option>
+            <% end %>
+            <% ssl['certs'].each_pair do |name, h| %>
+              <% if h['cert']['is_ca'] %>
+                <option value="<%= name %>"><%== name %></option>
+              <% end %>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <select name="proto">
+            <option selected value="udp">UDP (recommended)</option>
+            <option disabled value="tcp-client">TCP - connect to peer</option>
+            <option value="tcp-server">TCP - wait for connections</option>
+          </select>
+        </td>
+        <td style="text-align:center;"> 
+          <input type="text" class="rwtext" name="port" size="5" maxlength="5" value="1194"/>
+        </td>
+        <td>
+          <input style="width: 100%;" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/> 
+          <!-- <input style="width: 100%;" type="text" class="rwtext" name="server_net"/> -->
+        </td>
+        <td><%= ifname_form_field %></td>
+        <td>
+          <%=
+            format(
+              :module => 'openvpn',
+              :partial => true,
+              :path => 'network/openvpn/_interface_type_chooser',
+              :format => 'html'
+            )
+          %>
+        </td>
+        <td style="text-align: center;">
+          <input type="checkbox" checked name="comp-lzo"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>

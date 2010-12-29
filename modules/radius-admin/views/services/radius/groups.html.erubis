@@ -1,0 +1,58 @@
+<%#-*- coding: UTF-8 -*-%>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style'
+  )
+%>
+<%
+  groups      = objects['groups']       || []
+  page        = objects['page']         || 1
+  per_page    = objects['per_page']     || 1
+  total_items = objects['total_items']  || 0
+%>
+<%= message_partial(msg) %>
+
+<h2>RADIUS Groups</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Group Name</th>
+      <th>Auth-Type</th>
+      <th>Password Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% groups.each do |group| %>
+      <%= # users list and groups list share UI representation
+        partial(
+          :module => 'radius-admin',
+          :path   => 'services/radius/_userlist_row',
+          :locals => {
+            :user   => group,
+            :subdir => 'groups'
+          }
+        )
+      %>
+    <% end %>
+  </tbody>
+</table>
+<%=
+  paginator(
+    :page => page,
+    :per_page => per_page,
+    :total_items => total_items
+  )
+%>
+      
+<h3>Create new group</h3>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/groups/_form_create',
+  )
+%>
+
+
+

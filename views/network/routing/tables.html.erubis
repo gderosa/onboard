@@ -1,0 +1,77 @@
+<% 
+  require 'onboard/network/routing/table'    
+
+  system_tables  = objects['system_tables']  
+  custom_tables  = objects['custom_tables']  
+  comments       = objects['comments']       
+
+%>
+
+<h2><%= title %></h2>
+
+<%= 
+  erubis(
+    :"_messages.html",
+    {
+      :layout => false,
+      :locals => {:msg => msg, :status => status} 
+    }
+  )
+%>
+
+<h3>System tables</h3>
+
+<%= 
+  erubis(
+    :"network/routing/_tables.html",
+    {
+      :layout => false,
+      :locals => {
+        :tables => system_tables, 
+        :comments => comments,
+        :readonly => true
+      } 
+    }
+  )
+%>
+
+<h3>Custom tables</h3>
+
+<%= 
+  erubis(
+    :"network/routing/_tables.html",
+    {
+      :layout => false,
+      :locals => {
+        :tables => custom_tables, 
+        :comments => comments,
+        :readonly => false
+      } 
+    }
+  )
+%>
+
+<h3>Create a new table</h3>
+<% 
+  first_available_table_number = 
+    ((1.upto 255).to_a - (system_tables.keys + custom_tables.keys))[0]
+%>
+<form method="POST">
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Comment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><input class="rwtext" name="number" size="3" value="<%= first_available_table_number %>"/></td>
+      <td><input class="rwtext" name="name"/></td>
+      <td><input name="comment"/></td>
+    </tr> 
+  </tbody>
+</table>
+<button type="submit">Create!</button>
+</form>

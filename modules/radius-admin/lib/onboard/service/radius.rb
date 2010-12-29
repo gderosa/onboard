@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'facets/hash'
 require 'sequel'
 
 class OnBoard
@@ -7,11 +8,22 @@ class OnBoard
       
       autoload :DEFAULTS,     'onboard/service/radius/defaults'
       autoload :Accounting,   'onboard/service/radius/accounting'
-      autoload :User,         'onboard/service/radius/user'
       autoload :Check,        'onboard/service/radius/check'
+      #autoload :Reply,        'onboard/service/radius/reply'
+        # use User#update_reply_attributes instead, even on User creation
       autoload :Passwd,       'onboard/service/radius/passwd'
+      autoload :User,         'onboard/service/radius/user'
+      autoload :Group,        'onboard/service/radius/group'
+      autoload :Name,         'onboard/service/radius/name'
 
       CONFFILE = File.join CONFDIR, 'current/radius.conf.yaml'
+
+      class Conflict            < Conflict;     end
+      class BadRequest          < BadRequest;   end
+      class UserAlreadyExists   < Conflict;     end
+      class GroupAlreadyExists  < Conflict;     end
+      class PasswordsDoNotMatch < BadRequest;   end
+      class EmptyPassword       < BadRequest;   end
 
       class << self
         def conf
@@ -23,7 +35,7 @@ class OnBoard
 
         def read_conf
           if File.readable? CONFFILE
-            DEFAULTS.update YAML.load(File.read CONFFILE)
+            DEFAULTS.deep_merge YAML.load(File.read CONFFILE)
           else
             DEFAULTS
           end

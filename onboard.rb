@@ -1,19 +1,16 @@
-# encoding: utf-8
+# -*- coding: UTF-8 -*-
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib'
 
 require 'rubygems'
 require 'find'
-require 'json'
-require 'yaml'
 require 'logger'
-require 'pp' 
 require 'etc'
 
+require 'onboard/exceptions'
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
 require 'onboard/system/command'
-
 require 'onboard/platform/debian'
 
 begin
@@ -162,7 +159,8 @@ end
 OnBoard.prepare
 
 if OnBoard.web?
-  require OnBoard::ROOTDIR + '/controller.rb'
+  require 'onboard/controller'
+  require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run!
   end
