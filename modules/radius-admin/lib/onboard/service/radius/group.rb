@@ -145,6 +145,8 @@ class OnBoard
 
         def initialize(groupname)
           @name = groupname
+          @check = []
+          @reply = []
         end
 
         def retrieve_attributes_from_db
@@ -337,7 +339,6 @@ class OnBoard
         # Returns an Hash.
         #
         def find_attribute(tbl, &blk) 
-          retrieve_attributes_from_db unless @check # @reply MIGHT be empty...
           case tbl
           when :check
             row = @check.find do |h| 

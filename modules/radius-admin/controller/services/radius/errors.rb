@@ -12,7 +12,7 @@ class OnBoard
           :status => 500,
           :msg    => {:err => Service::RADIUS::Db.format_error_msg(e)} 
         }
-      end
+      end #=> else nil
     end
 
   end

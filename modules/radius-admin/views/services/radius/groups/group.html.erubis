@@ -1,7 +1,7 @@
 <% 
   group   = objects['group']
   conf    = objects['conf']
-  members = objects['members']
+  members = objects['members'] 
 %>
 <%= message_partial(msg) %>
 <%=
