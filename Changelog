@@ -1,3 +1,8 @@
+2010.12.01
+
+* radius-admin: fix #51
+  * group list displayed attributes incorrectly
+
 2010.12
 
 * FreeRADIUS Administration
