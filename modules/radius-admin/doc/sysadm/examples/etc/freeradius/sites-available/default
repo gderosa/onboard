@@ -357,7 +357,7 @@ accounting {
 	#  Create a 'detail'ed log of the packets.
 	#  Note that accounting requests which are proxied
 	#  are also logged in the detail file.
-	detail
+#	detail # only use sql db, save disk activity
 #	daily
 
 	#  Update the wtmp file
