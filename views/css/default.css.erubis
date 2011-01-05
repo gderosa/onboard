@@ -300,7 +300,7 @@ table tr th .optinfo {
   font-size: 8pt; /* avoid becoming too small... */
 }
 
-table tr th[scope="row"] {
+table tr th[scope="row"], table tr th[scope="rowgroup"] {
   text-align: left;
   font-size: 90%;
 }
