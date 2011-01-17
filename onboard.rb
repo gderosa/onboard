@@ -1,19 +1,16 @@
-# encoding: utf-8
+# -*- coding: UTF-8 -*-
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib'
 
 require 'rubygems'
 require 'find'
-require 'json'
-require 'yaml'
 require 'logger'
-require 'pp' 
 require 'etc'
 
+require 'onboard/exceptions'
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
 require 'onboard/system/command'
-
 require 'onboard/platform/debian'
 
 begin
@@ -27,7 +24,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2010.10.02'
+  VERSION           = '2010.12.02'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -37,6 +34,7 @@ class OnBoard
       ENV['ONBOARD_DATADIR'] or 
       File.join(ENV['HOME'], '.onboard')
   )
+  FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
   CONFDIR           = File.join RWDIR, '/etc/config'
   LOGDIR            = File.join RWDIR, '/var/log'
   LOGFILE_BASENAME  = 'onboard.log'
@@ -99,7 +97,11 @@ class OnBoard
       if File.directory? dir_fullpath and not dir =~ /^\./
         file = dir_fullpath + '/load.rb'
         if File.readable? file
-          load dir_fullpath + '/load.rb'
+          if File.exists? dir_fullpath + '/.disable'
+            puts "Module #{dir}: disabled!"
+          else
+            load dir_fullpath + '/load.rb'
+          end
         else
           STDERR.puts "Warning: Couldn't load modules/#{dir}/load.rb: Skipped!"
         end
@@ -109,15 +111,19 @@ class OnBoard
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
     if ARGV.include? '--restore' 
       restore_scripts = 
-          Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           +
-          Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
+          Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           #+
+          #Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
+      Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
+        next if File.exists? "#{module_dir}/.disable"
+        restore_scripts += Dir.glob("#{module_dir}/etc/restore/[0-9][0-9]*.rb")
+      end
       restore_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
       restore_scripts.each do |script|
         print "loading: #{script}... "
         STDOUT.flush
         begin
           load script and puts "OK"
-        rescue
+        rescue Exception
           exception = $!
 
           puts exception.inspect
@@ -137,9 +143,12 @@ class OnBoard
     find_n_load ROOTDIR + '/etc/save/'
 
     # modules
-    Dir.glob(ROOTDIR + '/modules/*/etc/save/*.rb').each do |script| 
-      print "loading: #{script}... " and STDOUT.flush
-      load script and puts ' OK'
+    Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
+      next if File.exists? "#{module_dir}/.disable"
+      Dir.glob("#{module_dir}/etc/save/*.rb").each do |script| 
+        print "loading: #{script}... " and STDOUT.flush
+        load script and puts ' OK'
+      end
     end
 
     System::Command.run 'sync'
@@ -150,7 +159,8 @@ end
 OnBoard.prepare
 
 if OnBoard.web?
-  require OnBoard::ROOTDIR + '/controller.rb'
+  require 'onboard/controller'
+  require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run!
   end

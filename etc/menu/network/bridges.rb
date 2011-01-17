@@ -4,6 +4,6 @@ class OnBoard
     :children => /\/network\/bridges\/.+/,
     :name => 'Bridges',
     :desc => 'A bridge is a group of network interfaces which act as one, sharing IP addresses etc.',
-    :n    => -5
+    :n    => 0
   })
 end

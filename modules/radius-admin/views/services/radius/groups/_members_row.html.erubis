@@ -1,0 +1,32 @@
+<%#-*- coding: UTF-8 -*-%>
+<%
+  subdir ||= 'users'
+%>
+
+
+      <% 
+        csstclass = case user.auth_type
+                    when 'Reject'
+                      'bg_off'
+                    when 'Accept'
+                      'bg_high'
+                    else
+                      ''
+                    end
+      %>
+      <tr class="<%= csstclass %>">
+        <%= 
+          partial(
+            :module => 'radius-admin',
+            :path   => 'services/radius/_userlist_row_content',
+            :locals => {
+              :user   => user,
+              :subdir => subdir
+            } 
+          )
+        %>
+        <td style="text-align: center;">
+          <input type="checkbox" name="remove[<%= user.name %>]"/>
+        </td>
+      </tr>
+

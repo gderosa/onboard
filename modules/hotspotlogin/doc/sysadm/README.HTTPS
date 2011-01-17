@@ -1,0 +1,25 @@
+It's strongly suggested to put hotspotlogin behind a reverse HTTPS proxy.
+For example, if you use LigHTTPd, these are the relevant parts of 
+the configuration:
+
+    server.modules = (
+      ...,
+      "mod_proxy"
+    )
+
+    $SERVER["socket"] == "0.0.0.0:443" {
+      ssl.engine                  = "enable"
+      ssl.pemfile                 = "/etc/lighttpd/server.pem"
+      ssl.ca-file                 = "/etc/lighttpd/ca.crt"
+    }
+
+    proxy.server = (
+      ...,
+      "/hotspotlogin" => (
+        (
+          "host" => "127.0.0.1",
+          "port" => 4990
+        )
+      )
+    )
+

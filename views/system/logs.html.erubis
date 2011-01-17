@@ -1,0 +1,24 @@
+<% if objects.class == Class %>
+  <h2>Logs</h2>
+  <% logs = objects %>
+  <% logs.categories.each_pair do |k, v| %>
+    <% ary = logs.all.select {|h| h['category'] == k and not h['hidden']} %>
+    <% if ary.length > 0 %>
+      <h3><%= v %></h3>
+      <ul>
+      <% ary.each do |logh| %>
+        <li>
+          <a href="logs/<%= logh['id'] or Rack::Utils.escape(logh['path']) %>.html"><%= logh['path'] %></a>
+        </li>
+      <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+
+<% elsif objects.class == OnBoard::System::Log %>
+  <% log = objects %>
+  <h2>Log: <%= log.data['meta']['path'] %></h2>
+  <%= 
+      erubis(:"system/_log.html", :layout => false, :locals => {:log => log})  
+  %>
+<% end %>

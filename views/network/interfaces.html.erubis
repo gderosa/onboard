@@ -1,0 +1,31 @@
+<% 
+  require "pp"
+  require "onboard/extensions/string"
+  require "onboard/network/interface"
+%>
+
+<% if objects.class == Array %>
+  <h2><%= title %></h2>
+  <%= 
+    erubis(
+      :"network/_interfaces_table.html", 
+      {
+        :layout => false, 
+        :locals => {:objects => objects}
+      }
+    )  
+  %> 
+<% else %>
+
+      <% netif = objects %>
+      <h2>Network interface: <%= netif.name %></h2>
+      <div class="item">
+        <pre><%== netif.pretty_inspect  %></pre>
+      </div>
+
+      <a href="<%= request.path_info.to_dir + '/ip.html' %>">
+        <span class="menu1">IP addresses</span>
+      </a>
+
+<% end %>
+

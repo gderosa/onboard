@@ -7,59 +7,54 @@ class OnBoard
   module Network
     class Dnsmasq
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
+      CONFDIR_CURRENT = "#{CONFDIR}/new"
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
-
-      # TODO: DRY
+      CONFFILES = %w{dnsmasq.conf dhcp.conf dns.conf domains.conf}
 
       def self.save
-        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
-          FileUtils.copy "#{CONFDIR}/new/#{file}", "#{CONFDIR}/#{file}" if
-              File.exists? "#{CONFDIR}/new/#{file}"
+        CONFFILES.each do |file|
+          FileUtils.copy "#{CONFDIR_CURRENT}/#{file}", "#{CONFDIR}/#{file}" if
+              File.exists? "#{CONFDIR_CURRENT}/#{file}"
         end
       end
 
       # "#{CONFDIR}"            # saved configuration
-      # "#{CONFDIR}/new"        # current configuration
+      # "#{CONFDIR_CURRENT}"        # current configuration
       # "#{DEFAULTS_CONFDIR}"   # "factory" defaults
       def self.restore
-        OnBoard::System::Command.run "mkdir -p #{CONFDIR}/new"
-        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
+        OnBoard::System::Command.run "mkdir -p #{CONFDIR_CURRENT}"
+        CONFFILES.each do |file|
           unless File.exists? "#{CONFDIR}/#{file}"
             FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR}/"
           end
-          FileUtils.copy "#{CONFDIR}/#{file}", "#{CONFDIR}/new/#{file}"
+          FileUtils.copy "#{CONFDIR}/#{file}", "#{CONFDIR_CURRENT}/#{file}"
         end
         # 'new' subdirectory is always the current config dir
         # do not copy new/*.conf to parent directory if you don't want
         # persistence        
-        OnBoard::PLATFORM::restart_dnsmasq("#{CONFDIR}/new")
+        OnBoard::PLATFORM::restart_dnsmasq("#{CONFDIR_CURRENT}")
       end
 
       def self.init_conf
         need_restart = false
-        unless File.exists? "#{CONFDIR}/new"
-          FileUtils.mkdir_p "#{CONFDIR}/new"
+        unless File.exists? "#{CONFDIR_CURRENT}"
+          FileUtils.mkdir_p "#{CONFDIR_CURRENT}"
           need_restart = true
         end
-        %w{dnsmasq.conf dhcp.conf dns.conf}.each do |file|
-          unless File.exists? "#{CONFDIR}/new/#{file}"
-            FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR}/new/#{file}"
+        CONFFILES.each do |file|
+          unless File.exists? "#{CONFDIR_CURRENT}/#{file}"
+            FileUtils.copy "#{DEFAULTS_CONFDIR}/#{file}", "#{CONFDIR_CURRENT}/#{file}"
             need_restart = true
           end
         end
         if need_restart
-          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR}/new"  
+          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR_CURRENT}"  
         end
       end
 
       def self.validate_dhcp_range(dhcp_range_params)
-        begin
-          return {:ignore => true} if 
-              dhcp_range_params['delete'] =~ /on|yes|true|1/i
-        rescue
-          pp dhcp_range_params
-          exit
-        end
+        return {:ignore => true} if 
+            dhcp_range_params['delete'] =~ /on|yes|true|1/i
 
         %w{ipstart ipend}.each do |what|
           return {:ignore => true} if dhcp_range_params[what] =~ /add\s*new/i
@@ -109,7 +104,8 @@ class OnBoard
             'dns'         => {  # explicitly configured
               'nameservers' => [],
               'searchdomain'=> '',
-              'localdomain' => ''
+              'localdomain' => '',
+              'domains'     => {}
             }
           },
           'leases'      => [],
@@ -191,28 +187,36 @@ class OnBoard
       end
 
       # Repeat Yourself :-P # TODO's ?
-      def parse_dns_conf
-        return false unless File.readable? CONFDIR + '/new/dns.conf'
-        File.open CONFDIR + '/new/dns.conf' do |file|
+      def parse_dns_conf(filename="#{CONFDIR_CURRENT}/dns.conf")
+        return false unless File.readable? filename
+        File.open filename do |file|
           file.each_line do |line|
             next if line =~ /^\s*#/
             line.strip!
             # The following regexes are too 'rigid' to parse conf file 
             # not written by ourselves, but should be ok for our needs.
-            if line =~ /^\s*server\s*=\s*([^,\s#]+)\s*#\s?(.*)$/
+            case line
+            when /^\s*server\s*=\s*([^,\s#]+)\s*#\s?(.*)$/
               @data['conf']['dns']['nameservers'] << {
                 'ip'      => $1,
                 'comment' => $2
               }
-            elsif line =~ /^\s*server\s*=\s*([^,\s#]+)/
+            when /^\s*server\s*=\s*([^,\s#]+)/
               @data['conf']['dns']['nameservers'] << {
                 'ip'      => $1,
                 'comment' => ''
               }
-            elsif line =~ /^\s*domain\s*=\s*([^,\s#]+)/
+            when /^\s*domain\s*=\s*([^,\s#]+)/
               @data['conf']['dns']['searchdomain'] << $1
-            elsif line =~ /^\s*local\s*=\s*\/([^,\s#]+)\//
+            when /^\s*local\s*=\s*\/([^,\s#]+)\//
               @data['conf']['dns']['localdomain'] << $1
+            when %r{^\s*address\s*=\s*/(([\w\.\-]+/)+)([a-fA-F\d\.:]+)\s*$}
+              domains = $1.split('/')
+              ip      = $3
+              domains.each do |domain|
+                @data['conf']['dns']['domains'][domain] ||= []
+                @data['conf']['dns']['domains'][domain] << ip
+              end
             end
           end
         end
@@ -269,10 +273,20 @@ class OnBoard
       def write_dns_conf_from_HTTP_request(params)
         str = "# Automatically generated by #{self.class.name} \n\n"
         params['nameservers'].each do |ns|
+          explicit_port = false
           ns['ip'].strip!
+          if ns['ip'] =~ /^(\S+)#(\d+)$/ # example: 127.0.0.1#5353
+            ns['ip'] = $1
+            ns['port'] = $2
+            explicit_port = true
+          end
           next if not \
               OnBoard::Network::Interface::IP::valid_address? ns['ip']  
-          str << "server=#{ns['ip']} # #{ns['comment']}\n" 
+          if explicit_port
+            str << "server=#{ns['ip']}##{ns['port']} # #{ns['comment']}\n"
+          else
+            str << "server=#{ns['ip']} # #{ns['comment']}\n" 
+          end
         end
         str << "\n"
 
@@ -298,6 +312,51 @@ class OnBoard
         return {:ok => true} 
         # just like we did for interface IP addresses, sending an invalid edit
         # (for example the empty string) is the way to remove an item.
+      end
+
+      def write_domains_conf_from_HTTP_request(params)
+        lines = ["# Automatically generated by #{self.class.name}"]
+        # only one checked-box is enough to block the domain
+        blocked = []
+        params['domains'].each do |domain|
+          blocked |= [domain['name']] if domain['block'] == 'on'
+        end
+        params['domains'].each do |domain|
+          domain['name'].strip!
+          domain['name'].downcase!
+          name = domain['name']
+          next unless name =~ /^[\w\-\.]+$/
+          ip    = domain['ip']
+          valid_ip = OnBoard::Network::Interface::IP::valid_address? ip
+          if blocked.include? name 
+            lines |= ["address=/#{name}/0.0.0.0"]
+            lines |= ["address=/#{name}/::"]
+          elsif valid_ip
+            lines |= ["address=/#{name}/#{ip}"]
+          end
+        end
+
+        unless File.exists? CONFDIR_CURRENT
+          FileUtils.mkdir_p CONFDIR_CURRENT
+        end
+
+        dns_conf_file = "#{CONFDIR_CURRENT}/domains.conf"
+
+        FileUtils.copy(dns_conf_file, "#{dns_conf_file}~" ) if
+          File.exists? dns_conf_file
+        File.open(dns_conf_file,  'w') do |file|
+          lines.each{|line| file.puts line}
+        end
+        return {:ok => true} 
+      end
+
+      def blocked?(domain)
+        ips = @data['conf']['dns']['domains'][domain]            
+        ips.length > 0 and (ips - ['0.0.0.0', '::']  == [])
+      end
+
+      def block!(domain)
+        @data['conf']['dns']['domains'][domain] = ['0.0.0.0', '::']
       end
 
     end

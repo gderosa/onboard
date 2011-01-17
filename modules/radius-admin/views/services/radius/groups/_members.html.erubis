@@ -1,0 +1,48 @@
+<% 
+  members                 ||= {}
+  members['users']        ||= []
+  members['page']         ||= 1
+  members['per_page']     ||= (params[:per_page] || 1)
+  members['total_items']  ||= 1
+%>
+
+<h<%= heading %>>Members</h<%= heading %>> 
+
+<table>
+  <thead>
+    <tr>
+      <th>User-Name</th>
+      <th>
+        Auth-Type
+      </th>
+      <th>
+        Password Type
+      </th>
+      <th>
+        Remove?
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% members['users'].each do |user| %>
+      <%=
+        partial(
+          :module => 'radius-admin',
+          :path   => 'services/radius/groups/_members_row',
+          :locals => {
+            :user   => user
+          }
+        )
+      %>
+    <% end %>
+  </tbody>
+</table>
+<%=
+  paginator(
+    :page => members['page'],
+    :per_page => members['per_page'],
+    :total_items => members['total_items']
+  )
+%>
+
+

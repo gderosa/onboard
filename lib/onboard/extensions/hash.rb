@@ -47,6 +47,24 @@ class Hash
     recursive!{|h| h.rekey{|k| k.to_sym}}
   end
 
+  # non-facets
+  
+  def symbolize_all
+    h = {}
+    each_pair do |k, v|
+      h[k.to_sym] = v.to_sym
+    end
+    return h
+  end
+
+  def symbolize_values
+    h = {}
+    each_pair do |k, v|
+      h[k] = v.to_sym
+    end
+    return h
+  end
+
 end
 
 
