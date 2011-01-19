@@ -1,0 +1,10 @@
+This module just read/writes into the FreeRADIUS MySQL database. It's somewhat
+inspired to the PHP project DaloRADIUS ( http://daloradius.com/ ). 
+/etc/freeradius must be pre-configured to make this module work. Of course,
+it may also manage a remote radius server.
+
+DEPENDENCIES:
+# gem install sequel mysql
+
+
+

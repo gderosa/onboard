@@ -1,0 +1,11 @@
+--- filetype.vim.orig	2010-12-11 01:44:12.000000000 +0100
++++ filetype.vim	2010-12-11 01:41:51.000000000 +0100
+@@ -808,7 +808,7 @@
+ endfunc
+ 
+ " HTML with Ruby - eRuby
+-au BufNewFile,BufRead *.erb,*.rhtml		setf eruby
++au BufNewFile,BufRead *.erubis,*.erb,*.rhtml	setf eruby
+ 
+ " HTML with M4
+ au BufNewFile,BufRead *.html.m4			setf htmlm4

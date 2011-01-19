@@ -1,3 +1,45 @@
+2010.12.02
+
+* chilli: postauthproxy and postauthproxyport
+
+2010.12.01
+
+* radius-admin: fix #51
+  * group list displayed attributes incorrectly
+
+2010.12
+
+* FreeRADIUS Administration
+  * users, groups and accounting on MySQL database
+
+2010.11.03
+
+* Chilli Improvements:
+  * NAS-Port-Type w/ autodetection
+  * NAS-Identifier
+
+* new module: radius-core
+  * a support module including files from a Radiustar fork
+
+2010.11.02
+
+* HotSpotLogin fixes:
+  * "Your Org. Name" field (aka --custom-headline)
+  * prevent logo image caching by browsers, via ?nocache=<unique-id> 
+
+2010.11.01
+
+* You can disable a module by creating modules/module_name/.disable
+
+2010.11
+
+* Captive portal
+  * hotspotlogin module
+    * strongly founded on CoovaChilli features, namely JSON interface
+  * chilli module
+    * no wpa, statip and mac auth, just web hotspot login
+  * requires a RADIUS server (not managed by OnBoard yet)
+
 2010.10.03
 
 * Dns(masq): customize/block domains
@@ -35,16 +77,16 @@
 2010.07
 
 * OpenVPN 
-	* Virtual Ethernets (TAP), allowing IPv6 and bridging 
-	* TAP configured persistently like normal ethernets
+  * Virtual Ethernets (TAP), allowing IPv6 and bridging 
+  * TAP configured persistently like normal ethernets
 
 2010.06
 
 * Policy routing based on: 
-	* source address 
-	* input interface
-	* input bridge port
-	* QoS classification (via netfilter packet mangling)
+  * source address 
+  * input interface
+  * input bridge port
+  * QoS classification (via netfilter packet mangling)
 
 2009.12
 

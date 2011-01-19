@@ -4,6 +4,6 @@ class OnBoard
     :children => /\/network\/interfaces\/.+/,
     :name     => 'Interfaces',
     :desc     => 'Network interfaces',
-    :n        => -10
+    #:n        => -10
   })
 end

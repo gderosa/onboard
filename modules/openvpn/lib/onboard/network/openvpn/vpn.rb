@@ -2,13 +2,14 @@
 require 'rubygems'
 gem 'uuid'
 gem 'escape'
+gem 'erubis'
 
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
 autoload :Escape,     'escape'
-autoload :ERB,        'erb'
+autoload :Erubis,     'erubis' 
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/extensions/openssl'
@@ -1044,8 +1045,8 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           cert    = h[:cert]
           key     = h[:key]
           port    = h[:port] 
-          tmpl = ERB.new File.read(  
-              File.join ROOTDIR, 'templates/client.conf.erb')
+          tmpl = Erubis::Eruby.new File.read(  
+              File.join ROOTDIR, 'templates/client.conf.erubis')
           tmpl.result(binding) 
         end
 
