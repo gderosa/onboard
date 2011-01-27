@@ -1,19 +1,16 @@
-# encoding: utf-8
+# -*- coding: UTF-8 -*-
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib'
 
 require 'rubygems'
 require 'find'
-require 'json'
-require 'yaml'
 require 'logger'
-require 'pp' 
 require 'etc'
 
+require 'onboard/exceptions'
 require 'onboard/extensions/object'
 require 'onboard/menu/node'
 require 'onboard/system/command'
-
 require 'onboard/platform/debian'
 
 begin
@@ -27,7 +24,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2010.11.02'
+  VERSION           = '2010.12.02'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -37,6 +34,7 @@ class OnBoard
       ENV['ONBOARD_DATADIR'] or 
       File.join(ENV['HOME'], '.onboard')
   )
+  FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
   CONFDIR           = File.join RWDIR, '/etc/config'
   LOGDIR            = File.join RWDIR, '/var/log'
   LOGFILE_BASENAME  = 'onboard.log'
@@ -161,7 +159,8 @@ end
 OnBoard.prepare
 
 if OnBoard.web?
-  require OnBoard::ROOTDIR + '/controller.rb'
+  require 'onboard/controller'
+  require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run!
   end

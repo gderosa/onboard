@@ -1,0 +1,114 @@
+<% 
+  require 'pp'
+
+  require 'onboard/network/interface'
+
+  all_interfaces = OnBoard::Network::Interface.getAll_layer3
+  interface_names = all_interfaces.map {|x| x.name} 
+
+  iptablesobj       = objects
+
+  ip_version        = iptablesobj.ip_version
+
+  tablename         = 'mangle'
+%>
+<style type="text/css">
+  td {
+    text-align: center;
+  }
+</style>
+<h2>Packet mangling (IPv<%= ip_version %>)</h2>
+
+  <%=
+    erubis(
+      :"/_messages.html",
+      {
+        :layout => false,
+        :locals => {
+          :msg => msg,
+          :status => status
+        }
+      }
+    )
+  %>
+
+<div class="warn">
+  These are special packet alteration rules; most of the times they are created 
+  automatically by the system to make policy routing and other tasks work 
+  (see <a href="../routing/tables.html">here</a> and 
+  <a href="../routing/rules.html">here</a>, for example).
+  They <em>should not</em> be changed manually.
+</div>
+
+<% iptablesobj.tables[tablename].chains.each_pair do |chainname, chain| %>
+  <h4>Chain <%= chain.name %></h4>
+  <table>
+    <thead>
+      <tr>
+        <% chain.listfields[0..0].each do |fieldname| %>
+          <th colspan="4"><%= fieldname  %></th>
+        <% end %>
+        <% chain.listfields[1..-1].each do |fieldname| %>
+          <th><%= fieldname  %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% chain.rules.each_with_index do |rule, rule_idx| %>
+        <tr>
+          <form method="POST">
+            <input type="hidden" name="_method" value="put"/>
+            <input type="hidden" name="chain" value="<%= chain.name %>"/>
+            <input type="hidden" name="rulenum" value="<%= rule[0] %>"/>
+            <% 
+            # rule is an Array of fields, the first (rule[0]) represents
+            # rulenum according to iptables conventions (starts from 1) 
+            # 
+            # Other "fields" come directly from iptables -L -v -n
+            # 
+            # chain.rules is the Array of such arrays
+            #    
+            # It is: rule_idx = rule[0] - 1    
+            %>
+            <input type="hidden" name="rulespec" value="<%== chain.rulespecs[rule_idx] %>"/>
+            <%
+            # we cannot use rulenum to move up/down a rule; we have to delete 
+            # it, then recreate in a different position, so we need the full
+            # rule specification
+            %>
+            <td>
+              <strong class="highlight"><%= rule[0] %></strong> <!-- rule number -->
+            </td>
+            <td>
+              <button type="submit" name="del_rule" title="Remove"><img src="<%= icondir + '/16x16/actions/remove.png'%>" alt="Remove" title="Remove"/></button>
+            </td>
+            <% 
+              # First[last] rule cannot be moved up[down] :
+              # disable buttons accordingly
+            %>
+            <td>
+              <button <%= 'disabled' if rule[0] == 1 %> type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
+            </td>
+            <td>
+              <button <%= 'disabled' if rule[0] == chain.rules.length %> type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
+            </td>           
+            <% rule[1..-2].each do |value| %>
+              <td><%= value %></td>
+            <% end %>
+            <!-- "misc" -->
+            <%
+              title = ""
+              if rule[3] =~ /LOG/
+                title << 'Some reasonable defaults have been added to avoid LOG flooding'
+              end
+            %>
+            <td title="<%= title %>" style="text-align: left;"><kbd><%= rule[-1] %></kbd></td>
+          </form>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<h3 class="warn">Adding new rules explicitely is disabled</h3>
+

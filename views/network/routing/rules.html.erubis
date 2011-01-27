@@ -1,0 +1,77 @@
+<% 
+  require 'onboard/network/routing'
+  require 'onboard/network/qos/diffserv'
+
+  all_tables      = OnBoard::Network::Routing::Table.getAllIDs 
+  all_interfaces  = OnBoard::Network::Interface.getAll 
+  all_rules       = objects 
+
+%>
+
+<style type="text/css">
+  td input, td select {
+    margin: 0 auto 0 0.3em;
+  }
+</style>
+
+<h2><%= title %></h2>
+
+
+<%= 
+  erubis(
+    :"_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg    => msg
+      }
+    }
+  )
+%>
+
+<h3>Current rules</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <%=
+    erubis(
+      :"network/routing/_rules.html",
+      {
+        :layout => false,
+        :locals => {
+          :all_tables     => all_tables,
+          :all_interfaces => all_interfaces,
+          :all_rules      => all_rules,
+          :show_delete_checkbox => true
+        }
+      }
+    )    
+  %>
+  <button type="submit">Change</button> 
+</form>
+
+<h3>Add a new rule</h3>
+
+<form method="POST">
+  <%=
+    erubis(
+      :"network/routing/_rules.html",
+      {
+        :layout => false,
+        :locals => {
+          :all_tables     => all_tables,
+          :all_interfaces => all_interfaces,
+          :all_rules      => [ # Array of just one element:
+            OnBoard::Network::Routing::Rule.new( { # a "blank" Routing::Rule object
+              :prio   => nil,
+              :from   => 'all',
+              :to     => 'all',
+              :fwmark => nil,
+              :table  => 'main'
+            } ) 
+          ]
+        }
+      }
+    )    
+  %>
+  <button type="submit">Add</button>
+</form>

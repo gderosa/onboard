@@ -1,0 +1,25 @@
+<style type="text/css">
+  table.raduserform tr th[scope="row"] {
+    font-size: 95%;
+  }
+  table.raduserform tr th select, table.raduserform tr th .optinfo {
+    width: 40ex;
+  }
+  /*
+  table.raduserform tr td  {
+    vertical-align: top;
+  }
+  */
+  table.raduserform tr td, table tr th {
+    padding: 1ex;
+  }
+  table.raduserform tr td input, table.raduserform tr td input.humantext {
+    width: 160px;
+  }
+  table.raduserform tr th div.optinfo {
+    margin-top: 0.2em;
+  }
+  form.raduserform button[type="submit"] {
+    margin-top: 1em; 
+  }
+</style>

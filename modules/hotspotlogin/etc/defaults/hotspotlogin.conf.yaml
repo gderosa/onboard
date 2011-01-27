@@ -4,3 +4,4 @@ port: 4990
 uamsecret: null
 userpassword: true
 log-http: false
+interval: 300

@@ -1,0 +1,91 @@
+<%#-*- coding: UTF-8 -*-%>
+
+<%
+  group ||= nil
+%>
+
+  <!-- no need of a "radgroupform" CSS/HTML class -->
+  <table class="raduserform">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <select name="check[Password-Type]">
+            <% 
+              if group 
+                if group.password_type 
+                  selected = group.password_type
+                else
+                  selected = ''
+                end
+              else
+                selected = default_passwd_type
+              end
+            %>
+            <option value="" <%= 'selected' if selected == '' %>>
+              (no password)
+              </option>  
+            <% passwd_types.each do |passwd_type| %>
+              <option 
+                  <%= 'selected' if passwd_type == selected %> 
+                  value="<%= passwd_type %>">
+                <%= passwd_type %>
+              </option>
+            <% end %>
+          </select>
+        </th>
+        <td style="vertical-align: top;">
+          <div style="margin-top:0;"> 
+            <input type="password" name="check[Group-Password]"/>
+          </div>
+          <div style="margin-top:0.7em;">
+            <input type="password" name="confirm[check][Group-Password]"/><br/>
+            <span class="optinfo">(confirm)</span>
+          </div>
+        </td>
+      </tr>
+
+      <%
+        csstclass = ''
+        if group
+          csstclass = case group.auth_type
+                      when 'Reject'
+                        'bg_off'
+                      when 'Accept'
+                        'bg_high'
+                      else
+                        ''
+                      end 
+        end
+      %>
+      <tr class="<%= csstclass %>">
+        <th scope="row" style="font-style:italic;">
+          Auth-Type
+        </th>
+        <td>
+          <fieldset>
+            <% 
+              selected_auth_type = ''
+              if group and group.auth_type
+                selected_auth_type = group.auth_type
+              end
+
+              human_friendly = {
+                'Reject'  => 'Reject',
+                ''        => '<span class="lowlight">(auto)</span>',
+                'Accept'  => 'Accept'
+              }
+            %>
+            <% ['Reject', '', 'Accept'].each do |auth_type| %>
+              <input 
+                  type="radio" 
+                  name="check[Auth-Type]" 
+                  value="<%= auth_type %>"
+                  <%= 'checked' if auth_type == selected_auth_type %>/>
+              <%= human_friendly[auth_type] %>
+              <br/>
+            <% end %>
+          </fieldset>
+        </td>
+      </tr>
+    </tbody>
+  </table>
