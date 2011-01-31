@@ -1,0 +1,59 @@
+#URLs in banned list
+#Don't bother with the http:// or the www
+
+#The bannedurllist is for blocking PART of a site
+#The bannedsitelist is for blocking ALL of a site
+
+#The 'grey' lists override the 'banned' lists.
+#The 'exception' lists override the 'banned' lists also.
+#The difference is that the 'exception' lists completely switch
+#off *all* other filtering for the match.  'grey' lists only
+#stop the URL filtering and allow the normal filtering to work.
+
+#An example of grey list use is when in Blanket Block (whitelist)
+#mode and you want to allow some sites but still filter as normal
+#on their content
+
+#Another example of grey list use is when you ban a site but want
+#to allow part of it.
+
+#To include additional files in this list use this example:
+#.Include<<%= dg.root %>/anotherbannedurllist>
+
+#You can have multiple .Includes.
+
+#listcategory: "Banned URLs"
+
+#List other URLs to block:
+
+members.home.net/uporn
+
+# The squidGuard advert domain/URL lists are now included by default.
+# To work with advanced ad blocking & the logadblocks option, advert
+# phrase/site/URL lists should have the string "ADs" in their listcategory.
+.Include<<%= dg.root %>/lists/blacklists/ads/urls>
+
+#Remove the # from the following and edit as needed to use a stock
+#squidGuard/urlblacklist blacklists collection.
+#.Include<<%= dg.root %>/lists/blacklists/adult/urls>
+#.Include<<%= dg.root %>/lists/blacklists/aggressive/urls>
+#.Include<<%= dg.root %>/lists/blacklists/audio-video/urls>
+#.Include<<%= dg.root %>/lists/blacklists/chat/urls>
+#.Include<<%= dg.root %>/lists/blacklists/drugs/urls>
+#.Include<<%= dg.root %>/lists/blacklists/entertainment/urls>
+#.Include<<%= dg.root %>/lists/blacklists/frencheducation/urls>
+#.Include<<%= dg.root %>/lists/blacklists/gambling/urls>
+#.Include<<%= dg.root %>/lists/blacklists/government/urls>
+#.Include<<%= dg.root %>/lists/blacklists/hacking/urls>
+#.Include<<%= dg.root %>/lists/blacklists/jobsearch/urls>
+#.Include<<%= dg.root %>/lists/blacklists/kidstimewasting/urls>
+#.Include<<%= dg.root %>/lists/blacklists/mail/urls>
+#.Include<<%= dg.root %>/lists/blacklists/news/urls>
+#.Include<<%= dg.root %>/lists/blacklists/porn/urls>
+#.Include<<%= dg.root %>/lists/blacklists/proxy/urls>
+#.Include<<%= dg.root %>/lists/blacklists/publicite/urls>
+#.Include<<%= dg.root %>/lists/blacklists/redirector/urls>
+#.Include<<%= dg.root %>/lists/blacklists/violence/urls>
+#.Include<<%= dg.root %>/lists/blacklists/virusinfected/urls>
+#.Include<<%= dg.root %>/lists/blacklists/warez/urls>
+# You will need to edit to add and remove categories you want
