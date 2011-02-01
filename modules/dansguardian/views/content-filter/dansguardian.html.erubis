@@ -1,7 +1,8 @@
 <% 
   dg = objects[:dg]
-  
 %>
+
+<%= message_partial(msg) %>
 
 <h2><%= title %></h2>
 

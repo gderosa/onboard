@@ -25,6 +25,10 @@ class OnBoard
         CONFDIR
       end
 
+      def config_file
+        "#{CONFDIR}/dansguardian.conf"
+      end
+
       def write_all
         dg = self
         ERB::recurse CONFTEMPLATEDIR, binding, '.erb' do |subpath|
@@ -43,6 +47,28 @@ class OnBoard
           reset
         end
         @dansguardian_s_string = output
+      end
+
+      def start_stop(params)
+        if params['start']
+          start
+        elsif params['stop']
+          stop
+        elsif params['restart']
+          restart
+        end
+      end
+
+      def start
+        System::Command.run "dansguardian -c #{config_file}", :sudo
+      end
+
+      def stop
+        System::Command.run 'dansguardian -q', :sudo
+      end
+
+      def restart
+        System::Command.run 'dansguardian -Q', :sudo
       end
 
     end

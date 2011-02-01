@@ -425,12 +425,7 @@ downloadmanager = '<%= dg.root %>/downloadmanagers/default.conf'
 # Some of the scanner(s) require 3rd party software and libraries eg clamav.
 # See the individual plugin conf file for more options (if any).
 #
-contentscanner = '<%= dg.root %>/contentscanners/clamav.conf'
 #contentscanner = '<%= dg.root %>/contentscanners/clamdscan.conf'
-#!! Unimplemented !! contentscanner = '<%= dg.root %>/contentscanners/kavav.conf'
-#!! Not compiled !! contentscanner = '<%= dg.root %>/contentscanners/kavdscan.conf'
-#contentscanner = '<%= dg.root %>/contentscanners/icapscan.conf'
-#contentscanner = '<%= dg.root %>/contentscanners/commandlinescan.conf'
 
 
 
@@ -454,23 +449,8 @@ contentscanexceptions = off
 
 
 # Auth plugins
-# These replace the usernameidmethod* options in previous versions. They
-# handle the extraction of client usernames from various sources, such as
-# Proxy-Authorisation headers and ident servers, enabling requests to be
-# handled according to the settings of the user's filter group.
-# Multiple plugins can be specified, and will be queried in order until one
-# of them either finds a username or throws an error. For example, if Squid
-# is configured with both NTLM and Basic auth enabled, and both the 'proxy-basic'
-# and 'proxy-ntlm' auth plugins are enabled here, then clients which do not support
-# NTLM can fall back to Basic without sacrificing access rights.
-#
-# If you do not use multiple filter groups, you need not specify this option.
-#
-#authplugin = '<%= dg.root %>/authplugins/proxy-basic.conf'
-#authplugin = '<%= dg.root %>/authplugins/proxy-digest.conf'
-#authplugin = '<%= dg.root %>/authplugins/proxy-ntlm.conf'
-#authplugin = '<%= dg.root %>/authplugins/ident.conf'
 #authplugin = '<%= dg.root %>/authplugins/ip.conf'
+#authplugin = '<%= dg.root %>/authplugins/sql.conf'
 
 
 
@@ -608,8 +588,8 @@ loguseragent = off
 # Temp files created during virus scanning are given owner and group read
 # permissions; to use content scanners based on external processes, such as
 # clamdscan, the two processes must run with either the same group or user ID.
-#daemonuser = 'dansguardian'
-#daemongroup = 'dansguardian'
+daemonuser = 'dansguardian'
+daemongroup = 'dansguardian'
 
 # Soft restart
 # When on this disables the forced killing off all processes in the process group.
@@ -617,8 +597,4 @@ loguseragent = off
 # on|off (defaults to off)
 softrestart = off
 
-# Mail program
-# Path (sendmail-compatible) email program, with options.
-# Not used if usesmtp is disabled (filtergroup specific).
-mailer = '/usr/sbin/sendmail -t'
 
