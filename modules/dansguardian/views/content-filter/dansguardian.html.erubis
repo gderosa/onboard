@@ -1,6 +1,28 @@
+<% 
+  dg = objects[:dg]
+  
+%>
+
 <h2><%= title %></h2>
 
+<h3>Current status</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
+  <table>
+    <tbody>
+      <tr>
+        <th scope="row">Running?</th>
+        <td><%= yes_no_icon dg.running?, :print_no %></td>
+        <td><%= action_button(dg.running? ? :stop : :start) %></td>
+        <td><%= action_button :restart, {:disabled => !dg.running?} %></td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+
+<h3>Initialize configuration</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <input type="hidden" name="initialize_config_files" value="on"/>
   <button type="submit">Initialize!</button>
 </form>

@@ -19,13 +19,18 @@ class OnBoard
     end
 
     put '/content-filter/dansguardian.:format' do
-      ContentFilter::DG.new.write_all
+      ContentFilter::DG.new.write_all if
+          params['initialize_config_files']
+      dg = ContentFilter::DG.new
+      dg.get_status
       format(
         :path     => '/content-filter/dansguardian',
         :module   => 'dansguardian',
         :title    => 'DansGuardian Web Content Filtering',
         :format   => params[:format],
-        :objects  => []
+        :objects  => {
+          :dg       => dg
+        } 
       )
     end
 

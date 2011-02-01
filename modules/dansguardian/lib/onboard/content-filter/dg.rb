@@ -33,8 +33,8 @@ class OnBoard
       end
 
       def get_status
-        output = `sudo dansguardian -s`
-        status = $!.dup
+        output = `sudo dansguardian -s 2>&1`
+        status = $?.dup
         if status == 0
           output =~ /(\d+)/ and @pid[:parent] = $1.to_i
           @pid[:children] = 
