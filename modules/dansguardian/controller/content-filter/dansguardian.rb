@@ -5,12 +5,16 @@ class OnBoard
   class Controller < Sinatra::Base
 
     get '/content-filter/dansguardian.:format' do
+      dg = ContentFilter::DG.new
+      dg.get_status
       format(
         :path     => '/content-filter/dansguardian',
         :module   => 'dansguardian',
         :title    => 'DansGuardian Web Content Filtering',
         :format   => params[:format],
-        :objects  => []
+        :objects  => {
+          :dg       => dg
+        }
       )
     end
 
