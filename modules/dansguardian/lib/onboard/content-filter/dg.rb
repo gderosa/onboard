@@ -5,6 +5,8 @@ class OnBoard
   module ContentFilter
     class DG
 
+      autoload :FilterGroup, 'onboard/content-filter/dg/filtergroup'
+
       attr_reader :pid, :filtergroups
 
       def initialize
@@ -16,7 +18,7 @@ class OnBoard
           :parent   => nil,
           :children => []
         }
-        @filtergroups = []
+        @filtergroups = {}
       end
 
       def running?
@@ -53,8 +55,38 @@ class OnBoard
       end
 
       def get_filtergroups
-        Dir.glob "#{CONFDIR}/dansguardianf[0-9]+.conf" do |file|
-          puts file
+        @filtergroups = {}
+
+        # Filter Group abstraction
+        Dir.glob "#{CONFDIR}/filtergroups/*" do |filepath|
+          if filepath =~ /([^\.\/\\]+)\.conf$/ 
+            id = $1
+            @filtergroups[id] = FilterGroup.new(
+              :conffile         => filepath,
+              :id               => id,
+              :dansguardian_id  => nil 
+            )
+          end
+        end
+
+        # DansGuardian Filter Groups
+        Dir.glob "#{CONFDIR}/dansguardianf*.conf" do |filepath|
+          if filepath =~ /dansguardianf(\d+)\.conf$/
+            dansguardian_id = $1.to_i
+            if File.symlink? filepath
+              id = File.basename(
+                  File.readlink(filepath)
+              ).sub(/\.[^\.\/\\]+$/,'')
+              @filtergroups[id].dansguardian_id = dansguardian_id
+            elsif File.file? filepath
+              id = "dansguardianf#{dansguardian_id}"
+              @filtergroups[id] = FilterGroup.new(
+                :conffile         => filepath,
+                :id               => id,
+                :dansguardian_id  => dansguardian_id
+              )
+            end
+          end
         end
       end
 

@@ -1,1 +1,6 @@
+<% filtergroups = objects %>
+
 <h2>DansGuardian: Filter Groups</h2>
+
+<pre><%== filtergroups.pretty_inspect %></pre>
+
