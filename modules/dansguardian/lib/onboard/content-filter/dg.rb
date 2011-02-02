@@ -79,10 +79,9 @@ class OnBoard
               ).sub(/\.[^\.\/\\]+$/,'')
               @filtergroups[id].dansguardian_id = dansguardian_id
             elsif File.file? filepath
-              id = "dansguardianf#{dansguardian_id}"
               @filtergroups[id] = FilterGroup.new(
                 :conffile         => filepath,
-                :id               => id,
+                :id               => nil,
                 :dansguardian_id  => dansguardian_id
               )
             end

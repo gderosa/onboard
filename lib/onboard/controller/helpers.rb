@@ -269,7 +269,7 @@ class OnBoard
       end
 
       def query_string_merge(h)
-        # Rack::Request#GET doesn't play well when :method_ovveride
+        # Rack::Request#GET doesn't play well when :method_ovverride
         # is enabled in Sinatra. 
         get_params = Rack::Utils.parse_query(request.query_string)
         Rack::Utils.build_query(
