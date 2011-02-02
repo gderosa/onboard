@@ -5,6 +5,8 @@ class OnBoard
   module ContentFilter
     class DG
 
+      attr_reader :pid, :filtergroups
+
       def initialize
         reset
       end
@@ -14,6 +16,7 @@ class OnBoard
           :parent   => nil,
           :children => []
         }
+        @filtergroups = []
       end
 
       def running?
@@ -47,6 +50,12 @@ class OnBoard
           reset
         end
         @dansguardian_s_string = output
+      end
+
+      def get_filtergroups
+        Dir.glob "#{CONFDIR}/dansguardianf[0-9]+.conf" do |file|
+          puts file
+        end
       end
 
       def start_stop(params)
