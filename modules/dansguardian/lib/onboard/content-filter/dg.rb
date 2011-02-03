@@ -1,3 +1,5 @@
+require 'dansguardian'
+
 require 'onboard/extensions/erb'
 require 'onboard/content-filter/dg/constants'
 
