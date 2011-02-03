@@ -5,12 +5,7 @@
 <table>
   <thead>
     <tr>
-      <th>
-        DansGuardian Filter Group ID
-        <div class="optinfo">
-          Click on the Id. number to view/edit Filter Group details
-        </div>
-      </th>
+      <th> # </th>
       <th>Name</th>
       <th>Group Mode</th>
       <th>Delete?</th>
@@ -20,15 +15,17 @@
     <% filtergroups.each do |fg| %>
       <% next unless fg %>
       <tr>
-        <td><a href="filtergroups/<%= fg.dansguardian_id %>.html"><%= fg.dansguardian_id %></a></td>
-        <td>TODO</td>
+        <td style="text-align: right;"><span style="font-weight: bold"><%= fg.dansguardian_id %></span> (<a style="font-style: italic" href="filtergroups/<%= fg.dansguardian_id %>.html">details</a>)</td>
+        <td><input type="text" name="name[]" value="ToDo"/></td>
         <td>
           <select name="groupmode">
             <option value="TODO">TODO</option>
           </select>
         </td>
-        <td><input type="checkbox"/></td>
+        <td style="text-align:center;"><input type="checkbox"/></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<button type="submit">Change!</button>
+
