@@ -9,18 +9,19 @@ class OnBoard
 
       autoload :FilterGroup, 'onboard/content-filter/dg/filtergroup'
 
-      attr_reader :pid, :filtergroups
+      attr_reader :pid, :filtergroups, :config
 
       def initialize
         reset
       end
 
       def reset
-        @pid = {
-          :parent   => nil,
-          :children => []
+        @pid            = {
+          :parent         => nil,
+          :children       => []
         }
-        @filtergroups = []
+        @filtergroups   = []
+        @config         = ::DansGuardian::Config.new(:mainfile => config_file)
       end
 
       def running?

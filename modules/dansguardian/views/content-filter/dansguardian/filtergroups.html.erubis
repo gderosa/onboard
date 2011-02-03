@@ -1,4 +1,7 @@
-<% filtergroups = objects %>
+<% 
+  dg = objects[:dg] 
+  filtergroups = dg.filtergroups 
+%>
 
 <h2>DansGuardian: Filter Groups</h2>
 
@@ -20,7 +23,7 @@
         <tr>
           <input type="hidden" name="fg[]" value=<%= id %>/> 
           <td style="text-align: right;"><span style="font-weight: bold"><%= id %></span> (<a style="font-style: italic" href="filtergroups/<%= id %>.html">details</a>)</td>
-          <td><input type="text" name="name[]" value="ToDo"/></td>
+          <td><input type="text" name="name[]" value="<%= dg.config.filtergroup(id)[:groupname] %>"/></td>
           <td>
             <select name="groupmode[]">
               <option value="TODO">TODO</option>

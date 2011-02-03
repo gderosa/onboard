@@ -26,7 +26,9 @@ class OnBoard
         :module   => 'dansguardian',
         :title    => 'DansGuardian: Filter Groups',
         :format   => params[:format],
-        :objects  => dg.filtergroups
+        :objects  => {
+          :dg       => dg
+        }
       )
     end
 
