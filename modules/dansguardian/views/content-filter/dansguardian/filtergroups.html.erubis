@@ -2,30 +2,66 @@
 
 <h2>DansGuardian: Filter Groups</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th> # </th>
-      <th>Name</th>
-      <th>Group Mode</th>
-      <th>Delete?</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% filtergroups.each do |fg| %>
-      <% next unless fg %>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <thead>
       <tr>
-        <td style="text-align: right;"><span style="font-weight: bold"><%= fg.dansguardian_id %></span> (<a style="font-style: italic" href="filtergroups/<%= fg.dansguardian_id %>.html">details</a>)</td>
-        <td><input type="text" name="name[]" value="ToDo"/></td>
+        <th>#</th>
+        <th>Name</th>
+        <th>Group Mode</th>
+        <th>Delete?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% filtergroups.each do |fg| %>
+        <% next unless fg %>
+        <% id = fg.dansguardian_id %>
+        <tr>
+          <input type="hidden" name="fg[]" value=<%= id %>/> 
+          <td style="text-align: right;"><span style="font-weight: bold"><%= id %></span> (<a style="font-style: italic" href="filtergroups/<%= id %>.html">details</a>)</td>
+          <td><input type="text" name="name[]" value="ToDo"/></td>
+          <td>
+            <select name="groupmode[]">
+              <option value="TODO">TODO</option>
+            </select>
+          </td>
+          <td style="text-align:center;">
+            <% if id == 1 %>
+              <input type="hidden" name="delete[]"/>
+            <% else %>
+              <input type="checkbox" name="delete[]"/>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <button type="submit">Change!</button>
+</form>
+
+<h3>Create new Filter Group</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="post"/>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Group Mode</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" name="name"/></td>
         <td>
           <select name="groupmode">
             <option value="TODO">TODO</option>
           </select>
         </td>
-        <td style="text-align:center;"><input type="checkbox"/></td>
       </tr>
-    <% end %>
-  </tbody>
-</table>
-<button type="submit">Change!</button>
+    </tbody>
+  </table>
+  <button type="submit">Create!</button>
+</form>
+
 
