@@ -26,7 +26,9 @@
           <td><input type="text" name="name[]" value="<%= fg[:groupname] %>"/></td>
           <td>
             <select name="groupmode[]">
-              <option value="TODO"><%= fg[:groupmode] %></option>
+              <% DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
+                <option value="<%= name %>" <%= 'selected' if name == fg[:groupmode] %>><%= name %></option>
+              <% end %>
             </select>
           </td>
           <td style="text-align:center;">
