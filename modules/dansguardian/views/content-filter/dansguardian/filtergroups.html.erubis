@@ -3,6 +3,8 @@
   dgconf  = dg.config
 %>
 
+<pre><%== params.pretty_inspect %></pre>
+
 <h2>DansGuardian: Filter Groups</h2>
 
 <form method="POST">
@@ -21,7 +23,7 @@
         <% next if dg.deleted_filtergroups.include? fgid %>
         <% fg = dgconf.filtergroup(fgid) %>
         <tr>
-          <input type="hidden" name="fg[]" value=<%= fgid %>/> 
+          <input type="hidden" name="fg[]" value="<%= fgid %>"/> 
           <td style="text-align: right;"><span style="font-weight: bold"><%= fgid %></span> (<a style="font-style: italic" href="filtergroups/<%= fgid %>.html">details</a>)</td>
           <td><input type="text" name="name[]" value="<%= fg[:groupname] %>"/></td>
           <td>
@@ -33,9 +35,9 @@
           </td>
           <td style="text-align:center;">
             <% if fgid == 1 %>
-              <input type="hidden" name="delete[]"/>
+              <input type="hidden" name="delete[<%= fgid %>]" value=""/>
             <% else %>
-              <input type="checkbox" name="delete[]"/>
+              <input type="checkbox" name="delete[<%= fgid %>]"/>
             <% end %>
           </td>
         </tr>

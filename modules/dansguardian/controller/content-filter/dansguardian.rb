@@ -18,19 +18,6 @@ class OnBoard
       )
     end
 
-    get '/content-filter/dansguardian/filtergroups.:format' do
-      dg = ContentFilter::DG.new
-      format(
-        :path     => '/content-filter/dansguardian/filtergroups',
-        :module   => 'dansguardian',
-        :title    => 'DansGuardian: Filter Groups',
-        :format   => params[:format],
-        :objects  => {
-          :dg       => dg
-        }
-      )
-    end
-
     put '/content-filter/dansguardian.:format' do
       msg = {}  
       dg = ContentFilter::DG.new
