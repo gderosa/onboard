@@ -5,7 +5,7 @@ class OnBoard
   class Controller < Sinatra::Base
 
     get '/content-filter/dansguardian/filtergroups.:format' do
-      dg = ContentFilter::DG.new
+      dg = OnBoard::ContentFilter::DG.new
       format(
         :path     => '/content-filter/dansguardian/filtergroups',
         :module   => 'dansguardian',
@@ -18,7 +18,14 @@ class OnBoard
     end
 
     put '/content-filter/dansguardian/filtergroups.:format' do
-      dg = ContentFilter::DG.new
+      dg = OnBoard::ContentFilter::DG.new
+      params['filtergroups'].each_pair do |key, edit_h|
+        fgid  = key.to_i
+        fg    = dg.config.filtergroup(fgid)
+        
+        fg[:groupname] = edit_h['groupname']
+        fg[:groupmode] = edit_h['groupmode'].to_sym
+      end
       format(
         :path     => '/content-filter/dansguardian/filtergroups',
         :module   => 'dansguardian',
