@@ -23,21 +23,18 @@
         <% next if dg.deleted_filtergroups.include? fgid %>
         <% fg = dgconf.filtergroup(fgid) %>
         <tr>
-          <input type="hidden" name="fg[]" value="<%= fgid %>"/> 
           <td style="text-align: right;"><span style="font-weight: bold"><%= fgid %></span> (<a style="font-style: italic" href="filtergroups/<%= fgid %>.html">details</a>)</td>
-          <td><input type="text" name="name[]" value="<%= fg[:groupname] %>"/></td>
+          <td><input type="text" name="filtergroups[<%= fgid %>][name]" value="<%= fg[:groupname] %>"/></td>
           <td>
-            <select name="groupmode[]">
+            <select name="filtergroups[<%= fgid %>][groupmode]">
               <% DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
                 <option value="<%= name %>" <%= 'selected' if name == fg[:groupmode] %>><%= name %></option>
               <% end %>
             </select>
           </td>
           <td style="text-align:center;">
-            <% if fgid == 1 %>
-              <input type="hidden" name="delete[<%= fgid %>]" value=""/>
-            <% else %>
-              <input type="checkbox" name="delete[<%= fgid %>]"/>
+            <% if fgid != 1 %>
+              <input type="checkbox" name="filtergroups[<%= fgid %>][delete]"/>
             <% end %>
           </td>
         </tr>
