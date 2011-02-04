@@ -20,7 +20,6 @@ class OnBoard
 
     get '/content-filter/dansguardian/filtergroups.:format' do
       dg = ContentFilter::DG.new
-      dg.get_filtergroups
       format(
         :path     => '/content-filter/dansguardian/filtergroups',
         :module   => 'dansguardian',

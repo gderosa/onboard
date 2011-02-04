@@ -7,9 +7,7 @@ class OnBoard
   module ContentFilter
     class DG
 
-      autoload :FilterGroup, 'onboard/content-filter/dg/filtergroup'
-
-      attr_reader :pid, :filtergroups, :config
+      attr_reader :pid, :config, :deleted_filtergroups
 
       def initialize
         reset
@@ -20,8 +18,8 @@ class OnBoard
           :parent         => nil,
           :children       => []
         }
-        @filtergroups   = []
         @config         = ::DansGuardian::Config.new(:mainfile => config_file)
+        get_deleted_filtergroups
       end
 
       def running?
@@ -57,28 +55,21 @@ class OnBoard
         @dansguardian_s_string = output
       end
 
-      def get_filtergroups
-        @filtergroups = []
-
+      # Mark as deleted a filtergroup whose config file is just a symlink
+      # to dansguardianf1.conf
+      def get_deleted_filtergroups
+        @deleted_filtergroups = []
         Dir.glob "#{CONFDIR}/dansguardianf*.conf" do |filepath|
           if filepath =~ /dansguardianf(\d+)\.conf$/
-            dansguardian_id = $1.to_i
+            fgid = $1.to_i
             if File.symlink? filepath
               if 
                   File.readlink(filepath) == "#{CONFDIR}/dansguardianf1.conf" or
                   File.readlink(filepath) == 'dansguardianf1.conf'
-                # it's a "deleted" filtergroup
-                next
+                @deleted_filtergroups << fgid
               end
             end
-            @filtergroups[dansguardian_id - 1] = FilterGroup.new(
-              :conffile         => filepath,
-              :dansguardian_id  => dansguardian_id
-            )
           end
-          # if, for example, there are 3 filtergroups, and the second is 
-          # "deleted" (making it just a symlink to the default one),
-          # you will end up with something like  [fg1, nil, fg3] 
         end
       end
 

@@ -1,6 +1,6 @@
 <% 
-  dg = objects[:dg] 
-  filtergroups = dg.filtergroups 
+  dg      = objects[:dg] 
+  dgconf  = dg.config
 %>
 
 <h2>DansGuardian: Filter Groups</h2>
@@ -17,20 +17,20 @@
       </tr>
     </thead>
     <tbody>
-      <% filtergroups.each do |fg| %>
-        <% next unless fg %>
-        <% id = fg.dansguardian_id %>
+      <% 1.upto dgconf.main[:filtergroups] do |fgid| %>
+        <% next if dg.deleted_filtergroups.include? fgid %>
+        <% fg = dgconf.filtergroup(fgid) %>
         <tr>
-          <input type="hidden" name="fg[]" value=<%= id %>/> 
-          <td style="text-align: right;"><span style="font-weight: bold"><%= id %></span> (<a style="font-style: italic" href="filtergroups/<%= id %>.html">details</a>)</td>
-          <td><input type="text" name="name[]" value="<%= dg.config.filtergroup(id)[:groupname] %>"/></td>
+          <input type="hidden" name="fg[]" value=<%= fgid %>/> 
+          <td style="text-align: right;"><span style="font-weight: bold"><%= fgid %></span> (<a style="font-style: italic" href="filtergroups/<%= fgid %>.html">details</a>)</td>
+          <td><input type="text" name="name[]" value="<%= fg[:groupname] %>"/></td>
           <td>
             <select name="groupmode[]">
-              <option value="TODO">TODO</option>
+              <option value="TODO"><%= fg[:groupmode] %></option>
             </select>
           </td>
           <td style="text-align:center;">
-            <% if id == 1 %>
+            <% if fgid == 1 %>
               <input type="hidden" name="delete[]"/>
             <% else %>
               <input type="checkbox" name="delete[]"/>
