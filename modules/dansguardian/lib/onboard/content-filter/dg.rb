@@ -7,6 +7,22 @@ class OnBoard
   module ContentFilter
     class DG
 
+      class << self
+
+        def root
+          CONFDIR
+        end
+
+        def config_file
+          "#{CONFDIR}/dansguardian.conf"
+        end
+
+        def fg_file(fgid)
+          "#{CONFDIR}/dansguardianf#{fgid}.conf"  
+        end
+
+      end
+
       attr_reader :pid, :config, :deleted_filtergroups
 
       def initialize
@@ -27,13 +43,9 @@ class OnBoard
         return @pid[:parent]
       end
 
-      def root
-        CONFDIR
-      end
-
-      def config_file
-        "#{CONFDIR}/dansguardian.conf"
-      end
+      def root;           self.class.root;          end
+      def config_file;    self.class.config_file;   end
+      def fg_file(fgid);  self.class.fg_file(fgid); end
 
       def write_all
         dg = self

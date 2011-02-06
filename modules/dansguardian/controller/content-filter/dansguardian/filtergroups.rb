@@ -18,14 +18,21 @@ class OnBoard
     end
 
     put '/content-filter/dansguardian/filtergroups.:format' do
-      dg = OnBoard::ContentFilter::DG.new
-      params['filtergroups'].each_pair do |key, edit_h|
-        fgid  = key.to_i
-        fg    = dg.config.filtergroup(fgid)
-        
-        fg[:groupname] = edit_h['groupname']
-        fg[:groupmode] = edit_h['groupmode'].to_sym
+      params['filtergroups'].each_pair do |key, h|
+        fgid    = key.to_i
+        fgfile  = ::OnBoard::ContentFilter::DG.fg_file(fgid)
+        ::DansGuardian::Updater.update!(
+          fgfile, 
+          {
+            :groupname => h['groupname'],
+            :groupmode => 
+              ::DansGuardian::Config::FilterGroup::GROUPMODE.invert[
+                h['groupmode'].to_sym
+              ],
+          }
+        ) 
       end
+      dg = OnBoard::ContentFilter::DG.new
       format(
         :path     => '/content-filter/dansguardian/filtergroups',
         :module   => 'dansguardian',
