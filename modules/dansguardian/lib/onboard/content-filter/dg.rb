@@ -25,18 +25,29 @@ class OnBoard
 
       attr_reader :pid, :config, :deleted_filtergroups
 
-      def initialize
+      def initialize(opts={:bare => false}) 
         reset
+        get_info unless opts[:bare] 
       end
 
       def reset
+        reset_pid
+        @config         = nil
+      end
+
+      def reset_pid
         @pid            = {
           :parent         => nil,
           :children       => []
         }
+      end
+
+      def get_info
         @config         = ::DansGuardian::Config.new(:mainfile => config_file)
         get_deleted_filtergroups
+        get_status
       end
+      alias update_info get_info
 
       def running?
         return false if @pid[:parent] == 0
@@ -62,7 +73,7 @@ class OnBoard
           @pid[:children] = 
               `pidof dansguardian`.split.map{|x| x.to_i} - [@pid[:parent]]
         else
-          reset
+          reset_pid
         end
         @dansguardian_s_string = output
       end
@@ -105,6 +116,14 @@ class OnBoard
 
       def restart
         System::Command.run 'dansguardian -Q', :sudo
+      end
+
+      def reload
+        System::Command.run 'dansguardian -r', :sudo
+      end
+
+      def reload_groups
+        System::Command.run 'dansguardian -g', :sudo
       end
 
     end
