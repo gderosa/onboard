@@ -60,6 +60,7 @@
         <td>
           <select name="template">
             <% 1.upto dgconf.main[:filtergroups] do |fgid| %>
+              <% next if dg.deleted_filtergroups.include? fgid %>
               <option value="<%= fgid %>"><%= fgid %>: <%= dgconf.filtergroup(fgid)[:groupname] %></option>
             <% end %>
           </select>
