@@ -24,10 +24,14 @@ class OnBoard
         fgfile  = dg.fg_file(fgid)
         if h['delete'] == 'on' and fgid > 1
           FileUtils.rm dg.fg_file(fgid)
+          # replace with a symlink to default because DansGuardian doesn't
+          # tolerate "holes", i.e. dansguardianf1.conf, dansguardianf3.conf
+          # but dansguardianf2.conf deleted
           FileUtils.ln_s( 
               File.basename(dg.fg_file(1)),
               dg.fg_file(fgid)
           )
+          dg.fix_filtergroups
         else
           ::DansGuardian::Updater.update!(
             fgfile, 

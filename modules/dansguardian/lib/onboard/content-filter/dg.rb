@@ -96,6 +96,50 @@ class OnBoard
         end
       end
 
+      # For example:
+      #   dansguardianf1.conf # real file
+      #   dansguardianf2.conf # real file
+      #   dansguardianf3.conf # symlink to dansguardianf1.conf ("deleted")
+      #   dansguardianf4.conf # real file
+      #   dansguardianf5.conf # symlink to dansguardianf1.conf ("deleted")
+      #   dansguardianf6.conf # symlink to dansguardianf1.conf ("deleted")
+      #
+      # In this case, dansguardianf5.conf and dansguardianf6.conf
+      # will be deleted and "filtergroups = 4" will be set in dansguardian.conf
+      def fix_filtergroups 
+        fg_statuses     = []
+        to_be_unlinked  = []
+        filtergroups    = 1
+        Dir.glob "#{CONFDIR}/dansguardianf*.conf" do |filepath|
+          if filepath =~ /dansguardianf(\d+)\.conf$/
+            fgid = $1.to_i
+            if File.symlink? filepath and (
+              File.readlink(filepath) == "#{CONFDIR}/dansguardianf1.conf" or
+              File.readlink(filepath) == 'dansguardianf1.conf'
+            )
+              fg_statuses[ fgid - 1 ] = :deleted
+            else
+              fg_statuses[ fgid - 1 ] = :active
+            end
+          end
+          fg_statuses.each_with_index do |fg_status, i|
+            if fg_status == :active
+              to_be_unlinked  = []
+              filtergroups = i + 1
+            elsif fg_status == :deleted
+              to_be_unlinked << i + 1
+            end
+          end
+        end
+        ::DansGuardian::Updater.update!(
+          "#{CONFDIR}/dansguardian.conf",
+          :filtergroups => filtergroups
+        )
+        to_be_unlinked.each do |fgid|
+          FileUtils.rm "#{CONFDIR}/dansguardianf#{fgid}.conf"
+        end
+      end
+
       def start_stop(params)
         if params['start']
           start
