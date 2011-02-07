@@ -3,7 +3,7 @@
   dgconf  = dg.config
 %>
 
-<pre><%== params.pretty_inspect %></pre>
+<!-- <pre><%# params.pretty_inspect %></pre> -->
 
 <h2>DansGuardian: Filter Groups</h2>
 

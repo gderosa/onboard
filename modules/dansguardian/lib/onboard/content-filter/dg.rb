@@ -170,6 +170,27 @@ class OnBoard
         System::Command.run 'dansguardian -g', :sudo
       end
 
+      def to_h
+        h = {
+          'config'                => {
+            'main'                  => @config.main.data
+          },
+          'deleted_filtergroups'  => @deleted_filtergroups,
+          'pid'                   => @pid
+        }
+        h['config']['filtergroups'] = {}
+        1.upto @config.main[:filtergroups] do |fgid|
+          unless @deleted_filtergroups.include? fgid
+            h['config']['filtergroups'][fgid.to_i] = @config.filtergroup(fgid).data
+          end
+        end
+        return h
+      end
+      alias export to_h
+
+      def to_json(*args); export.to_json(*args); end
+      def to_yaml(*args); export.to_yaml(*args); end
+
     end
   end
 end
