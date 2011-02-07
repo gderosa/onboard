@@ -59,6 +59,32 @@ class OnBoard
         }
       )
     end
+
+    post '/content-filter/dansguardian/filtergroups.:format' do
+      dg = OnBoard::ContentFilter::DG.new
+      new_fg_file = dg.fg_file(
+        (dg.deleted_filtergroups.min) || (dg.config.main[:filtergroups] + 1)
+      )
+      FileUtils.rm new_fg_file if File.exists? new_fg_file
+      FileUtils.cp(
+        dg.fg_file(params['template']), new_fg_file 
+      )
+      ::DansGuardian::Updater.update! new_fg_file, {
+        :groupname => params['groupname']
+      }
+      dg.fix_filtergroups
+      dg.reload_groups
+      dg.update_info
+      format(
+        :path     => '/content-filter/dansguardian/filtergroups',
+        :module   => 'dansguardian',
+        :title    => 'DansGuardian: Filter Groups',
+        :format   => params[:format],
+        :objects  => {
+          :dg       => dg
+        }
+      )
+    end
    
   end
 end

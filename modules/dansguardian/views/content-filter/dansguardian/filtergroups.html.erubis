@@ -51,15 +51,17 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th>Group Mode</th>
+        <th>Use existing group as a template</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><input type="text" name="groupname"/></td>
         <td>
-          <select name="groupmode">
-            <option value="TODO">TODO</option>
+          <select name="template">
+            <% 1.upto dgconf.main[:filtergroups] do |fgid| %>
+              <option value="<%= fgid %>"><%= fgid %>: <%= dgconf.filtergroup(fgid)[:groupname] %></option>
+            <% end %>
           </select>
         </td>
       </tr>
