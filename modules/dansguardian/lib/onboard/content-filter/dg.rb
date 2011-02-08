@@ -159,15 +159,19 @@ class OnBoard
       end
 
       def restart
-        System::Command.run 'dansguardian -Q', :sudo
+        System::Command.run "dansguardian -c #{config_file} -Q", :sudo
       end
 
       def reload
-        System::Command.run 'dansguardian -r', :sudo
+        System::Command.run "dansguardian -c #{config_file} -r", :sudo
       end
 
       def reload_groups
-        System::Command.run 'dansguardian -g', :sudo
+        # This is buggy: 
+        # System::Command.run "dansguardian -c #{config_file} -g", :sudo
+
+        # use HUP instead of USR1: it's safer and not that slower
+        reload
       end
 
       def to_h
