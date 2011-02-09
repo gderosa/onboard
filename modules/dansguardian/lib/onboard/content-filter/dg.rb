@@ -66,7 +66,7 @@ class OnBoard
       end
 
       def get_status
-        output = `sudo dansguardian -s 2>&1`
+        output = `sudo dansguardian -c #{config_file} -s 2>&1`
         status = $?.dup
         if status == 0
           output =~ /(\d+)/ and @pid[:parent] = $1.to_i
@@ -155,7 +155,7 @@ class OnBoard
       end
 
       def stop
-        System::Command.run 'dansguardian -q', :sudo
+        System::Command.run "dansguardian -c #{config_file} -q", :sudo
       end
 
       def restart
