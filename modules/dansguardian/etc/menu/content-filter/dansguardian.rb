@@ -82,6 +82,11 @@ class OnBoard
     :n    => 5
   })
 
+  MENU_ROOT.add_path('/content-filter/dg/lists/weightedphrases', {
+    :href => '/content-filter/dansguardian/lists/weighted/phrases',
+    :name => 'Weighted phrases',
+    :n    => 3
+  })
 
 
 end
