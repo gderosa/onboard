@@ -28,7 +28,7 @@ class OnBoard
             end
           end
 
-          def ls(relative_path)
+          def get(relative_path)
             real_path = File.realpath(
                 File.join root_dir, relative_path
             ) 

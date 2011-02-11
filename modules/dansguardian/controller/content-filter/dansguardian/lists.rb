@@ -24,7 +24,7 @@ class OnBoard
                     params[:splat]
                 )}",
             :format   => params[:format],
-            :objects  => ContentFilter::DG::ManagedList.ls(
+            :objects  => ContentFilter::DG::ManagedList.get( 
                 params[:splat].join('/')
             ) 
           )
