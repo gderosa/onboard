@@ -7,6 +7,8 @@ class OnBoard
   module ContentFilter
     class DG
 
+      autoload :List, 'onboard/content-filter/dg/list'
+
       class << self
 
         def root
