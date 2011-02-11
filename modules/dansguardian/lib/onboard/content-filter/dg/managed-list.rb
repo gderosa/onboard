@@ -1,11 +1,11 @@
 class OnBoard
   module ContentFilter
     class DG
-      class List
+      class ManagedList
 
         class << self
 
-          def managed_list_dir
+          def root_dir
             "#{CONFDIR}/lists/_managed"
           end
 
@@ -20,21 +20,21 @@ class OnBoard
             return "#{output[:adjective]} #{output[:noun]}"
           end
 
-          def ls(splat)
-            relative_path = splat.join('/') 
+          def ls(relative_path)
             real_path = File.realpath(
-                File.join managed_list_dir, relative_path)
+                File.join root_dir, relative_path
+            ) 
             if File.directory? real_path
-              ListDir.new real_path
+              ManagedListDir.new :relative_path => relative_path
             else
-              List.new real_path
+              ManagedList.new    :relative_path => relative_path
             end
           end
 
         end
 
-        def initialize(path)
-          @path = path
+        def initialize(h)
+          @relative_path = h[:relative_path]
         end
 
       end

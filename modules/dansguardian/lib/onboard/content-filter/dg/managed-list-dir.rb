@@ -3,9 +3,9 @@
 class OnBoard
   module ContentFilter
     class DG
-      class ListDir
-        def initialize(path)
-          @path = path
+      class ManagedListDir
+        def initialize(h)
+          @relative_path = h[:relative_path]
         end
       end
     end

@@ -20,9 +20,13 @@ class OnBoard
             :path     => '/content-filter/dansguardian/lists',
             :module   => 'dansguardian',
             :title    => 
-                "DansGuardian: #{ContentFilter::DG::List.title(params[:splat])}",
+                "DansGuardian: #{ContentFilter::DG::ManagedList.title(
+                    params[:splat]
+                )}",
             :format   => params[:format],
-            :objects  => ContentFilter::DG::List.ls(params[:splat]) 
+            :objects  => ContentFilter::DG::ManagedList.ls(
+                params[:splat].join('/')
+            ) 
           )
         rescue Errno::ENOENT
           not_found
