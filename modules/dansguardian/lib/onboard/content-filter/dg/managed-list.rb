@@ -1,7 +1,10 @@
 class OnBoard
   module ContentFilter
     class DG
-      class ManagedList
+      module ManagedList
+
+        autoload :Dir,  'onboard/content-filter/dg/managed-list/dir'
+        autoload :List, 'onboard/content-filter/dg/managed-list/list'       
 
         class << self
 
@@ -25,16 +28,12 @@ class OnBoard
                 File.join root_dir, relative_path
             ) 
             if File.directory? real_path
-              ManagedListDir.new :relative_path => relative_path
+              ManagedList::Dir.new  :relative_path => relative_path
             else
-              ManagedList.new    :relative_path => relative_path
+              ManagedList::List.new :relative_path => relative_path
             end
           end
 
-        end
-
-        def initialize(h)
-          @relative_path = h[:relative_path]
         end
 
       end
