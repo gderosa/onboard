@@ -20,7 +20,12 @@ class OnBoard
             elsif input[:noun]  == 'MIMEtypes'
               output[:noun]       =   'MIME types'
             end
-            return "#{output[:adjective]} #{output[:noun]}"
+            if splat.length > 2
+              subpath = splat[2..-1].join('/')
+              return "#{output[:adjective]} #{output[:noun]}: #{subpath}"
+            else
+              return "#{output[:adjective]} #{output[:noun]}"
+            end
           end
 
           def ls(relative_path)
