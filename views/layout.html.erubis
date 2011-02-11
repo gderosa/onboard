@@ -54,7 +54,7 @@
           :locals => {
             :formats => formats
           }
-        ) 
+        ) unless status == 404 
       %>
       <%= yield %>
       <pre id="jsdebug"></pre>
