@@ -15,14 +15,18 @@ class OnBoard
       # Example: /content-filter/dansguardian/lists/banned/sites.html
       # You get params[:splat] #=> ["banned", "sites"]
       get path do
-        format(
-          :path     => '/content-filter/dansguardian/lists',
-          :module   => 'dansguardian',
-          :title    => 
-              "DansGuardian: #{ContentFilter::DG::List.title(params[:splat])}",
-          :format   => params[:format],
-          :objects  => ContentFilter::DG::List.ls(params[:splat]) 
-        )
+        begin
+          format(
+            :path     => '/content-filter/dansguardian/lists',
+            :module   => 'dansguardian',
+            :title    => 
+                "DansGuardian: #{ContentFilter::DG::List.title(params[:splat])}",
+            :format   => params[:format],
+            :objects  => ContentFilter::DG::List.ls(params[:splat]) 
+          )
+        rescue Errno::ENOENT
+          not_found
+        end
       end
 
     end
