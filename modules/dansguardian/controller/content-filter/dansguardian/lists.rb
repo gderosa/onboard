@@ -21,7 +21,7 @@ class OnBoard
           :title    => 
               "DansGuardian: #{ContentFilter::DG::List.title(params[:splat])}",
           :format   => params[:format],
-          :objects  => params[:splat] 
+          :objects  => ContentFilter::DG::List.ls(params[:splat]) 
         )
       end
 
