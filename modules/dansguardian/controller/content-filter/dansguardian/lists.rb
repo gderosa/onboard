@@ -16,6 +16,10 @@ class OnBoard
       # You get params[:splat] #=> ["banned", "sites"]
       get path do
         begin
+          object = ContentFilter::DG::ManagedList.get(
+            params[:splat].join('/')
+          )
+          pp object.sort if object.respond_to? :sort
           format(
             :path     => '/content-filter/dansguardian/lists',
             :module   => 'dansguardian',
@@ -24,9 +28,7 @@ class OnBoard
                     params[:splat]
                 )}",
             :format   => params[:format],
-            :objects  => ContentFilter::DG::ManagedList.get( 
-                params[:splat].join('/')
-            ) 
+            :objects  => object
           )
         rescue Errno::ENOENT
           not_found

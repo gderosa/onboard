@@ -12,6 +12,14 @@ class OnBoard
             @relative_path = h[:relative_path]
           end
 
+          def <=>(other)
+            if other.is_a? ManagedList::Dir
+              +1 # list directories before files
+            else
+              @relative_path <=> other.relative_path
+            end
+          end
+
         end
       end
     end

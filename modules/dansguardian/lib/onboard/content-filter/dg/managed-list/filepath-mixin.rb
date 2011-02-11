@@ -6,6 +6,8 @@ class OnBoard
       module ManagedList
         module FilePathMixin
 
+          attr_reader :relative_path
+          
           def absolute_path
             File.join ManagedList.root_dir, @relative_path
           end

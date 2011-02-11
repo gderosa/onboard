@@ -20,8 +20,8 @@ class OnBoard
             elsif input[:noun]  == 'MIMEtypes'
               output[:noun]       =   'MIME types'
             end
-            if splat.length > 2
-              subpath = splat[2..-1].join('/')
+            if splat.length > 2 # e.g. ["banned", "phrases", "violence/english"]
+              subpath = splat[2] 
               return "#{output[:adjective]} #{output[:noun]}: #{subpath}"
             else
               return "#{output[:adjective]} #{output[:noun]}"
