@@ -25,15 +25,15 @@ groupmode = 1
 #groupname = ''
 
 # Content filtering files location
-bannedphraselist = '<%= dg.root %>/lists/_managed/banned/phrase/main'
-weightedphraselist = '<%= dg.root %>/lists/_managed/weighted/phrase/main'
-exceptionphraselist = '<%= dg.root %>/lists/_managed/exception/phrase/main'
-bannedsitelist = '<%= dg.root %>/lists/_managed/banned/site/main'
+bannedphraselist = '<%= dg.root %>/lists/_managed/banned/phrases/main'
+weightedphraselist = '<%= dg.root %>/lists/_managed/weighted/phrases/main'
+exceptionphraselist = '<%= dg.root %>/lists/_managed/exception/phrases/main'
+bannedsitelist = '<%= dg.root %>/lists/_managed/banned/sites/main'
 greysitelist = '<%= dg.root %>/lists/greysitelist'
-exceptionsitelist = '<%= dg.root %>/lists/_managed/exception/site/main'
-bannedurllist = '<%= dg.root %>/lists/_managed/banned/url/main'
+exceptionsitelist = '<%= dg.root %>/lists/_managed/exception/sites/main'
+bannedurllist = '<%= dg.root %>/lists/_managed/banned/URLs/main'
 greyurllist = '<%= dg.root %>/lists/greyurllist'
-exceptionurllist = '<%= dg.root %>/lists/_managed/exception/url/main'
+exceptionurllist = '<%= dg.root %>/lists/_managed/exception/URLs/main'
 exceptionregexpurllist = '<%= dg.root %>/lists/exceptionregexpurllist'
 bannedregexpurllist = '<%= dg.root %>/lists/bannedregexpurllist'
 picsfile = '<%= dg.root %>/lists/pics'
@@ -52,16 +52,14 @@ urlregexplist = '<%= dg.root %>/lists/urlregexplist'
 # (on | off)
 #
 blockdownloads = off
-exceptionextensionlist = '<%= dg.root %>/lists/_managed/exception/extension/main'
-exceptionmimetypelist = '<%= dg.root %>/lists/_managed/exception/mimetype/main'
+exceptionextensionlist = '<%= dg.root %>/lists/_managed/exception/extensions/main'
+exceptionmimetypelist = '<%= dg.root %>/lists/_managed/exception/MIMEtypes/main'
 #
 # Use the following lists to block specific kinds of file downloads.
 # The two exception lists above can be used to override these.
 #
-#bannedextensionlist = '<%= dg.root %>/lists/_managed/banned/extension/main'
-#bannedmimetypelist = '<%= dg.root %>/lists/_managed/banned/mimetype/main'
-bannedextensionlist = '/dev/null'
-bannedmimetypelist = '/dev/null'
+bannedextensionlist = '<%= dg.root %>/lists/_managed/banned/extensions/main'
+bannedmimetypelist = '<%= dg.root %>/lists/_managed/banned/MIMEtypes/main'
 
 #
 # In either file filtering mode, the following list can be used to override
