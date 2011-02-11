@@ -18,7 +18,8 @@ class OnBoard
         format(
           :path     => '/content-filter/dansguardian/lists',
           :module   => 'dansguardian',
-          :title    => "DansGuardian: #{params[:splat][0]} #{params[:splat][1]}",
+          :title    => 
+              "DansGuardian: #{ContentFilter::DG::List.title(params[:splat])}",
           :format   => params[:format],
           :objects  => params[:splat] 
         )
