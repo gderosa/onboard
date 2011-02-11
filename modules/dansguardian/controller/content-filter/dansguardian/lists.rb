@@ -19,7 +19,6 @@ class OnBoard
           object = ContentFilter::DG::ManagedList.get(
             params[:splat].join('/')
           )
-          pp object.sort if object.respond_to? :sort
           format(
             :path     => '/content-filter/dansguardian/lists',
             :module   => 'dansguardian',

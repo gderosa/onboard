@@ -1,2 +1,24 @@
+<% 
+  stuff             = objects 
+  directory_class   = OnBoard::ContentFilter::DG::ManagedList::Dir
+  single_list_class = OnBoard::ContentFilter::DG::ManagedList::List
+%> 
+
 <h2><%= title %></h2>
+
+<% 
+  if stuff.is_a? directory_class
+%>
+  <% dir = stuff %>
+  <ul>
+    <% dir.each do |item| %>
+      <li><% if item.is_a? directory_class %><img src="" alt="[DIR]"/> <% end %><a href="<%= item.http_path %>.html"><%== item.relative_path %><%= '/' if item.is_a? directory_class %></a></li>
+    <% end %>
+  </ul>
+<% else %>
+
+  Is a file :)
+
+<% end %>
+
 
