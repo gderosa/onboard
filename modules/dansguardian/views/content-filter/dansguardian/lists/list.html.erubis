@@ -4,3 +4,5 @@
 
 <h2><%= title %></h2>
 
+<h3>List items (one per line)</h3>
+<textarea cols="80" rows="25"><%= list.items.join("\n") %></textarea>
