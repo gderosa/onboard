@@ -12,7 +12,23 @@
   <% dir = stuff %>
   <ul>
     <% dir.each do |item| %>
-      <li><% if item.is_a? directory_class %><img src="" alt="[DIR]"/> <% end %><a href="<%= item.http_path %>.html"><%== item.relative_path %><%= '/' if item.is_a? directory_class %></a></li>
+      <%
+        icon = case item
+               when directory_class
+                 "#{IconDir}/#{IconSize}/places/folder.png"
+               when single_list_class
+                 "#{IconDir}/#{IconSize}/mimetypes/text-x-generic.png"
+               else 
+                 "" # should never happen
+               end
+        alt = case item
+              when directory_class
+                '[DIR]'
+              else
+                ''
+              end
+      %>
+      <li><img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= item.http_path %>.html"><%== item.relative_path %><%= '/' if item.is_a? directory_class %></a></li>
     <% end %>
   </ul>
 <% else %>
