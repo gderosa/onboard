@@ -19,6 +19,7 @@ class OnBoard
           object = ContentFilter::DG::ManagedList.get(
             params[:splat].join('/')
           )
+          object.read! if object.respond_to? :read!
           view_path = case object
                  when ContentFilter::DG::ManagedList::Dir
                    '/content-filter/dansguardian/lists/dir'

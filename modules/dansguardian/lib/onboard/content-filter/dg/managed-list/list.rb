@@ -18,6 +18,7 @@ class OnBoard
 
           def items;        @data.items;        end
           def listcategory; @data.listcategory; end
+          def read!;        @data.read!;        end
 
           def includes
             @data.includes.map{|path| ManagedList.relative_path path}  
