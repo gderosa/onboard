@@ -4,5 +4,10 @@
 
 <h2><%= title %></h2>
 
+<h3>List category (shown in DansGuardian message pages)</h3> 
+<input type="text" name="listcategory" value="<%= list.listcategory %>"/>
+
 <h3>List items (one per line)</h3>
-<textarea cols="80" rows="25"><%= list.items.join("\n") %></textarea>
+<textarea name="items" cols="80" rows="25"><%= 
+  list.items.join("\n") 
+%></textarea>

@@ -14,7 +14,8 @@ class OnBoard
             @data           = ::DansGuardian::List.new(absolute_path)
           end
 
-          def items; @data.items; end
+          def items;        @data.items;        end
+          def listcategory; @data.listcategory; end
 
           def includes
             @data.includes.map{|path| ManagedList.relative_path path}  
