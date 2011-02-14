@@ -1,0 +1,6 @@
+<% 
+  list    = objects 
+%>
+
+<h2><%= title %></h2>
+
