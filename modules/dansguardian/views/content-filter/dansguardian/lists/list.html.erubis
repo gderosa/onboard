@@ -8,6 +8,26 @@
 <input type="text" name="listcategory" value="<%= list.listcategory %>"/>
 
 <h3>List items (one per line)</h3>
-<textarea name="items" cols="80" rows="25"><%= 
+<textarea name="items" cols="80" rows="20"><%= 
   list.items.join("\n") 
 %></textarea>
+
+<h3>Includes</h3>
+<table>
+  <thead>
+    <tr>
+      <th>List</th>
+      <th>Include?</th> 
+    </tr>
+  </thead>
+  <tbody>
+    <% list.includes.each_with_index do |include_relpath, n| %>
+      <tr>
+        <td><%= include_relpath %></td>
+        <input type="hidden" name="include[<%= n %>][relative_path]" value="<%=  include_relpath %>"/>
+        <td style="text-align:center;"><input type="checkbox" name="include[<%= n %>][include]" checked/></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

@@ -14,6 +14,8 @@ class OnBoard
             @data           = ::DansGuardian::List.new(absolute_path)
           end
 
+          # Delegate to ::DansGuardian::List instance methods.
+
           def items;        @data.items;        end
           def listcategory; @data.listcategory; end
 
