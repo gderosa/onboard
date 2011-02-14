@@ -21,10 +21,10 @@
     </tr>
   </thead>
   <tbody>
-    <% list.includes.each_with_index do |included_list, n| %>
+    <% list.includables.each_with_index do |includable_list, n| %>
       <tr>
-        <td><a href="<%= included_list.http_path %>.html"><%= included_list.relative_path %></a></td>
-        <td style="text-align:center;"><input type="checkbox" name="include[<%= n %>][include]" checked/></td>
+        <td><a href="<%= includable_list.http_path %>.html"><%= includable_list.relative_path %></a></td>
+        <td style="text-align:center;"><input type="checkbox" name="include[<%= n %>][include]" <%= 'checked' if includable_list.included? %>/></td>
       </tr>
     <% end %>
   </tbody>
