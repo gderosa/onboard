@@ -19,8 +19,16 @@ class OnBoard
           object = ContentFilter::DG::ManagedList.get(
             params[:splat].join('/')
           )
+          view_path = case object
+                 when ContentFilter::DG::ManagedList::Dir
+                   '/content-filter/dansguardian/lists/dir'
+                 when ContentFilter::DG::ManagedList::List
+                   '/content-filter/dansguardian/lists/list'
+                 else
+                   raise TypeError, "I would expect a ContentFilter::DG::ManagedList::(File|List) object, got #{object.inspect}"
+                 end
           format(
-            :path     => '/content-filter/dansguardian/lists',
+            :path     => view_path,
             :module   => 'dansguardian',
             :title    => 
                 "DansGuardian: #{ContentFilter::DG::ManagedList.title(

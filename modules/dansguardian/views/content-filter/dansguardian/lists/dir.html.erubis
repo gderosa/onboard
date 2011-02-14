@@ -1,0 +1,41 @@
+<% 
+  directory_class   = OnBoard::ContentFilter::DG::ManagedList::Dir
+  single_list_class = OnBoard::ContentFilter::DG::ManagedList::List
+%> 
+
+<h2><%= title %></h2>
+
+<% 
+  dir     = objects 
+  subdirs = dir.select {|item| item.is_a? directory_class}
+  lists   = dir.select {|item| item.is_a? single_list_class}
+%>
+
+<% if lists.any? %>
+  <h3>Lists</h3>
+  <ul>
+    <% lists.each do |list| %>
+      <%
+        icon  = "#{IconDir}/#{IconSize}/mimetypes/text-x-generic.png"
+        alt   = '[TXT]'
+      %>
+      <li><img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%== list.relative_path %></a></li> 
+    <% end %>
+  </ul>
+<% end %>
+
+<% if subdirs.any? %>
+  <h3>Sub directories</h3>
+  <ul>
+    <% subdirs.each do |subdir| %>
+      <%
+        icon  = "#{IconDir}/#{IconSize}/places/folder.png"
+        alt   = '[DIR]'
+      %>
+      <li><img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= subdir.http_path %>.html"><%== subdir.relative_path %>/</a></li>
+    <% end %>
+  </ul>
+<% end %>
+
+
+
