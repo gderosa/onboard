@@ -1,3 +1,4 @@
+require 'dansguardian/list'
 require 'onboard/content-filter/dg/managed-list/filepath-mixin'
 
 class OnBoard
@@ -9,7 +10,14 @@ class OnBoard
           include ManagedList::FilePathMixin
 
           def initialize(h)
-            @relative_path = h[:relative_path]
+            @relative_path  = h[:relative_path]
+            @data           = ::DansGuardian::List.new(absolute_path)
+          end
+
+          def items; @data.items; end
+
+          def includes
+            @data.includes.map{|path| ManagedList.relative_path path}  
           end
 
           def <=>(other)

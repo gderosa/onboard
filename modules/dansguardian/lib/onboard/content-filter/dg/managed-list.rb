@@ -12,6 +12,10 @@ class OnBoard
             "#{CONFDIR}/lists/_managed"
           end
 
+          def relative_path(abspath)
+            abspath.sub /^#{root_dir}\//, ''
+          end
+
           def title(splat)
             input   = {:adjective => splat[0],  :noun => splat[1] }
             output  = input.clone
