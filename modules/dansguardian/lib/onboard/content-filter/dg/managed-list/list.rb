@@ -21,7 +21,10 @@ class OnBoard
           def read!;        @data.read!;        end
 
           def includes
-            @data.includes.map{|path| ManagedList.relative_path path}  
+            @data.includes.map do |abspath| 
+              relpath = ManagedList.relative_path abspath
+              ManagedList::List.new :relative_path => relpath
+            end
           end
 
           def <=>(other)

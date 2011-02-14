@@ -21,10 +21,9 @@
     </tr>
   </thead>
   <tbody>
-    <% list.includes.each_with_index do |include_relpath, n| %>
+    <% list.includes.each_with_index do |included_list, n| %>
       <tr>
-        <td><%= include_relpath %></td>
-        <input type="hidden" name="include[<%= n %>][relative_path]" value="<%=  include_relpath %>"/>
+        <td><a href="<%= included_list.http_path %>.html"><%= included_list.relative_path %></a></td>
         <td style="text-align:center;"><input type="checkbox" name="include[<%= n %>][include]" checked/></td>
       </tr>
     <% end %>
