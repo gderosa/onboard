@@ -71,7 +71,30 @@ class OnBoard
         rescue Errno::ENOENT
           not_found
         end
-      end   
+      end
+      
+      post path do # create directory
+        basedir = File.realpath ContentFilter::DG::ManagedList.absolute_path(
+          params[:splat].join('/') 
+        )
+        not_found unless File.directory? basedir
+        FileUtils.mkdir "#{basedir}/#{params['newdir']}" 
+
+        # read
+        object  = ContentFilter::DG::ManagedList.get(
+          params[:splat].join('/')
+        )
+        format(
+          :path     => '/content-filter/dansguardian/lists/dir',
+          :module   => 'dansguardian',
+          :title    => 
+              "DansGuardian: #{ContentFilter::DG::ManagedList.title(
+                  params[:splat]
+              )}",
+          :format   => params[:format],
+          :objects  => object
+        )       
+      end 
 
     end
    
