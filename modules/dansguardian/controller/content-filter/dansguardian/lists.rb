@@ -43,6 +43,36 @@ class OnBoard
         end
       end
 
+      put path do
+        begin
+          object = ContentFilter::DG::ManagedList.get(
+            params[:splat].join('/')
+          )
+          object.update!(params)
+          object.read! if object.respond_to? :read!
+          view_path = case object
+                 when ContentFilter::DG::ManagedList::Dir
+                   '/content-filter/dansguardian/lists/dir'
+                 when ContentFilter::DG::ManagedList::List
+                   '/content-filter/dansguardian/lists/list'
+                 else
+                   raise TypeError, "I would expect a ContentFilter::DG::ManagedList::(File|List) object, got #{object.inspect}"
+                 end
+          format(
+            :path     => view_path,
+            :module   => 'dansguardian',
+            :title    => 
+                "DansGuardian: #{ContentFilter::DG::ManagedList.title(
+                    params[:splat]
+                )}",
+            :format   => params[:format],
+            :objects  => object
+          )
+        rescue Errno::ENOENT
+          not_found
+        end
+      end   
+
     end
    
   end

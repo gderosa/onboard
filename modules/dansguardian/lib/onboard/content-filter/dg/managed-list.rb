@@ -16,6 +16,10 @@ class OnBoard
             abspath.sub /^#{root_dir}\//, ''
           end
 
+          def absolute_path(relpath)
+            "#{root_dir}/#{relpath}"
+          end
+
           def title(splat)
             input   = {:adjective => splat[0],  :noun => splat[1] }
             output  = input.clone

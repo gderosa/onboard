@@ -4,29 +4,34 @@
 
 <h2><%= title %></h2>
 
-<h3>List category (shown in DansGuardian message pages)</h3> 
-<input type="text" name="listcategory" value="<%= list.listcategory %>"/>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
 
-<h3>List items (one per line)</h3>
-<textarea name="items" cols="80" rows="20"><%= 
-  list.items.join("\n") 
-%></textarea>
+  <h3>List category (shown in DansGuardian message pages)</h3> 
+  <input type="text" name="listcategory" value="<%= list.listcategory %>"/>
 
-<h3>Includes</h3>
-<table>
-  <thead>
-    <tr>
-      <th>List</th>
-      <th>Include?</th> 
-    </tr>
-  </thead>
-  <tbody>
-    <% list.includables.each_with_index do |includable_list, n| %>
+  <h3>List items (use DansGuardian syntax)</h3>
+  <textarea name="items" cols="80" rows="12"><%= 
+    list.items.join("\n") 
+  %></textarea>
+
+  <h3>Includes</h3>
+  <table>
+    <thead>
       <tr>
-        <td><a href="<%= includable_list.http_path %>.html"><%= includable_list.relative_path %></a></td>
-        <td style="text-align:center;"><input type="checkbox" name="include[<%= n %>][include]" <%= 'checked' if includable_list.included? %>/></td>
+        <th>List</th>
+        <th>Include?</th> 
       </tr>
-    <% end %>
-  </tbody>
-</table>
-
+    </thead>
+    <tbody>
+      <% list.includables.each do |includable_list| %>
+        <tr>
+          <td><a href="<%= includable_list.http_path %>.html"><%= includable_list.relative_path %></a></td>
+          <input type="hidden" name="include[][relative_path]" value="<%= includable_list.relative_path %>">
+          <td style="text-align:center;"><input type="checkbox" name="include[][include]" <%= 'checked' if includable_list.included? %>/></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <button style="margin-top: 2em;" type="submit">Change!</button>
+</form>

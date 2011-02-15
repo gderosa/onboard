@@ -55,6 +55,21 @@ class OnBoard
             end
           end
 
+          def update!(params)
+            File.open absolute_path, 'w' do |f|
+              f.puts "#listcategory: \"#{params['listcategory']}\""
+              f.puts
+              f.puts '# List items:'
+              f.puts params['items']
+              f.puts
+              f.puts '# Includes:'
+              params['include'].each do |inc|
+                f.print '# ' if inc['include'] != 'on'
+                f.puts ".Include<#{ManagedList.absolute_path inc['relative_path']}>"
+              end
+            end
+          end
+
         end
       end
     end
