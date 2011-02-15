@@ -78,7 +78,12 @@ class OnBoard
           params[:splat].join('/') 
         )
         not_found unless File.directory? basedir
-        FileUtils.mkdir "#{basedir}/#{params['newdir']}" 
+        case params['new'] 
+        when 'directory'
+          FileUtils.mkdir "#{basedir}/#{params['name']}" 
+        when 'file'
+          File.open("#{basedir}/#{params['name']}", 'w') {} 
+        end
 
         # read
         object  = ContentFilter::DG::ManagedList.get(

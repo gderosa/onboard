@@ -37,10 +37,14 @@
   </ul>
 <% end %>
 
-<h3>Create new directory</h3>
+<h3>Create new</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="post"/>
-  <input type="text" name="newdir"/>
+  <input type="text" name="name"/>
+  <select name="new">
+    <option value="directory" selected>Directory</option> 
+    <option value="file">Empty list file</option>
+  </select>
   <button type="submit">Create!</button>
 </form>
 
