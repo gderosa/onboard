@@ -8,7 +8,7 @@
   <input type="hidden" name="_method" value="put"/>
 
   <h3>List category (shown in DansGuardian message pages)</h3> 
-  <input type="text" name="listcategory" value="<%= list.listcategory %>"/>
+  <input size="50" type="text" name="listcategory" value="<%= list.listcategory %>"/>
 
   <h3>List items (use DansGuardian syntax)</h3>
   <textarea name="items" cols="80" rows="12"><%= 

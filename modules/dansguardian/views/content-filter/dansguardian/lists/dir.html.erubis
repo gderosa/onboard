@@ -34,8 +34,8 @@ END
   lists   = dir.select {|item| item.is_a? single_list_class}
 %>
 
+<h3 id="lists">Lists</h3>
 <% if lists.any? %>
-  <h3 id="lists">Lists</h3>
   <table>
     <thead>
       <tr>
@@ -66,10 +66,12 @@ END
       <% end %>
     </tbody>
   </table>
+<% else %>
+  <p style="font-style: italic;">(no list files right now)</p> 
 <% end %>
 
+<h3 id="sub_directories">Sub directories</h3>
 <% if subdirs.any? %>
-  <h3 id="sub_directories">Sub directories</h3>
   <table>
     <thead>
       <tr>
@@ -101,6 +103,8 @@ END
       <% end %>
     </tbody>
   </table>
+<% else %>
+  <p style="font-style: italic;">(no subdirs right now)</p>
 <% end %>
 
 <h3 id="create_new">Create new</h3>
@@ -108,7 +112,7 @@ END
   <input type="hidden" name="_method" value="post"/>
   <input type="text" name="name"/>
   <select name="new">
-    <option value="directory" selected>Directory</option> 
+    <option value="directory" selected>Sub directory</option> 
     <option value="file">Empty list file</option>
   </select>
   <button type="submit">Create!</button>
