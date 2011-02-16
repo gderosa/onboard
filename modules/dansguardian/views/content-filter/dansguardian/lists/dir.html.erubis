@@ -40,7 +40,10 @@
         %>
         <tr>
           <td style="text-align:center">
-            <%= action_button :delete %>
+            <form method="POST" action="<%= list.http_path %>.html"> 
+              <input type="hidden" name="_method" value="delete">
+              <%= action_button :delete %>
+            </form>
           </td>
           <td class="file-manager">
             <img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%== list.relative_path %></a>
@@ -68,7 +71,10 @@
         %>
         <tr>
           <td style="text-align:center">
-            <%= action_button :delete %>
+            <form method="POST" action="<%= subdir.http_path %>.html"> 
+              <input type="hidden" name="_method" value="delete">
+              <%= action_button :delete %>
+            </form>
           </td>
           <td class="file-manager">
             <img src="<%= icon %>" alt="<%= alt %>"/>

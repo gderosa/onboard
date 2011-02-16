@@ -1,5 +1,7 @@
 # A directory of DansGuardian lists
 
+autoload :FileUtils, 'fileutils'
+
 class OnBoard
   module ContentFilter
     class DG
@@ -14,6 +16,10 @@ class OnBoard
 
           def http_path
             "/content-filter/dansguardian/lists/#{@relative_path}"
+          end
+
+          def delete_files!
+            FileUtils.rm_r File.realpath absolute_path
           end
 
         end

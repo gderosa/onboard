@@ -102,6 +102,16 @@ class OnBoard
       end 
 
     end
+
+    delete '/content-filter/dansguardian/lists/*/*/*.:format' do
+      listobject = ContentFilter::DG::ManagedList.get(
+        params[:splat].join('/')
+      )
+      listobject.delete_files!
+      status 303 # HTTP See Other
+      headers 'Location' => # redirect to parent dir 
+          "#{File.dirname(request.path_info)}.#{params[:format]}"
+    end
    
   end
 end
