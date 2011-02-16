@@ -1,7 +1,7 @@
 ruby OnBoard -- http://dev.vemarsas.it/onboard/ .
 
 Except where otherwise stated, this work is
-Copyright 2009 Guido De Rosa <guido.derosa at vemarsas.it>
+Copyright 2009, 2010, 2011 Guido De Rosa <guido.derosa at vemarsas.it>
 License: GPLv2 
 
 Some artworks from the GNOME project are included, see 
@@ -28,7 +28,7 @@ Sinatra 'development' environment.
 Software requirements for "core" (check individual directories under modules/
 for module-specific, additional requirements): 
 
-* ruby 1.9 (preferably >=1.9.1)
+* ruby 1.9.2 (yeah! use File.realpath, among other things)
 * sudo
 * iproute2
 * iptables (with proper kernel support)
