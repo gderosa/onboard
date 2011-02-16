@@ -63,9 +63,13 @@ class OnBoard
               f.puts params['items']
               f.puts
               f.puts '# Includes:'
-              params['include'].each do |inc|
-                f.print '# ' if inc['include'] != 'on'
-                f.puts ".Include<#{ManagedList.absolute_path inc['relative_path']}>"
+              if params['include'].respond_to? :each
+                params['include'].each do |inc|
+                  f.print '# ' if inc['include'] != 'on'
+                  f.puts(
+".Include<#{ManagedList.absolute_path inc['relative_path']}>"
+                  )
+                end
               end
             end
           end
