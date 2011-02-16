@@ -1,7 +1,19 @@
 <% 
   directory_class   = OnBoard::ContentFilter::DG::ManagedList::Dir
   single_list_class = OnBoard::ContentFilter::DG::ManagedList::List
-%> 
+%>
+
+<style type="text/css">
+  td.file-manager {
+    font-size: 110%;
+  }
+  td.file-manager img {
+    vertical-align: middle;
+  }
+  td button[type="submit"] { 
+    margin: 0 0;
+  }
+</style>
 
 <h2><%= title %></h2>
 
@@ -13,28 +25,59 @@
 
 <% if lists.any? %>
   <h3>Lists</h3>
-  <ul>
-    <% lists.each do |list| %>
-      <%
-        icon  = "#{IconDir}/#{IconSize}/mimetypes/text-x-generic.png"
-        alt   = '[TXT]'
-      %>
-      <li><img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%== list.relative_path %></a></li> 
-    <% end %>
-  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Delete?</th>
+        <th>File</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% lists.each do |list| %>
+        <%
+          icon  = "#{IconDir}/#{IconSize}/mimetypes/text-x-generic.png"
+          alt   = '[TXT]'
+        %>
+        <tr>
+          <td style="text-align:center">
+            <%= action_button :delete %>
+          </td>
+          <td class="file-manager">
+            <img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%== list.relative_path %></a>
+          </td> 
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>
 
 <% if subdirs.any? %>
   <h3>Sub directories</h3>
-  <ul>
-    <% subdirs.each do |subdir| %>
-      <%
-        icon  = "#{IconDir}/#{IconSize}/places/folder.png"
-        alt   = '[DIR]'
-      %>
-      <li><img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= subdir.http_path %>.html"><%== subdir.relative_path %>/</a></li>
-    <% end %>
-  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Delete?</th>
+        <th>Directory</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% subdirs.each do |subdir| %>
+        <%
+          icon  = "#{IconDir}/#{IconSize}/places/folder.png"
+          alt   = '[DIR]'
+        %>
+        <tr>
+          <td style="text-align:center">
+            <%= action_button :delete %>
+          </td>
+          <td class="file-manager">
+            <img src="<%= icon %>" alt="<%= alt %>"/>
+            <a href="<%= subdir.http_path %>.html"><%== subdir.relative_path %>/</a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>
 
 <h3>Create new</h3>

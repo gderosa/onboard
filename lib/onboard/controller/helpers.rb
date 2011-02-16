@@ -70,9 +70,16 @@ class OnBoard
       def action_button(action, *attributes)
         h = attributes[0] || {} 
         raise ArgumentError, "Invalid action: #{action.inspect}" unless 
-            [:start, :stop, :config, :reload, :restart].include? action
+            [
+              :start, 
+              :stop, 
+              :config, 
+              :reload, 
+              :restart, 
+              :delete
+            ].include? action 
         type = h[:type] || case action
-        when :start, :stop, :reload
+        when :start, :stop, :reload, :delete
           'submit'
         when :config
           'button'
@@ -92,6 +99,8 @@ class OnBoard
                   "#{IconDir}/#{IconSize}/actions/system-run.png"
                 when :reload, :restart
                   "#{IconDir}/#{IconSize}/actions/reload.png"
+                when :delete
+                  "#{IconDir}/#{IconSize}/actions/delete.png"
                 end
         return %Q{<button type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
       end
