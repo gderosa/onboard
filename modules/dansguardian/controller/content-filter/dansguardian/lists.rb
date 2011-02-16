@@ -78,11 +78,25 @@ class OnBoard
           params[:splat].join('/') 
         )
         not_found unless File.directory? basedir
+
+        # Create new file or directory
         case params['new'] 
         when 'directory'
           FileUtils.mkdir "#{basedir}/#{params['name']}" 
         when 'file'
           File.open("#{basedir}/#{params['name']}", 'w') {} 
+        end
+
+        ## File upload
+        if params['upload']
+          if params['rename'] =~ /\S/
+            dest = "#{basedir}/#{params['rename']}"
+          else
+            dest = "#{basedir}/#{params['upload'][:filename]}" 
+          end
+          File.open dest, 'w' do |o|
+            o.write params['upload'][:tempfile].read
+          end
         end
 
         # read

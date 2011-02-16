@@ -114,3 +114,25 @@ END
   <button type="submit">Create!</button>
 </form>
 
+<h3 id="upload">Upload a DansGuardian-compatible list file</h3>
+<form method="POST" enctype="multipart/form-data">
+  <table>
+    <tr>
+      <th scope="row">File to upload</th>
+      <td><input type="file" name="upload"/></td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Rename to
+        <div class="optinfo">
+          (leave empty to not rename)
+        </div>
+      </th>
+      <td>
+        <input type="text" name="rename" style="width: 90%;"/>
+      </td>
+    </tr>
+  </table>
+  <button type="submit">Upload!</button>
+</form>
+
