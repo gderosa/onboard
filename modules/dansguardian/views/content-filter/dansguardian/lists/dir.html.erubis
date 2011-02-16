@@ -55,7 +55,7 @@ END
           <td style="text-align:center">
             <form method="POST" action="<%= list.http_path %>.html"> 
               <input type="hidden" name="_method" value="delete">
-              <%= action_button :delete %>
+              <%= action_button :delete, :alt => '[Trash]'  %>
               <input type="checkbox" name="confirm"/>
             </form>
           </td>
@@ -89,7 +89,7 @@ END
           <td style="text-align:center">
             <form method="POST" action="<%= subdir.http_path %>.html"> 
               <input type="hidden" name="_method" value="delete">
-              <%= action_button :delete %>
+              <%= action_button :delete, :alt => '[Trash]' %>
               <input type="checkbox" name="confirm"/>
             </form>
           </td>
