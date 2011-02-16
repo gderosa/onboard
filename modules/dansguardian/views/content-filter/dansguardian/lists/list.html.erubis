@@ -16,6 +16,9 @@
   %></textarea>
 
   <h3>Includes</h3>
+  <p>
+    Only files in <a href="<%= parent_path %>#sub_directories">subdirectories</a> can be included. You may also <a href="<%= parent_path %>#create_new">create new ones</a>.
+  </p>
   <table>
     <thead>
       <tr>

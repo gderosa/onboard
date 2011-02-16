@@ -277,6 +277,10 @@ class OnBoard
         params.update OnBoard::Pagination.normalize(params) 
       end
 
+      def parent_path
+        "#{File.dirname(request.path_info)}.#{params[:format]}"
+      end
+
       def query_string_merge(h)
         # Rack::Request#GET doesn't play well when :method_ovverride
         # is enabled in Sinatra. 

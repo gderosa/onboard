@@ -1,9 +1,20 @@
 <% 
-  directory_class   = OnBoard::ContentFilter::DG::ManagedList::Dir
-  single_list_class = OnBoard::ContentFilter::DG::ManagedList::List
+  directory_class     = OnBoard::ContentFilter::DG::ManagedList::Dir
+  single_list_class   = OnBoard::ContentFilter::DG::ManagedList::List
+
+  deletion_header     = <<END
+          Delete?
+          <div class="optinfo" style="width: 18ex;">
+            To actually delete, check the confirm box then press
+            the Trash button.
+          </div>
+END
 %>
 
 <style type="text/css">
+  td *, td.file-manager * {
+    vertical-align: middle;
+  }
   td.file-manager {
     font-size: 110%;
   }
@@ -24,11 +35,13 @@
 %>
 
 <% if lists.any? %>
-  <h3>Lists</h3>
+  <h3 id="lists">Lists</h3>
   <table>
     <thead>
       <tr>
-        <th>Delete?</th>
+        <th>
+          <%= deletion_header %>
+        </th>
         <th>File</th>
       </tr>
     </thead>
@@ -43,6 +56,7 @@
             <form method="POST" action="<%= list.http_path %>.html"> 
               <input type="hidden" name="_method" value="delete">
               <%= action_button :delete %>
+              <input type="checkbox" name="confirm"/>
             </form>
           </td>
           <td class="file-manager">
@@ -55,11 +69,13 @@
 <% end %>
 
 <% if subdirs.any? %>
-  <h3>Sub directories</h3>
+  <h3 id="sub_directories">Sub directories</h3>
   <table>
     <thead>
       <tr>
-        <th>Delete?</th>
+        <th>
+          <%= deletion_header %>
+        </th>
         <th>Directory</th>
       </tr>
     </thead>
@@ -74,6 +90,7 @@
             <form method="POST" action="<%= subdir.http_path %>.html"> 
               <input type="hidden" name="_method" value="delete">
               <%= action_button :delete %>
+              <input type="checkbox" name="confirm"/>
             </form>
           </td>
           <td class="file-manager">
@@ -86,7 +103,7 @@
   </table>
 <% end %>
 
-<h3>Create new</h3>
+<h3 id="create_new">Create new</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="post"/>
   <input type="text" name="name"/>

@@ -107,7 +107,7 @@ class OnBoard
       listobject = ContentFilter::DG::ManagedList.get(
         params[:splat].join('/')
       )
-      listobject.delete_files!
+      listobject.delete_files! if params['confirm'] == 'on'
       status 303 # HTTP See Other
       headers 'Location' => # redirect to parent dir 
           "#{File.dirname(request.path_info)}.#{params[:format]}"
