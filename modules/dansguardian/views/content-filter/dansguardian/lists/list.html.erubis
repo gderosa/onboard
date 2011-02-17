@@ -12,7 +12,11 @@
 
   <h3>List items (use DansGuardian syntax)</h3>
   <textarea name="items" cols="80" rows="12"><%= 
-    list.items.join("\n") 
+    begin
+      list.items.join("\n").encode(current_encoding)  
+    rescue
+      list.items.map{|item| item.dump.sub(/"(.*)"/, '\1')}.join("\n")  
+    end
   %></textarea>
 
   <h3>Includes</h3>

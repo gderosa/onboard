@@ -36,14 +36,15 @@ class OnBoard
             end
           end
 
-          def get(relative_path)
+          def get(relative_path, opts={}) 
+            arg = opts.merge :relative_path => relative_path
             real_path = File.realpath(
                 File.join root_dir, relative_path
             ) 
             if File.directory? real_path
-              ManagedList::Dir.new  :relative_path => relative_path
+              ManagedList::Dir.new arg
             else
-              ManagedList::List.new :relative_path => relative_path
+              ManagedList::List.new arg
             end
           end
 

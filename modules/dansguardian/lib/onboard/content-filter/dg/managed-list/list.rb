@@ -11,8 +11,23 @@ class OnBoard
           include ManagedList::FilePathMixin
 
           def initialize(h)
+            @file_encoding  = case h[:file_encoding]
+                              when Encoding
+                                h[:file_encoding]
+                              when String
+                                begin
+                                  Encoding.find h[:file_encoding]
+                                rescue ArgumentError
+                                  Encoding::BINARY
+                                end
+                              else
+                                Encoding::BINARY
+                              end
             @relative_path  = h[:relative_path]
-            @data           = ::DansGuardian::List.new(absolute_path)
+            @data           = ::DansGuardian::List.new(
+              :file           =>absolute_path,  # included by FilePathMixin
+              :file_encoding  => @file_encoding
+            )
           end
 
           # Delegate to ::DansGuardian::List instance methods.

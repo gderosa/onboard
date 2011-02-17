@@ -17,7 +17,7 @@ class OnBoard
       get path do
         begin
           object = ContentFilter::DG::ManagedList.get(
-            params[:splat].join('/')
+            params[:splat].join('/'), :file_encoding => params['file_encoding']
           )
           object.read! if object.respond_to? :read!
           view_path = case object
@@ -46,7 +46,7 @@ class OnBoard
       put path do
         begin
           object = ContentFilter::DG::ManagedList.get(
-            params[:splat].join('/')
+            params[:splat].join('/'), :file_encoding => params['file_encoding']
           )
           object.update!(params)
           object.read! if object.respond_to? :read!

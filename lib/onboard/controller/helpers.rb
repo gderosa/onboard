@@ -295,6 +295,16 @@ class OnBoard
         Rack::Utils.escape(str) 
       end
 
+      def current_encoding
+        response['Content-Type'] =~ /charset\s*=\s*([^\s;,]+)/
+        encname = $1.dup
+        begin
+          Encoding.find encname
+        rescue ArgumentError
+          Encoding.find 'utf-8'
+        end
+      end
+
       def main_menu
         OnBoard::MENU_ROOT.to_html_ul do |node, output|
           if node.content
