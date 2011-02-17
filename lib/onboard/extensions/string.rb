@@ -74,6 +74,21 @@ class String
 
   end
 
+  def valid_encodings(subset=Encoding.list)
+    working_copy    = self.dup
+    valid_encs      = []
+    subset.each do |enc|
+      working_copy.force_encoding enc
+      begin
+        working_copy.encode 'utf-8'
+        working_copy =~ / test /
+        valid_encs << enc
+      rescue EncodingError, ArgumentError
+      end
+    end
+    valid_encs
+  end
+
   alias to_i_orig to_i
 
   # A smarter to_i which automatically guess the base of 

@@ -1,13 +1,26 @@
 <% 
-  list    = objects 
+  require 'onboard/extensions/file'
+
+  list                  = objects 
+  valid_file_encodings  = File.valid_encodings(list.absolute_path)
 %>
 
 <h2><%= title %></h2>
 
 <form method="GET">
   <select name="file_encoding">
+    <option value="">(none)</option>
     <% Encoding.list.each do |enc| %>
-      <option value="<%= enc %>" <%= 'selected' if params['file_encoding'] and params['file_encoding'].upcase == enc.name.upcase %>><%= enc %></option>
+      <% next if enc == Encoding::BINARY %> <%# already provided by "" (none) %>
+      <option 
+        value="<%= enc %>" 
+        <%= 'selected' if 
+            params['file_encoding'] and 
+            params['file_encoding'].upcase == enc.name.upcase %>
+        <%= 'disabled' unless valid_file_encodings.include? enc %>
+      >
+        <%= enc %>
+      </option>
     <% end %>
   </select>
   <button type="submit">Choose File encoding!</button>
