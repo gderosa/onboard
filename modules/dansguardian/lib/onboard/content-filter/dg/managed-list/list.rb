@@ -36,7 +36,6 @@ class OnBoard
           def listcategory;   @data.listcategory;   end
           def read!;          @data.read!;          end
           def file_encoding;  @data.file_encoding;  end
-          def each_line(*a);  @data.each_line(*a);  end
 
           #def includes
           #  @data.includes.map do |abspath| 
@@ -78,8 +77,7 @@ class OnBoard
               f.puts "#listcategory: \"#{listcategory}\""
               f.puts
               f.puts '# List items:'
-              f.puts eval %Q{"#{params['items'] || params['content']}"} 
-                  # 'undump' 
+              f.puts eval %Q{"#{params['items']}"}                  # 'undump' 
               f.puts
               f.puts '# Includes:'
               if params['include'].respond_to? :each
