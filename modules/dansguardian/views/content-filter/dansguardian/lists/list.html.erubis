@@ -21,7 +21,7 @@
     begin
       list.listcategory.encode(current_encoding) 
     rescue
-      list.listcategory.dump.sub(/"(.*)"/, '\1')
+      list.listcategory ? list.listcategory.dump.sub(/"(.*)"/, '\1') : ''
     end
   %>"/>
 
