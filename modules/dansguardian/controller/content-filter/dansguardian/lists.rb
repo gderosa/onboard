@@ -19,7 +19,7 @@ class OnBoard
           object = ContentFilter::DG::ManagedList.get(
             params[:splat].join('/'), :file_encoding => params['file_encoding']
           )
-          object.read! if object.respond_to? :read!
+          #object.read! if object.respond_to? :read!
           view_path = case object
                  when ContentFilter::DG::ManagedList::Dir
                    '/content-filter/dansguardian/lists/dir'
@@ -49,7 +49,7 @@ class OnBoard
             params[:splat].join('/'), :file_encoding => params['file_encoding']
           )
           object.update!(params)
-          object.read! if object.respond_to? :read!
+          #object.read! if object.respond_to? :read!
           view_path = case object
                  when ContentFilter::DG::ManagedList::Dir
                    '/content-filter/dansguardian/lists/dir'
