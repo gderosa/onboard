@@ -9,7 +9,7 @@
 
 <form method="GET">
   <select name="file_encoding">
-    <option value="">(none)</option>
+    <option value="">(none/BINARY)</option> 
     <% Encoding.list.each do |enc| %>
       <% next if enc == Encoding::BINARY %> <%# already provided by "" (none) %>
       <option 
