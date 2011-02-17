@@ -4,6 +4,15 @@
 
 <h2><%= title %></h2>
 
+<form method="GET">
+  <select name="file_encoding">
+    <% Encoding.list.each do |enc| %>
+      <option value="<%= enc %>" <%= 'selected' if params['file_encoding'] and params['file_encoding'].upcase == enc.name.upcase %>><%= enc %></option>
+    <% end %>
+  </select>
+  <button type="submit">Choose File encoding!</button>
+</form>
+
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
 
