@@ -32,9 +32,10 @@ class OnBoard
 
           # Delegate to ::DansGuardian::List instance methods.
 
-          def items;        @data.items;        end
-          def listcategory; @data.listcategory; end
-          def read!;        @data.read!;        end
+          def items;          @data.items;          end
+          def listcategory;   @data.listcategory;   end
+          def read!;          @data.read!;          end
+          def file_encoding;  @data.file_encoding;  end
 
           #def includes
           #  @data.includes.map do |abspath| 
@@ -71,11 +72,12 @@ class OnBoard
           end
 
           def update!(params)
-            File.open absolute_path, 'w' do |f|
-              f.puts "#listcategory: \"#{params['listcategory']}\""
+            File.open absolute_path, "w:#{@file_encoding}" do |f|
+              listcategory = eval %Q{"#{params['listcategory']}"}   # 'undump'
+              f.puts "#listcategory: \"#{listcategory}\""
               f.puts
               f.puts '# List items:'
-              f.puts params['items']
+              f.puts eval %Q{"#{params['items']}"}                  # 'undump' 
               f.puts
               f.puts '# Includes:'
               if params['include'].respond_to? :each
