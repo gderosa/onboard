@@ -82,8 +82,10 @@ class String
       begin
         working_copy.encode 'utf-8'
         working_copy =~ / test /
-        valid_encs << enc
       rescue EncodingError, ArgumentError
+        # do not add enc to valid_encs
+      else
+        valid_encs << enc
       end
     end
     valid_encs
