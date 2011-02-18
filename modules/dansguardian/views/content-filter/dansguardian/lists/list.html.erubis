@@ -42,9 +42,9 @@
   <h3>List items (use DansGuardian syntax)</h3>
   <textarea name="items" cols="80" rows="12"><%= 
     begin
-      list.items.join("\n").encode(current_encoding)  
+      list.each_line.join("\n").encode(current_encoding)  
     rescue
-      list.items.map{|item| item.to_asciihex}.join("\n")
+      list.each_line.map{|item| item.to_asciihex}.join("\n")
     end
   %></textarea>
 
