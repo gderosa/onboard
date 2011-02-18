@@ -44,7 +44,7 @@
     begin
       list.items.join("\n").encode(current_encoding)  
     rescue
-      list.items.map{|item| item.to_asciihex.join("\n")  
+      list.items.map{|item| item.to_asciihex}.join("\n")
     end
   %></textarea>
 
