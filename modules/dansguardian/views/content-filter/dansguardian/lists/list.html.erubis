@@ -34,17 +34,29 @@
   <input size="50" type="text" name="listcategory" value="<%= 
     begin
       list.listcategory.encode(current_encoding) 
-    rescue
+    rescue EncodingError, ArgumentError
       list.listcategory ? list.listcategory.to_asciihex : ''
     end
   %>"/>
 
-  <h3>List items (use DansGuardian syntax)</h3>
+  <h3>List content</h3>
+  <p>
+    Here you can view/edit the full content of list file, except 
+    <code>.Include</code> directives and <code>#listcategory</code> 
+    (for them, use the other form fields on this page).
+  </p>
+  <p>
+    Choose the right character encoding before editing! 
+  </p>
   <textarea name="items" cols="80" rows="12"><%= 
     begin
-      list.each_line.join("\n").encode(current_encoding)  
-    rescue
-      list.each_line.map{|item| item.to_asciihex}.join("\n")
+      list.each_line(
+        :exclude => [:listcategory, :includes]
+      ).map do |line| 
+        line.encode(current_encoding)
+      end.join("\n")  
+    rescue EncodingError, ArgumentError
+      list.each_line.map{|line| line.to_asciihex}.join("\n") 
     end
   %></textarea>
 
