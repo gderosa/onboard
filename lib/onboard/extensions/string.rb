@@ -93,11 +93,15 @@ class String
 
   def to_asciihex
     out   = ''.force_encoding Encoding::ASCII
-    self.each_byte do |byte|
-      if byte < 128
-        out << byte.chr
-      else
-        out << "\\x#{byte.to_s(16).upcase}"
+    self.each_line do |line|
+      # escape the backslash only if it's part of a hex sequence, like \xF9
+      line.gsub!(/(\\)(x\h\h)/, '\\x5C\2')  
+      line.each_byte do |byte|
+        if byte < 128
+          out << byte.chr
+        else
+          out << "\\x#{byte.to_s(16).upcase}"
+        end
       end
     end
     out
