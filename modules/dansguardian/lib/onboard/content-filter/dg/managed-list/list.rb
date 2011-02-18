@@ -73,11 +73,12 @@ class OnBoard
 
           def update!(params)
             File.open absolute_path, "w:#{@file_encoding}" do |f|
-              listcategory = eval %Q{"#{params['listcategory']}"}   # 'undump'
+              listcategory = 
+                  params['listcategory'].from_asciihex(@file_encoding) 
               f.puts "#listcategory: \"#{listcategory}\""
               f.puts
               f.puts '# List items:'
-              f.puts eval %Q{"#{params['items']}"}                  # 'undump' 
+              f.puts params['items'].from_asciihex(@file_encoding)  
               f.puts
               f.puts '# Includes:'
               if params['include'].respond_to? :each
