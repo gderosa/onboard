@@ -91,6 +91,29 @@ class String
     valid_encs
   end
 
+  def to_asciihex
+    out   = ''.force_encoding Encoding::ASCII
+    self.each_byte do |byte|
+      if byte < 128
+        out << byte.chr
+      else
+        out << "\\x#{byte.to_s(16).upcase}"
+      end
+    end
+    out
+  end
+
+  def from_asciihex(encoding=Encoding::BINARY)
+    out = ''.force_encoding encoding
+    self.each_line do |line|
+      out << line.gsub(/(\\x\h\h)/) do |capture|
+        eval %Q{"#{capture}"}
+      end
+    end
+    out
+  end
+
+
   alias to_i_orig to_i
 
   # A smarter to_i which automatically guess the base of 

@@ -1,4 +1,5 @@
-<% 
+<%
+  require 'onboard/extensions/string' 
   require 'onboard/extensions/file'
 
   list                  = objects 
@@ -9,7 +10,7 @@
 
 <form method="GET">
   <select name="file_encoding">
-    <option value="">(none/BINARY)</option> 
+    <option value="">(none / ASCII + hex codes)</option> 
     <% Encoding.list.each do |enc| %>
       <% next if enc == Encoding::BINARY %> <%# already provided by "" (none) %>
       <option 
@@ -34,7 +35,7 @@
     begin
       list.listcategory.encode(current_encoding) 
     rescue
-      list.listcategory ? list.listcategory.dump.sub(/"(.*)"/, '\1') : ''
+      list.listcategory ? list.listcategory.to_asciihex : ''
     end
   %>"/>
 
@@ -43,7 +44,7 @@
     begin
       list.items.join("\n").encode(current_encoding)  
     rescue
-      list.items.map{|item| item.dump.sub(/"(.*)"/, '\1')}.join("\n")  
+      list.items.map{|item| item.to_asciihex.join("\n")  
     end
   %></textarea>
 
