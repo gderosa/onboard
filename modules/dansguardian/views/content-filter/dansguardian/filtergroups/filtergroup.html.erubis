@@ -3,11 +3,10 @@
 %>
 
 <style type="text/css">
-  /*
-  th.dglist[scope="row"] {
-    width: 20em;
+  table.dglists {
+    display: inline;
+    vertical-align: top;
   }
-  */
 </style>
 
 <h2><%= title %></h2>
@@ -30,8 +29,98 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
   </tr>
 </table>
 
-<h3>Weighted phrase list</h3>
-<table>
+<h3>Lists</h3>
+
+<table class="dglists">
+  <caption>Black Lists / Banned</caption>
+  <tr>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/banned/sites.html">Sites</a></th>
+    <td>
+      <select name="bannedsitelist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/banned/URLs.html">URLs</a></th>
+    <td>
+      <select name="bannedurllist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/banned/phrases.html">Phrases</a></th>
+    <td>
+      <select name="bannedphraselist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">File extensions</th>
+    <td>
+      <select name="bannedextensionlist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">MIME types</th>
+    <td>
+      <select name="bannedmimetypelist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<table class="dglists">
+  <caption>White Lists / Exception</caption>
+  <tr>
+    <th scope="row">Sites</th>
+    <td>
+      <select name="exceptionsitelist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">URLs</th>
+    <td>
+      <select name="exceptionurllist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Phrases</th>
+    <td>
+      <select name="exceptionphraselist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">File extensions</th>
+    <td>
+      <select name="exceptionextensionlist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">MIME types</th>
+    <td>
+      <select name="exceptionmimetypelist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<table class="dglists">
+  <caption>Weighted phrase list</caption>
   <tr>
     <th scope="row">Weighted phrase list</th> 
     <td>
@@ -41,9 +130,5 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     </td>
   </tr>
 </table>
-
-<h3>Black Lists / Banned</h3>
-<table>
-  <tr>
 
 

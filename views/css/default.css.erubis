@@ -262,13 +262,17 @@ table {
   font-size: 90%;
 }
 
+table caption {
+  font-weight: bold;
+}
+
 table tr th {
   border:0; 
   text-align: center;
   padding: 0 1em;
 }
 
-table tr th, fieldset, .term, kbd {
+table tr td, table tr th, fieldset, .term, kbd {
   background: <%= lightbg %>;
 }
 
@@ -307,7 +311,6 @@ table tr th[scope="row"], table tr th[scope="rowgroup"] {
 
 table tr td {
   border: 0;
-  background: <%= lightbg %>;
   padding: 0 0.4em;
 }
 
