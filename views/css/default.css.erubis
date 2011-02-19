@@ -80,9 +80,9 @@ a.created, a.new {
 
 div#main {
   border: 0;
-	float: right;
-	width: 80%;	
-	padding: 2px;
+  float: right;
+  width: 80%;	
+  padding: 2px;
   margin: 1em 1px;
 }
 

@@ -28,17 +28,24 @@ class OnBoard
                  else
                    raise TypeError, "I would expect a ContentFilter::DG::ManagedList::(File|List) object, got #{object.inspect}"
                  end
-          format(
-            :path     => view_path,
-            :module   => 'dansguardian',
-            :title    => 
-                "DansGuardian: #{ContentFilter::DG::ManagedList.title(
-                    params[:splat]
-                )}",
-            :format   => params[:format],
-            :objects  => object
-          )
-        rescue Errno::ENOENT
+          if 
+              params[:format] == 'raw' and 
+              object.is_a? ContentFilter::DG::ManagedList::List
+            attachment File.basename params[:splat].last
+            send_file object.absolute_path, :type => 'text/plain'
+          else
+            format(
+              :path     => view_path,
+              :module   => 'dansguardian',
+              :title    => 
+                  "DansGuardian: #{ContentFilter::DG::ManagedList.title(
+                      params[:splat]
+                  )}",
+              :format   => params[:format],
+              :objects  => object
+            )
+          end
+          rescue Errno::ENOENT
           not_found
         end
       end
