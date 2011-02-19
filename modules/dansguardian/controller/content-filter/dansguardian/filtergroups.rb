@@ -17,6 +17,20 @@ class OnBoard
       )
     end
 
+    get '/content-filter/dansguardian/filtergroups/:id.:format' do
+      dgconf = ::DansGuardian::Config.new(
+        :mainfile => ::OnBoard::ContentFilter::DG.config_file
+      )
+      format(
+        :path     => '/content-filter/dansguardian/filtergroups/filtergroup',
+        :module   => 'dansguardian',
+        :title    => "DansGuardian: Filter Group ##{params[:id]}",
+        :format   => params[:format],
+        :objects  => dgconf.filtergroup(params[:id].to_i) 
+      )
+    end
+
+
     put '/content-filter/dansguardian/filtergroups.:format' do
       dg = OnBoard::ContentFilter::DG.new
       params['filtergroups'].each_pair do |key, h|

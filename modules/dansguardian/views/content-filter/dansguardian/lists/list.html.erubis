@@ -60,7 +60,7 @@
       </tr>
     </thead>
     <tbody>
-      <% list.includables.each do |includable_list| %>
+      <% list.includables.sort.each do |includable_list| %>
         <tr>
           <td><a href="<%= includable_list.http_path %>.html"><%= includable_list.relative_path %></a></td>
           <input type="hidden" name="include[][relative_path]" value="<%= includable_list.relative_path %>">

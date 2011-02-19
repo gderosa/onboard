@@ -1,0 +1,49 @@
+<%
+  fg = objects # The filtergroup object (::DansGuardian::Config) 
+%>
+
+<style type="text/css">
+  /*
+  th.dglist[scope="row"] {
+    width: 20em;
+  }
+  */
+</style>
+
+<h2><%= title %></h2>
+
+<table>
+  <tr>
+    <th scope="row">Group Name</th>
+    <td><input type="text" name="groupname" value="<%= fg[:groupname] %>"/></td>
+  </tr>
+  <tr>
+    <th scope="row">Group mode</th>
+    <td>
+      <select name="groupmode">
+        <% 
+DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
+          <option value="<%= name %>" <%= 'selected' if name == fg[:groupmode] %>><%= name %></option>
+        <% end %>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<h3>Weighted phrase list</h3>
+<table>
+  <tr>
+    <th scope="row">Weighted phrase list</th> 
+    <td>
+      <select name="weightdphraselist">
+        <option>dummy</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<h3>Black Lists / Banned</h3>
+<table>
+  <tr>
+
+
