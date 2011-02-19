@@ -1,11 +1,14 @@
 ruby OnBoard -- http://dev.vemarsas.it/onboard/ .
 
 Except where otherwise stated, this work is
-Copyright 2009, 2010, 2011 Guido De Rosa <guido.derosa at vemarsas.it>
+Copyright 2009, 2010, 2011 
+Guido De Rosa <guido.derosa at vemarsas.it> and
+Antonello Ventre <antonello.ventre at vemarsas.it> .
+
 License: GPLv2 
 
-Some artworks from the GNOME project are included, see 
-public/icons/gnome for details and Copyright info.
+Artworks from various sources are included.
+See public/*/* for details and Copyright info.
 
 ---
 
