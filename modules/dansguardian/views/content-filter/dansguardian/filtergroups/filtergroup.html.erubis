@@ -58,7 +58,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     </td>
   </tr>
   <tr>
-    <th scope="row">File extensions</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/banned/extensions.html">File extensions</a></th>
     <td>
       <select name="bannedextensionlist">
         <option>dummy</option>
@@ -66,7 +66,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     </td>
   </tr>
   <tr>
-    <th scope="row">MIME types</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/banned/MIMEtypes.html">MIME types</th>
     <td>
       <select name="bannedmimetypelist">
         <option>dummy</option>
@@ -78,7 +78,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
 <table class="dglists">
   <caption>White Lists / Exception</caption>
   <tr>
-    <th scope="row">Sites</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/exception/sites.html">Sites</a></th>
     <td>
       <select name="exceptionsitelist">
         <option>dummy</option>
@@ -86,7 +86,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     </td>
   </tr>
   <tr>
-    <th scope="row">URLs</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/exception/URLs.html">URLs</a></th>
     <td>
       <select name="exceptionurllist">
         <option>dummy</option>
@@ -94,7 +94,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     </td>
   </tr>
   <tr>
-    <th scope="row">Phrases</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/exception/phrases.html">Phrases</a></th>
     <td>
       <select name="exceptionphraselist">
         <option>dummy</option>
@@ -102,7 +102,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     </td>
   </tr>
   <tr>
-    <th scope="row">File extensions</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/exception/extensions.html">File extensions</a></th>
     <td>
       <select name="exceptionextensionlist">
         <option>dummy</option>
@@ -110,7 +110,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     </td>
   </tr>
   <tr>
-    <th scope="row">MIME types</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/exception/MIMEtypes.html">MIME types</a></th>
     <td>
       <select name="exceptionmimetypelist">
         <option>dummy</option>
@@ -122,7 +122,7 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
 <table class="dglists">
   <caption>Weighted phrase list</caption>
   <tr>
-    <th scope="row">Weighted phrase list</th> 
+    <th scope="row"><a href="/content-filter/dansguardian/lists/weighted/phrases.html">Weighted phrase list</a></th> 
     <td>
       <select name="weightdphraselist">
         <option>dummy</option>
