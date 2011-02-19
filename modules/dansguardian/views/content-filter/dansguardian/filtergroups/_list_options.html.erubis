@@ -1,0 +1,11 @@
+  <option value="null">(disabled)</option>
+<% 
+  dir = OnBoard::ContentFilter::DG::ManagedList.get(relative_path)
+
+  dir.select do |x| 
+    x.is_a? OnBoard::ContentFilter::DG::ManagedList::List 
+        # not a ManagedList::Dir
+  end.sort.each do |list|
+%>
+  <option value="<%= list.relative_path %>"><%= list.basename %></option>
+<% end %>

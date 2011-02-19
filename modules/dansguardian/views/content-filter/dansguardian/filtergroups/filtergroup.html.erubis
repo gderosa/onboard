@@ -37,7 +37,15 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/banned/sites.html">Sites</a></th>
     <td>
       <select name="bannedsitelist">
-        <option>dummy</option>
+        <%= 
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+            :locals => {
+              :relative_path => 'banned/sites'
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
