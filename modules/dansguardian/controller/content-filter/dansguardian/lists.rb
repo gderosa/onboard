@@ -95,6 +95,12 @@ class OnBoard
           FileUtils.mkdir "#{basedir}/#{params['name']}" 
         when 'file'
           File.open("#{basedir}/#{params['name']}", 'w') {} 
+        when /^copy_from:(.*)/
+          copy_from_basename = File.basename $1
+          FileUtils.cp(
+              "#{basedir}/#{copy_from_basename}", 
+              "#{basedir}/#{params['name']}"
+          )
         end
 
         ## File upload

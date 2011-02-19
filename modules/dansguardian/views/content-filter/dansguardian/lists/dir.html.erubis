@@ -51,7 +51,7 @@ END
         icon_dwnl   = "#{IconDir}/#{IconSize}/actions/document-save-as.png"
         alt_dwnl    = '[DOWNLOAD]'
       %>
-      <% lists.each do |list| %>
+      <% lists.sort.each do |list| %>
         <tr>
           <td style="text-align:center">
             <form method="POST" action="<%= list.http_path %>.html"> 
@@ -86,7 +86,7 @@ END
       </tr>
     </thead>
     <tbody>
-      <% subdirs.each do |subdir| %>
+      <% subdirs.sort.each do |subdir| %>
         <%
           icon  = "#{IconDir}/#{IconSize}/places/folder.png"
           alt   = '[DIR]'
@@ -118,6 +118,11 @@ END
   <select name="new">
     <option value="directory" selected>Sub directory</option> 
     <option value="file">Empty list file</option>
+    <% lists.sort.each do |list| %>
+      <option 
+          value="copy_from:<%= list.relative_path %>">copy from: <%= 
+          list.basename %></option>
+    <% end %>
   </select>
   <button type="submit">Create!</button>
 </form>

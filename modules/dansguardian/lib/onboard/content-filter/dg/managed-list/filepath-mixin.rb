@@ -22,6 +22,8 @@ class OnBoard
             FileUtils.rm_r File.realpath absolute_path
           end
 
+          def basename; File.basename @relative_path; end
+
         end
       end
     end
