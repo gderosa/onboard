@@ -273,7 +273,8 @@ table tr th {
 }
 
 table tr td, table tr th, fieldset, .term, kbd {
-  background: <%= lightbg %>;
+  /* background: <%= lightbg %>; */
+  background: url("/backgrounds/kollermedia.at/pattern4u/funky/31original.gif") repeat;
 }
 
 table tr td fieldset {
