@@ -83,7 +83,7 @@ class OnBoard
         end
       end
       
-      post path do # create directory
+      post path do 
         basedir = File.realpath ContentFilter::DG::ManagedList.absolute_path(
           params[:splat].join('/') 
         )
@@ -98,14 +98,27 @@ class OnBoard
         end
 
         ## File upload
+        #
+        # but preserve destination .Includes
+        include_re = /^[\s#]*\.Include<.*>/ # even commented
         if params['upload']
+          preserve_includes = ''
           if params['rename'] =~ /\S/
             dest = "#{basedir}/#{params['rename']}"
           else
             dest = "#{basedir}/#{params['upload'][:filename]}" 
           end
+          if File.exists? dest
+            f = File.open dest, 'r'
+            preserve_includes = f.grep(include_re).join
+            f.close
+          end
           File.open dest, 'w' do |o|
-            o.write params['upload'][:tempfile].read
+            File.foreach params['upload'][:tempfile] do |line|
+              next if line =~ include_re
+              o.write line
+            end
+            o.write preserve_includes
           end
         end
 

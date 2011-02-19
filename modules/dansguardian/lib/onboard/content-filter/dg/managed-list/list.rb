@@ -78,7 +78,8 @@ class OnBoard
               f.puts "#listcategory: \"#{listcategory}\""
               f.puts
               f.puts '# List items:'
-              f.puts params['items'].from_asciihex(@file_encoding)  
+              f.puts params['items'].gsub(
+		      "\r\n", "\n").from_asciihex(@file_encoding)  
               f.puts
               f.puts '# Includes:'
               if params['include'].respond_to? :each
