@@ -15,6 +15,7 @@ class OnBoard
       # Example: /content-filter/dansguardian/lists/banned/sites.html
       # You get params[:splat] #=> ["banned", "sites"]
       get path do
+        formats = @@formats.dup
         begin
           object = ContentFilter::DG::ManagedList.get(
             params[:splat].join('/'), :file_encoding => params['file_encoding']
@@ -24,6 +25,7 @@ class OnBoard
                  when ContentFilter::DG::ManagedList::Dir
                    '/content-filter/dansguardian/lists/dir'
                  when ContentFilter::DG::ManagedList::List
+                   formats << 'raw' # side effect
                    '/content-filter/dansguardian/lists/list'
                  else
                    raise TypeError, "I would expect a ContentFilter::DG::ManagedList::(File|List) object, got #{object.inspect}"
@@ -42,6 +44,7 @@ class OnBoard
                       params[:splat]
                   )}",
               :format   => params[:format],
+              :formats  => formats,
               :objects  => object
             )
           end
