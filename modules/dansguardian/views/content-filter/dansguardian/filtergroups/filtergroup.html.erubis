@@ -233,7 +233,7 @@
     <tr>
       <th scope="row"><a href="/content-filter/dansguardian/lists/weighted/phrases.html">Weighted phrase list</a></th> 
       <td>
-        <select name="weightdphraselist">
+        <select name="weightedphraselist">
           <%=
             partial(
               :module => 'dansguardian',
@@ -253,7 +253,7 @@
   <table id="main-options">
     <tr>
       <th scope="row">
-        Block downloads?
+        Block <em>all</em> file downloads? 
       </th>
       <td>
         <input
@@ -306,7 +306,7 @@
               type="radio" 
               name="weightedphrasemode" 
               value="0"
-              <%= 'checked' unless fg[:weightedphrasemode] %>
+              <%= 'checked' if fg[:weightedphrasemode] == :disabled %>
           />Do not use the weighted phrase feature<br/>
           <input 
               type="radio" 
