@@ -13,6 +13,13 @@
   table.dglists caption {
     margin-top: 1em;
   }
+  table#main-options tr th[scope="row"] {
+    width: 60em;
+  }
+  fieldset {
+    margin-left: 0;
+    padding-left: 0;
+  }
 </style>
 
 <h2><%= title %></h2>
@@ -236,6 +243,82 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
           )
         %>
       </select>
+    </td>
+  </tr>
+</table>
+
+<h3>Main Options</h3>
+<table id="main-options">
+  <tr>
+    <th scope="row">
+      Block downloads?
+    </th>
+    <td>
+      <input
+          type="checkbox" 
+          name="blockdownloads" 
+          <%= 'checked' if fg[:blockdownloads] %>
+      />
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">
+      Naughtyness limit
+      <div class="optinfo">
+        The limit over which the page will be blocked.  Each weighted phrase
+        is given a value either positive or negative and the values added up.
+        Phrases to do with good subjects will have negative values, and bad 
+        subjects will have positive. See the weighted phrase lists file 
+        for examples.
+      </div>
+    </th>
+    <td>
+      <input type="text" name="naughtynesslimit" value="<%= fg[:naughtynesslimit] %>"/>
+    </td>
+  </tr>
+   <tr>
+    <th scope="row">
+      Enable AntiVirus and/or other content scanners?      
+    </th>
+    <td>
+      <input
+          type="checkbox" 
+          name="enablecontentscan" 
+          <%= 'checked' unless fg[:disablecontentscan] %>
+      />
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">
+      Wheighted phrase mode
+    </th>
+    <td>
+      <fieldset>
+       <input 
+            type="radio" 
+            name="weightedphrasemode" 
+            value=""
+            <%= 'checked' if fg[:weightedphrasemode] == :inherit %>
+        />Inherit from the main configuration<br/>
+        <input 
+            type="radio" 
+            name="weightedphrasemode" 
+            value="0"
+            <%= 'checked' unless fg[:weightedphrasemode] %>
+        />Do not use the weighted phrase feature<br/>
+        <input 
+            type="radio" 
+            name="weightedphrasemode" 
+            value="1"
+            <%= 'checked' if fg[:weightedphrasemode] == :normal %> 
+        />Normal weighted phrase operation<br/>
+        <input 
+            type="radio" 
+            name="weightedphrasemode" 
+            value="2"
+            <%= 'checked' if fg[:weightedphrasemode] == :singular %>
+        />Each weighted phrase found only counts once on a page</br>
+      </fieldset>
     </td>
   </tr>
 </table>
