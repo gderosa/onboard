@@ -7,6 +7,9 @@
     display: inline;
     vertical-align: top;
   }
+  table.dglists tr td select{
+    width: 100%;
+  }
 </style>
 
 <h2><%= title %></h2>
@@ -42,7 +45,9 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
             :module => 'dansguardian',
             :path   => 'content-filter/dansguardian/filtergroups/_list_options',
             :locals => {
-              :relative_path => 'banned/sites'
+              :relative_dir_path        => 'banned/sites',
+              :filtergroup              => fg,
+              :name                     => :bannedsitelist
             }
           )
         %>
@@ -53,7 +58,17 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/banned/URLs.html">URLs</a></th>
     <td>
       <select name="bannedurllist">
-        <option>dummy</option>
+        <%= 
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+            :locals => {
+              :relative_dir_path        => 'banned/URLs',
+              :filtergroup              => fg,
+              :name                     => :bannedurllist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
@@ -61,7 +76,17 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/banned/phrases.html">Phrases</a></th>
     <td>
       <select name="bannedphraselist">
-        <option>dummy</option>
+        <%= 
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+            :locals => {
+              :relative_dir_path  => 'banned/phrases',
+              :filtergroup        => fg,
+              :name               => :bannedphraselist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
@@ -69,15 +94,34 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/banned/extensions.html">File extensions</a></th>
     <td>
       <select name="bannedextensionlist">
-        <option>dummy</option>
+         <%= 
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+            :locals => {
+              :relative_dir_path  => 'banned/extensions',
+              :filtergroup        => fg,
+              :name               => :bannedextensionlist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
   <tr>
-    <th scope="row"><a href="/content-filter/dansguardian/lists/banned/MIMEtypes.html">MIME types</th>
+    <th scope="row"><a href="/content-filter/dansguardian/lists/banned/MIMEtypes.html">MIME types</a></th>
     <td>
       <select name="bannedmimetypelist">
-        <option>dummy</option>
+         <%=
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+              :relative_dir_path  => 'banned/MIMEtypes',
+              :filtergroup        => fg,
+              :name               => :bannedmimetypelist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
@@ -89,7 +133,16 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/exception/sites.html">Sites</a></th>
     <td>
       <select name="exceptionsitelist">
-        <option>dummy</option>
+        <%=
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+              :relative_dir_path  => 'exception/sites',
+              :filtergroup        => fg,
+              :name               => :exceptionsitelist
+            }
+          )
+        %>        
       </select>
     </td>
   </tr>
@@ -97,7 +150,16 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/exception/URLs.html">URLs</a></th>
     <td>
       <select name="exceptionurllist">
-        <option>dummy</option>
+        <%=
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+              :relative_dir_path  => 'exception/URLs',
+              :filtergroup        => fg,
+              :name               => :exceptionurllist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
@@ -105,7 +167,16 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/exception/phrases.html">Phrases</a></th>
     <td>
       <select name="exceptionphraselist">
-        <option>dummy</option>
+        <%=
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+              :relative_dir_path  => 'exception/phrases',
+              :filtergroup        =>  fg,
+              :name               => :exceptionphraselist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
@@ -113,7 +184,16 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/exception/extensions.html">File extensions</a></th>
     <td>
       <select name="exceptionextensionlist">
-        <option>dummy</option>
+        <%=
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+              :relative_dir_path  => 'exception/extensions',
+              :filtergroup        =>  fg,
+              :name               => :exceptionextensionlist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
@@ -121,7 +201,16 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/exception/MIMEtypes.html">MIME types</a></th>
     <td>
       <select name="exceptionmimetypelist">
-        <option>dummy</option>
+        <%=
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+              :relative_dir_path  => 'exception/MIMEtypes',
+              :filtergroup        => fg,
+              :name               => :exceptionmimetypelist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
@@ -133,7 +222,16 @@ DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
     <th scope="row"><a href="/content-filter/dansguardian/lists/weighted/phrases.html">Weighted phrase list</a></th> 
     <td>
       <select name="weightdphraselist">
-        <option>dummy</option>
+        <%=
+          partial(
+            :module => 'dansguardian',
+            :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+              :relative_dir_path  => 'weighted/phrases',
+              :filtergroup        => fg,
+              :name               => :weightedphraselist
+            }
+          )
+        %>
       </select>
     </td>
   </tr>
