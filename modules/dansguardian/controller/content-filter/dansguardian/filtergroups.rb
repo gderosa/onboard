@@ -17,19 +17,6 @@ class OnBoard
       )
     end
 
-    get '/content-filter/dansguardian/filtergroups/:id.:format' do
-      dgconf = ::DansGuardian::Config.new(
-        :mainfile => ::OnBoard::ContentFilter::DG.config_file
-      )
-      format(
-        :path     => '/content-filter/dansguardian/filtergroups/filtergroup',
-        :module   => 'dansguardian',
-        :title    => "DansGuardian: Filter Group ##{params[:id]}",
-        :format   => params[:format],
-        :objects  => dgconf.filtergroup(params[:id].to_i) 
-      )
-    end
-
 
     put '/content-filter/dansguardian/filtergroups.:format' do
       dg = OnBoard::ContentFilter::DG.new
@@ -99,6 +86,37 @@ class OnBoard
         }
       )
     end
-   
+
+    get '/content-filter/dansguardian/filtergroups/:id.:format' do
+      dgconf = ::DansGuardian::Config.new(
+        :mainfile => ::OnBoard::ContentFilter::DG.config_file
+      )
+      format(
+        :path     => '/content-filter/dansguardian/filtergroups/filtergroup',
+        :module   => 'dansguardian',
+        :title    => "DansGuardian: Filter Group ##{params[:id]}",
+        :format   => params[:format],
+        :objects  => dgconf.filtergroup(params[:id].to_i) 
+      )
+    end
+
+    put '/content-filter/dansguardian/filtergroups/:id.:format' do
+      # This is a "web application object":
+      ::OnBoard::ContentFilter::DG::FilterGroup.get(
+        params[:id]
+      ).update!(params)  
+      # This is unrelated to the web app:
+      dgconf = ::DansGuardian::Config.new(
+        :mainfile => ::OnBoard::ContentFilter::DG.config_file
+      )
+      format(
+        :path     => '/content-filter/dansguardian/filtergroups/filtergroup',
+        :module   => 'dansguardian',
+        :title    => "DansGuardian: Filter Group ##{params[:id]}",
+        :format   => params[:format],
+        :objects  => dgconf.filtergroup(params[:id].to_i) 
+      )
+    end
+  
   end
 end

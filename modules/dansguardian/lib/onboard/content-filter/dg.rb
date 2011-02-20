@@ -7,8 +7,8 @@ class OnBoard
   module ContentFilter
     class DG
 
-      autoload :ManagedList,     'onboard/content-filter/dg/managed-list'
-      autoload :ManagedListDir,  'onboard/content-filter/dg/managed-list-dir'
+      autoload :ManagedList,    'onboard/content-filter/dg/managed-list'
+      autoload :FilterGroup,    'onboard/content-filter/dg/filter-group'
 
       class << self
 
