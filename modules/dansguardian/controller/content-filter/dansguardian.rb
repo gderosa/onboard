@@ -22,12 +22,13 @@ class OnBoard
       msg = {}  
       dg = ContentFilter::DG.new
       dg.get_status
-      if params['initialize_config_files']
-        msg = dg.write_all 
-      else
+      if params['start'] or params['stop'] or params['restart']
         msg = dg.start_stop(params)
-        dg.get_status
       end
+
+      dg.edit_main_config!(params)
+
+      dg.get_status
       format(
         :path     => '/content-filter/dansguardian',
         :module   => 'dansguardian',

@@ -145,6 +145,30 @@ class OnBoard
         end
       end
 
+      def edit_main_config!(params)
+        u = {}
+
+        %w{weightedphrasemode preservecase maxuploadsize}.each do |name|
+          u[name] = params[name]
+        end
+
+        u['authplugin'] = []
+        if params['authplugin'].respond_to? :each_pair
+          params['authplugin'].each_pair do |k, v|
+            u['authplugin'] << AuthPlugin.config_file(k) if v == 'on'
+          end
+        end
+
+        u['contentscanner'] = []
+        if params['contentscanner'].respond_to? :each_pair
+          params['contentscanner'].each_pair do |k, v|
+            u['contentscanner'] << ContentScanner.config_file(k) if v == 'on'
+          end
+        end
+
+        ::DansGuardian::Updater.update! config_file, u
+      end
+
       def start_stop(params)
         if params['start']
           start
