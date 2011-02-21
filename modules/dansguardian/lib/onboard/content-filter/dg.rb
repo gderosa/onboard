@@ -9,7 +9,8 @@ class OnBoard
 
       autoload :ManagedList,    'onboard/content-filter/dg/managed-list'
       autoload :FilterGroup,    'onboard/content-filter/dg/filter-group'
-
+      autoload :AuthPlugin,     'onboard/content-filter/dg/auth-plugin'
+     
       class << self
 
         def root

@@ -5,7 +5,8 @@
 %>
 
 <style type="text/css">
-  table#general_configuration tr th[scope="row"] {
+  table#general_configuration tr th[scope="row"],
+  table#authplugins           tr th[scope="row"] {
     width: 60em;
   }
   fieldset {
@@ -117,16 +118,27 @@
 </table>
 
 <h3>Authentication Plugins</h3>
-<table>
+<table id="authplugins"> 
   <tr>
     <th scope="row">
       SQL/RADIUS
       <div class="optinfo">
-        More info here and here.
+        Allows Captive Portal and 802.1X integration.
+        More info 
+        <a href="http://dev.vemarsas.it/projects/dansguardian">here</a> and 
+        <a href="http://tech.groups.yahoo.com/group/dansguardian/message/24647">here</a>.
       </div>
     </th>
     <td>
-      <input type="checkbox" name="authplugin[sql]"/>
+      <input 
+        type="checkbox" 
+        name="authplugin[sql]"
+        <%= 
+          'checked' if dg.config.main[:authplugin].include?(
+            OnBoard::ContentFilter::DG::AuthPlugin.config_file :sql
+          )
+        %>
+      />
     </td>
   </tr>
 </table>
@@ -138,5 +150,5 @@
   <button type="submit">Initialize!</button>
 </form>
 
-<pre><%== dg.config.main.pretty_inspect %></pre>
+<!-- <pre><%== dg.config.main.pretty_inspect %></pre> -->
 
