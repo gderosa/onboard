@@ -14,6 +14,11 @@ class OnBoard
     :name => 'Filter Groups',
     :desc => 'You may configure different filtering rules for each group of users',
   })
+  MENU_ROOT.add_path('/content-filter/dg/init', {
+    :href => '/content-filter/dansguardian/init',
+    :name => 'Reset / Init configuration',
+    :n    => 3
+  })
 
   
   MENU_ROOT.add_path('/content-filter/dg/lists', {

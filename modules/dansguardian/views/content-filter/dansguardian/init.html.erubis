@@ -1,0 +1,18 @@
+<% 
+  require 'set'
+
+  dg = objects[:dg] # This is an OnBoard:: object
+%>
+
+<%= message_partial(msg) %>
+
+<h2><%= title %></h2>
+
+
+<h3>Initialize configuration</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <input type="hidden" name="initialize_config_files" value="on"/>
+  <button type="submit">Initialize!</button>
+</form>
+

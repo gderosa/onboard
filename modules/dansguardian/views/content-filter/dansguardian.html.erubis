@@ -51,7 +51,7 @@
               name="weightedphrasemode"
               value="0"
               <%= 'checked' if dg.config.main[:weightedphrasemode] == :disabled %>
-          />Do not use the weighted phrase feature<br/>
+          />Do not use the phrase extraction feature!<br/>
           <input
               type="radio"
               name="weightedphrasemode"
@@ -173,17 +173,4 @@
   <button type="submit" style="margin-top:2em;">Change!</button>
 
 </form>
-
-<hr/>
-
-<h3>Initialize configuration</h3>
-<form method="POST">
-  <input type="hidden" name="_method" value="put"/>
-  <input type="hidden" name="initialize_config_files" value="on"/>
-  <button type="submit">Initialize!</button>
-</form>
-
-<hr/>
-
-<pre><%== dg.config.main.pretty_inspect %></pre> 
 
