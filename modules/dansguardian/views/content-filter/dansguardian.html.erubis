@@ -6,7 +6,8 @@
 
 <style type="text/css">
   table#general_configuration tr th[scope="row"],
-  table#authplugins           tr th[scope="row"] {
+  table#authplugins           tr th[scope="row"],
+  table#contentscanners       tr th[scope="row"] {
     width: 60em;
   }
   fieldset {
@@ -143,6 +144,30 @@
   </tr>
 </table>
 
+<h3>Anti Virus / Content Scanners</h3>
+<table id="contentscanners"> 
+  <tr>
+    <th scope="row">
+      ClamD scan
+      <div class="optinfo">
+        Based on 
+        <a href="http://www.clamav.net">ClamAV</a>.
+      </div>
+    </th>
+    <td>
+      <input 
+        type="checkbox" 
+        name="contentscanner[clamdscan]"
+        <%= 
+          'checked' if dg.config.main[:contentscanner].include?(
+            OnBoard::ContentFilter::DG::ContentScanner.config_file :clamdscan
+          )
+        %>
+      />
+    </td>
+  </tr>
+</table>
+
 <h3>Initialize configuration</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
@@ -150,5 +175,5 @@
   <button type="submit">Initialize!</button>
 </form>
 
-<!-- <pre><%== dg.config.main.pretty_inspect %></pre> -->
+<pre><%== dg.config.main.pretty_inspect %></pre> 
 
