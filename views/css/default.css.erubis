@@ -272,9 +272,14 @@ table tr th {
   padding: 0 1em;
 }
 
-table tr td, table tr th, fieldset, .term, kbd {
+table tr td, table tr th, fieldset {
   /* background: <%= lightbg %>; */
   background: url("/backgrounds/kollermedia.at/pattern4u/funky/31original.gif") repeat;
+}
+
+.term {
+  text-decoration: none;
+  border-bottom: 1px gray dashed;
 }
 
 table tr td fieldset {

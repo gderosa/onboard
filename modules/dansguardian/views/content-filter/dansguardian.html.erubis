@@ -9,6 +9,7 @@
   table#authplugins           tr th[scope="row"],
   table#contentscanners       tr th[scope="row"] {
     width: 60em;
+    font-size: 100%;
   }
   fieldset {
     margin-left: 0;
