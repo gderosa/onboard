@@ -19,9 +19,8 @@ class OnBoard
         end
 
         def update!(params)
-          pp params
-          
-          # Update Hash: will be the argument for ::DansGuardian::Updater.update!
+          # Update Hash: will be the argument of
+          # ::DansGuardian::Updater.update!
           u = {} 
           u['groupname']        = params['groupname']
           u['naughtynesslimit'] = params['naughtynesslimit']
