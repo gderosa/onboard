@@ -116,6 +116,21 @@
   </tr>
 </table>
 
+<h3>Authentication Plugins</h3>
+<table>
+  <tr>
+    <th scope="row">
+      SQL/RADIUS
+      <div class="optinfo">
+        More info here and here.
+      </div>
+    </th>
+    <td>
+      <input type="checkbox" name="authplugin[sql]"/>
+    </td>
+  </tr>
+</table>
+
 <h3>Initialize configuration</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
