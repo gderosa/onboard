@@ -38,12 +38,30 @@
 <table id="general_configuration">
   <tr>
     <th scope="row">
-      Max upload size (KiB)
-      <div class="optinfo">
-        0 to block any file upload, -1 for “unlimited”
-      </div>
+      Wheighted phrase mode
     </th>
-    <td><input type="text" name="maxuploadsize" value="<%= dg.config.main[:maxuploadsize] %>"/></td>
+    <td>
+      <fieldset>
+        <input
+            type="radio"
+            name="weightedphrasemode"
+            value="0"
+            <%= 'checked' if dg.config.main[:weightedphrasemode] == :disabled %>
+        />Do not use the weighted phrase feature<br/>
+        <input
+            type="radio"
+            name="weightedphrasemode"
+            value="1"
+            <%= 'checked' if dg.config.main[:weightedphrasemode] == :normal %>
+        />Normal weighted phrase operation<br/>
+        <input
+            type="radio"
+            name="weightedphrasemode"
+            value="2"
+            <%= 'checked' if dg.config.main[:weightedphrasemode] == :singular %>
+        />Each weighted phrase found only counts once on a page</br>
+      </fieldset>
+    </td>
   </tr>
   <tr>
     <th scope="row">
@@ -89,30 +107,12 @@
   </tr>
   <tr>
     <th scope="row">
-      Wheighted phrase mode
+      Max upload size (KiB)
+      <div class="optinfo">
+        0 to block any file upload, -1 for “unlimited”
+      </div>
     </th>
-    <td>
-      <fieldset>
-        <input
-            type="radio"
-            name="weightedphrasemode"
-            value="0"
-            <%= 'checked' if dg.config.main[:weightedphrasemode] == :disabled %>
-        />Do not use the weighted phrase feature<br/>
-        <input
-            type="radio"
-            name="weightedphrasemode"
-            value="1"
-            <%= 'checked' if dg.config.main[:weightedphrasemode] == :normal %>
-        />Normal weighted phrase operation<br/>
-        <input
-            type="radio"
-            name="weightedphrasemode"
-            value="2"
-            <%= 'checked' if dg.config.main[:weightedphrasemode] == :singular %>
-        />Each weighted phrase found only counts once on a page</br>
-      </fieldset>
-    </td>
+    <td><input type="text" name="maxuploadsize" value="<%= dg.config.main[:maxuploadsize] %>"/></td>
   </tr>
 </table>
 
