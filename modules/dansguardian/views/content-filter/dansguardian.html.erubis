@@ -8,6 +8,10 @@
   table#general_configuration tr th[scope="row"] {
     width: 60em;
   }
+  fieldset {
+    margin-left: 0;
+    padding-left: 0;
+  }
 </style>
 
 <%= message_partial(msg) %>
@@ -81,6 +85,33 @@
               dg.config.main[:preservecase] == Set.new([:lower, :original]) %>
         >Both</option>
       </select>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">
+      Wheighted phrase mode
+    </th>
+    <td>
+      <fieldset>
+        <input
+            type="radio"
+            name="weightedphrasemode"
+            value="0"
+            <%= 'checked' if dg.config.main[:weightedphrasemode] == :disabled %>
+        />Do not use the weighted phrase feature<br/>
+        <input
+            type="radio"
+            name="weightedphrasemode"
+            value="1"
+            <%= 'checked' if dg.config.main[:weightedphrasemode] == :normal %>
+        />Normal weighted phrase operation<br/>
+        <input
+            type="radio"
+            name="weightedphrasemode"
+            value="2"
+            <%= 'checked' if dg.config.main[:weightedphrasemode] == :singular %>
+        />Each weighted phrase found only counts once on a page</br>
+      </fieldset>
     </td>
   </tr>
 </table>
