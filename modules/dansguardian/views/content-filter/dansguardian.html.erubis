@@ -1,6 +1,14 @@
 <% 
-  dg = objects[:dg]
+  require 'set'
+
+  dg = objects[:dg] # This is an OnBoard:: object
 %>
+
+<style type="text/css">
+  table#general_configuration tr th[scope="row"] {
+    width: 60em;
+  }
+</style>
 
 <%= message_partial(msg) %>
 
@@ -21,9 +29,68 @@
   </table>
 </form>
 
+<h3>General configuration</h3>
+
+<table id="general_configuration">
+  <tr>
+    <th scope="row">
+      Max upload size (KiB)
+      <div class="optinfo">
+        0 to block any file upload, -1 for “unlimited”
+      </div>
+    </th>
+    <td><input type="text" name="maxuploadsize" value="<%= dg.config.main[:maxuploadsize] %>"/></td>
+  </tr>
+  <tr>
+    <th scope="row">
+      Case-sensitive phrase matching?
+      <div class="optinfo">
+        <ul>
+          <li>
+            <span class="term">Case-insensitive</span> is the default option.
+          </li>
+          <li>
+            <span class="term">Case-sensitive</span> is generaly discouraged, 
+            as it would require 
+            separate list items for “word”, “Word”, and “WORD”; but may be 
+            useful to work-around problems with accented letters and 
+            multibyte character encodings.
+          </li>
+          <li>
+            “<span class="term">Both</span>” is the most powerful option, 
+            but may affect performance.
+          </li>
+        </ul>
+      </div>
+    </th>
+    <td>
+      <select name="preservecase">
+        <option 
+          value="0"
+          <%= 'selected' if 
+              dg.config.main[:preservecase] == Set.new([:lower]) %>
+        >Case-insensitive</option>
+        <option 
+          value="1"
+          <%= 'selected' if 
+              dg.config.main[:preservecase] == Set.new([:original]) %>
+        >Case-sensitive</option>
+        <option 
+          value="2"
+          <%= 'selected' if 
+              dg.config.main[:preservecase] == Set.new([:lower, :original]) %>
+        >Both</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
 <h3>Initialize configuration</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <input type="hidden" name="initialize_config_files" value="on"/>
   <button type="submit">Initialize!</button>
 </form>
+
+<pre><%== dg.config.main.pretty_inspect %></pre>
+

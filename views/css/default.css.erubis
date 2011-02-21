@@ -286,6 +286,17 @@ table tr th, fieldset, .term {
   font-weight: bold;
 }
 
+table tr th .optinfo .term {
+  font-style: normal;
+  font-size: 95%;
+}
+
+table tr th .optinfo ul {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
 em.term {
   font-style: normal;
 }
