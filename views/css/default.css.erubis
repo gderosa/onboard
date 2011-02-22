@@ -274,8 +274,7 @@ table tr th {
 
 table tr td, table tr th, fieldset {
   /* background: <%= lightbg %>; */
-  /* background: url("/backgrounds/kollermedia.at/pattern4u/funky/31original.gif") repeat; */
-  background: url("/backgrounds/kollermedia.at/pattern4u/lined/33original.gif");
+  background: url("/backgrounds/kollermedia.at/pattern4u/lined/25original.gif"); 
 }
 
 .term {
