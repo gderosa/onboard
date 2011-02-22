@@ -2,7 +2,7 @@
   superhighlight  = "#080"
   highlight       = "#44b" 
   almostblack     = "#222"
-  lowlight        = "#777" 
+  lowlight        = "#666" 
   superlowlight   = "#bbb" 
   hover           = "color: white; background: #{highlight};" 
   lightbg         = "#f8f0c0" 
@@ -274,16 +274,17 @@ table tr th {
 
 table tr td, table tr th, fieldset {
   /* background: <%= lightbg %>; */
-  background: url("/backgrounds/kollermedia.at/pattern4u/funky/31original.gif") repeat;
+  /* background: url("/backgrounds/kollermedia.at/pattern4u/funky/31original.gif") repeat; */
+  background: url("/backgrounds/kollermedia.at/pattern4u/lined/33original.gif");
 }
 
 .term {
   text-decoration: none;
-  border-bottom: 1px gray dashed;
+  border-bottom: 1px black dashed;
 }
 
 table tr td fieldset {
-  background: inherit;
+  background: transparent;
 }
 
 table tr th, fieldset, .term {
