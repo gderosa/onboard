@@ -18,24 +18,34 @@ class OnBoard
         :objects  => sqlauth  
       )
     end
-=begin
-    put '/content-filter/dansguardian/filtergroups/:id.:format' do
-      # This is a "web application object":
-      ::OnBoard::ContentFilter::DG::FilterGroup.get(
-        params[:id]
-      ).update!(params)  
-      # This is unrelated to the web app:
-      dgconf = ::DansGuardian::Config.new(
-        :mainfile => ::OnBoard::ContentFilter::DG.config_file
+
+    get '/content-filter/dansguardian/authplugins/sql/groups.:format' do
+      
+      dg = OnBoard::ContentFilter::DG.new
+      dgconf = dg.config
+      fgnames = {}
+      1.upto dgconf.main[:filtergroups] do |fgid|
+        next if dg.deleted_filtergroups.include? fgid
+        fgnames[fgid] = dgconf.filtergroup(fgid)[:groupname] 
+      end
+
+      sqlauth_data      = ::DansGuardian::Parser.read_file (
+        ::OnBoard::ContentFilter::DG::AuthPlugin.config_file(:sql) 
       )
+      sqlauth_groupfile = sqlauth_data[:sqlauthgroups] 
+      sqlgroups_data    = ::DansGuardian::Parser.read_file sqlauth_groupfile
+
       format(
-        :path     => '/content-filter/dansguardian/filtergroups/filtergroup',
+        :path     => '/content-filter/dansguardian/authplugins/sql/groups',
         :module   => 'dansguardian',
-        :title    => "DansGuardian: Filter Group ##{params[:id]}",
+        :title    => "DansGuardian: SQL/RADIUS Groups mapping",
         :format   => params[:format],
-        :objects  => dgconf.filtergroup(params[:id].to_i) 
+        :objects  => {
+          :fgnames    => fgnames,
+          :groups     => sqlgroups_data
+        }  
       )
     end
-=end
+   
   end
 end
