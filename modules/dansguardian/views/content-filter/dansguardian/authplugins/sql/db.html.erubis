@@ -67,4 +67,3 @@
 </table> 
 
 
-<pre><%== o.pretty_inspect %></pre>
