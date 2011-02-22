@@ -12,9 +12,10 @@ class OnBoard
   })
 
   MENU_ROOT.add_path('/content-filter/dg/main', {
-    :href => '/content-filter/dansguardian',
-    :name => 'Main',
-    :n    => 1
+    :href     => '/content-filter/dansguardian',
+    :name     => 'Main',
+    :n        => 1,
+    :children => lambda {|arg| false} 
   })
 
   MENU_ROOT.add_path('/content-filter/dg/authplugins', {
