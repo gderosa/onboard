@@ -279,7 +279,7 @@ table tr td, table tr th, fieldset {
 
 .term {
   text-decoration: none;
-  border-bottom: 1px black dashed;
+  border-bottom: 1px #444 dashed;
 }
 
 table tr td fieldset {

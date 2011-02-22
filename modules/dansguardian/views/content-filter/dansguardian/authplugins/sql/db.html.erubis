@@ -45,7 +45,13 @@
 <h3>Queries</h3>
 <table>
   <tr>
-    <th scope="row">Map IP address to (RADIUS) User name</th>
+    <th scope="row">
+      Map IP address to (RADIUS) User name
+      <div class="optinfo">
+        <span class="term">-IPADDRESS-</span> will be replaced by the actual 
+        IP address of the client
+      </div>
+    </th>
     <td>
       <!-- HTML5 spellcheck="false" -->
       <textarea
@@ -55,7 +61,13 @@
     </td>
   </tr>
   <tr>
-    <th scope="row">Map (RADIUS) User name to (RADIUS) group</th>
+    <th scope="row">
+      Map (RADIUS) user to (RADIUS) group
+      <div class="optinfo">
+        <span class="term">-USERNAME-</span> will be replaced by the (RADIUS) 
+        username resulting from the previous query
+      </div>
+    </th>
     <td>
       <!-- HTML5 spellcheck="false" -->
       <textarea 
