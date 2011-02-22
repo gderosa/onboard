@@ -47,7 +47,9 @@
   <tr>
     <th scope="row">Map IP address to (RADIUS) User name</th>
     <td>
-      <textarea 
+      <!-- HTML5 spellcheck="false" -->
+      <textarea
+          spellcheck="false" 
           name="sqlauthipuserquery" 
           cols="60"><%= o[:sqlauthipuserquery] %></textarea>
     </td>
@@ -55,7 +57,9 @@
   <tr>
     <th scope="row">Map (RADIUS) User name to (RADIUS) group</th>
     <td>
+      <!-- HTML5 spellcheck="false" -->
       <textarea 
+          spellcheck="false" 
           name="sqlauthusergroupquery" 
           cols="60"><%= o[:sqlauthusergroupquery] %></textarea>
     </td>
