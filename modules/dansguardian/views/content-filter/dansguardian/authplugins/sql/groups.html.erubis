@@ -5,8 +5,9 @@
 
   groups        = objects[:groups]
   fgnames       = objects[:fgnames]
-  fgnumbers     = fgnames.keys.sort
-  sqlfgnumbers  = groups.values.uniq.sort 
+  fgnumbers     = fgnames.keys
+  sqlfgnumbers  = groups.values.uniq
+  allfgnumbers  = (fgnumbers | sqlfgnumbers).sort
   
 %>
 
@@ -19,14 +20,17 @@
   <input type="hidden" name="action" value="rewrite"/>
   <% groups.each_pair do |radgroup, fgid| %>
     <tr>
-      <th scope="row"><%= radgroup %></th>
       <td>
-        <select name="groups[<%= radgroup %>]">
-          <% 1.upto (fgnumbers + sqlfgnumbers).max do |n| %>
+        <input type="text" name="groups[][sqlname]" value="<%= radgroup %>"/>
+      </th>
+      <td>
+        <select name="groups[][fgid]">
+          <% allfgnumbers.each do |n| %>
+            <% selected = (n == fgid ? 'selected' : '') %> 
             <% if fgnumbers.include? n %>
-              <option value="<%= n %>"><span style="text-align: right; width: 2em;"><%= n%>:</span> <%= fgnames[n] %></option>
+              <option <%= selected %> value="<%= n %>"><%= sprintf("%02d", n) %>: <%= fgnames[n] %></option>
             <% else %>
-              <option class="err" value="<%= n %>"><span style="text-align: right; width: 2em;"><%= n%>:</span> (non existing!)</option>
+              <option <%= selected %> class="error" value="<%= n %>"><%= sprintf("%02d", n) %>: (non existing!)</option>
             <% end %>
           <% end %>
         </select>
