@@ -1,4 +1,37 @@
+<% 
+  # we are breaking MVC pattern here: lots of "logic" is put in the view
+  # and in the Sinatra routes, instead of lib/ ; but Sinatra itself
+  # encourages non-MVC development, so...
+
+  groups        = objects[:groups]
+  fgnames       = objects[:fgnames]
+  fgnumbers     = fgnames.keys.sort
+  sqlfgnumbers  = groups.values.uniq.sort 
+  
+%>
+
 <h2><%= title %></h2>
 
 <pre><%== objects.pretty_inspect %></pre>
+
+<table>
+  <!-- allow future implementation of "update" -->
+  <input type="hidden" name="action" value="rewrite"/>
+  <% groups.each_pair do |radgroup, fgid| %>
+    <tr>
+      <th scope="row"><%= radgroup %></th>
+      <td>
+        <select name="groups[<%= radgroup %>]">
+          <% 1.upto (fgnumbers + sqlfgnumbers).max do |n| %>
+            <% if fgnumbers.include? n %>
+              <option value="<%= n %>"><span style="text-align: right; width: 2em;"><%= n%>:</span> <%= fgnames[n] %></option>
+            <% else %>
+              <option class="err" value="<%= n %>"><span style="text-align: right; width: 2em;"><%= n%>:</span> (non existing!)</option>
+            <% end %>
+          <% end %>
+        </select>
+      </td>
+    </tr>
+  <% end %>
+</table>
 

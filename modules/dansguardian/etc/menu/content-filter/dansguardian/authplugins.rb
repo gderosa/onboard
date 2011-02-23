@@ -6,7 +6,7 @@ class OnBoard
   })
 
   MENU_ROOT.add_path('/content-filter/dg/authplugins/sql/groups', {
-    :name => 'Group mapping',
+    :name => 'Group Mapping',
     :href => '/content-filter/dansguardian/authplugins/sql/groups',
     :n    => 1
   })

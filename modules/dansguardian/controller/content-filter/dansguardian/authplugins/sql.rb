@@ -35,14 +35,19 @@ class OnBoard
       sqlauth_groupfile = sqlauth_data[:sqlauthgroups] 
       sqlgroups_data    = ::DansGuardian::Parser.read_file sqlauth_groupfile
 
+      groups = {}
+      sqlgroups_data.each_pair do |radgroup, fgstring|
+        groups[radgroup.to_s] = fgstring.sub('filter', '').to_i
+      end
+
       format(
         :path     => '/content-filter/dansguardian/authplugins/sql/groups',
         :module   => 'dansguardian',
-        :title    => "DansGuardian: SQL/RADIUS Groups mapping",
+        :title    => "DansGuardian: SQL/RADIUS Authentication",
         :format   => params[:format],
         :objects  => {
           :fgnames    => fgnames,
-          :groups     => sqlgroups_data
+          :groups     => groups
         }  
       )
     end
