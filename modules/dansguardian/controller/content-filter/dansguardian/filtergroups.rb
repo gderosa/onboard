@@ -88,15 +88,16 @@ class OnBoard
     end
 
     get '/content-filter/dansguardian/filtergroups/:id.:format' do
-      dgconf = ::DansGuardian::Config.new(
-        :mainfile => ::OnBoard::ContentFilter::DG.config_file
-      )
+      #dgconf = ::DansGuardian::Config.new(
+      #  :mainfile => ::OnBoard::ContentFilter::DG.config_file
+      #)
+      o = OnBoard::ContentFilter::DG::FilterGroup.get(params[:id].to_i) 
       format(
         :path     => '/content-filter/dansguardian/filtergroups/filtergroup',
         :module   => 'dansguardian',
         :title    => "DansGuardian: Filter Group ##{params[:id]}",
         :format   => params[:format],
-        :objects  => dgconf.filtergroup(params[:id].to_i) 
+        :objects  => o 
       )
     end
 

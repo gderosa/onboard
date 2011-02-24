@@ -1,5 +1,5 @@
 <%
-  fg = objects # The filtergroup object (::DansGuardian::Config) 
+  fg = objects.fgdata # The filtergroup object (::DansGuardian::Config) 
 %>
 
 <style type="text/css">

@@ -8,7 +8,7 @@ class OnBoard
         class << self
           def get(id)
             new(
-              :id => id
+              :id => id.to_i
             )
           end
         end
@@ -17,6 +17,32 @@ class OnBoard
           @id   = h[:id]
           @file = DG.fg_file(@id)
         end
+
+        def fgdata
+          @fgdata ||= ::DansGuardian::Config.new(
+            :mainfile => ::OnBoard::ContentFilter::DG.config_file
+          ).filtergroup(@id)
+          @fgdata
+        end
+
+        def export
+          h = {}
+          fgdata.data.each_pair do |k, v|
+            k = k.to_s # Symbol#to_s! does not exist :-)
+            if k =~ /list$/
+              if v =~ /^#{DG::ManagedList.root_dir}\/(.*)/
+                repath = $1
+                h[k] = repath
+              end
+            else
+              h[k] = v
+            end
+          end
+          return h
+        end
+
+        def to_json(*a); export.to_json(*a); end
+        def to_yaml(*a); export.to_yaml(*a); end
 
         def update!(params)
           # Update Hash: will be the argument of
