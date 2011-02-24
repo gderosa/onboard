@@ -11,40 +11,88 @@
   
 %>
 
+<style type="text/css">
+  /* table tr th:first-child, table tr td:first-child {
+    width: 32ex;
+  } */
+  table tr td input[type="text"], table tr td select {
+    width: 30ex;
+  }
+</style>
+
 <h2><%= title %></h2>
 
 <h3>Group Mapping</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th>SQL/RADIUS Group</th>
-      <th>DansGuardian Filter Group</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- allow future implementation of "update" -->
-    <input type="hidden" name="action" value="rewrite"/>
-    <% groups.each_pair do |radgroup, fgid| %>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <!-- allow future implementation of "update" -->
+  <!-- <input type="hidden" name="action" value="rewrite"/> -->
+  <table style="<%= 'display: none;' unless groups.keys.any? %>">
+    <thead>
       <tr>
-        <td>
-          <input type="text" name="groups[][sqlname]" value="<%= radgroup %>"/>
+        <th>
+          SQL/RADIUS Group
+          <div class="optinfo">
+            Make this field blank to delete an item
+          </div>
         </th>
-        <td>
-          <select name="groups[][fgid]">
-            <% allfgnumbers.each do |n| %>
-              <% print_n = sprintf("%02d", n) %> 
-              <% selected = (n == fgid ? 'selected' : '') %> 
-              <% if fgnumbers.include? n %>
-                <option <%= selected %> value="<%= n %>"><%= print_n %>: <%= fgnames[n] %></option>
-              <% else %>
-                <option <%= selected %> class="error" value="<%= n %>"><%= print_n %>: (non-existent!)</option>
-              <% end %>
-            <% end %>
-          </select>
-        </td>
+        <th>DansGuardian Filter Group</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
-
+    </thead>
+    <tbody>
+      <% groups.each_pair do |radgroup, fgid| %>
+        <tr>
+          <td>
+            <input type="text" name="groups[][sqlname]" value="<%= radgroup %>"/>
+          </th>
+          <td>
+            <select name="groups[][fgid]">
+              <% allfgnumbers.each do |n| %>
+                <% print_n = sprintf("%02d", n) %> 
+                <% selected = (n == fgid ? 'selected' : '') %> 
+                <% if fgnumbers.include? n %>
+                  <option <%= selected %> value="<%= n %>"><%= print_n %>: <%= fgnames[n] %></option>
+                <% else %>
+                  <option <%= selected %> class="error" value="<%= n %>"><%= print_n %>: (non-existent!)</option>
+                <% end %>
+              <% end %>
+            </select>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <h4>Add new</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>SQL/RADIUS Group</th>
+        <th>DansGuardian Filter Group</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 4.times do %>
+        <tr>
+          <td>
+            <input type="text" name="groups[][sqlname]" value=""/>
+          </th>
+          <td>
+            <select name="groups[][fgid]">
+              <% allfgnumbers.each do |n| %>
+                <% fgid = 1 %>
+                <% print_n = sprintf("%02d", n) %> 
+                <% selected = (n == fgid ? 'selected' : '') %> 
+                <% if fgnumbers.include? n %>
+                  <option <%= selected %> value="<%= n %>"><%= print_n %>: <%= fgnames[n] %></option>
+                <% else %>
+                  <option <%= selected %> class="error" value="<%= n %>"><%= print_n %>: (non-existent!)</option>
+                <% end %>
+              <% end %>
+            </select>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <button type="submit" style="margin-top: 2em;">Change!</button>
+</form>
