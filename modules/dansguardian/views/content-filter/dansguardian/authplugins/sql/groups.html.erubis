@@ -13,29 +13,38 @@
 
 <h2><%= title %></h2>
 
-<pre><%== objects.pretty_inspect %></pre>
+<h3>Group Mapping</h3>
 
 <table>
-  <!-- allow future implementation of "update" -->
-  <input type="hidden" name="action" value="rewrite"/>
-  <% groups.each_pair do |radgroup, fgid| %>
+  <thead>
     <tr>
-      <td>
-        <input type="text" name="groups[][sqlname]" value="<%= radgroup %>"/>
-      </th>
-      <td>
-        <select name="groups[][fgid]">
-          <% allfgnumbers.each do |n| %>
-            <% selected = (n == fgid ? 'selected' : '') %> 
-            <% if fgnumbers.include? n %>
-              <option <%= selected %> value="<%= n %>"><%= sprintf("%02d", n) %>: <%= fgnames[n] %></option>
-            <% else %>
-              <option <%= selected %> class="error" value="<%= n %>"><%= sprintf("%02d", n) %>: (non existing!)</option>
-            <% end %>
-          <% end %>
-        </select>
-      </td>
+      <th>SQL/RADIUS Group</th>
+      <th>DansGuardian Filter Group</th>
     </tr>
-  <% end %>
+  </thead>
+  <tbody>
+    <!-- allow future implementation of "update" -->
+    <input type="hidden" name="action" value="rewrite"/>
+    <% groups.each_pair do |radgroup, fgid| %>
+      <tr>
+        <td>
+          <input type="text" name="groups[][sqlname]" value="<%= radgroup %>"/>
+        </th>
+        <td>
+          <select name="groups[][fgid]">
+            <% allfgnumbers.each do |n| %>
+              <% print_n = sprintf("%02d", n) %> 
+              <% selected = (n == fgid ? 'selected' : '') %> 
+              <% if fgnumbers.include? n %>
+                <option <%= selected %> value="<%= n %>"><%= print_n %>: <%= fgnames[n] %></option>
+              <% else %>
+                <option <%= selected %> class="error" value="<%= n %>"><%= print_n %>: (non-existent!)</option>
+              <% end %>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
 

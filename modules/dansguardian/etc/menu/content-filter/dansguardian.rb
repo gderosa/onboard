@@ -19,21 +19,22 @@ class OnBoard
   })
 
   MENU_ROOT.add_path('/content-filter/dg/authplugins', {
-    :name => 'User Authentication',
+    :name => 'Authentication',
     :desc => 'Assign users to Filter Groups',
-    :n    => 2
+    :n    => 4
   })
 
   MENU_ROOT.add_path('/content-filter/dg/fg', {
     :href => '/content-filter/dansguardian/filtergroups',
     :name => 'Filter Groups',
-    :desc => 'You may configure different filtering rules for each group of users',
-    :n    => 3
+    :desc => 
+        'You may configure different filtering rules for each group of users',
+    :n    => 2
   })
 
   MENU_ROOT.add_path('/content-filter/dg/lists', {
     :name => 'Lists',
-    :n    => 4
+    :n    => 3
   })
 
   MENU_ROOT.add_path('/content-filter/dg/init', {
