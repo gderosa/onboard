@@ -19,6 +19,31 @@ class OnBoard
       )
     end
 
+    put '/content-filter/dansguardian/authplugins/sql/db.:format' do
+      # pp params
+
+      file = ::OnBoard::ContentFilter::DG::AuthPlugin.config_file(:sql)
+      u = {}
+      %w{
+        sqlauthdb sqlauthdbhost sqlauthdbuser sqlauthdbpass 
+        sqlauthipuserquery sqlauthusergroupquery
+      }.each do |name|
+        u[name] = %Q{'#{params[name]}'} if params[name] =~ /\S/
+      end
+      ::DansGuardian::Updater.update! file, u
+
+      sqlauth = ::DansGuardian::Config::Auth::SQL.new
+      data    = ::DansGuardian::Parser.read_file file
+      sqlauth.load data
+      format(
+        :path     => '/content-filter/dansguardian/authplugins/sql/db',
+        :module   => 'dansguardian',
+        :title    => "DansGuardian: SQL/RADIUS Authentication",
+        :format   => params[:format],
+        :objects  => sqlauth  
+      )
+    end
+
     get '/content-filter/dansguardian/authplugins/sql/groups.:format' do
       
       dg = OnBoard::ContentFilter::DG.new

@@ -5,77 +5,79 @@
 
 <h2><%= title %></h2>
 
-<h3>Database configuration</h3>
-<table>
-  <tr>
-    <th scope="row">DB backend</th>
-    <td>
-      <select name="sqlauthdb" readonly>
-        <option value="mysql">MySQL</option>
-      </select>
-    </td>
-  </tr>
-  <tr>
-    <th scope="row">DB host</th>
-    <td>
-      <input 
-          type="text" name="sqlauthdbhost" value="<%= o[:sqlauthdbhost] %>"/>
-    </td>
-  </tr>
-  <tr>
-    <th scope="row">DB username</th>
-    <td>
-      <input 
-          type="text" name="sqlauthdbuser" value="<%= o[:sqlauthdbuser] %>"/>
-    </td>
-  </tr> 
-  <tr>
-    <th scope="row">
-      DB password
-      <div class="optinfo">
-        Leave blank to keep the current password
-      </div>
-    </th>
-    <td>
-      <input type="password" name="sqlauthdbuser"/>
-    </td>
-  </tr> 
-</table> 
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <h3>Database configuration</h3>
+  <table>
+    <tr>
+      <th scope="row">DB backend</th>
+      <td>
+        <select name="sqlauthdb" readonly>
+          <option value="mysql">MySQL</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">DB host</th>
+      <td>
+        <input 
+            type="text" name="sqlauthdbhost" value="<%= o[:sqlauthdbhost] %>"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">DB username</th>
+      <td>
+        <input 
+            type="text" name="sqlauthdbuser" value="<%= o[:sqlauthdbuser] %>"/>
+      </td>
+    </tr> 
+    <tr>
+      <th scope="row">
+        DB password
+        <div class="optinfo">
+          Leave blank to keep the current password
+        </div>
+      </th>
+      <td>
+        <input type="password" name="sqlauthdbpass"/>
+      </td>
+    </tr> 
+  </table> 
 
-<h3>Queries</h3>
-<table>
-  <tr>
-    <th scope="row">
-      Map IP address to (RADIUS) User name
-      <div class="optinfo">
-        <span class="term">-IPADDRESS-</span> will be replaced by the actual 
-        IP address of the client
-      </div>
-    </th>
-    <td>
-      <!-- HTML5 spellcheck="false" -->
-      <textarea
-          spellcheck="false" 
-          name="sqlauthipuserquery" 
-          cols="60"><%= o[:sqlauthipuserquery] %></textarea>
-    </td>
-  </tr>
-  <tr>
-    <th scope="row">
-      Map (RADIUS) user to (RADIUS) group
-      <div class="optinfo">
-        <span class="term">-USERNAME-</span> will be replaced by the (RADIUS) 
-        username resulting from the previous query
-      </div>
-    </th>
-    <td>
-      <!-- HTML5 spellcheck="false" -->
-      <textarea 
-          spellcheck="false" 
-          name="sqlauthusergroupquery" 
-          cols="60"><%= o[:sqlauthusergroupquery] %></textarea>
-    </td>
-  </tr>
-</table> 
-
-
+  <h3>Queries</h3>
+  <table>
+    <tr>
+      <th scope="row">
+        Map IP address to (RADIUS) User name
+        <div class="optinfo">
+          <span class="term">-IPADDRESS-</span> will be replaced by the actual 
+          IP address of the client
+        </div>
+      </th>
+      <td>
+        <!-- HTML5 spellcheck="false" -->
+        <textarea
+            spellcheck="false" 
+            name="sqlauthipuserquery" 
+            cols="60"><%= o[:sqlauthipuserquery] %></textarea>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Map (RADIUS) user to (RADIUS) group
+        <div class="optinfo">
+          <span class="term">-USERNAME-</span> will be replaced by the (RADIUS) 
+          username resulting from the previous query
+        </div>
+      </th>
+      <td>
+        <!-- HTML5 spellcheck="false" -->
+        <textarea 
+            spellcheck="false" 
+            name="sqlauthusergroupquery" 
+            cols="60"><%= o[:sqlauthusergroupquery] %></textarea>
+      </td>
+    </tr>
+  </table> 
+  <button type="submit" style="margin-top:2em;">Change!</button>
+</form>
