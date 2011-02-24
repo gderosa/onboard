@@ -124,7 +124,7 @@
   <table id="authplugins"> 
     <tr>
       <th scope="row">
-        <a href="/content-filter/dansguardian/authplugins/sql.html">SQL/RADIUS</a>
+        SQL/RADIUS
         <div class="optinfo">
           Allows Captive Portal and 802.1X integration.
           More info 
