@@ -27,14 +27,14 @@ class OnBoard
 
         def export
           h = {}
-          fgdata.data.each_pair do |k, v|
+          fgdata.each do |k, v|
             k = k.to_s # Symbol#to_s! does not exist :-)
             if k =~ /list$/
               if v =~ /^#{DG::ManagedList.root_dir}\/(.*)/
                 repath = $1
                 h[k] = repath
               end
-            else
+            elsif %w{groupmode groupname blockdownloads naughtynesslimit disablecontentscan weightedphrasemode}.include? k
               h[k] = v
             end
           end
