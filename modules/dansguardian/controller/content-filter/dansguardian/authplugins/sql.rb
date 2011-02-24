@@ -10,6 +10,20 @@ class OnBoard
         ::OnBoard::ContentFilter::DG::AuthPlugin.config_file(:sql) 
       )
       sqlauth.load data
+
+      def sqlauth.export
+        h = {}
+        [
+          :sqlauthdb, :sqlauthdbhost, :sqlauthdbuser, 
+          :sqlauthipuserquery, :sqlauthusergroupquery
+        ].each do |k|
+          h[k.to_s] = self[k]
+        end
+        h
+      end
+      def sqlauth.to_json(*a); self.export.to_json(*a); end
+      def sqlauth.to_yaml(*a); self.export.to_yaml(*a); end
+
       format(
         :path     => '/content-filter/dansguardian/authplugins/sql/db',
         :module   => 'dansguardian',
