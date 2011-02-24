@@ -107,10 +107,15 @@ class OnBoard
     
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
+        h[:formats] ||= %w{html json yaml}
+        h[:formats] |= %w{rb} if options.environment == :development
+
         # try to guess if not provided
         h[:format]                                ||= 
             params[:format]                       ||= 
             request.path_info =~ /\.(\w+$)/ && $1
+
+        return multiple_choices(h) unless h[:formats].include? h[:format]
 
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
@@ -163,13 +168,13 @@ class OnBoard
 
           return h[:objects].to_(h[:format]) 
 
-        when 'rb'
-          if options.environment == :development
+        when 'rb' # development check already done
+          #if options.environment == :development
             content_type 'text/x-ruby'
             return h[:objects].pretty_inspect 
-          else
-            multiple_choices(h)
-          end
+          #else
+          #  multiple_choices(h)
+          #end
         else
           if h[:partial]
             raise ArgumentError, "You requested a partial but you did not provide a valid :format. You may want something like :format => 'html' in #{caller[0]}"
