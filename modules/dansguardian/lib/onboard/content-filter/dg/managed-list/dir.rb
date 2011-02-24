@@ -30,6 +30,32 @@ class OnBoard
             end
           end
 
+          def export
+            a = []
+            self.each do |item|
+              a << {
+                'type' => (
+                            case item
+                            when ManagedList::List
+                              'list'
+                            when ManagedList::Dir
+                              'dir'
+                            else
+                              'unknown'
+                            end
+                          ),
+                'name' => File.basename(item.relative_path)
+              }
+            end
+            {
+              'relative_path' => @relative_path,
+              'items'         => a
+            }
+          end
+
+          def to_json(*args); export.to_json(*args); end
+          def to_yaml(*args); export.to_yaml(*args); end
+
         end
       end
     end
