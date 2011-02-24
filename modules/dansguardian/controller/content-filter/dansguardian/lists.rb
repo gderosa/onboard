@@ -25,7 +25,7 @@ class OnBoard
                  when ContentFilter::DG::ManagedList::Dir
                    '/content-filter/dansguardian/lists/dir'
                  when ContentFilter::DG::ManagedList::List
-                   formats << 'raw' # side effect
+                   formats = ['html', 'raw'] # side effect
                    '/content-filter/dansguardian/lists/list'
                  else
                    raise TypeError, "I would expect a ContentFilter::DG::ManagedList::(File|List) object, got #{object.inspect}"

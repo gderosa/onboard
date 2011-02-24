@@ -63,6 +63,22 @@ class OnBoard
             return includables
           end
 
+# Lots of encoding issues :-( , download the raw file!
+=begin          
+          def export
+            h = {}
+            # h['file_encoding']  = @file_encoding.name # not 'intrinsic'
+            h['listcategory']   = listcategory
+            h['items']          = items.map do |s| 
+              s.encode Encoding::default_external
+            end
+            return h
+          end
+
+          def to_json(*args); export.to_json(*args); end
+          def to_yaml(*args); export.to_yaml(*args); end
+=end
+
           def <=>(other)
             if other.is_a? ManagedList::Dir
               +1 # list directories before files
