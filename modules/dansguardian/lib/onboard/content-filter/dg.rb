@@ -26,6 +26,10 @@ class OnBoard
           "#{CONFDIR}/dansguardianf#{fgid}.conf"  
         end
 
+        def saverestore_file
+          "#{CONFDIR}/onboard.yaml"
+        end
+
       end
 
       attr_reader :pid, :config, :deleted_filtergroups
@@ -59,9 +63,10 @@ class OnBoard
         return @pid[:parent]
       end
 
-      def root;           self.class.root;          end
-      def config_file;    self.class.config_file;   end
-      def fg_file(fgid);  self.class.fg_file(fgid); end
+      def root;             self.class.root;              end
+      def config_file;      self.class.config_file;       end
+      def fg_file(fgid);    self.class.fg_file(fgid);     end
+      def saverestore_file; self.class.saverestore_file;  end
 
       def write_all
         dg = self
@@ -223,6 +228,24 @@ class OnBoard
 
       def to_json(*args); export.to_json(*args); end
       def to_yaml(*args); export.to_yaml(*args); end
+
+      def save
+        File.open saverestore_file, 'w' do |f|
+          f.write YAML.dump (
+            {
+              :running => running? 
+            }
+          )
+        end
+      end
+
+      def restore
+        begin
+          saved_data = YAML.load File.read saverestore_file
+          start if saved_data[:running] and not running?
+        rescue Errno::ENOENT
+        end
+      end
 
     end
   end
