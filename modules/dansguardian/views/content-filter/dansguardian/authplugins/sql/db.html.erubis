@@ -42,7 +42,20 @@
         <input type="password" name="sqlauthdbpass"/>
       </td>
     </tr> 
-  </table> 
+  </table>
+
+  <h3>Cache</h3>
+  <table>
+    <tr>
+      <th scope="row">
+        Cache Time-to-Live (seconds)
+      </th>
+      <td>
+        <input 
+            type="text" name="sqlauthcachettl" value="<%= o[:sqlauthcachettl] %>"/>
+      </td>
+    </tr>
+  </table>
 
   <h3>Queries</h3>
   <table>
