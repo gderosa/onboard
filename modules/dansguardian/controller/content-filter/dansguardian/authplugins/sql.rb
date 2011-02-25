@@ -15,10 +15,11 @@ class OnBoard
         h = {}
         [
           :sqlauthdb, :sqlauthdbhost, :sqlauthdbuser, 
-          :sqlauthipuserquery, :sqlauthusergroupquery
+          :sqlauthipuserquery, :sqlauthusergroupquery,
         ].each do |k|
           h[k.to_s] = self[k]
         end
+	h['sqlauthcachettl'] = self[:sqlauthcachettl].to_i # should be already Fixnum
         h
       end
       def sqlauth.to_json(*a); self.export.to_json(*a); end
@@ -44,6 +45,7 @@ class OnBoard
       }.each do |name|
         u[name] = %Q{'#{params[name]}'} if params[name] =~ /\S/
       end
+      u['sqlauthcachettl'] = "#{params['sqlauthcachettl']}" # no surrounding quotes
       ::DansGuardian::Updater.update! file, u
 
       sqlauth = ::DansGuardian::Config::Auth::SQL.new
