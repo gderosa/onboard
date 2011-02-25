@@ -39,6 +39,7 @@
 <h3>General configuration</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/> 
+  <input type="hidden" name="change_general_config" value="on"/>
   <table id="general_configuration">
     <tr>
       <th scope="row">
