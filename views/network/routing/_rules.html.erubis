@@ -1,0 +1,107 @@
+<%
+  # encoding: utf-8
+
+  require 'onboard/network/routing'
+  require 'onboard/network/qos/diffserv'
+  require 'onboard/extensions/string' # a "smarter" to_i 
+
+  show_delete_checkbox ||= false
+
+%>
+
+<table>
+  <thead>
+    <tr>
+      <th>Priority</th>
+      <th>Source address/network</th>
+      <!-- <th>Destination address/network</th> --> <!-- makes little sense... -->
+      <th title="Quality of Service: Differentiated Service Code Point">
+        <a href="http://en.wikipedia.org/wiki/Differentiated_services">QoS: DSCP</a>
+      </th>
+      <th>Input Interface</th>
+      <th>Input Bridge Port</th> 
+      <th>Routing Table</th>
+      <% if show_delete_checkbox %>
+        <th>Delete?</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% all_rules.each do |rule| %>
+      <tr>
+        <td><input class="rwtext" name="rules[][prio]" size="5" style="text-align: right;" value="<%= rule.prio %>"/></td>
+        <td><input size="19" class="rwtext" name="rules[][from]" value="<%= rule.from %>"/></td>
+        <!-- <td><input size="19" class="rwtext" name="rules[][to]"   value="<%= rule.to %>"  /></td> --> <!-- makes little sense... -->
+        <!-- 
+          "iif" recalls ip rule keyword, but really the process goes
+          via iptables mark. Why don't use iproute2 directly? Because iptables
+          allow you even to distinguish between different ports inside a 
+          bridge ( iptables -m physdev ) which is a really interesting feature.
+        -->        
+        <td>
+          <select style="width: 9em;" name="rules[][dscp]">
+            <option value=""></option>
+            <% OnBoard::Network::QoS::DSCP.each do |dscp| %>
+              <option title="<%= dscp[:comment] %>" value="<%= dscp[:value] %>" <%= 'selected' if dscp[:value] == rule.dscp %>><%= dscp[:symbol] %>: <%= dscp[:long_name] %></option>
+            <% end %>
+          </select>
+        </td>
+        
+        <td>
+          <%= 
+            erubis(
+              :"/network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name          => 'rules[][iif]',
+                  :all_interfaces       => all_interfaces.reject{|x| x.bridged?},
+                  :selected_if          => lambda {|x| x.name == rule.iif}, 
+                  :print_bridge_info    => true
+                }
+              }
+            )  # display IP interfaces, including bridges, but not bridge ports
+          %>
+        </td>
+        <td>
+          <%= 
+            erubis(
+              :"/network/_interface_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name          => 'rules[][iphysdev]',
+                  :all_interfaces       => all_interfaces.select{|x| x.bridged?},
+                  :selected_if          => lambda {|x| x.name == rule.iphysdev},
+                  :print_bridge_info    => true
+                }
+              }
+            ) 
+          %>
+        </td>
+
+        <td>
+          <%= 
+            erubis(
+              :"/network/routing/_table_chooser.html",
+              {
+                :layout => false,
+                :locals => {
+                  :select_name          => 'rules[][table]',
+                  :all_tables           => all_tables,
+                  :rule                 => rule # to select a default choice
+                }
+              }
+            ) 
+          %>
+        </td>
+        <% if show_delete_checkbox %>
+          <td style="text-align: center;">
+            <input type="checkbox" name="rules[][delete]"/>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

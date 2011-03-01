@@ -1,0 +1,66 @@
+<% 
+  group   = objects['group']
+  conf    = objects['conf']
+  members = objects['members'] 
+%>
+<%= message_partial(msg) %>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style' # same style of users
+  )
+%>
+
+<h2>RADIUS group: <%= group.name %></h2>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <%= 
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/groups/_members',
+      :locals => {
+        :group    => group,
+        :heading  => 3,
+        :members  => members
+      }
+    )
+  %>
+
+  <h3>Add members</h3>
+  <p>
+  Comma-separated list, e.g. <code>user1, user2, user3</code> . Or one
+  per line.</p> 
+  <p>You may
+  also add non existing users, which will be configured later (of course,
+  they will NOT be authorized to access the network until then).
+  </p>
+
+  <p><textarea style="width:40ex" name="add_members"></textarea></p>
+  <div style="margin-top:2em;"><button type="submit" name="update_members" value="on">Update members!</button></div>
+</form>
+
+<div style="height:2em;"> <!-- separator --> </div>
+
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/groups/_form_edit', # edit attributes
+    :locals => {
+      :group    => group,
+      :heading  => 3
+    }
+  )
+%>
+<div style="height:2em;"> <!-- separator --> </div>
+<h3>Delete this group</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="delete"/>
+  <table>
+    <tr>
+      <th scope="row">Yes, I am sure</th>
+      <td><input type="checkbox" name="confirm"/></td>
+    </tr>
+  </table>
+  <button type="submit" style="margin-top:1.2em;">Delete!</button>
+</form>

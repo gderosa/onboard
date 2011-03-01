@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<% 
+  require 'hmenu'
+
+  title ||= nil # avoid NameError if no title was set
+%> 
+<html>
+  <head>
+    <title><%= OnBoard::LONGNAME %><%= " - #{title}" if title %></title> 
+    <link rel="stylesheet" href="/css/default.css"/>
+    <link rel="icon" href="/icons/favicon.ico"/>
+    <style type="text/css">
+      <%= ::HMenu::CSS.out %>
+    </style>
+
+    <script type="text/javascript">
+      <%= ::HMenu::JS.out %>
+    </script>
+
+  </head>
+  <body onload="reset_menus();"> 
+    <div id="sidebar">
+      <div id="onboard-menu">
+        <% 
+          # Work-around a subtle bug: the first time you call the menu,
+          # item highlighting does not work properly: so, allow data
+          # to properly filled
+        
+          $main_menu_called ||= false
+          unless $main_menu_called
+            main_menu
+            $main_menu_called = true
+          end
+        %>
+        <%= main_menu %>
+      </div>
+    </div>
+    <div id="main">
+
+      <%= erubis(:"_navbar.html", :layout => false) %>
+
+      <%= 
+        erubis(
+          :"_altbar.html", 
+          :layout => false,
+          :locals => {
+            :formats => formats
+          }
+        ) unless status == 404 
+      %>
+      <%= yield %>
+      <pre id="jsdebug"></pre>
+    </div>
+  </body>
+</html>

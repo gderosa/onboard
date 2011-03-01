@@ -157,6 +157,7 @@ class OnBoard
             end
             return :ipv4
           elsif addr =~ /^[\da-f:]+$/i                              # IPv6
+            return :ipv6 if addr == '::'
             return false if addr =~ /::.*::/
             return false if addr =~ /:::/
             return false unless addr =~ /[\da-f]/i

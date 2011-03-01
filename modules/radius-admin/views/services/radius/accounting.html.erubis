@@ -1,0 +1,56 @@
+<%
+  require 'facets/hash'
+  require 'onboard/service/radius'
+
+  rows          = objects['rows']         || []
+  total_items   = objects['total_items']  || 0
+  page          = objects['page']         || params[:page]      || 1
+  per_page      = objects['per_page']     || params[:per_page]  || 1
+
+%>
+<% 
+  if rows[0]
+    columns = rows[0].keys 
+  else
+    columns = ['no info available yet']
+  end
+%>
+<style type="text/css">
+  table tr th {
+    /* font-size: 70%; */
+    padding: 0.2em 0;
+  }
+</style>
+<%= message_partial(msg) %>
+<h2>RADIUS Accounting</h2>
+
+<table>
+  <thead>
+    <tr>
+      <% columns.each do |column| %>
+        <th><%= column %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% rows.each do |row| %>
+      <tr>
+        <% columns.each do |column| %>
+          <td><%= row[column] %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= 
+  erubis(
+    :"_paginator.html",
+    :layout => false,
+    :locals => {
+      :page => page,
+      :per_page => per_page,
+      :total_items => total_items
+    }
+  )
+%>

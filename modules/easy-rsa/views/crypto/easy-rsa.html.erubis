@@ -1,0 +1,360 @@
+<% # encoding: utf-8
+  
+  require 'rack/utils'
+  require 'i18n_data' 
+  require 'date'
+
+  require 'onboard/extensions/integer'
+  require 'onboard/crypto/easy-rsa'
+  require 'onboard/crypto/ssl'
+%>
+
+<h2>SSL keys and certificates</h2>
+<h3>Diffie-Hellman parameters</h3>
+<table>
+  <thead>
+    <tr>
+      <th>File name</th>
+      <th>Size</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% objects['dh'].each_pair do |filename, dh_h| %>   
+      <tr> 
+        <td><code><%= filename %></code></td>
+        <td><%= dh_h['size'] %></td>
+        <td>
+          <%= 
+            if not dh_h['err']
+              'Ok'  
+            elsif dh_h['being_created'] 
+              '<span style="font-style:italic;">generating DH params... this may take a long time...</span>'
+            else
+              dh_h['err']
+            end
+          %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<h3>Certificates</h3>
+<table>
+  <thead><tr>
+      <th title="Certificates issued by our CA will be also added to the Certificate Revocation List">Delete / Revoke</th>
+    <th>&ldquo;Common Name&rdquo;</th>
+    <th>Serial no.</th>
+    <th>Issued by:</th>
+    <th>Issued to:</th>
+    <th>Key size (bits)</th>
+    <th>Private Key?</th>
+    <th title="Is a Certificate Authority?">Cert. Auth.?</th> 
+    <th title="Certificate Revocation List">CRL</th>
+    <th>SSL Server?</th>
+  </tr></thead>
+  <tbody>
+    <% objects['certs'].each_pair do |name, cert| %>
+      <tr>
+        <td style="text-align: center;">
+          <form method="POST" action="/crypto/easy-rsa/certs/<%= Rack::Utils.escape name %>.crt">
+            <input type="hidden" name="_method" value="delete"/>
+            <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
+              <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
+            </button>
+          </form>
+        </td>
+        <% if cert['cert']['err'] and not cert['cert']['ok'] %>
+          <td colspan="0" class="error">Certificate Error for &ldquo;<code><%= name %>.crt</code>&rdquo;: <code><%= cert['cert']['err'] %></code></td>
+        <% else %>
+          <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= Rack::Utils.escape name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
+          <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
+          <td><%= '<strong class="superhighlight" title="Signed by our internal Certificate Authority">' if cert['signed_by_our_CA'] %><%= cert['cert']['issuer']['CN'] %><%= '</strong>' if cert['signed_by_our_CA'] %></td>
+          <td>
+            <%= 
+              ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
+                cert['cert']['subject'] 
+              )
+            %>
+          </td>
+          <td><%= cert['cert']['key_size'] %></td>
+          <% if cert['private_key'] %>
+            <% if cert['private_key']['ok'] %>
+              <!-- <td><%= "<strong>#{i18n.yes}</strong>" %> <small>[<a href="/crypto/ssl/certs/private/<%= name %>.key">download</a>]</small></td> -->
+              <td style="text-align:center"><a class="img" title="Download" href="/crypto/ssl/certs/private/<%= name %>.key"><img style="vertical-align:middle;" alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
+            <% else %>
+              <td class="error"><code><%= html_escape cert['private_key']['err'] %></code></td>
+            <% end %>
+          <% else %>
+            <!-- <td><%= i18n.no %></td> -->
+            <td><!-- nothing --></td>
+          <% end %>
+          <!-- <td><%= cert['cert']['is_ca']     ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td> -->
+          <td style="text-align:center;">
+            <% if cert['cert']['is_ca'] %>
+              <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
+            <% end %>
+          </td>
+          <td style="text-align:center;"> 
+            <% if cert['crl'] %>
+              <small>
+              <a title="Download the Certificate Revocation List in PEM format"
+                href="/crypto/ssl/CRLs/<%= cert['crl'] %>.pem">PEM</a>&nbsp;|&nbsp;<a
+                title="Download the Certificate Revocation List in DER format" 
+                href="/crypto/ssl/CRLs/<%= cert['crl'] %>.der">DER</a>
+              </small>
+            <% end %>
+          </td>
+          <!-- <td><%= cert['cert']['is_server'] ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td> -->
+          <td style="text-align:center;">
+            <% if cert['cert']['is_server'] %>
+              <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
+            <% end %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<h3>Certificate Authority</h3>
+<% if objects['ca'] and objects['ca']['err'] %>
+  <span class="error">
+    Certificate error: <code><%= html_escape objects['ca']['err'] %></code>
+  </span>
+<% end %>
+<% if objects['ca'] and not objects['ca']['err'] %>
+  <%
+    if objects['ca']['issuer'] == objects['ca']['subject']
+      signed_info_html = '<span style="font-style:italic;"><strong>self-signed</strong></span>'
+    else
+      signed_info_html = 'issued by <em>' + objects['ca']['issuer']['CN'] + '</em>'
+    end
+  %>
+  <table style="display: inline;">
+    <caption>CA certificate (<%= signed_info_html %>)</caption>
+    <tbody>
+      <tr>
+        <th scope="row">Validity</th>
+        <td>
+          <%= 
+            begin
+              i18n.l(objects['ca']['not_before'].to_date, :full) 
+            rescue 
+              objects['ca']['not_before'].to_date
+            end
+          %>
+          -      
+          <%= 
+            begin
+              i18n.l(objects['ca']['not_after'].to_date, :full)  
+            rescue
+              objects['ca']['not_after'].to_date
+            end
+          %>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Serial No.</th>
+        <td>
+          <code>
+            <%= objects['ca']['serial'].to_byte_s %>
+          </code>
+        </td>
+      </tr>   
+      <tr>
+        <th scope="row">X509 Standard version</th>
+        <td><%= objects['ca']['version'] %></td>
+      </tr>
+      <tr>
+        <th scope="row">Signature algorithm</th>
+        <td><code><%= objects['ca']['signature_algorithm'] %></code></td>
+      </tr> 
+    </tbody>
+  </table>
+  <% cadata = objects['ca']['subject'] %>
+  <table style="display:inline;">
+    <caption style="margin-top:0.5em;">CA details</caption>
+    <tbody>
+      <tr>
+        <th scope="row">&ldquo;Common Name&rdquo;</th>     
+        <td><strong><code><%= cadata['CN'] %></code></strong></td>
+      </tr>
+      <tr>
+        <th scope="row">Country</th>
+        <td>
+          <%= countries[cadata['C']] %>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">State/Province</th>
+        <td><%= cadata['ST'] %></td>
+      </tr>   
+      <tr>
+        <th scope="row">Location</th>
+        <td><%= cadata['L'] %></td>
+      </tr>
+      <tr>
+        <th scope="row">Organization</th>
+        <td><%= cadata['O'] %><%= (', <span style="font-style: italic;">' + cadata['OU'] + '</span>') if cadata['OU'] =~ /\S/ %></td>
+      </tr> 
+      <tr>
+        <th scope="row">E-mail</th>
+        <td><code><%= cadata['emailAddress'] %></code></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4>Downloads</h4>
+  <ul>
+    <li>
+      CA Certificate: <a href="/crypto/ssl/ca/ca.crt"><code>ca.crt</code></a>
+    </li>
+    <li>
+      Full Hystory of issued certificates: <a href="/crypto/easy-rsa/ca/index.txt"><code>index.txt</code></a>
+    </li>
+    <li>
+      Certificate Revocation List: 
+      <% if File.exists? OnBoard::Crypto::EasyRSA::CRL %>
+        <a title="CRL in PEM format" href="/crypto/easy-rsa/ca/crl.pem">
+          <code>crl.pem</code>
+        </a>,
+        <a title="CRL in DER format" href="/crypto/easy-rsa/ca/crl.der">
+          <code>crl.der</code>
+        </a>
+      <% else %>
+        <code class="lowlight" title="No certificate has been revoked.">crl.pem</code>
+      <% end %>
+    </li>
+  </ul>
+<% end %>
+
+<% 
+  # CA Deletion/RESET makes sense if either it's not valid, or it has not
+  # issued certificates, or issued certs have been all revoked; otherwise
+  # it would be a dangerous, stupid action -- don't do that!
+%>
+<% if objects['ca'] %>
+  <% if objects['err'] or not (objects['certs'].values.detect{|c| 
+      c['signed_by_our_CA'] }) %>
+    <h4>RESET CA (use with caution!)</h4>
+    <form method="POST" action="/crypto/easy-rsa/ca.html">
+      <input type="hidden" name="_method" value="delete"/>
+      <button type="submit"><img style="vertical-align:middle;" src="<%= "#{icondir}/#{iconsize}/emblems/emblem-important.png" %>"/> RESET!</a></button>
+    </form>
+  <% end %>
+<% end %>
+
+<% if objects['ca'] and not objects['ca']['err'] %>
+  <h3>Issue a new certificate</h3>
+<% else %>
+  <h4>Initialize a new CA</h4>
+<% end %>  
+
+<% if objects['ca'] and not objects['ca']['err'] %>
+  <form method="POST" action="easy-rsa/certs.html"> 
+<% else %>
+  <form method="POST" action="easy-rsa/ca.html">
+<% end %>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Key Size (bits)</th>
+        <th>Expiry (days)</th>
+        <th>Country</th>
+        <th colspan="2">City (Province/State)</th>
+        <th>Organization Name</th>
+        <th>Organizational Unit</th>
+        <th>E-mail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:center;">
+          <select name="key_size">
+            <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
+              <option value="<%= ksiz %>"><%= ksiz %></option>  
+            <% end %>
+          </select>
+        </td>
+        <td><input name="days" size="4" value="3650"/></td>
+        <td style="text-align:center;">
+          <select name="C">
+            <% country_codes_by_name.each do |cc| %>
+              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%== countries[cc] %>">
+                <%
+                  truncate = 18
+                  country_html = Rack::Utils.escape_html countries[cc][0..truncate] 
+                      # truncate to not mess the page layout
+                      #
+                  country_html << "&hellip;" if countries[cc].length > truncate
+                %> <%= country_html %> 
+              </option> 
+            <% end %>
+          </select> 
+        </td>
+        <td><input name="L"  type="text" size="9"/></td>
+        <td><input name="ST" type="text" size="2"/></td>
+        <td style="text-align:center;">
+          <input name="O" type="text" size="12"/></td>
+        <td style="text-align:center;">
+          <input name="OU" type="text" size="11"/></td>
+        <td style="text-align:center;">
+          <input name="emailAddress" type="text" size="14"/></td>
+      </tr>
+    </tbody>
+  </table>
+  <% if objects['ca'] and not objects['ca']['err'] %>
+    <table>
+      <thead>
+        <tr>
+          <th title="A unique identifier, typically the hostname of the subject machine">&ldquo;Common Name&rdquo;</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="input" name="CN" title="A unique identifier, typically the hostname of the subject machine"/></td>
+          <td>
+            <select name="type">
+              <option value="client">Client</option>
+              <option value="server">Server</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+  <button type="submit" style="margin: 0.3em 0.6em;">Create!</button>
+</form>
+
+<h3>Import</h3>
+
+<div style="width:48%; float:left;">
+  <form method="POST" action="/crypto/ssl/certs.html" enctype="multipart/form-data">
+    <input type="hidden" name="file_upload" value="yes"/>
+    <table>
+      <tr>
+        <th scope="row">X509 Certificate</th>
+        <td><input type="file" name="certificate"/></td>
+      </tr>
+      <tr>
+        <th scope="row">Associated private key (optional)</th>
+        <td><input type="file" name="private_key"/></td>
+      </tr>
+    </table>
+    <button type="submit">Upload!</button>
+  </form>
+</div>
+
+<div style="width:48%; float:right;">
+  <form method="POST" action="/crypto/ssl/CRLs.html" enctype="multipart/form-data">
+    <input type="hidden" name="file_upload" value="yes"/>
+    <table>
+      <tr>
+        <th scope="row">Certificate Revocation List<br/>(Import/Update)</th>
+        <td><input type="file" name="CRL"/></td>
+      </tr>
+    </table>
+    <button type="submit">Upload!</button>
+  </form>
+</div>

@@ -1,8 +1,7 @@
 class OnBoard
-
   MENU_ROOT.add_path('/network/routing', {
     :name => 'Routing',
-    :n    => -10
+    #:n    => -10
   })
   
   MENU_ROOT.add_path('/network/routing/basic', {

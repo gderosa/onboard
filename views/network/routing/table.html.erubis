@@ -1,0 +1,184 @@
+<%
+  require 'socket'  
+  require 'ipaddr'
+
+  require 'onboard/extensions/ipaddr'
+
+  routing_table = objects
+
+  name            = routing_table.name
+  comment         = routing_table.comment
+  number          = routing_table.number
+  is_system_table = routing_table.system?
+
+%>
+
+<h2><%= title %></h2>
+
+<% 
+  fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Static?} 
+  colspans   =   [1, 1, 1, 1, 1,  1, 1]
+%>
+
+<% 
+  # if not msg or not msg[:stderr] =~ /\S/ 
+  if request.env["REQUEST_METHOD"] == "GET"
+%>
+  <p class="warn">
+    Most of the routing table entries are set up automatically, do not edit
+    if you're not sure what you're doing.
+  <p>
+<% end %>
+
+  <%=
+    erubis(
+      :"/_messages.html",
+      {
+        :layout => false,
+        :locals => {
+          :msg => msg,
+          :status => status
+        }
+      }
+    )
+  %>
+
+<h3>View/Edit the routing table</h3>
+<table>
+  <tr>
+    <%  fieldnames.each_index do |i| %>
+      <th colspan="<%= colspans[i] %>" style="<%= 'display: none;' if params['view'] != 'all' and fieldnames[i] == 'Route Type' %>">
+        <%= fieldnames[i] %>
+      </th>
+    <% end %>
+  </tr>
+  <% routing_table.each_route do |route| %>
+    <%
+      next unless route 
+      if params['view'] != 'all' and not route.static?
+        next if 
+            route.dest.family == Socket::AF_INET6 and
+            (
+                route.dest.link_local? or 
+                route.dest.multicast? 
+            ) 
+
+        next unless route.route_type == 'unicast'
+      end
+    %>
+    <tr>
+      <form method="POST">
+        <%
+          # instead of DELETEing a "route" resource, we PUT our edits to the 
+          # "routing table" resource; it's not totally RESTful, but it's
+          # simple...
+        %>
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" name="ip_route_del" value="<%= route.rawline %>"/>
+        <td style="text-align:center;">
+          <button type="submit" title="Delete this route!">
+            <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
+          </button>
+        </td>
+        <td><%= route.dest.to_s %>/<%= route.dest.prefixlen %></td>
+        <td><%= route.dev if route.dev %></td>
+        <td><%= route.gw.to_s if route.gw %></td>
+        <td>
+          <% 
+            str =  ""
+            str << "IPv4"       if route.dest.family == Socket::AF_INET
+            str << "IPv6"       if route.dest.family == Socket::AF_INET6
+            str << " "
+            str << "default gateway" if
+                [
+                    IPAddr.new('::/0'), 
+                    IPAddr.new('0.0.0.0/0')
+                ].include? route.dest and route.route_type == 'unicast'
+            str << "loopback"   if route.dest.loopback?
+            str << "link-local" if route.dest.link_local?
+            str << "multicast"  if route.dest.multicast?
+          %>
+          <%= str %>
+        </td>
+        <td style="<%= 'display: none;' unless params['view'] == 'all' %>">
+          <code><%= route.route_type %></code>
+        </td>
+        <td style="text-align: center;">
+          <%= yes_no_icon(route.static?, :print_no) %>
+        </td>
+      </form>
+    </tr>
+  <% end %>
+</table>
+
+(<a href="<%= request.fullpath %>">Refresh</a>)
+<% showhide = 'IPv6 link-local and non-unicast routes' %>
+<% if params['view'] == 'all' %>
+  (<a title="Hide <%= showhide %>" 
+    href="<%= request.path_info %>">Compact view</a>)
+<% else %>
+  (<a title="Show <%= showhide %>" 
+    href="<%= request.path_info + '?view=all' %>">Full view</a>)
+<% end %>
+
+<h4>Add/Replace a static route</h4>
+
+<table>
+  <tr>
+    <th>Add!</th>
+    <th colspan="3">Destination</th>
+    <th>Device</th>
+    <th>Gateway</th>
+  </tr>
+  <tr>
+    <form method="POST">
+      <input type="hidden" name="_method" value="put">
+      <td style="text-align:center;">
+        <button title="Add route" type="submit" name=""><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="add"/></button>
+      </td>
+
+      <td><input type="text" name="ip" class="rwtext" style="text-align: right;"></td>
+      <td>/</td>
+      <td><input type="text" name="prefixlen" size="3" maxlength="3" class="rwtext"></td>
+
+      <td><input type="text" name="dev" size="6" class="rwtext"></td>
+      <td><input type="text" name="gw" class="rwtext"></td>
+    </form>
+  </tr>
+</table>
+
+<% unless is_system_table %>
+
+  <h3>Advanced</h3>
+
+  <h4>Change table name and comment</h4>
+  <form method="POST">
+    <input type="hidden" name="_method" value="put"/>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input class="rwtext" type="text" name="name" value="<%= name %>"/>
+          </td>
+          <td>
+            <input class="humantext" type="text" name="comment" value="<%= comment %>" size="28"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="submit">Change!</button>
+  </form>
+
+  <h4>Delete this table!</h4>
+  <div class="warn">Are you sure? There is no going back!</div>
+  <form method="POST">
+    <input type="hidden" name="_method" value="delete"/>
+    <button type="submit">Delete!</button>
+  </form>
+<% end %>

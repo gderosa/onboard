@@ -1,0 +1,108 @@
+<%# -*- coding: UTF-8 -*-%>
+
+<%
+  user ||= nil
+%>
+
+  <table class="raduserform">
+    <tbody>
+      <tr>
+        <th scope="row">
+          <select name="check[Password-Type]">
+            <% 
+              if user 
+                if user.password_type 
+                  selected = user.password_type
+                else
+                  selected = ''
+                end
+              else
+                selected = best_passwd_type
+              end
+            %>
+            <option value="">(no password)</option>
+            <% passwd_types.each do |passwd_type| %>
+              <option 
+                  <%= 'selected' if passwd_type == selected %> 
+                  value="<%= passwd_type %>">
+                <%= passwd_type %>
+              </option>
+            <% end %>
+          </select>
+          <p class="optinfo">
+            <% if user %>
+              Password will be automatically encrypted if required. Leave the 
+              fields blank to leave the password unchanged. 
+            <% else %>
+              Password types reflect the way they are encrypted in the
+              database. The strongest method is SSHA1. Cleartext should be used
+              only if clients authenticate using <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a>.
+            <% end %>
+          </p>
+          <p class="optinfo">
+            Choose "no password" if you want Authentication to be performed
+            on a per-group basis only.
+          </p>
+        </th>
+        <td style="vertical-align: top;">
+          <div style="margin-top:0;"> 
+            <input type="password" name="check[User-Password]"/>
+          </div>
+          <div style="margin-top:0.7em;">
+            <input type="password" name="confirm[check][User-Password]"/><br/>
+            <span class="optinfo">(confirm)</span>
+          </div>
+        </td>
+      </tr>
+
+      <%
+        csstclass = ''
+        if user
+          csstclass = case user.auth_type
+                      when 'Reject'
+                        'bg_off'
+                      when 'Accept'
+                        'bg_high'
+                      else
+                        ''
+                      end 
+        end
+      %>
+      <tr class="<%= csstclass %>">
+        <th scope="row" style="font-style:italic;">
+          User is
+          <div class="optinfo">
+            Technically, sets the <code>Auth-Type</code> RADIUS attribute 
+            (more info&nbsp;<a 
+              href="http://wiki.freeradius.org/Auth-Type">here</a>).
+          </div>
+        </th>
+        <td>
+          <fieldset>
+            <% 
+              selected_auth_type = ''
+              if user and user.auth_type
+                selected_auth_type = user.auth_type
+              end
+
+              human_friendly = {
+                'Reject'  => 'Disabled',
+                ''        => 'Enabled',
+                'Accept'  => 'Always accepted (guest user)'
+              }
+            %>
+            <% ['Reject', '', 'Accept'].each do |auth_type| %>
+              <input 
+                  type="radio" 
+                  name="check[Auth-Type]" 
+                  value="<%= auth_type %>"
+                  <%= 'checked' if auth_type == selected_auth_type %>/>
+              <%# puts "#{selected_auth_type} : #{auth_type}" %>
+              <%= human_friendly[auth_type] %>
+              <br/>
+            <% end %>
+          </fieldset>
+        </td>
+      </tr>
+    </tbody>
+  </table>

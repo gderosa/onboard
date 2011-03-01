@@ -1,0 +1,245 @@
+<%#
+locals:
+
+  vpn_i:  Array index
+  vpn:    VPN object
+
+  show_actions_column:
+
+locals automatically provided by format() helper:
+
+  icondir:
+  iconsize:
+
+%>
+
+<% 
+  show_actions_column ||= false # just to avoid NameError
+%>
+
+      <%
+        vpnid = vpn_i + 1 # users prefer starting from 1, not 0
+        if vpn.data['remote'].respond_to? :length
+          rowspan = vpn.data['remote'].length
+        else
+          rowspan = 1
+        end
+      %>
+
+      <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
+
+        <% if show_actions_column == true %> <%# by default show buttons %>
+          
+          <!-- START/STOP/EDIT/DELETE BUTTONS -->  
+          <td rowspan="<%= rowspan %>" style="text-align:center;">
+            <form method="POST">
+              <input type="hidden" name="_method" value="put"/>
+              <input type="hidden" name="portable_id" value="<%= vpn.data['portable_id'] if vpn.data['portable_id'] %>"/>
+              <% if vpn.data['running'] %>
+                <button type="submit" name="stop" value="<%= vpnid %>" title="Disconnect VPN">
+                  <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_disconnect.png'%>" alt="Disconnect!"/>
+                </button>
+              <% else %>
+                <button type="submit" name="start" value="<%= vpnid %>" title="Connect VPN">
+                  <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_connect.png'%>" alt="Connect!"/>
+                </button>
+              <% end %>
+            </form>
+          </td>
+
+          <td rowspan="<%= rowspan %>">
+            <form method="GET" action="openvpn/vpn/<%= vpnid %>.html">
+                <!-- not a real form, just an hyperlink  -->
+              <button type="submit"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button> 
+            </form>
+          </td>
+          <td rowspan="<%= rowspan %>">
+            <% 
+              if vpn.data['running']
+                str = 'Stop the VPN and remove from the list'
+              else
+                str = 'Remove from the list'
+              end
+            %>
+            <% if vpn.data['portable_id'] and vpn.data['portable_id'] =~ /\S/ %>
+            <form action="openvpn/vpn/<%= vpn.data['portable_id'] %>.html" method="POST">
+            <% else %>
+            <form action="openvpn/vpn/<%= vpnid %>.html" method="POST">
+            <% end %>
+              <input type="hidden" name="_method" value="delete"/>
+              <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
+            </form>
+          </td>
+        <% elsif show_actions_column %>
+          <td colspan="3" style="text-align:center;">
+            <%= show_actions_column or '' %>
+          </td> <%# show alternate text  %>
+        <% end %> <%# if show_actions_column %>
+
+        <td rowspan="<%= rowspan %>">
+          <%= 
+            if vpn.data['dev-type'] == 'tun'
+              "Point-to-Point"
+            elsif vpn.data['dev-type'] == 'tap'
+              "Virtual Ethernet"
+            end
+          %>
+          <%= 
+            if vpn.data['client']
+              "Client"
+            elsif vpn.data['server']
+              "Server"
+            end
+          %>
+        </td>
+        <% 
+          cssclass = ""
+          cssclass2 = ""
+          text = ""
+          extrastyle = ""
+          errortext = ""
+          begin
+            text = vpn.data['cert']['subject']['CN']
+          rescue
+            begin
+              errortext = "Certificate error: "
+              text = Rack::Utils.escape_html vpn.data['cert']['err']
+              cssclass = "error"
+              cssclass2 = "lowlight"
+            rescue
+              errortext = ""
+              text = ""
+              cssclass = ""
+              cssclass2 = ""
+            end
+          end
+        %>
+        <!-- SSL CN -->
+        <td rowspan="<%= rowspan %>" class="<%= cssclass %>"><span class="<%= cssclass2 %>">
+          <%= errortext %><code><%= text %></code>
+        </span></td>
+        <td rowspan="<%= rowspan %>"> <!-- *local* port -->
+          <%= 
+            if vpn.data['port']
+              vpn.data['port']
+            else
+              '<span class="lowlight">(auto)</span>'
+            end
+          %>
+        </td>
+        <td> 
+          <%=
+            if vpn.data['remote'] and vpn.data['remote'][0]['address']
+              vpn.data['remote'][0]['address']
+            elsif vpn.data['server']
+              '<div class="lowlight" style="text-align:center;">*</div>'
+            end
+          %>
+        </td>
+        <td> 
+          <%=
+            if vpn.data['remote'] and vpn.data['remote'][0]['port']
+              vpn.data['remote'][0]['port']
+            elsif vpn.data['server']
+              '<div class="lowlight" style="text-align:center;">*</div>'
+            end
+          %>
+        </td>
+        <td style="font-variant: small-caps;"><%= 
+          begin
+            vpn.data['remote'][0]['proto']
+          rescue
+            vpn.data['proto']
+          end
+        %></td>
+        <% 
+          cssclass = ''; cssclass2 = ''; text = ''; errortext = ''
+          if vpn.data['dev-type'] == 'tap' or vpn.data['dev'] =~ /^tap/
+            if vpn.data['virtual_addresses'].respond_to? :select
+              text = (
+                vpn.data['virtual_addresses'].select do |x| 
+                  x.scope == 'global'
+                end
+              ).map{|y| "#{y.addr}/#{y.prefixlen}"}
+            end
+          elsif vpn.data['client'] and vpn.data['client'].respond_to? :[] 
+            if vpn.data['client']['Virtual Address'] and
+                vpn.data['client']['Virtual Address'] =~ /\S/
+              text = vpn.data['client']['Virtual Address']
+            elsif vpn.data['client']['management_interface_err'] 
+              cssclass = 'error'; cssclass2 = 'lowlight'
+              text = vpn.data['client']['management_interface_err']
+              errortext = 'Management Interface error: '
+            elsif vpn.data['client']['management_interface_warn']
+              cssclass = 'warn'; cssclass2 = 'lowlight'
+              errortext = vpn.data['client']['management_interface_warn']
+              text = ''
+            end
+          elsif vpn.data['server']
+            # if, in the config file it's
+            # server=10.8.0.0 netmask=255.255.255.0, then the virtual local
+            # server address is 10.8.0.1/24
+            ip = IPAddr.new(vpn.data['server'] + '/' + vpn.data['netmask'])
+            text = ip.to_range.to_a[1].to_s + '/' + ip.prefixlen.to_s
+          end
+        %>
+        <td rowspan="<%= rowspan %>" class="<%= cssclass %>">
+          <span class="<%= cssclass2 %>">
+            <%= errortext %>
+            <% if text.respond_to? :each %>
+              <% text.each do |t| %>
+                <div><%== t %></div>
+              <% end %>
+            <% else %>
+              <%== text %>
+            <% end %>
+          </span>
+        </td>
+        <td rowspan="<%= rowspan %>">
+          <%= 
+            str = ''
+            vpn.data['routes'].each do |route|
+                            
+              addr      = route['dest']['addr'] 
+              prefixlen = route['dest']['prefixlen'] 
+              af        = route['dest']['af']
+              if route['gw']
+                gw        = route['gw']['addr']
+              else
+                gw        = ''
+              end
+
+              next if addr == 'fe80::' # skip ipv6 link-local
+
+              str << '<div>'
+              str       << addr
+
+              unless  (af=='inet'   and prefixlen==32) or 
+                      (af=='inet6'  and prefixlen==128)
+                str << '/'
+                str << prefixlen.to_s
+              end
+              # str << "<span class=\"lowlight\"> (via #{gw}) </span>" unless %w{0.0.0.0 ::}.include? gw # it wastes space...
+              str << '</div> ' 
+            end 
+            str
+          %>
+        </td>
+        <td rowspan="<%= rowspan %>"><code><a href="/network/interfaces/<%= vpn.data['interface'] %>.html"><%= vpn.data['interface'] %></a></code></td>
+        <td rowspan="<%= rowspan %>" style="text-align: center;">
+          <% if vpn.data['comp-lzo'] %>
+            <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
+          <% end %>
+        </td>
+      </tr>
+      <% if vpn.data['remote'].respond_to? :length %>
+        <% 1.upto (vpn.data['remote'].length - 1) do |i| %>
+          <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
+            <td><%= vpn.data['remote'][i]['address'] %></td>
+            <td><%= vpn.data['remote'][i]['port'] %></td>
+            <td style="font-variant: small-caps;"><%= vpn.data['remote'][i]['proto'] %></td>
+          </tr>
+        <% end %>
+      <% end %>
+
+

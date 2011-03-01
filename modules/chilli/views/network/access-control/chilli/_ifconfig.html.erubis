@@ -1,0 +1,203 @@
+<% 
+  require 'onboard/network/interface'
+  require 'onboard/network/aaa/radius'
+
+  # Used both for captive portals creation and editing
+
+  chilli          = objects
+  interfaces      = 
+      OnBoard::Network::Interface.getAll().sort{|x,y| x.name <=> y.name} 
+  dictionary      =
+      OnBoard::Network::AAA::RADIUS::dictionary(:rfc2865) 
+
+  nas_port_type   = dictionary.find_attribute_by_name 'NAS-Port-Type'
+  nas_port_types  = nas_port_type.values
+
+  interface = nil
+  if chilli and chilli.conf['dhcpif'] =~ /\S/ 
+    interface = interfaces.detect{|i| i.name == chilli.conf['dhcpif']} 
+  end
+
+  
+  nas_port_type_selected_value = nil
+
+  if 
+      chilli                                    and 
+      chilli.conf['radiusnasporttype']          and 
+      chilli.conf['radiusnasporttype'].to_i > 0
+
+    nas_port_type_selected_value = nas_port_types.detect do |v|
+      v.id = chilli.conf['radiusnasporttype'].to_i
+    end
+
+  elsif interface
+    nas_port_type_selected_value = case interface.type
+                                   when 'ether'
+                                     nas_port_types.detect do |v|
+                                       v.name =~ /Ethernet/
+                                     end
+                                   when 'wi-fi'
+                                     nas_port_types.detect do |v|
+                                       v.name =~ /802\.11/
+                                     end
+                                   end
+  end
+%>
+
+<!-- 
+  conf[] form params will be written directly in the chilli config file ;
+  other parameters will undergo some processing.
+-->
+  
+<h4>Network</h4>
+<table>
+  <thead></thead>
+  <tbody>
+    <tr>
+      <th scope="row">Interface</th>
+      <td>
+        <% if interface %>
+          <input type="text" name="conf[dhcpif]" value="<%= interface.name %>" readonly />
+        <% else %>
+          <select name="conf[dhcpif]"> 
+            <option value="" class="lowlight">[choose one]</option>
+            <% interfaces.each do |iface| %>
+              <% next unless ['ether', 'wi-fi'].include? iface.type %>
+              <option value="<%= iface.name %>"><%= iface.name %> (<%= iface.type_hr %>)</option>
+            <% end %>
+          </select>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Network</th>
+      <td><input type="text" name="conf[net]" value="<%= chilli.conf['net'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+      <th scope="row">Listen address</th>
+    <td><input type="text" name="conf[uamlisten]" value="<%= chilli.conf['uamlisten'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+      <th scope="row">DHCP range</th>
+      <td><input type="text" name="dhcp_start" value="<%= chilli.dhcp_range.first if chilli and chilli.conf['net'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/> - <input type="text" name="dhcp_end" value="<%= chilli.dhcp_range.last if chilli and chilli.conf['net'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>DNS</h4>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">Domain</th>
+    <td><input type="text" name="conf[domain]" value="<%= chilli.conf['domain'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+      <th scope="rowgroup" rowspan="2">Name Servers</th>
+    <td><input type="text" name="conf[dns1]" value="<%= chilli.conf['dns1'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+      <td><input type="text" name="conf[dns2]" value="<%= chilli.conf['dns2'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Authorization, Authentication and Accounting</h4>
+<table>
+  <tbody>
+    <tr>
+      <th scope="rowgroup" rowspan="2">RADIUS Servers</th>
+      <td><input type="text" name="conf[radiusserver1]" value="<%= chilli.conf['radiusserver1'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+    <td><input type="text" name="conf[radiusserver2]" value="<%= chilli.conf['radiusserver2'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+      <th scope="row">Authentication port</th>
+      <td><input type="text" name="conf[radiusauthport]" value="<%= chilli.conf['radiusauthport'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+      <th scope="row">Accounting port</th>
+      <td><input type="text" name="conf[radiusacctport]" value="<%= chilli.conf['radiusacctport'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr title="<%= 'Empty to leave unchanged' if chilli and chilli.conf['radiussecret'] %>">
+      <th scope="row">RADIUS password</th>
+      <td><input type="password" name="conf[radiussecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <!-- <tr><td colspan="2" style="background:inherit;"><hr/></td></tr> -->
+    <tr>
+      <th scope="row" title="NAS-Port-Type RADIUS attribute">NAS Port Type</th>
+      <td>
+        <select name="conf[radiusnasporttype]">
+          <option value="">(auto)</option>
+          <% nas_port_types.each do |npt| %>
+            <option value="<%= npt.id %>" <%= 'selected' if nas_port_type_selected_value and npt.id == nas_port_type_selected_value.id %>><%= npt.name %></option>
+          <% end %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" title="NAS-Identifier RADIUS attribute">
+        NAS Identifier
+      </th>
+      <td>
+      <input type="text" name="conf[radiusnasid]" title="Choose a name" <% if chilli and chilli.conf['radiusnasid'] %> value="<%= chilli.conf['radiusnasid'] %>" <% end %> />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Captive portal</h4>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">Login page URL</th>
+      <td><input type="text" name="conf[uamserver]" value="<%= chilli.conf['uamserver'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="64"/></td>
+    </tr>
+    <% if chilli and chilli.conf['uamsecret'] %>
+      <tr>
+        <th scope="row">&ldquo;UAM secret&rdquo; (old password)</th>
+        <td><input type="password" name="old_conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+      </tr>
+    <% end %>
+    <tr title="Leave empty to not use a shared secret">
+      <th scope="row">&ldquo;UAM secret&rdquo; (new password)</th>
+      <td><input type="password" name="conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>   
+    <tr title="Leave empty to not use a shared secret">
+      <th scope="row">&ldquo;UAM secret&rdquo; (new password, type again)</th>
+      <td><input type="password" name="verify_conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>    
+  </tbody>
+</table>
+
+<h4>Advanced</h4>
+<table>
+  <tbody>   
+    <tr>
+      <th title="Web traffic will be trasparently proxied after authentication" scope="row">
+        HTTP proxy address/port
+        <div class="optinfo" style="width: 50ex;">
+          Hint: if <a href="http://www.dansguardian.org/">DansGuardian</a> 
+          is running on this system, 
+          you may choose the same address as "Listen Address" and port 8080
+          to take advantage of Web Content Filtering. Leave empty to not use 
+          any proxy instead.
+        </div>
+      </th>
+      <td style="vertical-align: top; padding-top:2ex;">
+        <input type="text" name="conf[postauthproxy]" value="<%= chilli.conf['postauthproxy'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="40"/>
+        <input type="text" name="conf[postauthproxyport]" value="<%= chilli.conf['postauthproxyport'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="5"/>       
+      </td>
+    </tr>
+    <tr title="Comma-separated list of IP addresses, domain names or network segments">
+      <th scope="row">Resources accessible without authorization</th>
+      <td><input type="text" name="conf[uamallowed]" value="<%= chilli.conf['uamallowed'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="64"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Change-of-Authorization UDP port</th>
+      <td><input type="text" name="conf[coaport]" size="5" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> value="<%= chilli.conf['coaport'] %>"/></td>
+    </tr>
+  </tbody> 
+</table>
+
+
