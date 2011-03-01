@@ -158,9 +158,9 @@ locals automatically provided by format() helper:
             if vpn.data['virtual_addresses'].respond_to? :select
               text = (
                 vpn.data['virtual_addresses'].select do |x| 
-                  x['scope'] == 'global'
+                  x.scope == 'global'
                 end
-              ).map{|y| "#{y['addr']}/#{y['prefixlen']}"}
+              ).map{|y| "#{y.addr}/#{y.prefixlen}"}
             end
           elsif vpn.data['client'] and vpn.data['client'].respond_to? :[] 
             if vpn.data['client']['Virtual Address'] and
