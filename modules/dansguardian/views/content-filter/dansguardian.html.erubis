@@ -117,7 +117,14 @@
           0 to block any file upload, -1 for “unlimited”
         </div>
       </th>
-      <td><input type="text" name="maxuploadsize" value="<%= dg.config.main[:maxuploadsize] %>"/></td>
+      <% 
+        begin
+          maxuploadsize = dg.config.main[:maxuploadsize]
+        rescue ConfigFiles::Base::NoKeyError
+          maxuploadsize = 'UNKNOWN/INVALID'
+        end
+      %>
+      <td><input type="text" name="maxuploadsize" value="<%= maxuploadsize %>"/></td>
     </tr>
   </table>
 

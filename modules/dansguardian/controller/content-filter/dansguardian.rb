@@ -26,7 +26,9 @@ class OnBoard
         msg = dg.start_stop(params)
       end
 
-      dg.edit_main_config!(params) if params['change_general_config'] == 'on'
+      if params['change_general_config'] == 'on'
+        dg.edit_main_config!(params)
+      end
 
       dg.get_status
       format(
