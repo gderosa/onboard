@@ -3,6 +3,8 @@ require 'dansguardian'
 require 'onboard/extensions/erb'
 require 'onboard/content-filter/dg/constants'
 
+autoload :YAML, 'yaml'
+
 class OnBoard
   module ContentFilter
     class DG
