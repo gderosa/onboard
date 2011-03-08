@@ -61,6 +61,7 @@ class OnBoard
       alias update_info get_info
 
       def running?
+        get_status
         return false if @pid[:parent] == 0
         return @pid[:parent]
       end
