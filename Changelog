@@ -1,3 +1,11 @@
+2011.03.02
+
+* OpenVPN: client wizard: fix TCP mode
+
+2011.03.01
+
+* DansGuardian: some error handling
+
 2011.03.00.alpha2
 
 * DansGuardian JSON/YAML export
