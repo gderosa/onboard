@@ -1,0 +1,74 @@
+<% 
+  dg      = objects[:dg] 
+  dgconf  = dg.config
+%>
+
+<!-- <pre><%# params.pretty_inspect %></pre> -->
+
+<h2>DansGuardian: Filter Groups</h2>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Group Mode</th>
+        <th>Delete?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 1.upto dgconf.main[:filtergroups] do |fgid| %>
+        <% next if dg.deleted_filtergroups.include? fgid %>
+        <% fg = dgconf.filtergroup(fgid) %>
+        <tr>
+          <td style="text-align: right;"><span style="font-weight: bold"><%= fgid %></span> (<a style="font-style: italic" href="filtergroups/<%= fgid %>.html">details</a>)</td>
+          <td><input type="text" name="filtergroups[<%= fgid %>][groupname]" value="<%= fg[:groupname] %>"/></td>
+          <td>
+            <select name="filtergroups[<%= fgid %>][groupmode]">
+              <% DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
+                <option value="<%= name %>" <%= 'selected' if name == fg[:groupmode] %>><%= name %></option>
+              <% end %>
+            </select>
+          </td>
+          <td style="text-align:center;">
+            <% if fgid != 1 %>
+              <input type="checkbox" name="filtergroups[<%= fgid %>][delete]"/>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <button type="submit">Change!</button>
+</form>
+
+<h3>Create new Filter Group</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="post"/>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Use existing group as a template</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" name="groupname"/></td>
+        <td>
+          <select name="template">
+            <% 1.upto dgconf.main[:filtergroups] do |fgid| %>
+              <% next if dg.deleted_filtergroups.include? fgid %>
+              <option value="<%= fgid %>"><%= fgid %>: <%= dgconf.filtergroup(fgid)[:groupname] %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="submit">Create!</button>
+</form>
+
+
