@@ -1,6 +1,6 @@
 class OnBoard
   MENU_ROOT.add_path('/system', {
     :name => 'System',
-    :n    => 2 
+    :n    => 4
   })
 end

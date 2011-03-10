@@ -1,0 +1,335 @@
+<%
+  fg = objects.fgdata # The filtergroup object (::DansGuardian::Config) 
+%>
+
+<style type="text/css">
+  table.dglists {
+    display: inline;
+    vertical-align: top;
+  }
+  table.dglists tr td select{
+    width: 100%;
+  }
+  table.dglists caption {
+    margin-top: 1em;
+  }
+  table#main-options tr th[scope="row"] {
+    width: 60em;
+  }
+  fieldset {
+    margin-left: 0;
+    padding-left: 0;
+  }
+</style>
+
+<h2><%= title %></h2>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <tr>
+      <th scope="row">Group Name</th>
+      <td><input type="text" name="groupname" value="<%= fg[:groupname] %>"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Group mode</th>
+      <td>
+        <select name="groupmode">
+          <% 
+  DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
+            <option value="<%= name %>" <%= 'selected' if name == fg[:groupmode] %>><%= name %></option>
+          <% end %>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <h3>Lists</h3>
+
+  <table class="dglists">
+    <caption>Black Lists / Banned</caption>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/banned/sites.html">Sites</a></th>
+      <td>
+        <select name="bannedsitelist">
+          <%= 
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+              :locals => {
+                :relative_dir_path        => 'banned/sites',
+                :filtergroup              => fg,
+                :name                     => :bannedsitelist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/banned/URLs.html">URLs</a></th>
+      <td>
+        <select name="bannedurllist">
+          <%= 
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+              :locals => {
+                :relative_dir_path        => 'banned/URLs',
+                :filtergroup              => fg,
+                :name                     => :bannedurllist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/banned/phrases.html">Phrases</a></th>
+      <td>
+        <select name="bannedphraselist">
+          <%= 
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+              :locals => {
+                :relative_dir_path  => 'banned/phrases',
+                :filtergroup        => fg,
+                :name               => :bannedphraselist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/banned/extensions.html">File extensions</a></th>
+      <td>
+        <select name="bannedextensionlist">
+           <%= 
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',
+              :locals => {
+                :relative_dir_path  => 'banned/extensions',
+                :filtergroup        => fg,
+                :name               => :bannedextensionlist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/banned/MIMEtypes.html">MIME types</a></th>
+      <td>
+        <select name="bannedmimetypelist">
+           <%=
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+                :relative_dir_path  => 'banned/MIMEtypes',
+                :filtergroup        => fg,
+                :name               => :bannedmimetypelist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <table class="dglists">
+    <caption>White Lists / Exception</caption>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/exception/sites.html">Sites</a></th>
+      <td>
+        <select name="exceptionsitelist">
+          <%=
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+                :relative_dir_path  => 'exception/sites',
+                :filtergroup        => fg,
+                :name               => :exceptionsitelist
+              }
+            )
+          %>        
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/exception/URLs.html">URLs</a></th>
+      <td>
+        <select name="exceptionurllist">
+          <%=
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+                :relative_dir_path  => 'exception/URLs',
+                :filtergroup        => fg,
+                :name               => :exceptionurllist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/exception/phrases.html">Phrases</a></th>
+      <td>
+        <select name="exceptionphraselist">
+          <%=
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+                :relative_dir_path  => 'exception/phrases',
+                :filtergroup        =>  fg,
+                :name               => :exceptionphraselist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/exception/extensions.html">File extensions</a></th>
+      <td>
+        <select name="exceptionextensionlist">
+          <%=
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+                :relative_dir_path  => 'exception/extensions',
+                :filtergroup        =>  fg,
+                :name               => :exceptionextensionlist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/exception/MIMEtypes.html">MIME types</a></th>
+      <td>
+        <select name="exceptionmimetypelist">
+          <%=
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+                :relative_dir_path  => 'exception/MIMEtypes',
+                :filtergroup        => fg,
+                :name               => :exceptionmimetypelist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <table class="dglists">
+    <caption>Weighted phrase list</caption>
+    <tr>
+      <th scope="row"><a href="/content-filter/dansguardian/lists/weighted/phrases.html">Weighted phrase list</a></th> 
+      <td>
+        <select name="weightedphraselist">
+          <%=
+            partial(
+              :module => 'dansguardian',
+              :path   => 'content-filter/dansguardian/filtergroups/_list_options',            :locals => {
+                :relative_dir_path  => 'weighted/phrases',
+                :filtergroup        => fg,
+                :name               => :weightedphraselist
+              }
+            )
+          %>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <h3>Main Options</h3>
+  <table id="main-options">
+    <tr>
+      <th scope="row">
+        Block <em>all</em> file downloads? 
+      </th>
+      <td>
+        <input
+            type="checkbox" 
+            name="blockdownloads" 
+            <%= 'checked' if fg[:blockdownloads] %>
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Naughtyness limit
+        <div class="optinfo">
+          The limit over which the page will be blocked.  Each weighted phrase
+          is given a value either positive or negative and the values added up.
+          Phrases to do with good subjects will have negative values, and bad 
+          subjects will have positive. See the weighted phrase lists file 
+          for examples.
+        </div>
+      </th>
+      <td>
+        <% 
+          begin
+            naughtynesslimit = fg[:naughtynesslimit]
+          rescue ConfigFiles::Base::NoKeyError
+            naughtynesslimit = 'UNKNOWN/INVALID'
+          end
+        %>
+        <input type="text" name="naughtynesslimit" value="<%= naughtynesslimit %>"/>
+      </td>
+    </tr>
+     <tr>
+      <th scope="row">
+        Enable AntiVirus and/or other content scanners?      
+      </th>
+      <td>
+        <input
+            type="checkbox" 
+            name="enablecontentscan" 
+            <%= 'checked' unless fg[:disablecontentscan] %>
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Wheighted phrase mode
+      </th>
+      <td>
+        <fieldset>
+         <input 
+              type="radio" 
+              name="weightedphrasemode" 
+              value=""
+              <%= 'checked' if fg[:weightedphrasemode] == :inherit %>
+          />Inherit from the main configuration<br/>
+          <input 
+              type="radio" 
+              name="weightedphrasemode" 
+              value="0"
+              <%= 'checked' if fg[:weightedphrasemode] == :disabled %>
+          />Do not use the weighted phrase feature<br/>
+          <input 
+              type="radio" 
+              name="weightedphrasemode" 
+              value="1"
+              <%= 'checked' if fg[:weightedphrasemode] == :normal %> 
+          />Normal weighted phrase operation<br/>
+          <input 
+              type="radio" 
+              name="weightedphrasemode" 
+              value="2"
+              <%= 'checked' if fg[:weightedphrasemode] == :singular %>
+          />Each weighted phrase found only counts once on a page</br>
+        </fieldset>
+      </td>
+    </tr>
+  </table>
+  <button type="submit">Change!</button>
+</form>

@@ -70,9 +70,16 @@ class OnBoard
       def action_button(action, *attributes)
         h = attributes[0] || {} 
         raise ArgumentError, "Invalid action: #{action.inspect}" unless 
-            [:start, :stop, :config, :reload, :restart].include? action
+            [
+              :start, 
+              :stop, 
+              :config, 
+              :reload, 
+              :restart, 
+              :delete
+            ].include? action 
         type = h[:type] || case action
-        when :start, :stop, :reload
+        when :start, :stop, :reload, :delete
           'submit'
         when :config
           'button'
@@ -92,16 +99,23 @@ class OnBoard
                   "#{IconDir}/#{IconSize}/actions/system-run.png"
                 when :reload, :restart
                   "#{IconDir}/#{IconSize}/actions/reload.png"
+                when :delete
+                  "#{IconDir}/#{IconSize}/actions/delete.png"
                 end
         return %Q{<button type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
       end
     
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
+        h[:formats] ||= %w{html json yaml}
+        h[:formats] |= %w{rb} if options.environment == :development
+
         # try to guess if not provided
         h[:format]                                ||= 
             params[:format]                       ||= 
             request.path_info =~ /\.(\w+$)/ && $1
+
+        return multiple_choices(h) unless h[:formats].include? h[:format]
 
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
@@ -154,13 +168,13 @@ class OnBoard
 
           return h[:objects].to_(h[:format]) 
 
-        when 'rb'
-          if options.environment == :development
+        when 'rb' # development check already done
+          #if options.environment == :development
             content_type 'text/x-ruby'
             return h[:objects].pretty_inspect 
-          else
-            multiple_choices(h)
-          end
+          #else
+          #  multiple_choices(h)
+          #end
         else
           if h[:partial]
             raise ArgumentError, "You requested a partial but you did not provide a valid :format. You may want something like :format => 'html' in #{caller[0]}"
@@ -268,8 +282,12 @@ class OnBoard
         params.update OnBoard::Pagination.normalize(params) 
       end
 
+      def parent_path
+        "#{File.dirname(request.path_info)}.#{params[:format]}"
+      end
+
       def query_string_merge(h)
-        # Rack::Request#GET doesn't play well when :method_ovveride
+        # Rack::Request#GET doesn't play well when :method_ovverride
         # is enabled in Sinatra. 
         get_params = Rack::Utils.parse_query(request.query_string)
         Rack::Utils.build_query(
@@ -280,6 +298,16 @@ class OnBoard
       # backward-compatibility for code based on ERB::Util
       def url_encode(str)
         Rack::Utils.escape(str) 
+      end
+
+      def current_encoding
+        response['Content-Type'] =~ /charset\s*=\s*([^\s;,]+)/
+        encname = $1.dup
+        begin
+          Encoding.find encname
+        rescue ArgumentError
+          Encoding.find 'utf-8'
+        end
       end
 
       def main_menu

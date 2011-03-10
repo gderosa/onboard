@@ -74,6 +74,50 @@ class String
 
   end
 
+  def valid_encodings(subset=Encoding.list)
+    working_copy    = self.dup
+    valid_encs      = []
+    subset.each do |enc|
+      working_copy.force_encoding enc
+      begin
+        working_copy.encode 'utf-8'
+        working_copy =~ / test /
+      rescue EncodingError, ArgumentError
+        # do not add enc to valid_encs
+      else
+        valid_encs << enc
+      end
+    end
+    valid_encs
+  end
+
+  def to_asciihex
+    out   = ''.force_encoding Encoding::ASCII
+    self.each_line do |line|
+      # escape the backslash only if it's part of a hex sequence, like \xF9
+      line.gsub!(/(\\)(x\h\h)/, '\\x5C\2')  
+      line.each_byte do |byte|
+        if byte < 128
+          out << byte.chr
+        else
+          out << "\\x#{byte.to_s(16).upcase}"
+        end
+      end
+    end
+    out
+  end
+
+  def from_asciihex(encoding=Encoding::BINARY)
+    out = ''.force_encoding encoding
+    self.each_line do |line|
+      out << line.gsub(/(\\x\h\h)/) do |capture|
+        eval %Q{"#{capture}"}
+      end
+    end
+    out
+  end
+
+
   alias to_i_orig to_i
 
   # A smarter to_i which automatically guess the base of 

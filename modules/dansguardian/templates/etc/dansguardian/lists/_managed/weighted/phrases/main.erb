@@ -1,0 +1,131 @@
+# DANSGUARDIAN weightedphraselist INSTRUCTIONS FOR USE
+#
+# Examples:
+#
+# <slut><10>			
+# - Adds 10 to the count against the string 'slut'.   ie. sluts, slut!, abslutxyz.
+#
+# < slut ><10>
+# - Adds 10 to the count against the word 'slut'.   ie. Sally is a slut that smells.
+#
+# <slut>,<horny><50>
+# - Adds 50 to the count when the strings 'slut' and 'horny' are found on the same page.
+#
+# <breast>,<medical><-30>
+# - Subtracts 30 from the count when 'breast' and 'medical' are on the one page.
+#
+# <education><-25>
+# - Subtracts 25 from the count when 'education' is on the page.
+#
+# See the bannedphraselist for more examples.
+#
+# Extra weighted-list files to include
+# .Include<<%= dg.root %>/lists/_managed/weighted/phrases/weightedphraselist.topic>
+#
+# Help by contributing customised lists and/or new keyword lists. 
+# Email: pornmastergeneral@dansguardian.org or phrasemaster@dansguardian.org
+#
+# NOTE: New lists are commented out as ALPHA or BETA depending on how much the 
+# lists have been tested.
+# ALPHA - Brand new and/or incomplete - little testing has been done
+# BETA - Relatively new - tested in several locations
+#
+
+#listcategory: "Weighted Phrases"
+
+#To enable several non-PICS self-labelling and self-rating systems.  
+#Enabled as a bannedsitelist by default.  Disable there before enabling as a phraselist.
+##.Include<<%= dg.root %>/lists/_managed/weighted/phrases/safelabel/weighted>
+
+#Good Phrases (to allow medical, education, news and other good sites)
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_general>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_news>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_general_danish>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_general_dutch>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_general_malay>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_general_polish>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_general_portuguese>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/goodphrases/weighted_general_swedish>
+
+#Pornography
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_chinese> #ALPHA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_danish> #ALPHA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_dutch> #BETA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_french>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_german>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_italian>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_japanese> #ALPHA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_malay> #BETA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_norwegian> #BETA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_polish>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_portuguese>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_russian> #BETA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_russian_utf8> #BETA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_spanish> #ALPHA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/pornography/weighted_swedish>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/nudism/weighted>
+
+#Bad Words - swearing
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/badwords/weighted_dutch> 
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/badwords/weighted_french>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/badwords/weighted_german> #ALPHA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/badwords/weighted_portuguese> #ALPHA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/badwords/weighted_spanish> #ALPHA#
+
+#Drugs
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/drugadvocacy/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/illegaldrugs/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/illegaldrugs/weighted_portuguese>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/legaldrugs/weighted>
+
+#Violence and intolerance
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/intolerance/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/intolerance/weighted_portuguese>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/gore/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/gore/weighted_portuguese>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/violence/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/violence/weighted_portuguese>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/weapons/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/weapons/weighted_portuguese>
+
+#Chat
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/chat/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/chat/weighted_italian>
+
+#Webmail
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/webmail/weighted>
+#Note that if you enable the webmail weighted list you should also disable 
+#the "exception_email" list in the exceptionphraselist file.
+
+#Forums
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/forums/weighted> #BETA#
+
+#Gambling
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/gambling/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/gambling/weighted_portuguese>
+
+#Productivity
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/games/weighted> #ALPHA#
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/news/weighted> #ALPHA#
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/personals/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/personals/weighted_portuguese>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/sport/weighted> #ALPHA#
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/travel/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/music/weighted>
+
+#System Management and Security
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/domainsforsale/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/idtheft/weighted>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/malware/weighted> #BETA#
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/proxies/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/translation/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/upstreamfilter/weighted>
+.Include<<%= dg.root %>/lists/_managed/weighted/phrases/warezhacking/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/peer2peer/weighted>
+
+#Miscellaneous	
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/conspiracy/weighted>
+#.Include<<%= dg.root %>/lists/_managed/weighted/phrases/secretsocieties/weighted>
+
+

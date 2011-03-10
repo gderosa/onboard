@@ -2,7 +2,7 @@
   superhighlight  = "#080"
   highlight       = "#44b" 
   almostblack     = "#222"
-  lowlight        = "#777" 
+  lowlight        = "#666" 
   superlowlight   = "#bbb" 
   hover           = "color: white; background: #{highlight};" 
   lightbg         = "#f8f0c0" 
@@ -80,9 +80,9 @@ a.created, a.new {
 
 div#main {
   border: 0;
-	float: right;
-	width: 80%;	
-	padding: 2px;
+  float: right;
+  width: 80%;	
+  padding: 2px;
   margin: 1em 1px;
 }
 
@@ -262,23 +262,45 @@ table {
   font-size: 90%;
 }
 
+table caption {
+  font-weight: bold;
+}
+
 table tr th {
   border:0; 
   text-align: center;
   padding: 0 1em;
 }
 
-table tr th, fieldset, .term, kbd {
-  background: <%= lightbg %>;
+table tr td, table tr th, fieldset {
+  /* background: <%= lightbg %>; */
+  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.gif");
+  background-attachment: fixed;
+}
+
+.term {
+  text-decoration: none;
+  border-bottom: 1px #444 dashed;
 }
 
 table tr td fieldset {
-  background: inherit;
+  background: transparent;
 }
 
 table tr th, fieldset, .term {
   font-size: 80%;
   font-weight: bold;
+}
+
+table tr th .optinfo .term {
+  font-style: normal;
+  font-size: 95%;
+}
+
+table tr th .optinfo ul {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
 }
 
 em.term {
@@ -307,7 +329,6 @@ table tr th[scope="row"], table tr th[scope="rowgroup"] {
 
 table tr td {
   border: 0;
-  background: <%= lightbg %>;
   padding: 0 0.4em;
 }
 

@@ -1,0 +1,40 @@
+# IP+SQL auth plugin
+#
+# Maps client IPs to filter groups according to the result of an SQL query.
+
+plugname = 'sqlauth'
+
+# List file assigning RADIUS groups to filter groups
+# (or more generally, the result of sqlauthusergroupquery to filter groups)
+sqlauthgroups = '<%= dg.root %>/lists/authplugins/sqlgroups'
+
+# You can use any database engine supported by the SOCI C++ library.
+sqlauthdb     = 'mysql'
+sqlauthdbhost = 'localhost'
+sqlauthdbname = 'radius'
+sqlauthdbuser = 'radius'
+sqlauthdbpass = 'radius'
+
+# SQL queries: the example shown is well tested with the default FreeRADIUS
+# configuration and MySQL.
+
+# SQL query to know username from IP.
+#
+# -IPADDRESS- will be expanded to the actual client address.
+sqlauthipuserquery = 'SELECT `username` FROM `radacct` WHERE `acctstoptime` IS NULL AND `framedipaddress` = "-IPADDRESS-" ORDER BY `acctstarttime` DESC'
+
+# SQL query to know group(s) user belongs to.
+#
+# -USERNAME- will be expanded to the actual username.
+#
+# Multiple groups may be returned: they will be compared to the sqlauthgroups
+# file untl a match is found, so order is important.
+sqlauthusergroupquery = 'SELECT `groupname` FROM `radusergroup` WHERE `username` = "-USERNAME-" ORDER BY `priority` ASC'
+
+# Any child will keep data in memory for specified seconds before 
+# querying the database again
+sqlauthcachettl = 120
+
+# Whether to print sql queries to stdout when in foreground (-N switch) 
+# default off
+#sqlauthdebug = off
