@@ -5,6 +5,13 @@
 
 <h2><%= title %></h2>
 
+<%= 
+  partial(
+    :module => 'dansguardian',
+    :path => 'content-filter/dansguardian/authplugins/sql/_info'
+  )
+%>
+
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <h3>Database configuration</h3>
