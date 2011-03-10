@@ -46,7 +46,17 @@ dev <%= vpn.data['dev-type'] %>
 # UDP server?  Use the same setting as
 # on the server.
 ;proto tcp
-proto <%= vpn.data['proto'] %>
+<% 
+  proto = case vpn.data['proto']
+          when 'udp'
+            'udp'
+          when 'tcp-server'
+            'tcp-client'
+          else # you shouldn't be here... 
+            vpn.data['proto']
+          end
+%>
+proto <%= proto %>
 
 # The hostname/IP and port of the server.
 # You can have multiple remote entries
