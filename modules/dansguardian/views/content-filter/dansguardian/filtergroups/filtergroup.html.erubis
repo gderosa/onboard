@@ -275,7 +275,14 @@
         </div>
       </th>
       <td>
-        <input type="text" name="naughtynesslimit" value="<%= fg[:naughtynesslimit] %>"/>
+        <% 
+          begin
+            naughtynesslimit = fg[:naughtynesslimit]
+          rescue ConfigFiles::Base::NoKeyError
+            naughtynesslimit = 'UNKNOWN/INVALID'
+          end
+        %>
+        <input type="text" name="naughtynesslimit" value="<%= naughtynesslimit %>"/>
       </td>
     </tr>
      <tr>
