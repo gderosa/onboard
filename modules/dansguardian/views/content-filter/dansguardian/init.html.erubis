@@ -9,10 +9,20 @@
 <h2><%= title %></h2>
 
 
-<h3>Initialize configuration</h3>
+<h3>Initialize / reset configuration</h3>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <input type="hidden" name="initialize_config_files" value="on"/>
-  <button type="submit">Initialize!</button>
+  <table>
+    <tr>
+      <td>
+        <input type="checkbox" name="delete_all"/>
+      </td>
+      <th scope="row">
+        Also delete newly created files, such as custom lists
+      </th>
+    </tr>
+  </table>
+  <button style="margin-top: 2em;" type="submit">Initialize!</button>
 </form>
 
