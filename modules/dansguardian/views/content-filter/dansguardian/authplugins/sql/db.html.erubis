@@ -51,8 +51,15 @@
         Cache Time-to-Live (seconds)
       </th>
       <td>
+        <%
+          begin
+            sqlauthcachettl = o[:sqlauthcachettl]
+          rescue ConfigFiles::Base::NoKeyError
+            sqlauthcachettl = 'UNKNOWN/INVALID'
+          end
+        %>
         <input 
-            type="text" name="sqlauthcachettl" value="<%= o[:sqlauthcachettl] %>"/>
+            type="text" name="sqlauthcachettl" value="<%= sqlauthcachettl %>"/>
       </td>
     </tr>
   </table>
