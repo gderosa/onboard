@@ -13,3 +13,4 @@ This module depends on the module "easy-rsa".
 gems:
 - uuid
 - zippy
+- archive-tar-minitar
