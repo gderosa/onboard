@@ -1,3 +1,19 @@
+2011.03.02
+
+* OpenVPN: client wizard: fix TCP mode
+
+2011.03.01
+
+* DansGuardian: some error handling
+
+2011.03.00.alpha2
+
+* DansGuardian JSON/YAML export
+
+2011.03.00.alpha1
+
+* DansGuardian module
+
 2010.12.02
 
 * chilli: postauthproxy and postauthproxyport

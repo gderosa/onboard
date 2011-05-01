@@ -1,12 +1,12 @@
 <% name = "OnBoard"  %>    
-    <h2>Welcome to <%= name %></h2>
+    <h2><%= name %></h2>
     <div style="width:70%;">
       <p>A Web Interface to manage Linux-based network appliances.</p>
       <p>
         <%= name %> is based on 
         <a href="http://www.sinatrarb.com/">Sinatra</a> and is 
-        mostly tested on <a href="http://www.debian.org/">Debian</a> and
-        <a href="http://linux.voyage.hk/">Voyage Linux</a> distributions.
+        mostly tested on <a href="http://www.debian.org/">Debian</a>-based
+        systems.
       </p>
     </div>
 

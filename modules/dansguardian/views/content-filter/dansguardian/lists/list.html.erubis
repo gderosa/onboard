@@ -1,0 +1,73 @@
+<%
+  require 'onboard/extensions/string' 
+  require 'onboard/extensions/file'
+
+  list                  = objects 
+  valid_file_encodings  = File.valid_encodings(list.absolute_path)
+%>
+
+<h2><%= title %></h2>
+
+<form method="GET">
+  <select name="file_encoding">
+    <option value="">(none / ASCII + hex codes)</option> 
+    <% Encoding.list.each do |enc| %>
+      <% next if enc == Encoding::BINARY %> <%# already provided by "" (none) %>
+      <option 
+        value="<%= enc %>" 
+        <%= 'selected' if 
+            params['file_encoding'] and 
+            params['file_encoding'].upcase == enc.name.upcase %>
+        <%= 'disabled' unless valid_file_encodings.include? enc %>
+      >
+        <%= enc %>
+      </option>
+    <% end %>
+  </select>
+  <button type="submit">Choose File encoding!</button>
+</form>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+
+  <h3>List category (shown in DansGuardian message pages)</h3> 
+  <input size="50" type="text" name="listcategory" value="<%= 
+    begin
+      list.listcategory.encode(current_encoding) 
+    rescue
+      list.listcategory ? list.listcategory.to_asciihex : ''
+    end
+  %>"/>
+
+  <h3>List items (use DansGuardian syntax)</h3>
+  <textarea name="items" cols="80" rows="12"><%= 
+    begin
+      list.items.join("\n").encode(current_encoding)  
+    rescue
+      list.items.map{|item| item.to_asciihex}.join("\n")
+    end
+  %></textarea>
+
+  <h3>Includes</h3>
+  <p>
+    Only files in <a href="<%= parent_path %>#sub_directories">subdirectories</a> can be included. You may also <a href="<%= parent_path %>#create_new">create new ones</a>.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>List</th>
+        <th>Include?</th> 
+      </tr>
+    </thead>
+    <tbody>
+      <% list.includables.sort.each do |includable_list| %>
+        <tr>
+          <td><a href="<%= includable_list.http_path %>.html"><%= includable_list.relative_path %></a></td>
+          <input type="hidden" name="include[][relative_path]" value="<%= includable_list.relative_path %>">
+          <td style="text-align:center;"><input type="checkbox" name="include[][include]" <%= 'checked' if includable_list.included? %>/></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <button style="margin-top: 2em;" type="submit">Change!</button>
+</form>

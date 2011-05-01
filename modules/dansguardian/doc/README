@@ -1,0 +1,18 @@
+SQLAUTH PATCH:
+
+http://tech.groups.yahoo.com/group/dansguardian/message/24647
+
+ANTIVIRUS:
+
+Currently only clamd is supported.
+
+ClamD must be able to access DG temporary files, so you have to do something
+like:
+
+  adduser clamv dansguardian
+
+and restart clamD
+
+.
+
+
