@@ -1,3 +1,7 @@
+2011.03.03
+
+openvpn --local
+
 2011.03.02
 
 * OpenVPN: client wizard: fix TCP mode
