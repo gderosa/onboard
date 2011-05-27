@@ -6,7 +6,7 @@ class OnBoard
       # Different from standard Sinatra error handler:
       # * allow multiple blocks for the same exception (called subsequently)
       # * does not require disabling :show_exceptions (which is still useful
-      #   for unhandles exceptions).
+      #   for unhandled exceptions).
       #
       # Each handler returns a Hash, like {:status => 409. :msg => {...}}
       # or nil if the error cannot be handled. msg Hash will be used
