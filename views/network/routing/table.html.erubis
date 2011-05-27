@@ -75,6 +75,7 @@
         %>
         <input type="hidden" name="_method" value="put"/>
         <input type="hidden" name="ip_route_del" value="<%= route.rawline %>"/>
+        <input type="hidden" name="af" value="<%= route.dest.family == Socket::AF_INET6 ? 'inet6' : 'inet' %>"/>
         <td style="text-align:center;">
           <button type="submit" title="Delete this route!">
             <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>

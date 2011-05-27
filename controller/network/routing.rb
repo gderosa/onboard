@@ -139,7 +139,9 @@ class OnBoard::Controller
         msg = {:err => "Invalid name: \"#{name}\". Use at least one alphabetical character; you may also use numbers, '-' and '_'."}
       end
     elsif params['ip_route_del']
-      msg = table.ip_route_del params['ip_route_del']
+      # 'default' might be ambiguous, 0.0.0.0/0 or ::/0 ? So, specifying
+      # the address family (af) is required. 
+      msg = table.ip_route_del params['ip_route_del'], :af => params['af']
     else
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params
     end
