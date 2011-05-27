@@ -215,7 +215,7 @@
         <th colspan="2">
           SSL <small>(<a href="/crypto/easy-rsa.html">configuration</a>)</small>
         </th>
-        <th colspan="2">Real Network</th>
+        <th colspan="3">Real Network</th>
         <th colspan="3" rowspan="1">Virtual</th>
         <th rowspan="3">LZO<br/>Compression?</th>
       </tr>
@@ -223,6 +223,7 @@
         <th rowspan="2">Certificate (must have Private Key)</th>
         <th rowspan="2">Trusted Certificate Authority</th>
         <th rowspan="2">Protocol</th>
+        <th rowspan="2">Local address (optional)</th>
         <th rowspan="2">Local<br/>port</th>
         <th rowspan="2">
           Network (Point-to-Point, IPv4 only)
@@ -288,6 +289,9 @@
             <option disabled value="tcp-client">TCP - connect to peer</option>
             <option value="tcp-server">TCP - wait for connections</option>
           </select>
+        </td>
+        <td>
+          <input type="text" class="rwtext" name="local_address" size="15"/>
         </td>
         <td style="text-align:center;"> 
           <input type="text" class="rwtext" name="port" size="5" maxlength="5" value="1194"/>

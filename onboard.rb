@@ -24,7 +24,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2011.03.01'
+  VERSION           = '2011.03.03'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 

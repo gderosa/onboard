@@ -118,6 +118,8 @@ locals automatically provided by format() helper:
         <td rowspan="<%= rowspan %>" class="<%= cssclass %>"><span class="<%= cssclass2 %>">
           <%= errortext %><code><%= text %></code>
         </span></td>
+
+        <td><%= vpn.data['local'] or '<div class="lowlight" style="text-align:center;"> * </div>' %></td>
         <td rowspan="<%= rowspan %>"> <!-- *local* port -->
           <%= 
             if vpn.data['port']
