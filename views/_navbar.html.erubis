@@ -44,7 +44,13 @@
           <% end %>
         <% end %>
         <span style="margin-left:2em;">
-          <% referrer_path = URI.parse(request.referer).path %>
+          <% 
+            begin
+              referrer_path = URI.parse(request.referer).path 
+            rescue URI::InvalidURIError
+              referrer_path = nil
+            end
+          %>
           <span <%= 'style="display:none;"' if referrer_path == request.path_info or request.env['REQUEST_METHOD'] == 'GET' %>>
             <% 
             # ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^  
