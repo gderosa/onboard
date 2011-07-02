@@ -86,6 +86,16 @@
     </td>
   </tr>
   <tr>
+    <th scope="row">Add Identification Papers</th>
+    <td>
+      <% 3.times do %>
+        <div>
+          <input type="file" name="id_paper_uploads[]"/>
+        </div>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
     <th scope="row">Notes</th>
     <td>
       <textarea style="width: 40ex;" name="personal[Notes]"><%= personal['Notes'] %></textarea>
