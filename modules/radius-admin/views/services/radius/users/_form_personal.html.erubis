@@ -88,8 +88,10 @@
   <tr>
     <th scope="row">Attachments</th>
     <td>
-      <% personal['Attachments'].each do |name| %>
-        <%= name %><br/>
+      <% if personal['Attachments'].respont_to? :each %>
+        <% personal['Attachments'].each do |name| %>
+          <%= name %><br/>
+        <% end %>
       <% end %>
       <% 3.times do %>
         <div>
