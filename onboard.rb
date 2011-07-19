@@ -36,10 +36,12 @@ class OnBoard
   )
   FileUtils.mkdir_p RWDIR
   FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
-  CONFDIR           = File.join RWDIR, '/etc/config'
-  LOGDIR            = File.join RWDIR, '/var/log'
-  LOGFILE_BASENAME  = 'onboard.log'
-  LOGFILE_PATH      = File.join LOGDIR, LOGFILE_BASENAME
+  CONFDIR             = File.join RWDIR, '/etc/config'
+  LOGDIR              = File.join RWDIR, '/var/log'
+  # sometimes files are uploaded elsewhere, as best suitable
+  DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
+  LOGFILE_BASENAME    = 'onboard.log'
+  LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
  
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
   # NOTE: we are re-defining a constant!

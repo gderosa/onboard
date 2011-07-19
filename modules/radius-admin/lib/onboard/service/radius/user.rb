@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'facets/hash'
 require 'sequel'
 require 'sequel/extensions/pagination'
@@ -10,6 +11,8 @@ class OnBoard
   module Service
     module RADIUS
       class User
+
+        UPLOADS = File.join RADIUS::UPLOADS, 'users'
 
         class << self
 
@@ -241,8 +244,17 @@ class OnBoard
 
         def upload_attachments(params)
           params['personal']['Attachments'].each do |attachment|
-            puts 
-            p attachment
+
+            # DEBUG
+            # puts 
+            # p attachment
+
+            dir = "#{UPLOADS}/#{params['check']['User-Name']}/personal"
+            FileUtils.mkdir_p dir
+            FileUtils.cp(
+                attachment[:tempfile].path, 
+                File.join(dir, attachment[:filename])
+            )
           end
         end
 
