@@ -88,7 +88,7 @@
   <tr>
     <th scope="row">Attachments</th>
     <td>
-      <% if personal['Attachments'].respont_to? :each %>
+      <% if personal['Attachments'].respond_to? :each %>
         <% personal['Attachments'].each do |name| %>
           <%= name %><br/>
         <% end %>
