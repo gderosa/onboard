@@ -227,7 +227,7 @@ class OnBoard
           match = {@@perscols['User-Name'] => @name}
           row   = match.clone
           params['personal'].each_pair do |k, v|
-            row[@@perscols[k]] = v
+            row[@@perscols[k]] = v if @@perscols[k]
           end
           if RADIUS.db[@@perstable].filter(match).any?
             row[@@perscols['Update-Date']] = Time.now
