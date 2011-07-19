@@ -243,13 +243,9 @@ class OnBoard
         end
 
         def upload_attachments(params)
+          user = params['check']['User-Name'] || params[:userid]
           params['personal']['Attachments'].each do |attachment|
-
-            # DEBUG
-            # puts 
-            # p attachment
-
-            dir = "#{UPLOADS}/#{params['check']['User-Name']}/personal"
+            dir = "#{UPLOADS}/#{user}/personal"
             FileUtils.mkdir_p dir
             FileUtils.cp(
                 attachment[:tempfile].path, 
@@ -266,6 +262,7 @@ class OnBoard
             update_check_attributes(params)
             update_reply_attributes(params)
             update_personal_data(params)
+            upload_attachments(params)
           end
         end
 

@@ -2,9 +2,9 @@
   user    ||= nil
   heading ||= 4
 %>
-<form class="raduserform" method="POST">
+<form class="raduserform" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_method" value="put">
-  <h<%= heading%>>Personal Informations</h<%= heading%>>
+  <h<%= heading%>>Personal Information</h<%= heading%>>
   <%=
     partial(
       :module => 'radius-admin',
