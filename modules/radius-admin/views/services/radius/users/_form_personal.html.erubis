@@ -90,7 +90,7 @@
     <td>
       <% 3.times do %>
         <div>
-          <input type="file" name="id_paper_uploads[]"/>
+          <input type="file" name="id_paper_uploads[]" style="width:20em;"/>
         </div>
       <% end %>
     </td>
