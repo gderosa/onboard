@@ -90,7 +90,7 @@
     <td>
       <% 3.times do %>
         <div>
-          <input type="file" name="attachment[]" style="width:20em;"/>
+          <input type="file" name="personal[Attachments][]" style="width:20em;"/>
         </div>
       <% end %>
     </td>
