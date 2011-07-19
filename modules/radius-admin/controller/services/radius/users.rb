@@ -62,6 +62,7 @@ class OnBoard
         user.retrieve_attributes_from_db
         user.retrieve_group_membership_from_db
         user.retrieve_personal_info_from_db
+        user.get_personal_attachment_info
         not_found unless user.found?
       end
       format(

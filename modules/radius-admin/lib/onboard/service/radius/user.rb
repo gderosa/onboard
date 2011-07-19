@@ -120,6 +120,16 @@ class OnBoard
           else 
             @personal = {} 
           end
+          # p @personal
+        end
+
+        def get_personal_attachment_info
+          @personal ||= {}
+          dir = "#{UPLOADS}/#{@name}/personal"
+          @personal['Attachments'] = Dir.foreach(dir).select do |entry|
+            File.file? "#{dir}/#{entry}"
+          end
+          # p @personal
         end
 
         def grouplist

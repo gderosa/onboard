@@ -88,6 +88,9 @@
   <tr>
     <th scope="row">Attachments</th>
     <td>
+      <% personal['Attachments'].each do |name| %>
+        <%= name %><br/>
+      <% end %>
       <% 3.times do %>
         <div>
           <input type="file" name="personal[Attachments][]" style="width:20em;"/>
