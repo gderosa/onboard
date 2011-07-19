@@ -86,11 +86,11 @@
     </td>
   </tr>
   <tr>
-    <th scope="row">Add Identification Papers</th>
+    <th scope="row">Attachments</th>
     <td>
       <% 3.times do %>
         <div>
-          <input type="file" name="id_paper_uploads[]" style="width:20em;"/>
+          <input type="file" name="attachment[]" style="width:20em;"/>
         </div>
       <% end %>
     </td>
