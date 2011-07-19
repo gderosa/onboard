@@ -239,6 +239,13 @@ class OnBoard
           end
         end
 
+        def upload_attachments(params)
+          params['personal']['Attachments'].each do |attachment|
+            puts 
+            p attachment
+          end
+        end
+
         def update(params)
           if params['update_groups']
             update_group_membership(params)

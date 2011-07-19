@@ -34,6 +34,7 @@ class OnBoard
         Service::RADIUS::Check.insert(params)
         user.update_reply_attributes(params) 
         user.update_personal_data(params)
+        user.upload_attachments(params) 
       end
       if msg[:ok] and not msg[:err] 
         status 201 # Created
