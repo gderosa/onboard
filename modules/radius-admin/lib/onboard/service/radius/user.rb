@@ -126,8 +126,12 @@ class OnBoard
         def get_personal_attachment_info
           @personal ||= {}
           dir = "#{UPLOADS}/#{@name}/personal"
-          @personal['Attachments'] = Dir.foreach(dir).select do |entry|
-            File.file? "#{dir}/#{entry}"
+          begin
+            @personal['Attachments'] = Dir.foreach(dir).select do |entry|
+              File.file? "#{dir}/#{entry}"
+            end
+          rescue Errno::ENOENT
+            @personal['Attachments'] = []
           end
           # p @personal
         end

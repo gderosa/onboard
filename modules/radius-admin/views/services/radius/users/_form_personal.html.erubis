@@ -89,8 +89,8 @@
     <th scope="row">Attachments</th>
     <td>
       <% if personal['Attachments'].respond_to? :each %>
-        <% personal['Attachments'].each do |name| %>
-          <%= name %><br/>
+        <% personal['Attachments'].each do |attachment_basename| %>
+          <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>"><%= attachment_basename %></a><br/>
         <% end %>
       <% end %>
       <% 3.times do %>
