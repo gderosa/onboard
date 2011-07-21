@@ -9,6 +9,25 @@
     end
   end
 %>
+
+<style type="text/css">
+  table tr#personal-attachments td table {
+    margin-bottom: 1em;
+  }
+  table tr#personal-attachments td table tr th, 
+  table tr#personal-attachments td table tr td 
+  {
+    border: none; 
+    padding: 0;
+  }
+  table tr#personal-attachments td table tr th {
+    padding-right: 1em;
+  }
+  table tr#personal-attachments td table tr td {
+    padding-left: 1em;
+  }
+</style>
+
 <table class="raduserform">
   <tr>
     <th scope="row">Name</th>
@@ -85,18 +104,31 @@
       </span>   
     </td>
   </tr>
-  <tr>
+  <tr id="personal-attachments">
     <th scope="row">Attachments</th>
     <td>
       <% if personal['Attachments'].respond_to? :each %>
-        <% personal['Attachments'].each do |attachment_basename| %>
-          <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>"><%= attachment_basename %></a><br/>
-        <% end %>
+        <table>
+          <% personal['Attachments'].each do |attachment_basename| %>
+            <tr>
+              <th scope="row">
+                <%= attachment_basename %>
+              </th>
+              <td>
+                <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>">
+                  view</a>
+                |
+                <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>?disposition=attachment">
+                  download</a>
+                |
+                delete
+              </td>
+            </tr>  
+          <% end %>
+        </table>
       <% end %>
       <% 3.times do %>
-        <div>
-          <input type="file" name="personal[Attachments][]" style="width:20em;"/>
-        </div>
+        <input type="file" name="personal[Attachments][]" style="width:20em;"/>
       <% end %>
     </td>
   </tr>

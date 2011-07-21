@@ -104,5 +104,15 @@ class OnBoard
       )
     end
 
+    get '/services/radius/users/:userid/attachments/personal/:basename' do
+      attachment(params[:basename]) if params['disposition'] == 'attachment'
+      send_file( File.join(
+          OnBoard::Service::RADIUS::User::UPLOADS,
+          params[:userid],
+          'personal',
+          params[:basename]
+      ) )
+    end
+
   end
 end

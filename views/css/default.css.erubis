@@ -5,7 +5,7 @@
   lowlight        = "#666" 
   superlowlight   = "#bbb" 
   hover           = "color: white; background: #{highlight};" 
-  lightbg         = "#f8f0c0" 
+  lightbg         = "#dfdfdf" 
   lightbg_off     = "#eedddd"
   lightbg_high    = "#ddeedd"
   serif           = %q{"Times New Roman", Times, Georgia, serif}
@@ -273,9 +273,11 @@ table tr th {
 }
 
 table tr td, table tr th, fieldset {
-  /* background: <%= lightbg %>; */
-  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.gif");
+  background: <%= lightbg %>; 
+  /*
+  background: url("/backgrounds/kollermedia.at/pattern4u/funky/18original.gif");
   background-attachment: fixed;
+  */
 }
 
 .term {
