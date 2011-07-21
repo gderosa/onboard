@@ -21,6 +21,7 @@
     padding: 0;
   }
   table tr#personal-attachments td table tr th {
+    font-size: 100%;
     padding-right: 1em;
   }
   table tr#personal-attachments td table tr td {
@@ -28,7 +29,7 @@
   }
   table tr#personal-attachments td table tr td input[type="checkbox"] {
     vertical-align: bottom;
-    margin: 0 0;
+    margin: 0 0.1em;
   }
 </style>
 
@@ -125,7 +126,7 @@
                 <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>?disposition=attachment">
                   download</a>
                 |
-                delete <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
+                <span style="font-weight: bold; color: #111; ">delete</span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
               </td>
             </tr>  
           <% end %>
