@@ -26,6 +26,10 @@
   table tr#personal-attachments td table tr td {
     padding-left: 1em;
   }
+  table tr#personal-attachments td table tr td input[type="checkbox"] {
+    vertical-align: bottom;
+    margin: 0 0;
+  }
 </style>
 
 <table class="raduserform">
@@ -121,7 +125,7 @@
                 <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>?disposition=attachment">
                   download</a>
                 |
-                delete
+                delete <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
               </td>
             </tr>  
           <% end %>
