@@ -58,23 +58,25 @@
     </td>
   </tr>
   <tr>
-    <th scope="row">Phone number</th>
+    <th scope="row">Birth</th>
     <td>
       <span class="input-container">
         <input 
             type="text" 
-            name="personal[Work-Phone]"
-            value="<%= personal['Work-Phone'] %>">(Work)</span> 
+            name="personal[Birth-Date]"
+            title="in YYYY-MM-DD format"
+            value="<%= personal['Birth-Date'] %>">(Date)</span> 
       <span class="input-container">
         <input 
             type="text" 
-            name="personal[Home-Phone]"
-            value="<%= personal['Home-Phone'] %>">(Home)</span>
+            name="personal[Birth-City]"
+            value="<%= personal['Birth-City'] %>">(City)</span>
       <span class="input-container">
         <input 
             type="text" 
-            name="personal[Mobile-Phone]"
-            value="<%= personal['Mobile-Phone'] %>">(Mobile)</span>
+            name="personal[Birth-State]"
+            style="width: 2ex;"
+            value="<%= personal['Birth-State'] %>">(State/Province)</span>
     </td>
   </tr>
   <tr>
@@ -110,6 +112,26 @@
       </span>   
     </td>
   </tr>
+  <tr>
+    <th scope="row">Phone number</th>
+    <td>
+      <span class="input-container">
+        <input 
+            type="text" 
+            name="personal[Work-Phone]"
+            value="<%= personal['Work-Phone'] %>">(Work)</span> 
+      <span class="input-container">
+        <input 
+            type="text" 
+            name="personal[Home-Phone]"
+            value="<%= personal['Home-Phone'] %>">(Home)</span>
+      <span class="input-container">
+        <input 
+            type="text" 
+            name="personal[Mobile-Phone]"
+            value="<%= personal['Mobile-Phone'] %>">(Mobile)</span>
+    </td>
+  </tr>
   <tr id="personal-attachments">
     <th scope="row">Attachments</th>
     <td>
@@ -136,6 +158,15 @@
       <% 3.times do %>
         <input type="file" name="personal[Attachments][]" style="width:20em;"/>
       <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">
+      Personal ID code
+      <div class="optinfo">such as Tax Code, SSN, etc.</div>
+    </th>
+    <td>
+      <input type="text" name="personal[ID-Code]" value="<%= personal['ID-Code'] %>"/>
     </td>
   </tr>
   <tr>
