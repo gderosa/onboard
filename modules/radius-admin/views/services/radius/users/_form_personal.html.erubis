@@ -12,6 +12,7 @@
 
 <style type="text/css">
   table tr#personal-attachments td table {
+    margin-top: 0.4em;
     margin-bottom: 1em;
   }
   table tr#personal-attachments td table tr th, 
@@ -112,7 +113,7 @@
   <tr id="personal-attachments">
     <th scope="row">Attachments</th>
     <td>
-      <% if personal['Attachments'].respond_to? :each %>
+      <% if personal['Attachments'].respond_to? :each and personal['Attachments'].any? %>
         <table>
           <% personal['Attachments'].each do |attachment_basename| %>
             <tr>

@@ -256,15 +256,26 @@ class OnBoard
           end
         end
 
+        def delete_attachments(params)
+          if params['delete'].respond_to? :[]
+            dir = "#{UPLOADS}/#{@name}/personal"
+            params['delete']['personal']['Attachments'].each_pair do |basename, delete|
+              FileUtils.rm "#{dir}/#{basename}" if delete == 'on'
+            end
+          end
+        end
+
         def upload_attachments(params)
-          user = params['check']['User-Name'] || params[:userid]
-          params['personal']['Attachments'].each do |attachment|
-            dir = "#{UPLOADS}/#{user}/personal"
-            FileUtils.mkdir_p dir
-            FileUtils.cp(
-                attachment[:tempfile].path, 
-                File.join(dir, attachment[:filename])
-            )
+          # user = params['check']['User-Name'] || params[:userid]
+          if params['personal'] and params['personal']['Attachments'].respond_to? :each
+            params['personal']['Attachments'].each do |attachment|
+              dir = "#{UPLOADS}/#{@name}/personal"
+              FileUtils.mkdir_p dir
+              FileUtils.cp(
+                  attachment[:tempfile].path, 
+                  File.join(dir, attachment[:filename])
+              )
+            end
           end
         end
 
@@ -276,6 +287,7 @@ class OnBoard
             update_check_attributes(params)
             update_reply_attributes(params)
             update_personal_data(params)
+            delete_attachments(params)
             upload_attachments(params)
           end
         end
