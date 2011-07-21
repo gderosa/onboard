@@ -1,3 +1,4 @@
+require 'date'
 require 'fileutils'
 require 'facets/hash'
 require 'sequel'
@@ -246,6 +247,12 @@ class OnBoard
           params['personal'].each_pair do |k, v|
             row[@@perscols[k]] = v if @@perscols[k]
           end
+          begin
+            birthdate = Date.parse params['personal']['Birth-Date']
+          rescue ArgumentError
+            birthdate = Sequel::NULL
+          end
+          row[@@perscols['Birth-Date']] = birthdate
           if RADIUS.db[@@perstable].filter(match).any?
             row[@@perscols['Update-Date']] = Time.now
             RADIUS.db[@@perstable].filter(match).update(row) 

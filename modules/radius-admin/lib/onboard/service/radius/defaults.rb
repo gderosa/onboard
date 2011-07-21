@@ -45,7 +45,13 @@ class OnBoard
               'Postal-Code'           => 'zip',
               'Notes'                 => 'notes',
               'Creation-Date'         => 'creationdate',
-              'Update-Date'           => 'updatedate'
+              'Update-Date'           => 'updatedate',
+
+              'Birth-Date'            => 'birthdate',
+              'Birth-City'            => 'birthcity',
+              'Birth-State'           => 'birthstate',
+
+              'ID-Code'               => 'personalidcode'
             }
           },
 
