@@ -77,6 +77,9 @@ class OnBoard
 
     # All URLs under /pub/ are publicly accessible! 
     public_access! %r{^/pub(/.*)?$} 
+  
+    # 
+    public_access! %r{^/__sinatra__(/.*)?$} 
 
     get %r{^/pub(/.*)?$} do
       @layout = 'pub/layout.html' 

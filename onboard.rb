@@ -88,10 +88,12 @@ class OnBoard
   end
 
   def self.prepare
-    # menu
     if web?
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
+      
+      require 'onboard/controller/helpers'
+      require 'onboard/controller'
     end
 
     # modules
@@ -162,8 +164,8 @@ end
 OnBoard.prepare
 
 if OnBoard.web?
-  require 'onboard/controller'
-  require 'onboard/controller/helpers'
+  #require 'onboard/controller'
+  #require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run!
   end
