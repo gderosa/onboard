@@ -95,7 +95,11 @@ end
         end
 
         def stop!
-          Process.kill 'TERM', File.read(PIDFILE).to_i
+          pid = File.read(PIDFILE).to_i
+          Process.kill 'TERM', pid
+          while (running?) do
+            sleep 0.1
+          end
         end
 
         def restart!
