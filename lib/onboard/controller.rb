@@ -76,7 +76,7 @@ class OnBoard
     end    
 
     # Example
-    public_access! 'pub'
+    public_access! '/pub'
 
     get '/pub' do
       'Public access example'
