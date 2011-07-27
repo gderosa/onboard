@@ -22,6 +22,25 @@ require 'onboard/pagination'
 class OnBoard
   class Controller < ::Sinatra::Base
     helpers do
+    
+      # Auth helpers, from http://www.sinatrarb.com/faq.html#auth
+      def protected!
+        unless authorized?
+          response['WWW-Authenticate'] = %(Basic realm="Restricted Area")
+          throw(:halt, [401, "Not authorized\n"])
+        end
+      end
+      def authorized?
+        @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+        @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['admin', 'admin']
+      end
+      def public_access!
+        @public_access = true
+      end
+      def public_access?
+        instance_variable_defined? :@public_access and @public_access
+      end
+      # there's an afetr filter in controller.rb
 
       # Localization helpers 
       def locale

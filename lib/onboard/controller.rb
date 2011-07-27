@@ -48,13 +48,24 @@ class OnBoard
       OnBoard::LOGGER.level = Logger::INFO
     end
 
+=begin
     use Rack::Auth::Basic do |username, password|
       (File.exists? OnBoard::Passwd::ADMIN_PASSWD_FILE) ?
           (username == 'admin' and Passwd.check_admin_pass password)
       :
           (username == 'admin' and password == 'admin')
     end  
+=end
+    after do
+      protected! unless instance_variable_defined? :@public_access and @public_access 
+    end    
 
+    # Example
+    get '/pub' do
+      public_access!
+      'Public access example'
+    end       
+    
     # TODO: do not hardcode, make it themable :-)
     IconDir = '/icons/gnome/gnome-icon-theme-2.18.0'
     IconSize = '16x16'
