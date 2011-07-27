@@ -6,13 +6,11 @@ class OnBoard
     # Currently, just one user: admin .
 
     PASSWD_DIR = OnBoard::CONFDIR + '/self/passwd'
-    # ADMIN_PASSWD_FILE = PASSWD_DIR + '/admin.md5.dat'
-    ADMIN_PASSWD_FILE = PASSWD_DIR + '/admin.pass'
+    ADMIN_PASSWD_FILE = PASSWD_DIR + '/admin.md5.dat'
     DEFAULT_ADMIN_USERNAME = 'admin'
     DEFAULT_ADMIN_PASSWD = 'admin'
 
     def self.change_from_HTTP_request(params)
-      puts "calling check_pass from change_from_HTTP_request"
       unless self.check_pass(params['oldpasswd'])
         return {
           :ok => false,
@@ -29,19 +27,16 @@ class OnBoard
       end
       FileUtils.mkdir_p PASSWD_DIR unless Dir.exists? PASSWD_DIR
       File.open ADMIN_PASSWD_FILE, 'w' do |f|
-        #f.write Digest::MD5.digest params['newpasswd']
-        f.write params['newpasswd']
+        f.write Digest::MD5.digest params['newpasswd']
       end
       return {:ok => true, :info => 'Password successfully updated.'}
     end
 
     def self.check_pass(passwd)
       if File.exists? ADMIN_PASSWD_FILE
-        # Digest::MD5.digest(passwd) == File.read(ADMIN_PASSWD_FILE)
-        p [passwd, File.read(ADMIN_PASSWD_FILE)]
-        return passwd == File.read(ADMIN_PASSWD_FILE)
+        Digest::MD5.digest(passwd) == File.read(ADMIN_PASSWD_FILE)
       else
-        return passwd == DEFAULT_ADMIN_PASSWD
+        passwd == DEFAULT_ADMIN_PASSWD
       end
     end
     
