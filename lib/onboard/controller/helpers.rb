@@ -32,7 +32,16 @@ class OnBoard
       end
       def authorized?
         @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-        @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['admin', 'admin']
+        if @auth.provided? && @auth.basic? && @auth.credentials 
+          if File.exists? OnBoard::Passwd::ADMIN_PASSWD_FILE
+            return ( 
+              @auth.credentials[0] == 'admin' && 
+              Passwd.check_admin_pass(@auth.credentials[1]) 
+            )
+          else
+            return @auth.credentials == ['admin', 'admin']
+          end
+        end
       end
       def public_access!
         @public_access = true
