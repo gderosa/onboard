@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'rubygems'
+require 'set'
 require 'thin' 
 require 'sinatra/base'
 require 'sinatra/r18n'
@@ -22,6 +23,17 @@ class OnBoard
   class Controller < ::Sinatra::Base
 
     class ArgumentError < ArgumentError; end # who uses this?
+
+    # TODO: move auth stuff elsewhere, in one place
+    def self.public_access!(path)
+      @@public_access ||= Set.new
+      @@public_access << path
+    end
+    def self.protected_access!(path) # which is default, useful to re-protect...
+      @@public_access.delete path
+    end
+    def self.public_access?(path)
+      class_variable_defined? :@@public_access and @@public_access.any? {|m| m === path}      end
 
     # Extensions must be explicitly registered in modular style apps.
     register ::Sinatra::R18n
@@ -56,13 +68,17 @@ class OnBoard
           (username == 'admin' and password == 'admin')
     end  
 =end
-    after do
-      protected! unless instance_variable_defined? :@public_access and @public_access 
+    
+    @@public_access = Set.new
+    
+    before do
+      protected! unless self.class.public_access? request.path_info
     end    
 
     # Example
+    public_access! 'pub'
+
     get '/pub' do
-      public_access!
       'Public access example'
     end       
     

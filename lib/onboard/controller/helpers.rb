@@ -43,13 +43,7 @@ class OnBoard
           end
         end
       end
-      def public_access!
-        @public_access = true
-      end
-      def public_access?
-        instance_variable_defined? :@public_access and @public_access
-      end
-      # there's an afetr filter in controller.rb
+      # there's a before filter in controller.rb
 
       # Localization helpers 
       def locale
