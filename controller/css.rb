@@ -1,6 +1,8 @@
 class OnBoard
   class Controller < Sinatra::Base
 
+    public_access! %r{^/css/}
+
     # just to have "CSS variables"
     get '/css/default.css' do
       content_type 'text/css'

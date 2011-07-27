@@ -144,7 +144,9 @@ class OnBoard
         end
         case h[:format]
         when 'html'
-          if h[:partial]
+          if instance_variable_defined? :@layout and @layout
+            layout = @layout.to_sym
+          elsif h[:partial]
             layout = false
           else
             layout = :"layout.html"

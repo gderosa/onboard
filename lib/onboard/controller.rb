@@ -75,13 +75,14 @@ class OnBoard
       protected! unless self.class.public_access? request.path_info
     end    
 
-    # Example
-    public_access! '/pub'
+    # All URLs under /pub/ are publicly accessible! 
+    public_access! %r{^/pub(/.*)?$} 
 
-    get '/pub' do
-      'Public access example'
-    end       
-    
+    get %r{^/pub(/.*)?$} do
+      @layout = 'pub/layout.html' 
+      pass
+    end
+
     # TODO: do not hardcode, make it themable :-)
     IconDir = '/icons/gnome/gnome-icon-theme-2.18.0'
     IconSize = '16x16'
