@@ -1,5 +1,5 @@
 <form class="raduserform" method="POST" enctype="multipart/form-data">
-  <input type="hidden" name="_method" value="post">
+  <input type="hidden" name="_method" value="put">
   <h3>Enable end-users web signup?</h3>
   <%=
     partial(
