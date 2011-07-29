@@ -16,7 +16,6 @@
 
 <h2>End User sign-up</h2>
 
-<h3>New user defaults</h3>
 <%=
   partial(
     :module => 'radius-admin',

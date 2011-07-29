@@ -1,5 +1,13 @@
 <form class="raduserform" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_method" value="post">
+  <h3>Enable end-users web signup?</h3>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_signup_enable',
+    )
+  %>
+  <h3>Default attributes for new users</h3>
   <h4>Check Attributes</h4>
   <%=
     partial(
