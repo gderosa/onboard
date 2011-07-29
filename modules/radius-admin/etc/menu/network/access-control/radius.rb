@@ -48,6 +48,13 @@ class OnBoard
     :n        => 40
   })
 
+  MENU_ROOT.add_path('/network/access-control/radius/signup', {
+    :href     => '/services/radius/signup',
+    :name     => 'Signup',
+    :desc     => 'End user sign-up via public interface',
+    :n        => 40
+  })
+
   MENU_ROOT.add_path('/network/access-control/radius/resetdb', {
     :href     => '/services/radius/resetdb',
     :name     => 'Reset Database',

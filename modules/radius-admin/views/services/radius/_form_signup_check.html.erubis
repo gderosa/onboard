@@ -1,0 +1,60 @@
+<%# -*- coding: UTF-8 -*-%>
+
+  <table class="radsignupform">
+    <tbody>
+      <tr>
+        <th scope="row">
+          Password type
+          <div class="optinfo">
+            Don’t change if unsure
+          </div>
+        </th>
+        <td style="vertical-align: middle;">
+          <select name="check[Password-Type]">
+            <% 
+              selected = best_passwd_type
+            %>
+            <option value="">(no password)</option>
+            <% passwd_types.each do |passwd_type| %>
+              <option 
+                  <%= 'selected' if passwd_type == selected %> 
+                  value="<%= passwd_type %>">
+                <%= passwd_type %>
+              </option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <th scope="row" style="font-style:italic;">
+          User is
+          <div class="optinfo">
+            Technically, sets the <code>Auth-Type</code> RADIUS attribute 
+            (more info&nbsp;<a 
+              href="http://wiki.freeradius.org/Auth-Type">here</a>).
+          </div>
+        </th>
+        <td>
+          <fieldset>
+            <% 
+              human_friendly = {
+                'Reject'  => 'Disabled',
+                ''        => 'Enabled',
+                # 'Accept'  => 'Always accepted (guest user)'
+              }
+            %>
+            <% human_friendly.keys.each do |auth_type| %>
+              <input 
+                  type="radio" 
+                  name="check[Auth-Type]" 
+                  value="<%= auth_type %>"
+              />
+              <span style="vertical-align:middle;"><%= human_friendly[auth_type] %></span>
+              <br/>
+            <% end %>
+          </fieldset>
+        </td>
+      </tr>
+    </tbody>
+  </table>

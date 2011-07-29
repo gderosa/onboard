@@ -1,0 +1,22 @@
+<form class="raduserform" method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="_method" value="post">
+  <h4>Check Attributes</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_signup_check',
+      :locals => {
+        :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
+        :best_passwd_type => 'SSHA1-Password',
+      }
+    )
+  %>
+  <h4>Reply Attributes</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_signup_reply',
+    )
+  %>
+  <button type="submit">Change!</button>
+</form>
