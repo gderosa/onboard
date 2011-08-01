@@ -14,5 +14,15 @@ class OnBoard
       )
     end
 
+    put '/services/radius/signup.:format' do
+      Service::RADIUS::Signup.update_config params
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/signup',
+        :title    => "End-user sign up",
+        :format   => params[:format],
+      )
+    end
+
   end
 end
