@@ -30,17 +30,17 @@
         <th scope="row" style="font-style:italic;">
           User is
           <div class="optinfo">
-            Technically, sets the <code>Auth-Type</code> RADIUS attribute 
-            (more info&nbsp;<a 
-              href="http://wiki.freeradius.org/Auth-Type">here</a>).
+            If you choose <span class="term">Disabled</span>, you will be able to review
+            all new subscriptions prior to actually enable them 
+            (at <a href="users.html">this page</a>).
           </div>
         </th>
         <td>
           <fieldset>
             <% 
               human_friendly = {
-                'Reject'  => 'Disabled',
                 ''        => 'Enabled',
+                'Reject'  => 'Disabled',
                 # 'Accept'  => 'Always accepted (guest user)'
               }
             %>
@@ -49,6 +49,7 @@
                   type="radio" 
                   name="check[Auth-Type]" 
                   value="<%= auth_type %>"
+                  <%= 'checked' if auth_type == '' %>
               />
               <span style="vertical-align:middle;"><%= human_friendly[auth_type] %></span>
               <br/>
