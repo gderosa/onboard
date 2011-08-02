@@ -1,4 +1,5 @@
 <%#-*- coding: UTF-8 -*-%>
+<%= message_partial(msg) %>
 <%= 
   partial(
     :module => 'radius-admin',

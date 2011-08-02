@@ -37,7 +37,7 @@ class OnBoard
       if msg[:ok] and not msg[:err] 
         status 201 # Created
         #msg[:info] = %Q{User <a class="created" href="users/#{user.name}.#{params[:format]}">#{user.name}</a> has been created!}
-        msg[:info] = %Q{User has been created!}
+        msg[:info] = %Q{User '#{user.name}' has been created!}
       end
 
       format(
