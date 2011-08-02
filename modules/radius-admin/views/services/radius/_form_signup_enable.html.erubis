@@ -7,7 +7,7 @@
           Enable?
         </th>
         <td style="width: 2em; text-align: center; vertical:align:middle;">
-          <input type="checkbox" name="enable"/>
+          <input type="checkbox" name="enable" <%= 'checked' if configuration['enable'] %>/>
         </td>
       </tr>
     </tbody>

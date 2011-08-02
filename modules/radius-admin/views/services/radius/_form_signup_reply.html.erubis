@@ -1,9 +1,5 @@
 <%#-*- coding: UTF-8 -*-%>
 
-<%
-  user ||= nil
-%>
-
   <table class="radsignupform">
     <tbody>
       <tr>
@@ -12,7 +8,7 @@
           <input 
               type="text" 
               name="reply[Reply-Message]" 
-              value="<%= user.attribute :reply, 'Reply-Message' if user %>"/>
+              value="<%= configuration['reply']['Reply-Message'] %>"/>
         </td>
       </tr>
       <tr>
@@ -24,7 +20,7 @@
           <input 
               type="text" 
               name="reply[Session-Timeout]"
-              value="<%= user.attribute :reply, 'Session-Timeout' if user %>"/>
+              value="<%= configuration['reply']['Session-Timeout'] %>"/>
         </td>
       </tr>
       <tr>
@@ -36,7 +32,7 @@
           <input 
               type="text" 
               name="reply[Idle-Timeout]"
-              value="<%= user.attribute :reply, 'Idle-Timeout' if user %>"/>
+              value="<%= configuration['reply']['Idle-Timeout'] %>"/>
         </td>
       </tr>
       <tr>
@@ -48,8 +44,7 @@
           <input 
               type="text" 
               name="reply[WISPr-Bandwidth-Max-Down]"
-              value="<%= user.attribute :reply, 'WISPr-Bandwidth-Max-Down' if 
-                  user %>"/>
+              value="<%= configuration['reply']['WISPr-Bandwidth-Max-Down'] %>"/>
         </td>
       </tr>
       <tr>
@@ -61,8 +56,7 @@
           <input 
               type="text" 
               name="reply[WISPr-Bandwidth-Max-Up]"
-              value="<%= user.attribute :reply, 'WISPr-Bandwidth-Max-Up' if
-                  user %>"/>
+              value="<%= configuration['reply']['WISPr-Bandwidth-Max-Up'] %>"/>
         </td>
       </tr>
     </tbody>

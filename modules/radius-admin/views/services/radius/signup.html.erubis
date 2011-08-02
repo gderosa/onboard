@@ -20,6 +20,7 @@
   partial(
     :module => 'radius-admin',
     :path   => 'services/radius/_form_signup',
+    :locals => {:configuration => configuration} 
   )
 %>
 

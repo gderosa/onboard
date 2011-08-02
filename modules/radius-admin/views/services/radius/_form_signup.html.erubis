@@ -5,6 +5,7 @@
     partial(
       :module => 'radius-admin',
       :path   => 'services/radius/_form_signup_enable',
+      :locals => {:configuration => configuration}
     )
   %>
   <h3>Default attributes for new users</h3>
@@ -16,6 +17,7 @@
       :locals => {
         :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
         :best_passwd_type => 'SSHA1-Password',
+        :configuration    => configuration
       }
     )
   %>
@@ -24,6 +26,7 @@
     partial(
       :module => 'radius-admin',
       :path   => 'services/radius/_form_signup_reply',
+      :locals => { :configuration => configuration } 
     )
   %>
   <button type="submit">Change!</button>
