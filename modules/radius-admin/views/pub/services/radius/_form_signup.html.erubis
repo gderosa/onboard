@@ -1,0 +1,39 @@
+<%
+  user ||= nil
+%>
+<form class="raduserform" method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="_method" value="post">
+  <table class="raduserform">
+    <tbody>
+      <tr>
+        <th scope="row">User-Name</th>
+        <td>
+          <% if user %>
+            <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">
+          <% else %>
+            <input type="text" name="check[User-Name]"/>
+          <% end %>
+        </td>
+      </tr>
+    </tbody>
+  </table>  
+  <h4>Personal data</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/users/_form_personal',
+      :locals => {
+        :user             => user
+      }
+    )
+  %>
+  <h4>Password</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      #:path   => 'services/radius/users/_form_check',
+      :path   => 'pub/services/radius/_form_signup_password',
+    )
+  %>
+  <button type="submit">Create!</button>
+</form>

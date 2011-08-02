@@ -5,22 +5,14 @@
     :path => 'services/radius/users/_form_style'
   )
 %>
-<%
-  require 'onboard/service/radius/passwd'
 
-  best_passwd_type  = 'SSHA1-Password'
-  passwd_types      = OnBoard::Service::RADIUS::Passwd::TYPES
-%>
-
-<%= message_partial(msg) %>
-
-<h2>RADIUS Users</h2>
+<h2>Hotspot signup</h2>
 
 <h3>Create new user</h3>
 <%=
   partial(
     :module => 'radius-admin',
-    :path   => 'services/radius/users/_form_create',
+    :path   => 'pub/services/radius/_form_signup',
   )
 %>
 
