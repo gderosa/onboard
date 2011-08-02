@@ -73,6 +73,10 @@ class OnBoard
     
     before do
       protected! unless self.class.public_access? request.path_info
+
+      if request.path_info =~ %r{^/pub(/.*)?$}
+        @layout = 'pub/layout.html'
+      end
     end    
 
     # All URLs under /pub/ are publicly accessible! 
@@ -80,11 +84,6 @@ class OnBoard
   
     # 
     public_access! %r{^/__sinatra__(/.*)?$} 
-
-    get %r{^/pub(/.*)?$} do
-      @layout = 'pub/layout.html' 
-      pass
-    end
 
     # TODO: do not hardcode, make it themable :-)
     IconDir = '/icons/gnome/gnome-icon-theme-2.18.0'
