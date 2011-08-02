@@ -7,10 +7,19 @@ class OnBoard
   class Controller < Sinatra::Base
 
     get '/pub/services/radius/signup.html' do
-      format(
-        :module   => 'radius-admin',
-        :path     => '/pub/services/radius/signup',
-      )
+      conf = Service::RADIUS::Signup.get_config
+      if conf['enable'] 
+        format(
+          :module   => 'radius-admin',
+          :path     => '/pub/services/radius/signup',
+        )
+      else
+        status 403 # Forbidden
+        format(
+          :module   => 'radius-admin',
+          :path     => '/pub/services/radius/signup_disabled',
+        )
+      end
     end
 =begin
     post '/services/radius/users.:format' do
