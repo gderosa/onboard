@@ -1,6 +1,15 @@
+<%
+  signup_url = "#{request.url.sub request.fullpath, ''}/pub/services/radius/signup.html"
+%>
 <form class="raduserform" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_method" value="put">
   <h3>Enable end-users web signup?</h3>
+  <p>
+  You should edit the captive portal page to include a link to the signup page:
+  <a href="<%= signup_url %>"><code><%= signup_url %></code></a> .
+  <p>
+  In some cases, you might want to change <code><%= request.host %></code> into
+  another address, according to your configuration.
   <%=
     partial(
       :module => 'radius-admin',
