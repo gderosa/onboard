@@ -163,6 +163,14 @@ end
             conf_h['logo'] = logo_path
           end
 
+          # signup_url
+          if params['delete'] and params['delete']['signup_url']
+            conf_h['signup-url'] = nil
+          elsif params['signup_url'] and params['signup_url'] =~ /\S/
+            conf_h['signup-url'] = params['signup_url']
+          end
+         
+
           # custom headline
           if params['delete'] and params['delete']['custom_headline']
             conf_h['custom-headline'] = nil

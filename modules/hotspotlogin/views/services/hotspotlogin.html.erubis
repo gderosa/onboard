@@ -8,6 +8,7 @@
   interval        = hslogin['conf']['interval'] 
   uamsecret       = hslogin['conf']['uamsecret']
   logo            = hslogin['conf']['logo']
+  signup_url      = hslogin['conf']['signup-url']
   custom_headline = hslogin['conf']['custom-headline'] 
   custom_text     = hslogin['conf']['custom-text']
   custom_footer   = hslogin['conf']['custom-footer']
@@ -29,7 +30,7 @@
       custom_footer and File.readable? custom_footer
 
   textrows = 5
-  textcols = 38
+  textcols = 40
 
 %>
 
@@ -145,6 +146,23 @@
         <input type="checkbox" name="delete[logo]"/>
       </td>
     </tr>
+
+    <tr>
+      <th scope="row">
+        Signup URL 
+        <div class="optinfo">Leave blank to not display</div>
+      </th>
+      <td>
+        <input type="text" size="<%= textcols %>" class="rwtext" name="signup_url" value="<%= signup_url %>"/> 
+      </td>
+      <td style="text-align: center;">
+      <% if signup_url and signup_url =~ /\S/ %><a title="Displayed text may vary according to localization" target="_blank" href="<%= signup_url %>">Signup</a><% end %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[signup_url]"/>
+      </td>
+    </tr>
+    
     <tr>
       <th scope="row">
         Custom headline
@@ -163,7 +181,7 @@
     <tr>
       <th scope="row">Custom text</th>
       <td>
-        <textarea name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_text_content %></textarea>
+        <textarea name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_text_content %></textarea>
       </td>
       <td>
         <%= custom_text_content %>
@@ -175,7 +193,7 @@
     <tr>
       <th scope="row">Custom footer</th>
       <td>
-        <textarea name="custom_footer" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_footer_content %></textarea>
+        <textarea name="custom_footer" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_footer_content %></textarea>
       </td>
       <td style="text-align: center;">
         <%= custom_footer_content %>
