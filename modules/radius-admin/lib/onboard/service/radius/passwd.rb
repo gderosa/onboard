@@ -35,7 +35,12 @@ class OnBoard
               lambda{|s, encr| s == encr},
 
           'Crypt-Password'      => 
-              lambda{|s, encr| false}, 
+              lambda do |s, encr| 
+                # salt is at the beginning, as opposed to MD5 and SHA1
+                salt = encr[0..1]
+                salted = s.crypt(salt)
+                salted == encr
+              end, 
 
           'MD5-Password'        => 
               lambda{|s, encr| Digest::MD5.hexdigest(s) == encr},
