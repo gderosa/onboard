@@ -41,7 +41,11 @@ class OnBoard
               lambda{|s, encr| Digest::MD5.hexdigest(s) == encr},
 
           'SMD5-Password'       => 
-              lambda{|s, encr| false},
+              lambda do |s, encr| 
+                salt = encr.hex2bin[Digest::MD5.digest_length..-1] 
+                salted = Digest::MD5.salted_hexdigest(s, salt)
+                salted == encr
+              end,
 
           'SHA1-Password'       => 
               lambda{|s, encr| Digest::SHA1.base64digest(s) == encr},
@@ -50,7 +54,6 @@ class OnBoard
               lambda do |s, encr|
                 salt = Base64.decode64(encr)[Digest::SHA1.digest_length..-1]
                 salted = Digest::SHA1.salted_base64digest(s, salt)
-                p [s, salt, salted, encr]
                 salted == encr
               end,
         }
