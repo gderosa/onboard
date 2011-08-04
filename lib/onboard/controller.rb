@@ -20,6 +20,7 @@ require 'onboard/menu/node'
 require 'onboard/passwd'
 
 require 'onboard/controller/auth'
+require 'onboard/controller/locale'
 
 class OnBoard
   class Controller < ::Sinatra::Base
