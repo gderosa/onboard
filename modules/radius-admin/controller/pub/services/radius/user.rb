@@ -1,6 +1,5 @@
 require 'sinatra/base'
 
-require 'onboard/pagination'
 require 'onboard/service/radius'
 
 class OnBoard
@@ -16,6 +15,10 @@ class OnBoard
         user.get_personal_attachment_info
         not_found unless user.found?
       end
+
+      redirect '/pub/services/radius/login.html' unless
+          user.check_password session[:radpass] 
+
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users/user',

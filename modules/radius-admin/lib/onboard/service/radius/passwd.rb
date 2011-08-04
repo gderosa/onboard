@@ -28,6 +28,26 @@ class OnBoard
 
         TYPES   = ENCRYPT.keys
 
+        CHECK = {
+          'Cleartext-Password'  => 
+              lambda{|s, encr| s == encr},
+
+          'Crypt-Password'      => 
+              lambda{|s, encr| false}, 
+
+          'MD5-Password'        => 
+              lambda{|s, encr| false},
+
+          'SMD5-Password'       => 
+              lambda{|s, encr| false},
+
+          'SHA1-Password'       => 
+              lambda{|s, encr| false},
+
+          'SSHA1-Password'      => 
+              lambda{|s, encr| false},
+        }
+
         class UnknownType < ArgumentError; end
 
         def initialize(h)
@@ -41,6 +61,11 @@ class OnBoard
           ENCRYPT[@type].call(@cleartext)
         end
         alias to_s compute
+
+        def check(encrypted)
+          check_type
+          CHECK[@type].call(@cleartext, encrypted) 
+        end
 
         def check_type
           raise UnknownType, "Unknown type #{@type.inspect}; allowed passwd types are: #{TYPES.join(', ')}" unless

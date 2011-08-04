@@ -8,10 +8,6 @@ class OnBoard
 
     enable :sessions
 
-    after do
-      p session
-    end
-
     get '/pub/services/radius/login.html' do
       format(
         :module   => 'radius-admin',

@@ -346,8 +346,13 @@ class OnBoard
           row ? row[:Attribute] : nil
         end
 
-        def auth_type
-          find_attribute_value_by_name(:check, 'Auth-Type')
+        def stored_password
+          find_attribute_value_by_name :check, password_type
+        end
+
+        def check_password(cleartext) 
+          passwd = Passwd.new :type => password_type, :cleartext => cleartext
+          passwd.check stored_password
         end
 
         def validate_empty_password(params)
@@ -356,6 +361,10 @@ class OnBoard
           if password_type != params['check']['Password-Type']
             RADIUS::Check.validate_empty_password(params)
           end
+        end
+
+        def auth_type
+          find_attribute_value_by_name(:check, 'Auth-Type')
         end
 
         def to_h
