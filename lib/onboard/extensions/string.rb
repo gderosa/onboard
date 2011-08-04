@@ -117,6 +117,9 @@ class String
     out
   end
 
+  def hex2bin
+    [self].pack('H*') 
+  end
 
   alias to_i_orig to_i
 

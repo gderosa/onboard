@@ -1,6 +1,8 @@
 require 'onboard/extensions/string'
 require 'onboard/extensions/digest'
 
+autoload :Base64, 'base64'
+
 class OnBoard
   module Service
     module RADIUS
@@ -45,7 +47,12 @@ class OnBoard
               lambda{|s, encr| Digest::SHA1.base64digest(s) == encr},
 
           'SSHA1-Password'      => 
-              lambda{|s, encr| false},
+              lambda do |s, encr|
+                salt = Base64.decode64(encr)[Digest::SHA1.digest_length..-1]
+                salted = Digest::SHA1.salted_base64digest(s, salt)
+                p [s, salt, salted, encr]
+                salted == encr
+              end,
         }
 
         class UnknownType < ArgumentError; end
