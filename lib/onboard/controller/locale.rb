@@ -1,3 +1,5 @@
+require 'sinatra/r18n'
+
 class OnBoard
   class Controller < ::Sinatra::Base
 

@@ -2,6 +2,9 @@ require 'sinatra/base'
 
 class OnBoard
   class Controller < Sinatra::Base
+
+    class ArgumentError < ArgumentError; end # who uses this?
+
     class << self
       # Different from standard Sinatra error handler:
       # * allow multiple blocks for the same exception (called subsequently)
