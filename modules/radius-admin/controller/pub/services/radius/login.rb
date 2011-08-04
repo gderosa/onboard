@@ -8,9 +8,9 @@ class OnBoard
 
     enable :sessions
 
-    #after do
-    #  p session
-    #end
+    after do
+      p session
+    end
 
     get '/pub/services/radius/login.html' do
       format(
@@ -20,8 +20,9 @@ class OnBoard
       )
     end
 
-    # This is un-ReSTful: HTTP Authentication should be used instead of sessions; but
-    # this is unconvenient to end users who expect a "logout" link somewhere
+    # This is un-ReSTful: HTTP Authentication should be used instead of 
+    # sessions; but this is unconvenient to end users who expect a "logout" 
+    # link somewhere
     post '/pub/services/radius/login.html' do
       session[:raduser] = params['raduser']
       session[:radpass] = params['radpass']
@@ -30,6 +31,12 @@ class OnBoard
         :path     => '/pub/services/radius/login',
         :title    => "RADIUS End User Account Management",
       )
+    end
+
+    get '/pub/services/radius/logout.html' do
+      session[:raduser] = nil
+      session[:radpass] = nil
+      redirect '/pub/services/radius/login.html'
     end
 
   end
