@@ -36,13 +36,13 @@ class OnBoard
               lambda{|s, encr| false}, 
 
           'MD5-Password'        => 
-              lambda{|s, encr| false},
+              lambda{|s, encr| Digest::MD5.hexdigest(s) == encr},
 
           'SMD5-Password'       => 
               lambda{|s, encr| false},
 
           'SHA1-Password'       => 
-              lambda{|s, encr| false},
+              lambda{|s, encr| Digest::SHA1.base64digest(s) == encr},
 
           'SSHA1-Password'      => 
               lambda{|s, encr| false},
@@ -63,6 +63,7 @@ class OnBoard
         alias to_s compute
 
         def check(encrypted)
+          return nil unless (@cleartext && encrypted)
           check_type
           CHECK[@type].call(@cleartext, encrypted) 
         end
