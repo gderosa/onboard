@@ -60,15 +60,6 @@ class OnBoard
       OnBoard::LOGGER.level = Logger::INFO
     end
 
-=begin
-    use Rack::Auth::Basic do |username, password|
-      (File.exists? OnBoard::Passwd::ADMIN_PASSWD_FILE) ?
-          (username == 'admin' and Passwd.check_admin_pass password)
-      :
-          (username == 'admin' and password == 'admin')
-    end  
-=end
-    
     @@public_access = Set.new
     
     before do
