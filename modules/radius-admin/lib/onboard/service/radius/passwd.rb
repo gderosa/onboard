@@ -10,56 +10,57 @@ class OnBoard
 
         ENCRYPT = {
           'Cleartext-Password'  => 
-              lambda{|s| s},
+              lambda{|cleartxt| cleartxt},
 
           'Crypt-Password'      => 
-              lambda{|s| s.salted_crypt}, # autogenerate a random salt
+              lambda{|cleartxt| cleartxt.salted_crypt}, 
 
           'MD5-Password'        => 
-              lambda{|s| Digest::MD5.hexdigest s},
+              lambda{|cleartxt| Digest::MD5.hexdigest cleartxt},
 
           'SMD5-Password'       => 
-              lambda{|s| Digest::MD5.salted_hexdigest s},
+              lambda{|cleartxt| Digest::MD5.salted_hexdigest cleartxt},
 
           'SHA1-Password'       => 
-              lambda{|s| Digest::SHA1.base64digest s},
+              lambda{|cleartxt| Digest::SHA1.base64digest cleartxt},
 
           'SSHA1-Password'      => 
-              lambda{|s| Digest::SHA1.salted_base64digest s},
+              lambda{|cleartxt| Digest::SHA1.salted_base64digest cleartxt},
         }
 
         TYPES   = ENCRYPT.keys
 
         CHECK = {
           'Cleartext-Password'  => 
-              lambda{|s, encr| s == encr},
+              lambda{|cleartxt, stored| cleartxt == stored},
 
           'Crypt-Password'      => 
-              lambda do |s, encr| 
+              lambda do |cleartxt, stored| 
                 # salt is at the beginning, as opposed to MD5 and SHA1
-                salt = encr[0..1]
-                salted = s.crypt(salt)
-                salted == encr
+                salt = stored[0..1]
+                cleartxt.crypt(salt) == stored
               end, 
 
           'MD5-Password'        => 
-              lambda{|s, encr| Digest::MD5.hexdigest(s) == encr},
+              lambda do |cleartxt, stored| 
+                Digest::MD5.hexdigest(cleartxt) == stored
+              end,
 
           'SMD5-Password'       => 
-              lambda do |s, encr| 
-                salt = encr.hex2bin[Digest::MD5.digest_length..-1] 
-                salted = Digest::MD5.salted_hexdigest(s, salt)
-                salted == encr
+              lambda do |cleartxt, stored| 
+                salt = stored.hex2bin[Digest::MD5.digest_length..-1] 
+                Digest::MD5.salted_hexdigest(cleartxt, salt) == stored
               end,
 
           'SHA1-Password'       => 
-              lambda{|s, encr| Digest::SHA1.base64digest(s) == encr},
+              lambda do |cleartxt, stored| 
+                Digest::SHA1.base64digest(cleartxt) == stored
+              end,
 
           'SSHA1-Password'      => 
-              lambda do |s, encr|
-                salt = Base64.decode64(encr)[Digest::SHA1.digest_length..-1]
-                salted = Digest::SHA1.salted_base64digest(s, salt)
-                salted == encr
+              lambda do |cleartxt, stored|
+                salt = Base64.decode64(stored)[Digest::SHA1.digest_length..-1]
+                Digest::SHA1.salted_base64digest(cleartxt, salt) == stored
               end,
         }
 
