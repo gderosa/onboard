@@ -7,6 +7,8 @@
   )
 %>
 
+<div style="text-align: right;">Already registered user? <a href="login.html">Login</a>.</div>
+
 <h2>Hotspot signup</h2>
 
 <h3>Create new user</h3>

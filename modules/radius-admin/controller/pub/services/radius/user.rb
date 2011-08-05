@@ -21,7 +21,7 @@ class OnBoard
 
       format(
         :module   => 'radius-admin',
-        :path     => '/services/radius/users/user',
+        :path     => '/pub/services/radius/users/user',
         :title    => "RADIUS User: #{params[:userid]}",
         :format   => params[:format],
         :objects  => {
@@ -48,7 +48,7 @@ class OnBoard
       end
       format(
         :module   => 'radius-admin',
-        :path     => '/services/radius/users/user',
+        :path     => '/pub/services/radius/users/user',
         :title    => "RADIUS User: #{params[:userid]}",
         :format   => params[:format],
         :msg      => msg,

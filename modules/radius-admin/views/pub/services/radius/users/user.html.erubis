@@ -1,0 +1,41 @@
+<% 
+  user    = objects['user']
+%>
+<%= message_partial(msg) %>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style'
+  )
+%>
+
+<div style="text-align: right;"> Logged in as <em><%= user.name %></em>: <a href="../logout.html">Logout</a>. </div>
+
+<h2>RADIUS user: <%= user.name %></h2>
+
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path   => 'services/radius/users/_form_edit',
+    :locals => {
+      :user     => user,
+      :heading  => 3
+    }
+  )
+%>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <h3>Groups</h3>
+  <p>RADIUS <a href="/services/radius/groups.html">groups</a> this user is member of.</p>
+  <p>
+    Comma-separated list, in order of priority e.g. <code>group1, 
+    group2</code> . You may also add non existing groups, they will be 
+    created for you.
+  </p>
+
+  <div style="margin-top:1.2em;"><input type="text" style="width:50ex" name="groups" value="<%= user.grouplist.join(', ') %>"/></div> 
+  <div style="margin-top:1.8em;"><button type="submit" name="update_groups" value="on">Update group membership!</button></div>
+</form>
+
+

@@ -13,5 +13,5 @@
     <td><input type="password" name="radpass"/></td>
   </tr>
 </table>
-<button type="submit">Login</button>
+<button type="submit">Login</button> OR <a href="signup.html">Signup</a>!
 </form>

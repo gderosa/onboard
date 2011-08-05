@@ -31,7 +31,8 @@ class OnBoard
       end
 
       if user.found? and user.check_password session[:radpass]
-        msg[:info] = %Q{Welcome <a href="users/#{session[:raduser]}.html">#{session[:raduser]}</a>!} 
+        #msg[:info] = %Q{Welcome <a href="users/#{session[:raduser]}.html">#{session[:raduser]}</a>!} 
+        redirect "/pub/services/radius/users/#{user.name}.html"
       else
         msg[:ok] = false
         msg[:err] = 'Login Failed'
