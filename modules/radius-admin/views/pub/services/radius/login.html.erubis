@@ -1,5 +1,7 @@
 <h2><%= title %></h2>
 
+<%= message_partial(msg) %>
+
 <form method="POST">
 <table>
   <tr>

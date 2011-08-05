@@ -22,10 +22,26 @@ class OnBoard
     post '/pub/services/radius/login.html' do
       session[:raduser] = params['raduser']
       session[:radpass] = params['radpass']
+
+      user = Service::RADIUS::User.new(params['raduser'])
+      msg = {}
+      msg = handle_errors do
+        user.retrieve_attributes_from_db
+        #not_found unless user.found?
+      end
+
+      if user.found? and user.check_password session[:radpass]
+        msg[:info] = %Q{Welcome <a href="users/#{session[:raduser]}.html">#{session[:raduser]}</a>!} 
+      else
+        msg[:ok] = false
+        msg[:err] = 'Login Failed'
+      end
+      
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/login',
         :title    => "RADIUS End User Account Management",
+        :msg      => msg
       )
     end
 

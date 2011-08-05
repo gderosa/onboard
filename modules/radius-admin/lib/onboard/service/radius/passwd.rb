@@ -28,7 +28,7 @@ class OnBoard
               lambda{|cleartxt| Digest::SHA1.salted_base64digest cleartxt},
         }
 
-        TYPES   = ENCRYPT.keys
+        TYPES = ENCRYPT.keys
 
         CHECK = {
           'Cleartext-Password'  => 
