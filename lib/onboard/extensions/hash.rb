@@ -1,14 +1,49 @@
 class Hash
+
+  # Filter nested data in a granular way, only letting in what specified in +allowed+,
+  # as in the following example:
+  #
+  #   data = {
+  #     :a => 1,
+  #     :b => 2,
+  #     :c => {
+  #       :x => 10,
+  #       :y => 20,
+  #       :z => 30
+  #     }
+  #   }
+  #
+  #   allowed = {
+  #     :b => true,
+  #     :c => {
+  #       :y => true
+  #     }
+  #   }
+  #
+  #   data.let_in(allowed)  #=>  {:b => 2, :c => {:y => 20}}
+  def let_in(allowed)
+    result = {}
+    allowed.each_pair do |k, v|
+      case v
+      when Hash
+        result[k] = self[k].let_in(v)
+      else
+        result[k] = self[k] if v
+      end
+    end
+    return result
+  end
+
   # Can't find a reason why: 
   #
-  # Array#select #=> an Array
-  # Array#partition #=> an Array
+  #   Array#select #=> an Array
+  #   Array#partition #=> an Array
   #
-  # Hash#select #=> an Hash
+  #   Hash#select #=> an Hash
   #
   # and:
   #
-  # Hash#partition #=> an Array # :-(
+  #   Hash#partition #=> an Array # :-(
   #
   # Hash#partition_hash tries to fix this inconsistence:
   #
