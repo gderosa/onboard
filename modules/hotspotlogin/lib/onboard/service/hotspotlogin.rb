@@ -157,11 +157,16 @@ end
           # TODO: delete stale files or manage a collection/library of logos?
           if params['delete'] and params['delete']['logo'] == 'on'
             conf_h['logo'] = nil
+            conf_h['logo-link'] = nil
           elsif params['logo'] 
             logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
             FileUtils.mv(params['logo'][:tempfile], logo_path) 
             conf_h['logo'] = logo_path
           end
+          if params['logo_link'] and params['logo_link'] =~ /\S/
+            conf_h['logo-link'] = params['logo_link']
+          end
+
 
           # signup_url
           if params['delete'] and params['delete']['signup_url']

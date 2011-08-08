@@ -8,6 +8,7 @@
   interval        = hslogin['conf']['interval'] 
   uamsecret       = hslogin['conf']['uamsecret']
   logo            = hslogin['conf']['logo']
+  logo_link       = hslogin['conf']['logo-link']
   signup_url      = hslogin['conf']['signup-url']
   my_url          = hslogin['conf']['my-url']
   custom_headline = hslogin['conf']['custom-headline'] 
@@ -134,13 +135,16 @@
       <td></td>
     </tr>
     <tr>
-      <th scope="row">Logo</th>
+      <th scope="row">Logo and Organization link</th>
       <td>
-        <input type="file" name="logo"/>
+        <input type="file" name="logo"/> <br/>
+        <input type="text" size="<%= textcols %>" name="logo_link" value="<%= logo_link %>" class="rwtext"/>
       </td>
       <td style="text-align: center;">
         <% if logo and File.exists? logo %>
-          <img src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+          <% if logo_link and logo_link =~ /\S/ %><a href="<%= logo_link %>" target="_blank"><% end %>
+              <img src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+          <% if logo_link and logo_link =~ /\S/ %></a><% end %>
         <% end %>
       </td>
       <td style="text-align: center;">
