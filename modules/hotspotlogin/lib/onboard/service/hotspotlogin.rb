@@ -170,6 +170,12 @@ end
             conf_h['signup-url'] = params['signup_url']
           end
          
+          # my_url # "My Account" link
+          if params['delete'] and params['delete']['my_url']
+            conf_h['my-url'] = nil
+          elsif params['my_url'] and params['my_url'] =~ /\S/
+            conf_h['my-url'] = params['my_url']
+          end
 
           # custom headline
           if params['delete'] and params['delete']['custom_headline']
