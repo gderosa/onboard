@@ -26,7 +26,7 @@ class Hash
     allowed.each_pair do |k, v|
       case v
       when Hash
-        result[k] = self[k].let_in(v)
+        result[k] = self[k].let_in(v) if self[k].respond_to? :let_in
       else
         result[k] = self[k] if v
       end

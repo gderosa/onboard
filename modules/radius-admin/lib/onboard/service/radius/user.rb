@@ -146,6 +146,7 @@ class OnBoard
         end
 
         def update_reply_attributes(params)
+          return unless params['reply'].respond_to? :each_pair
           setup
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(
@@ -163,6 +164,7 @@ class OnBoard
         end
         
         def update_check_attributes(params) # no passwords
+          return unless  params['check'].respond_to? :each_pair
           params['check'].each_pair do |attribute, value|
             # passwords are managed by #update_password
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
@@ -184,6 +186,7 @@ class OnBoard
         end
 
         def update_passwd(params)
+          return unless params['check']
           if params['check']['User-Password'] !=
               params['confirm']['check']['User-Password']
             raise PasswordsDoNotMatch, 'Passwords do not match!'
@@ -201,7 +204,7 @@ class OnBoard
             @@chkcols['User-Name']  => @name
           ).filter(
             @@chkcols['Attribute'].like '%-Password'
-          ).delete
+          ).delete if params['check']['Password-Type'] # nil != '' ; nil =  unchanged
           if params['check']['Password-Type'] =~ /\S/
             RADIUS.db[@@chktable].insert(
               @@chkcols['User-Name']  => @name,
@@ -241,6 +244,7 @@ class OnBoard
         end
 
         def update_personal_data(params)
+          return unless params['personal'].respond_to? :each_pair
           setup
           match = {@@perscols['User-Name'] => @name}
           row   = match.clone
@@ -351,8 +355,12 @@ class OnBoard
         end
 
         def check_password(cleartext) 
-          passwd = Passwd.new :type => password_type, :cleartext => cleartext
-          passwd.check stored_password
+          begin
+            passwd = Passwd.new :type => password_type, :cleartext => cleartext
+            return passwd.check stored_password
+          rescue Passwd::UnknownType
+            return false
+          end
         end
 
         def validate_empty_password(params)

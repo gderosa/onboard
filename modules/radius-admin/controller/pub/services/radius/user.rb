@@ -32,12 +32,27 @@ class OnBoard
     end
 
     put '/pub/services/radius/users/:userid.:format' do
+      params_filtered = params.let_in(
+        'personal'  => true,
+        'check'     => {
+          'User-Password' => true,
+        },
+        'confirm'   => {
+          'check'     => {
+            'User-Password' => true,
+          },
+        },
+      )
       user = Service::RADIUS::User.new(params[:userid])
       msg = handle_errors do
         user.retrieve_attributes_from_db
         user.retrieve_group_membership_from_db
         not_found unless user.found?
-        user.update(params)
+        
+        redirect '/pub/services/radius/login.html' unless
+            user.check_password session[:radpass] 
+        
+        user.update(params_filtered)
         user.retrieve_attributes_from_db
         user.retrieve_group_membership_from_db
         user.retrieve_personal_info_from_db
@@ -59,6 +74,16 @@ class OnBoard
     end
 
     get '/pub/services/radius/users/:userid/attachments/personal/:basename' do
+      user = Service::RADIUS::User.new(params[:userid])
+      msg = {}
+      msg = handle_errors do
+        user.retrieve_attributes_from_db
+        not_found unless user.found?
+      end
+
+      redirect '/pub/services/radius/login.html' unless
+          user.check_password session[:radpass] 
+     
       attachment(params[:basename]) if params['disposition'] == 'attachment'
       send_file( File.join(
           OnBoard::Service::RADIUS::User::UPLOADS,
