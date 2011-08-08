@@ -1,0 +1,23 @@
+<%# -*- coding: UTF-8 -*-%>
+
+<%
+  user ||= nil
+%>
+
+  <table class="raduserform">
+    <tbody>
+      <tr>
+        <th scope="row">Password</th>
+        <td style="vertical-align: top;">
+          <div style="margin-top:0;"> 
+            <input type="password" name="check[User-Password]"/>
+          </div>
+          <div style="margin-top:0.7em;">
+            <input type="password" name="confirm[check][User-Password]"/><br/>
+            <span class="optinfo">(confirm)</span>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>

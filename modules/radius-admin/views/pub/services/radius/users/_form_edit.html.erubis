@@ -1,0 +1,37 @@
+<%
+  user    ||= nil
+  heading ||= 4
+%>
+<style type="text/css">
+  button[type="submit"] {
+    margin-top: 1em;
+  }
+</style>
+<form class="raduserform" method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="_method" value="put">
+  <h<%= heading%>>Personal Information</h<%= heading%>>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/users/_form_personal',
+      :locals => {
+        :user             => user
+      }
+    )
+  %>
+  
+  <h<%= heading%>>Password</h<%= heading%>>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'pub/services/radius/users/_form_check',
+      :locals => {
+        # :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
+        # :best_passwd_type => 'SSHA1-Password',
+        :user             => user
+      }
+    )
+  %>
+
+  <button type="submit" style="margin:2em 0;">Update!</button>
+</form>

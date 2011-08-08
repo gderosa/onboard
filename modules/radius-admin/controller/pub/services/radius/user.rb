@@ -42,6 +42,11 @@ class OnBoard
             'User-Password' => true,
           },
         },
+        'delete'    => {
+          'personal' => {
+            'Attachments' => true,
+          },
+        },
       )
       user = Service::RADIUS::User.new(params[:userid])
       msg = handle_errors do
