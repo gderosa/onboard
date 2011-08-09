@@ -7,6 +7,27 @@ class OnBoard
         'dbuser'                => 'radius',
         'dbpass'                => 'radius',
 
+        'terms'                 => {
+          'table'                 => 'terms',
+          'columns'               => {
+            'Id'                    => 'id',
+            'Name'                  => 'name',
+            'Content'               => 'content',
+            'Asked'                 => 'asked',
+            'Required'              => 'required',
+          }
+        },
+
+        'terms_accept'          => {
+          'table'                 => 'terms_accept',
+          'columns'               => {
+            'Id'                    => 'id',
+            'Personal-Details-Id'   => 'userinfo_id',
+            'Terms-Id'              => 'terms_id',
+            'Accept'                => 'accept',
+          },
+        },
+
         'accounting'            => {
           'table'                 => 'radacct',
           'columns'               => {
