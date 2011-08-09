@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # As you may see,
 # the Menu hierarchy and the URL/Ruby classes hierarchy are different!
 #
@@ -55,10 +57,17 @@ class OnBoard
     :n        => 40
   })
 
+  MENU_ROOT.add_path('/network/access-control/radius/terms', {
+    :href     => '/services/radius/terms',
+    :name     => '&ldquo;Terms and Conditions&rdquo;',
+    :desc     => 'Usage policies, Privacy and other regulation documents',
+    :n        => 50
+  })
+
   MENU_ROOT.add_path('/network/access-control/radius/resetdb', {
     :href     => '/services/radius/resetdb',
     :name     => 'Reset Database',
-    :n        => 50
+    :n        => 60
   })
 
 end
