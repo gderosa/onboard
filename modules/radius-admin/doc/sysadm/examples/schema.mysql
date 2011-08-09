@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `radusergroup` (
 
 --
 -- Table structure for table `userinfo`
--- (added a `country` columnd to DaloRADIUS schema)
+-- (added/removed some columns to DaloRADIUS schema)
 --
 
 CREATE TABLE IF NOT EXISTS `userinfo` (
@@ -200,9 +200,9 @@ CREATE TABLE IF NOT EXISTS `userinfo` (
   `birthcity` varchar(200) DEFAULT NULL COMMENT 'not present in DaloRADIUS',
   `birthstate` varchar(200) DEFAULT NULL COMMENT 'not present in DaloRADIUS',
   `personalidcode` varchar(128) DEFAULT NULL COMMENT 'not present in DaloRADIUS',
-  `changeuserinfo` varchar(128) DEFAULT NULL,
-  `portalloginpassword` varchar(128) DEFAULT '',
-  `enableportallogin` int(32) DEFAULT '0',
+  -- `changeuserinfo` varchar(128) DEFAULT NULL,
+  -- `portalloginpassword` varchar(128) DEFAULT '',
+  -- `enableportallogin` int(32) DEFAULT '0',
   `creationdate` datetime DEFAULT NULL COMMENT '0000-... would crash Sequel',
   `creationby` varchar(128) DEFAULT NULL,
   `updatedate` datetime DEFAULT NULL COMMENT '0000-... would crash Sequel',
@@ -210,3 +210,25 @@ CREATE TABLE IF NOT EXISTS `userinfo` (
   PRIMARY KEY (`id`),
   KEY `username` (`username`)
 ) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- Terms and Conditions
+CREATE TABLE IF NOT EXISTS `terms` ( 
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL,
+  `content` mediumtext,
+  `asked` bool NOT NULL DEFAULT false,
+  `required` bool NOT NULL DEFAULT false,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+-- Terms and Conditions accepted by users
+CREATE TABLE IF NOT EXISTS `terms_accept` ( 
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userinfo_id` int(11) NOT NULL, 
+  `terms_id` int(11) NOT NULL,
+  `accept` bool NOT NULL DEFAULT false,
+  PRIMARY KEY (`id`),
+  KEY `userinfo_id` (`userinfo_id`)
+) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
+
