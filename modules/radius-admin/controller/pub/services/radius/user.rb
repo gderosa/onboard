@@ -32,22 +32,25 @@ class OnBoard
     end
 
     put '/pub/services/radius/users/:userid.:format' do
-      params_filtered = params.let_in(
-        'personal'  => true,
-        'check'     => {
-          'User-Password' => true,
-        },
-        'confirm'   => {
+      config = Service::RADIUS::Signup.get_config
+      if config['enable_selfcare']
+        params_filtered = params.let_in(
+          'personal'  => true,
           'check'     => {
             'User-Password' => true,
           },
-        },
-        'delete'    => {
-          'personal' => {
-            'Attachments' => true,
+          'confirm'   => {
+            'check'     => {
+              'User-Password' => true,
+            },
           },
-        },
-      )
+          'delete'    => {
+            'personal' => {
+              'Attachments' => true,
+            },
+          },
+        )
+      end
       user = Service::RADIUS::User.new(params[:userid])
       msg = handle_errors do
         user.retrieve_attributes_from_db
@@ -57,15 +60,26 @@ class OnBoard
         redirect '/pub/services/radius/login.html' unless
             user.check_password session[:radpass] 
         
-        user.update(params_filtered)
-        user.retrieve_attributes_from_db
-        user.retrieve_group_membership_from_db
+        if config['enable_selfcare']
+          user.update(params_filtered)
+          user.retrieve_attributes_from_db
+          user.retrieve_group_membership_from_db
+        end
+
         user.retrieve_personal_info_from_db
         user.get_personal_attachment_info
       end
-      if !user.found? and !msg[:err] 
-        msg[:warn] = "User has no longer any attribute!"
+
+      #if !user.found? and !msg[:err] 
+      #  msg[:warn] = "User has no longer any attribute!"
+      #end
+
+      unless config['enable_selfcare']
+        msg[:ok] = false
+        msg[:err] = 'Editing not allowed!'
+        status 403 # Forbidden
       end
+
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/users/user',
