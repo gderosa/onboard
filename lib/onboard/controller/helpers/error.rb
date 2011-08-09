@@ -7,7 +7,15 @@ class OnBoard
       def handle_external_errors(e, req)
         result = nil
         @@error_handlers ||= {}
-        exception_handlers = @@error_handlers[e.class] || []  
+
+        # So, if @@error_handlers[MyError] exists, it's also valid
+        # for MyDerivedError where:
+        #
+        #   class MyDerivedError < MyError; end         
+        #
+        exception_handlers = 
+            @@error_handlers.find{|k, v| e.is_a? k }[1] || 
+            []  
         exception_handlers.each do |handler|
           result = handler.call(e, req)
           return result if result and result != :pass 
