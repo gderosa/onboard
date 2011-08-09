@@ -14,7 +14,7 @@
 
 <%= message_partial(msg) %>
 
-<h2>End User sign-up</h2>
+<h2>End users signup and selfcare</h2>
 
 <%=
   partial(

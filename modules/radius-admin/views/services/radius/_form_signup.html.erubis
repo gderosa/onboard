@@ -1,13 +1,33 @@
 <%
   signup_path = '/pub/services/radius/signup.html'
-  signup_url = "#{request.url.sub request.fullpath, ''}#{signup_path}"
+  signup_url = "#{request.url.sub request.fullpath, ''}#{signup_path}" # unused
+  login_path = '/pub/services/radius/login.html'
+  my_path = '/pub/services/radius/users/[__USERNAME__].html'
 %>
+
+
 <form class="raduserform" method="POST" enctype="multipart/form-data">
+  <h3></h3>
+  <div class="warn">
+    You may want to add some of these links to your captive portal page:  
+    <ul style="margin-bottom:0.45em;">
+      <li>
+        Signup:
+        <ul>
+          <li>Create new account: <code><%= signup_path %></code></li>
+        </ul>
+      </li>
+      <li>
+        Selfcare:
+        <ul>
+          <li>Login: <code><%= login_path %></code></li>
+          <li>“My Account”: <code><%= my_path %></code></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+ 
   <input type="hidden" name="_method" value="put">
-  <h3>Enable end-users web signup?</h3>
-  <p>
-  You should edit the captive portal page to include a link to the signup page:
-  <a href="<%= signup_path %>"><code><%= signup_path %></code></a> .
   <%=
     partial(
       :module => 'radius-admin',
@@ -15,6 +35,7 @@
       :locals => {:configuration => configuration}
     )
   %>
+
   <h3>Default attributes for new users</h3>
   <h4>Check Attributes</h4>
   <%=
@@ -36,5 +57,5 @@
       :locals => { :configuration => configuration } 
     )
   %>
-  <button type="submit">Change!</button>
+  <button type="submit" style="margin-top:2em;">Change!</button>
 </form>

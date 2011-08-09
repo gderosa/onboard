@@ -50,8 +50,8 @@ class OnBoard
 
   MENU_ROOT.add_path('/network/access-control/radius/signup', {
     :href     => '/services/radius/signup',
-    :name     => 'Signup',
-    :desc     => 'End user sign-up via public interface',
+    :name     => 'Signup and Selfcare',
+    :desc     => 'End users may create new accounts or edit their own details',
     :n        => 40
   })
 
