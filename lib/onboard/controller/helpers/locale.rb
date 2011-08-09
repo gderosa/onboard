@@ -1,5 +1,8 @@
 # encoding: UTF-8
 
+gem 'locale'
+autoload :Locale, 'locale'
+
 class OnBoard
   class Controller < ::Sinatra::Base
     helpers do
