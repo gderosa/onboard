@@ -8,7 +8,7 @@
 
 <form class="raduserform" method="POST" enctype="multipart/form-data">
   <h3></h3>
-  <div class="warn">
+  <div class="info">
     You may want to add some of these links to your captive portal page:  
     <ul style="margin-bottom:0.45em;">
       <li>
