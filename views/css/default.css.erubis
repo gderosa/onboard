@@ -180,6 +180,10 @@ div#main pre {
   color: <%= highlight %>;
 }
 
+div#main td pre {
+  color: <%= almostblack %>;
+}
+
 div#main pre.framed {
   border: 1px <%= highlight %> solid;
 }
