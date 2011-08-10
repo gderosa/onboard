@@ -19,3 +19,26 @@
     </tr>
   <% end %>
 </table>
+
+<h3>Create a new document</h3>
+<form method="POST">
+<table>
+  <tr>
+    <th scope="row">Name</th>
+    <td><input style="width:80ex;" class="rwtext" type="text" name="name"/></td>
+  </tr>
+  <tr>
+    <th scope="row">Content</th>
+    <td><textarea class="rwtext" nowrap name="name"/ rows="22" style="width:80ex;"></textarea></td> 
+  </tr>
+  <tr>
+    <th scope="row">Asked?</th>
+    <td><input type="checkbox" name="asked" checked/></td>
+  </tr>
+  <tr>
+    <th scope="row">Required?</th>
+    <td><input type="checkbox" name="required"/></td>
+  </tr>
+</table>
+<button type="submit" style="margin-top:1em;">Create!</button>
+</form>
