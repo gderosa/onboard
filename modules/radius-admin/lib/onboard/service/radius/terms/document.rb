@@ -22,19 +22,18 @@ class OnBoard
 
             def get_all
               setup
-              q = RADIUS.db[@@terms_table].select.map do |row|
+              RADIUS.db[@@terms_table].select.map do |row|
                 Hash[ 
                   row.map do |k, v| 
                     [
                       k, 
-                      v.respond_to?(:force_encoding)  ? 
-                          v.force_encoding('iso-8859-1').encode('utf-8')   : 
+                      v.respond_to?(:smart_encode)  ? 
+                          v.smart_encode('utf-8')   : 
                           v
                     ]
                   end
                 ]
-              end
-              return q
+              end              
             end
 
           end
