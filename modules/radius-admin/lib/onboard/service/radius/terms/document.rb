@@ -1,3 +1,4 @@
+require 'onboard/extensions/string'
 require 'onboard/extensions/hash'
 
 class OnBoard
@@ -21,8 +22,19 @@ class OnBoard
 
             def get_all
               setup
-              q = RADIUS.db[@@terms_table].select
-              return q.to_a
+              q = RADIUS.db[@@terms_table].select.map do |row|
+                Hash[ 
+                  row.map do |k, v| 
+                    [
+                      k, 
+                      v.respond_to?(:force_encoding)  ? 
+                          v.force_encoding('iso-8859-1').encode('utf-8')   : 
+                          v
+                    ]
+                  end
+                ]
+              end
+              return q
             end
 
           end

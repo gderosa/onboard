@@ -50,14 +50,19 @@ class OnBoard
     :n        => 40
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/signup', {
+  MENU_ROOT.add_path('/network/access-control/radius/endusers', {
+    :name     => 'End users',
+    :n        => 50,
+  })
+
+  MENU_ROOT.add_path('/network/access-control/radius/endusers/signup', {
     :href     => '/services/radius/signup',
     :name     => 'Signup and Selfcare',
     :desc     => 'End users may create new accounts or edit their own details',
     :n        => 40
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/terms', {
+  MENU_ROOT.add_path('/network/access-control/radius/endusers/terms', {
     :href     => '/services/radius/terms',
     :name     => '&ldquo;Terms and Conditions&rdquo;',
     :desc     => 'Usage policies, Privacy and other regulation documents',

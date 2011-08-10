@@ -13,12 +13,13 @@ class OnBoard
         #
         #   class MyDerivedError < MyError; end         
         #
-        exception_handlers = 
-            @@error_handlers.find{|k, v| e.is_a? k }[1] || 
-            []  
-        exception_handlers.each do |handler|
-          result = handler.call(e, req)
-          return result if result and result != :pass 
+        select = @@error_handlers.select{|k, v| e.is_a? k } || {}
+        arrays = select.values
+        arrays.each do |array|
+          array.each do |handler|
+            result = handler.call(e, req)
+            return result if result and result != :pass 
+          end
         end
         return result
       end
