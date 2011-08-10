@@ -46,12 +46,19 @@ class OnBoard
                 params['required']  = 'on' if params['asked required'].include? 'required'
               end
 
-              RADIUS.db[@@terms_table].insert(
+              RADIUS.db[@@terms_table].insert( # TODO: generalize column names from conf
                 :name     => params['name'],
                 :content  => params['content'],
                 :asked    => params['asked']    ? true : false,
                 :required => params['required'] ? true : false
               )
+            end
+
+            def delete(id)
+              setup
+
+              # TODO: generalize column names from conf
+              RADIUS.db[@@terms_table].filter(:id => id).delete
             end
 
           end

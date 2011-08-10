@@ -37,6 +37,14 @@ class OnBoard
       )
     end
 
+    delete '/services/radius/terms/:id.:format' do
+      documents = []
+      msg = handle_errors do
+        Service::RADIUS::Terms::Document.delete params[:id].to_i
+      end
+      # TODO TODO TODO
+    end
+
 
   end
 end
