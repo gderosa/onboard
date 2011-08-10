@@ -32,6 +32,17 @@
     <td><textarea class="rwtext" nowrap name="content"/ rows="22" style="width:80ex;"></textarea></td> 
   </tr>
   <tr>
+    <th scope="row">Terms acceptance is</th>
+    <td>
+      <select name="asked required">
+        <option value="">not asked (document is a draft)</option>
+        <option value="asked" selected>asked, but not required</option>
+        <option value="asked required">required</option> <!-- if required, shall be asked! -->
+      </select>
+    </td>
+  </tr>
+<!--  
+  <tr>
     <th scope="row">Asked?</th>
     <td><input type="checkbox" name="asked" checked/></td>
   </tr>
@@ -39,6 +50,7 @@
     <th scope="row">Required?</th>
     <td><input type="checkbox" name="required"/></td>
   </tr>
+-->
 </table>
 <button type="submit" style="margin-top:1em;">Create!</button>
 </form>
