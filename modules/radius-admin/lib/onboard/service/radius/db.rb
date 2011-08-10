@@ -3,6 +3,18 @@ class OnBoard
     module RADIUS
       module Db
         class << self
+
+          # Methods that should be here, but are actually defined in ../radius.rb .
+          # The following aliases allow future code to use a cleaner API, e.g.:
+          #
+          #   Service::RADIUS::Db.connect
+          #
+          # Also, they are here to make current code a bit more readable...
+          #
+          def connect;    RADIUS.db_connect;    end
+          def disconnect; RADIUS.db_disconnect; end
+          def reconnect;  RADIUS.db_reconnect;  end
+          
           def reset_data(params)
             tables = []
             if params['resetdata']
