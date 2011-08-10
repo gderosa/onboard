@@ -26,6 +26,7 @@ class OnBoard
         Service::RADIUS::Terms::Document.insert params
         documents = Service::RADIUS::Terms::Document.get_all
       end
+      status 201 if msg[:ok] and not msg[:err] 
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/terms',
