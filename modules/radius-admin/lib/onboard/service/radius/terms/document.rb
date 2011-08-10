@@ -36,6 +36,16 @@ class OnBoard
               end              
             end
 
+            def insert(params)
+              setup
+              RADIUS.db[@@terms_table].insert(
+                :name     => params['name'],
+                :content  => params['content'],
+                :asked    => params['asked']    ? true : false,
+                :required => params['required'] ? true : false
+              )
+            end
+
           end
 
         end

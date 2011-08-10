@@ -5,7 +5,7 @@
   <tr>
     <th>id</th>
     <th>Name</th>
-    <th>Preview</th>
+    <th>Content preview</th>
     <th>Asked?</th>
     <th>Required?</th>
   </tr>
@@ -13,7 +13,7 @@
     <tr>
       <td style="text-align:right"><a href="terms/<%= row[:id] %>.html"><%= row[:id] %></a></td>
       <td><a href="terms/<%= row[:id] %>.html"><%= row[:name] %></td>
-        <td><pre><%= row[:content][0..100] %>...</pre></td>
+        <td><%= row[:content][0..300].gsub(/\r?\n/, '<br/>') if row[:content] %>...</td>
       <td style="text-align:center"><%= yes_no_icon row[:asked],    :print_no %></td>
       <td style="text-align:center"><%= yes_no_icon row[:required], :print_no %></td>
     </tr>
@@ -29,7 +29,7 @@
   </tr>
   <tr>
     <th scope="row">Content</th>
-    <td><textarea class="rwtext" nowrap name="name"/ rows="22" style="width:80ex;"></textarea></td> 
+    <td><textarea class="rwtext" nowrap name="content"/ rows="22" style="width:80ex;"></textarea></td> 
   </tr>
   <tr>
     <th scope="row">Asked?</th>
