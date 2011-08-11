@@ -38,13 +38,18 @@ class OnBoard
     end
 
     delete '/services/radius/terms/:id.:format' do
-      documents = []
       msg = handle_errors do
         Service::RADIUS::Terms::Document.delete params[:id].to_i
+        redirect "/services/radius/terms.#{params[:format]}" 
       end
-      # TODO TODO TODO
+      # errors
+      format(
+        :path     => '/generic',
+        :title    => "RADIUS/HotSpot users: Usage Policy, Privacy and other regulatory documents",
+        :format   => params[:format],
+        :msg      => msg
+      )
     end
-
 
   end
 end
