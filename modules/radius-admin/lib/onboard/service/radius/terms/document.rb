@@ -46,7 +46,7 @@ class OnBoard
                   [
                     k, 
                     v.respond_to?(:smart_encode)  ? 
-                       v.smart_encode('utf-8')   : 
+                       v.smart_encode('utf-8')    : 
                        v
                   ]
                 end

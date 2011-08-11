@@ -1,3 +1,16 @@
 <%# Useful for error reporting etc., only uses layout features %>
+<% document = objects %>
 <h2><%= title %></h2>
 <%= message_partial msg %>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <%= 
+    partial(
+      :module   => 'radius-admin', 
+      :path     => 'services/radius/terms/_form',
+      :locals   => {
+        :document => document
+      }
+    )
+  %>
+</form>
