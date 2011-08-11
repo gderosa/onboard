@@ -55,13 +55,7 @@ class OnBoard
 
             def insert(params)
               setup
-
-              # translate a <select> into two checkboxes :-)
-              # (which is why a ReST backend and a web frontend should be separated!) 
-              if params['asked required'].respond_to? :include?
-                params['asked']     = 'on' if params['asked required'].include? 'asked'
-                params['required']  = 'on' if params['asked required'].include? 'required'
-              end
+              wrap_params! params
 
               RADIUS.db[@@terms_table].insert( 
                 :name     => params['name'],
@@ -71,10 +65,38 @@ class OnBoard
               )
             end
 
+            def update(id, params)
+              setup
+              wrap_params! params
+
+              RADIUS.db[@@terms_table].filter(:id => id).update(
+                :name     => params['name'],
+                :content  => params['content'],
+                :asked    => params['asked']    ? true : false,
+                :required => params['required'] ? true : false
+              )
+
+              get(id)
+            end
+
             def delete(id)
               setup
 
               RADIUS.db[@@terms_table].filter(:id => id).delete
+            end
+
+            private
+
+            def wrap_params(params); wrap_params!(params.dup); end
+            
+            def wrap_params!(params)
+              # translate a <select> into two checkboxes :-)
+              # (which is why a ReST backend and a web frontend should be separated!) 
+              if params['asked required'].respond_to? :include?
+                params['asked']     = 'on' if params['asked required'].include? 'asked'
+                params['required']  = 'on' if params['asked required'].include? 'required'
+              end
+              params
             end
 
           end

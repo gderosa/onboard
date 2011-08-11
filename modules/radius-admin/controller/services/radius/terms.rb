@@ -53,6 +53,25 @@ class OnBoard
       )
     end
 
+    put '/services/radius/terms/:id.:format' do |id, fmt|
+      document = nil
+      msg = handle_errors do
+        document = Service::RADIUS::Terms::Document.get id.to_i
+      end
+      not_found unless document
+      msg = handle_errors do
+        document = Service::RADIUS::Terms::Document.update id.to_i, params
+      end
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/terms/document',
+        :title    => "RADIUS/HotSpot users: Policy document",
+        :format   => fmt,
+        :objects  => document,
+        :msg      => msg
+      )
+    end
+
     delete '/services/radius/terms/:id.:format' do
       msg = handle_errors do
         Service::RADIUS::Terms::Document.delete params[:id].to_i
