@@ -1,6 +1,9 @@
 <h2><%= title %></h2>
 <% rows = objects %>
 <%= message_partial msg %>
+<div class="warn">
+  Documents already subscribed by one or more active users SHALL NOT be deleted!
+</div>
 <table>
   <tr>
     <th>id</th>

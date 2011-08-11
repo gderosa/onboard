@@ -2,6 +2,10 @@
 <% document = objects %>
 <h2><%= title %></h2>
 <%= message_partial msg %>
+<div class="warn">
+  You SHOULD AT MOST make small changes, like typo fixes etc.; substantial 
+  modifications are considered like altering a legal agreement.
+</div>
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <%= 
