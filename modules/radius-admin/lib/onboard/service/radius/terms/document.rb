@@ -6,6 +6,7 @@ class OnBoard
     module RADIUS
       module Terms
         class Document
+          # TODO TODO TODO: generalize column names from conf
 
           class << self
 
@@ -36,6 +37,22 @@ class OnBoard
               end              
             end
 
+            def get(id)
+              setup
+              document = RADIUS.db[@@terms_table].first(:id => id)
+              return unless document 
+              Hash[
+                RADIUS.db[@@terms_table].first(:id => id).map do |k, v| 
+                  [
+                    k, 
+                    v.respond_to?(:smart_encode)  ? 
+                       v.smart_encode('utf-8')   : 
+                       v
+                  ]
+                end
+              ]
+            end
+
             def insert(params)
               setup
 
@@ -46,7 +63,7 @@ class OnBoard
                 params['required']  = 'on' if params['asked required'].include? 'required'
               end
 
-              RADIUS.db[@@terms_table].insert( # TODO: generalize column names from conf
+              RADIUS.db[@@terms_table].insert( 
                 :name     => params['name'],
                 :content  => params['content'],
                 :asked    => params['asked']    ? true : false,
@@ -57,7 +74,6 @@ class OnBoard
             def delete(id)
               setup
 
-              # TODO: generalize column names from conf
               RADIUS.db[@@terms_table].filter(:id => id).delete
             end
 
