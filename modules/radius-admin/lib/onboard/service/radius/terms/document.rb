@@ -21,9 +21,9 @@ class OnBoard
               setup
             end
 
-            def get_all
+            def get_all(filter_h={})
               setup
-              RADIUS.db[@@terms_table].select.map do |row|
+              RADIUS.db[@@terms_table].filter(filter_h).map do |row|
                 Hash[ 
                   row.map do |k, v| 
                     [

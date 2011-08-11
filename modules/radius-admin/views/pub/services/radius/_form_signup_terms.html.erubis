@@ -1,0 +1,19 @@
+<%# -*- coding: UTF-8 -*-%>
+
+  <table class="raduserform">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Accept?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% terms.each do |document| %>
+        <tr>
+        <td><a href="terms/<%= document[:id] %>.html" target="_blank"><%= document[:name] %></a> <%= mandatory_mark if document[:required] %></td> 
+          <td style="text-align:center"><input type="checkbox" name="terms[accept][<%= document[:id] %>]"/></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+

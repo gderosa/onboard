@@ -53,6 +53,9 @@ class OnBoard
                 end
         return %Q{<button type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
       end
+      def mandatory_mark
+        '<span style="font-weight:bold; color:red">*</span>'
+      end
 
     end
   end

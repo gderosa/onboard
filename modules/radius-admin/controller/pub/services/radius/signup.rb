@@ -14,6 +14,9 @@ class OnBoard
         format(
           :module   => 'radius-admin',
           :path     => '/pub/services/radius/signup',
+          :locals   => {
+            :terms    => Service::RADIUS::Terms::Document.get_all(:asked => true) 
+          }
         )
       else
         status 403 # Forbidden

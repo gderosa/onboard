@@ -31,8 +31,17 @@
   <%=
     partial(
       :module => 'radius-admin',
-      #:path   => 'services/radius/users/_form_check',
       :path   => 'pub/services/radius/_form_signup_password',
+    )
+  %>
+  <h4>Terms and Conditions</h4>
+  <p>Acceptance of terms marked with “<%= mandatory_mark %>” is mandatory. You must
+  click on each name to read the details. </p>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'pub/services/radius/_form_signup_terms',
+      :locals => {:terms => terms} 
     )
   %>
   <button type="submit">Create!</button>
