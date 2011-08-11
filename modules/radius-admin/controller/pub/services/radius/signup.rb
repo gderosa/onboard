@@ -1,7 +1,7 @@
 require 'facets/hash'
-
 require 'sinatra/base'
 
+require 'onboard/extensions/array'
 require 'onboard/pagination'
 require 'onboard/service/radius'
 
@@ -28,8 +28,9 @@ class OnBoard
     end
 
     post '/pub/services/radius/signup.html' do
-      conf = Service::RADIUS::Signup.get_config
-      unless conf['enable']
+      terms = []
+      config = Service::RADIUS::Signup.get_config
+      unless config['enable']
         halt(
           403, # Forbidden
           format(
@@ -42,6 +43,17 @@ class OnBoard
       user  = Service::RADIUS::User.new(name) # blank slate
       msg = handle_errors do
         h = config.deep_merge(params)
+
+        terms = Service::RADIUS::Terms::Document.get_all(:asked => true)
+        required_terms = terms.select{|h| h[:required]} 
+        must_accept = required_terms.map{|h| h[:id]}
+        accepted = begin
+          params['terms']['accept'].select{|k, v| v == 'on'}.keys.map{|x| x.to_i}
+        rescue NoMethodError
+          []
+        end
+        raise Service::RADIUS::Terms::MandatoryDocumentNotAccepted, 'You must accept mandatory Terms and Conditions' unless accepted.include_all_of? must_accept
+
         Service::RADIUS::Check.insert(h)
         user.update_reply_attributes(h) 
         user.update_personal_data(h)
@@ -57,7 +69,10 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/signup',
-        :msg      => msg
+        :msg      => msg,
+        :locals   => {
+          :terms => terms
+        }
       )
 
     end
