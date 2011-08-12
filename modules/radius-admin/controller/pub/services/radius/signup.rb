@@ -44,6 +44,7 @@ class OnBoard
       msg = handle_errors do
         h = config.deep_merge(params)
 
+        # Terms and Conditions acceptance
         terms = Service::RADIUS::Terms::Document.get_all(:asked => true)
         required_terms = terms.select{|h| h[:required]} 
         must_accept = required_terms.map{|h| h[:id]}
@@ -52,7 +53,11 @@ class OnBoard
         rescue NoMethodError
           []
         end
-        raise Service::RADIUS::Terms::MandatoryDocumentNotAccepted, 'You must accept mandatory Terms and Conditions' unless accepted.include_all_of? must_accept
+        if accepted.include_all_of? must_accept
+          #user.accepts_terms_documents! accepted 
+        else
+          raise Service::RADIUS::Terms::MandatoryDocumentNotAccepted, 'You must accept mandatory Terms and Conditions' 
+        end
 
         Service::RADIUS::Check.insert(h)
         user.update_reply_attributes(h) 
