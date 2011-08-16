@@ -48,20 +48,29 @@ class OnBoard
         terms = Service::RADIUS::Terms::Document.get_all(:asked => true)
         required_terms = terms.select{|h| h[:required]} 
         must_accept = required_terms.map{|h| h[:id]}
-        accepted = begin
+        terms_accepted = begin
           params['terms']['accept'].select{|k, v| v == 'on'}.keys.map{|x| x.to_i}
         rescue NoMethodError
           []
         end
-        if accepted.include_all_of? must_accept
-          #user.accepts_terms_documents! accepted 
+        if terms_accepted.include_all_of? must_accept
+          # user.accept_terms! terms_accepted 
+          #   deferred 'cause we still don't konw the id
         else
           raise Service::RADIUS::Terms::MandatoryDocumentNotAccepted, 'You must accept mandatory Terms and Conditions' 
         end
 
         Service::RADIUS::Check.insert(h)
+
         user.update_reply_attributes(h) 
+
         user.update_personal_data(h)
+        #puts
+        user.retrieve_personal_info_from_db
+        #puts
+        #p user.personal
+
+        user.accept_terms! terms_accepted
         user.upload_attachments(h) 
       end
       if msg[:ok] and not msg[:err] 

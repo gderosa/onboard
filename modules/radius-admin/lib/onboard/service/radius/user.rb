@@ -8,6 +8,11 @@ require 'onboard/extensions/sequel/dataset'
 require 'onboard/extensions/object/deep'
 require 'onboard/extensions/hash'
 
+# WARNING WARNING WARNING! We're depending upon deprecated features:
+# https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
+#
+# TODO: remove the configurable-column-names feature until a robust solution is found
+
 class OnBoard
   module Service
     module RADIUS
@@ -18,6 +23,15 @@ class OnBoard
         class << self
 
           def setup
+            # WARNING WARNING WARNING! We're depending upon deprecated features:
+            # https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
+            #
+            # TODO: remove the configurable-column-names feature until a robust 
+            # solution is found
+            #
+            # Most of the following hashes are used in various calls to
+            # Sequel::Dataset#select 
+
             @@conf      ||= RADIUS.read_conf
             @@chktable  ||= @@conf['user']['check']['table'].to_sym
             @@chkcols   ||= @@conf['user']['check']['columns'].symbolize_values
@@ -26,6 +40,7 @@ class OnBoard
             @@perstable ||= @@conf['user']['personal']['table'].to_sym
             @@perscols  ||= 
                 @@conf['user']['personal']['columns'].symbolize_values
+            @@
           end
 
           def setup!
@@ -121,7 +136,17 @@ class OnBoard
           else 
             @personal = {} 
           end
-          # p @personal
+        end
+        alias retrieve_personal_info retrieve_personal_info_from_db
+
+        def accept_terms!(accepted_terms)
+          setup
+          retrieve_personal_info_from_db unless @personal[:id] 
+          raise(
+              Conflict, 
+              %Q{There's no user named "#{@name}" in userinfo db table}
+          ) unless @personal[:id]
+
         end
 
         def get_personal_attachment_info
@@ -134,7 +159,6 @@ class OnBoard
           rescue Errno::ENOENT
             @personal['Attachments'] = []
           end
-          # p @personal
         end
 
         def grouplist
