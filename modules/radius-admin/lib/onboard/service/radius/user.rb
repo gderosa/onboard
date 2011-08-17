@@ -32,15 +32,17 @@ class OnBoard
             # Most of the following hashes are used in various calls to
             # Sequel::Dataset#select 
 
-            @@conf      ||= RADIUS.read_conf
-            @@chktable  ||= @@conf['user']['check']['table'].to_sym
-            @@chkcols   ||= @@conf['user']['check']['columns'].symbolize_values
-            @@rpltable  ||= @@conf['user']['reply']['table'].to_sym
-            @@rplcols   ||= @@conf['user']['reply']['columns'].symbolize_values
-            @@perstable ||= @@conf['user']['personal']['table'].to_sym
-            @@perscols  ||= 
+            @@conf        ||= RADIUS.read_conf
+            @@chktable    ||= @@conf['user']['check']['table'].to_sym
+            @@chkcols     ||= @@conf['user']['check']['columns'].symbolize_values
+            @@rpltable    ||= @@conf['user']['reply']['table'].to_sym
+            @@rplcols     ||= @@conf['user']['reply']['columns'].symbolize_values
+            @@perstable   ||= @@conf['user']['personal']['table'].to_sym
+            @@perscols    ||= 
                 @@conf['user']['personal']['columns'].symbolize_values
-            @@
+            @@termstable  ||= @@conf['terms']['table'].to_sym
+            @@termsaccepttable ||=
+                              @@conf['terms_accept']['table'].to_sym
           end
 
           def setup!
@@ -141,12 +143,19 @@ class OnBoard
 
         def accept_terms!(accepted_terms)
           setup
-          retrieve_personal_info_from_db unless @personal[:id] 
+          retrieve_personal_info_from_db unless @personal['Id'] 
           raise(
               Conflict, 
               %Q{There's no user named "#{@name}" in userinfo db table}
-          ) unless @personal[:id]
-
+          ) unless @personal['Id']
+          accepted_terms.each do |terms_id|
+            # here we use fixed column names!
+            RADIUS.db[@@termsaccepttable].insert(
+              :userinfo_id  => @personal['Id'],
+              :terms_id     => terms_id,
+              :accept       => true
+            )
+          end
         end
 
         def get_personal_attachment_info

@@ -33,7 +33,7 @@ class OnBoard
           'columns'               => {
             'Id'                    => 'Radacctid',
             'User-Name'             => 'Username',
-            'Famed-IP-Address'      => 'Framedipaddress',
+            'Framed-IP-Address'     => 'Framedipaddress',
             'NAS-IP-Address'        => 'Nasipaddress',
             'NAS-Port-Type'         => 'Nasporttype',
             'Start Time'            => 'Acctstarttime',
