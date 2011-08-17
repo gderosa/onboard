@@ -84,7 +84,7 @@ class OnBoard
         
         end
 
-        attr_reader :name, :check, :reply, :groups, :personal
+        attr_reader :name, :check, :reply, :groups, :personal, :accepted_terms
 
         def setup;  self.class.setup;   end
         def setup!; self.class.setup!;  end
@@ -140,6 +140,15 @@ class OnBoard
           end
         end
         alias retrieve_personal_info retrieve_personal_info_from_db
+
+        # TODO: change :terms_id and :userinfo_id in something configurable
+        # but don't use hash aliasing (see above)
+        def retrieve_accepted_terms_from_db
+          retrieve_personal_info unless @personal['Id']
+          list = RADIUS.db[@@termsaccepttable].select(:terms_id).filter(:userinfo_id => @personal['Id']).map{|h| h[:terms_id]}
+          @accepted_terms = list || []
+        end
+        alias retrieve_accepted_terms retrieve_accepted_terms_from_db
 
         def accept_terms!(accepted_terms)
           setup
@@ -410,11 +419,12 @@ class OnBoard
 
         def to_h
           {
-            :name     => @name,
-            :check    => @check,
-            :reply    => @reply,
-            :groups   => @groups,
-            :personal => @personal,
+            :name           => @name,
+            :check          => @check,
+            :reply          => @reply,
+            :groups         => @groups,
+            :personal       => @personal,
+            :accepted_terms => @accepted_terms
           }
         end
 

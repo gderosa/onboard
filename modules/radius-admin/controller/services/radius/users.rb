@@ -55,7 +55,7 @@ class OnBoard
       )
     end
 
-    get '/services/radius/users/:userid.:format' do
+    get '/services/radius/users/:userid.:format' do # :userid is actually a username
       user = Service::RADIUS::User.new(params[:userid])
       msg = {}
       msg = handle_errors do
@@ -63,6 +63,7 @@ class OnBoard
         user.retrieve_group_membership_from_db
         user.retrieve_personal_info_from_db
         user.get_personal_attachment_info
+        user.retrieve_accepted_terms_from_db
         not_found unless user.found?
       end
       format(
