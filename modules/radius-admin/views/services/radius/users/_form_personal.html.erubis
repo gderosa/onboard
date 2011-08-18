@@ -1,11 +1,19 @@
 <% 
   user      ||= nil
+
   personal  ||= nil
   unless personal
     if user
       personal = (user.personal || {})
     else
       personal = {}
+    end
+  end
+
+  accepted_terms ||= nil
+  unless accepted_terms
+    if user and user.respond_to? :accepted_terms and user.accepted_terms
+      accepted_terms = user.accepted_terms
     end
   end
 %>
@@ -169,6 +177,21 @@
       <input type="text" name="personal[ID-Code]" value="<%= personal['ID-Code'] %>"/>
     </td>
   </tr>
+  <% if accepted_terms %>
+    <tr>
+      <th scope="row">
+        User has accepted the following<br/><a href="../terms.html">Terms and Conditions</a> documents:</th>
+      <td>
+        <ul>
+          <% accepted_terms.each do |document| %>
+            <li>
+              <a href="../terms/<%= document[:id] %>.html"><%= document[:name] %></a>
+            </li>
+          <% end %>           
+        </ul>
+      </td>      
+    </tr>
+  <% end %>
   <tr>
     <th scope="row">Notes</th>
     <td>
