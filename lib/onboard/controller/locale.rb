@@ -6,5 +6,10 @@ class OnBoard
     # Extensions must be explicitly registered in modular style apps.
     register ::Sinatra::R18n
 
+    set(
+      :translations, 
+      [File.join(ROOTDIR, 'i18n')] + Dir.glob("#{ROOTDIR}/modules/*/i18n")
+    )
+
   end
 end    

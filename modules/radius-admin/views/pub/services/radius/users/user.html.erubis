@@ -9,7 +9,7 @@
   )
 %>
 
-<div style="text-align: right;"> Logged in as <em><%= user.name %></em>: <a href="../logout.html">Logout</a>. </div>
+<div style="text-align: right;"> <%= i18n.logged_in_as %> <em><%= user.name %></em>: <a href="../logout.html">Logout</a>. </div>
 
 <h2>RADIUS user: <%= user.name %></h2>
 
