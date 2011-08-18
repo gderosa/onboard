@@ -21,9 +21,9 @@ class OnBoard
               setup
             end
 
-            def get_all(filter_h={})
+            def get_all(filter_={})
               setup
-              RADIUS.db[@@terms_table].filter(filter_h).map do |row|
+              RADIUS.db[@@terms_table].filter(filter_).map do |row|
                 Hash[ 
                   row.map do |k, v| 
                     [
@@ -44,7 +44,7 @@ class OnBoard
               table           = RADIUS.db[@@terms_table]
               columns         = options[:content] ?
                 table.columns                     :
-                table.columns - [:content] 
+                table.columns - [:content]          # unused?
               document        = table.select(*columns)[:id => id] 
               return unless document               
               Hash[

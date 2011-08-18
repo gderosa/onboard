@@ -141,12 +141,12 @@ class OnBoard
         end
         alias retrieve_personal_info retrieve_personal_info_from_db
 
-        # TODO: change :terms_id and :userinfo_id in something configurable
+        # TODO: change :terms_id, :userinfo_id, :id in something configurable
         # but don't use hash aliasing (see above)
         def retrieve_accepted_terms_from_db
           retrieve_personal_info unless @personal['Id']
           list = RADIUS.db[@@termsaccepttable].select(:terms_id).filter(:userinfo_id => @personal['Id']).map{|h| h[:terms_id]}
-          @accepted_terms = list || []
+          @accepted_terms = Terms::Document.get_all(:id => list) 
         end
         alias retrieve_accepted_terms retrieve_accepted_terms_from_db
 
