@@ -37,12 +37,18 @@ class OnBoard
               end              
             end
 
-            def get(id)
+            def get(id, options={})
+              default_options = {:content => true}
+              options         = default_options.merge options
               setup
-              document = RADIUS.db[@@terms_table].first(:id => id)
-              return unless document 
+              table           = RADIUS.db[@@terms_table]
+              columns         = options[:content] ?
+                table.columns                     :
+                table.columns - [:content] 
+              document        = table.select(*columns)[:id => id] 
+              return unless document               
               Hash[
-                RADIUS.db[@@terms_table].first(:id => id).map do |k, v| 
+                document.map do |k, v| 
                   [
                     k, 
                     v.respond_to?(:smart_encode)  ? 
