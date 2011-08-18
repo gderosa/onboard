@@ -180,12 +180,13 @@
   <% if accepted_terms %>
     <tr>
       <th scope="row">
-        User has accepted the following<br/><a href="../terms.html">Terms and Conditions</a> documents:</th>
+        User has accepted the following<br/>Terms and Conditions documents:</th>
       <td>
         <ul>
           <% accepted_terms.each do |document| %>
             <li>
-              <a href="../terms/<%= document[:id] %>.html"><%= document[:name] %></a>
+              <!-- relative links which work either in public and admin interface -->
+              <a target="_blank" href="../terms/<%= document[:id] %>.html"><%= document[:name] %></a> <%= '(required)' if document[:required] %>
             </li>
           <% end %>           
         </ul>

@@ -14,6 +14,7 @@ class OnBoard
         user.retrieve_personal_info_from_db
         user.get_personal_attachment_info
         not_found unless user.found?
+        user.retrieve_accepted_terms_from_db
       end
 
       redirect '/pub/services/radius/login.html' unless
