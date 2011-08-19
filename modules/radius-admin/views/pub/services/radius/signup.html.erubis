@@ -1,4 +1,7 @@
 <%#-*- coding: UTF-8 -*-%>
+<% 
+  require 'facets/string'
+%>
 <%= message_partial(msg) %>
 <%= 
   partial(
@@ -7,11 +10,11 @@
   )
 %>
 
-<div style="text-align: right;">Already registered user? <a href="login.html">Login</a>.</div>
+<div style="text-align: right;"><%= i18n.radius.user.registered.already.capitalize %>? <a href="login.html"><%= i18n.login.you.capitalize %></a>.</div>
 
-<h2>Hotspot signup</h2>
+<h2><%= i18n.hotspot.signup.titlecase %></h2>
 
-<h3>Create new user</h3>
+<h3><%= i18n.radius.user.create_new.you.capitalize %></h3>
 <%=
   partial(
     :module => 'radius-admin',

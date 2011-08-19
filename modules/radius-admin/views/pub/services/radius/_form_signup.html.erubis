@@ -6,7 +6,7 @@
   <table class="raduserform">
     <tbody>
       <tr>
-        <th scope="row">User-Name</th>
+        <th scope="row"><%= i18n.radius.user.name.capitalize %></th>
         <td>
           <% if user %>
             <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">
@@ -17,7 +17,7 @@
       </tr>
     </tbody>
   </table>  
-  <h4>Personal data</h4>
+  <h4><%= i18n.personal.info.capitalize %></h4>
   <%=
     partial(
       :module => 'radius-admin',
@@ -34,9 +34,8 @@
       :path   => 'pub/services/radius/_form_signup_password',
     )
   %>
-  <h4>Terms and Conditions</h4>
-  <p>Acceptance of terms marked with “<%= mandatory_mark %>” is mandatory. You must
-  click on each name to read the details. </p>
+  <h4><%= i18n.terms.terms %></h4>
+  <p><%= i18n.terms.mandatory_mark(mandatory_mark) %>.</p>
   <%=
     partial(
       :module => 'radius-admin',
@@ -44,5 +43,5 @@
       :locals => {:terms => terms} 
     )
   %>
-  <button type="submit">Create!</button>
+  <button type="submit"><%= i18n.create.you.capitalize %>!</button>
 </form>

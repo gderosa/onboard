@@ -11,7 +11,7 @@
 
 <div style="text-align: right;"> <%= i18n.logged_in_as.capitalize %> <em><%= user.name %></em>: <a href="../logout.html"><%= i18n.logout.you.capitalize %></a>. </div>
 
-<h2><%= i18n.radius.user.capitalize %>: <%= user.name %></h2>
+<h2><%= i18n.radius.user.user.capitalize %>: <%= user.name %></h2>
 
 <%= 
   partial(

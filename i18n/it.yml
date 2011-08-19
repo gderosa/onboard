@@ -19,7 +19,17 @@ delete_: # diiirty
 update_: # diiirty
   you: aggiorna
 
+create:
+  you: crea
+
 notes: note
 
 confirm: conferma
-       
+
+password:
+  repeat: 
+    you: ripeti password
+    any: ripetere password
+  type_twice: 
+    you: inserisci due volte
+    any: inserire due volte

@@ -1,11 +1,24 @@
-# radius-admin
+# radius-admin 
+# encoding: utf-8
 
 logged_in_as: autenticato come 
 logout:
   you: esci
+login:
+  you: entra
 
 radius:
-  user: utente
+  user: 
+    user: utente
+    name: nome utente
+    registered:
+      already: utente già registrato
+    create_new: 
+      you: crea nuovo utente 
+      any: creazione nuovo utente   
+
+hotspot:
+  signup: registrazione Hotspot    
 
 personal:
   info: informazioni personali
@@ -31,7 +44,13 @@ personal:
     alt: o num. Previdenza Sociale (Stati Uniti), etc.
   
 terms:
+  name: nome / descrizione
+  terms: Termini e Condizioni
+  accept:
+    i: accetto
   accepted: Termini e Condizioni accettati
+  accepted_bare: "accettati"
   mandatory: obbligatorio # TODO? should be general?
+  mandatory_mark: l’accettazione dei Termini marcati con “%1” è obbligatoria 
 
 

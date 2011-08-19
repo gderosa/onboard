@@ -1,10 +1,13 @@
 <%# -*- coding: UTF-8 -*-%>
+<% 
+  require 'facets/string' 
+%>
 
   <table class="raduserform">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Accept?</th>
+        <th><%= i18n.terms.name.titlecase %></th>
+        <th><%= i18n.terms.accept.i.capitalize %></th>
       </tr>
     </thead>
     <tbody>
