@@ -69,13 +69,15 @@
     </td>
   </tr>
   <tr>
-    <th scope="row"><%= i18n.personal.birth.all_data.capitalize %></th>
+    <th scope="row">
+      <%= i18n.personal.birth.all_data.capitalize %>
+    </th>
     <td>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Birth-Date]"
-            title="in YYYY-MM-DD format"
+            title="<%= i18n.date.format.capitalize %>: 1980-01-30"
             value="<%= personal['Birth-Date'] %>">(<%= i18n.personal.date.capitalize %>)</span> 
       <span class="input-container">
         <input 

@@ -33,3 +33,6 @@ password:
   type_twice: 
     you: inserisci due volte
     any: inserire due volte
+
+date:
+  format: formato data
