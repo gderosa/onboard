@@ -9,7 +9,7 @@
 </style>
 <form class="raduserform" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_method" value="put">
-  <h<%= heading%>>Personal Information</h<%= heading%>>
+  <h<%= heading%>><%= i18n.personal.info.capitalize %></h<%= heading%>>
   <%=
     partial(
       :module => 'radius-admin',
@@ -33,5 +33,5 @@
     )
   %>
 
-  <button type="submit" style="margin:2em 0;">Update!</button>
+  <button type="submit" style="margin:2em 0;"><%= i18n.update_.you.capitalize %>!</button>
 </form>

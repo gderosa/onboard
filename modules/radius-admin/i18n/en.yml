@@ -1,2 +1,7 @@
+# radius-admin
+
 logged_in_as: Logged in as 
+
+radius:
+  user: RADIUS/Hotspot user
 

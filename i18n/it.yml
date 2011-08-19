@@ -1,2 +1,25 @@
-"yes": "Sì"
-"no": "No"
+
+yes: "Sì"
+no: "No"
+
+
+attachment: !!pl
+  1: allegato
+  n: allegati
+
+view:
+  you: visualizza
+
+download:
+  you: scarica
+
+delete_: # diiirty 
+  you: cancella
+
+update_: # diiirty
+  you: aggiorna
+
+notes: note
+
+confirm: conferma
+       

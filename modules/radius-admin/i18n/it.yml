@@ -1,2 +1,37 @@
-logged_in_as: Autenticato come 
+# radius-admin
+
+logged_in_as: autenticato come 
+logout:
+  you: esci
+
+radius:
+  user: utente
+
+personal:
+  info: informazioni personali
+  name:
+    full: nome e cognome
+    first: nome
+    last: cognome
+  birth: 
+    short: nascita
+    all_data: data e luogo di nascita
+  city: comune
+  state: provincia
+  date: data
+  address: indirizzo
+  postcode: CAP
+  phone:
+    phone: telefono
+    work: ufficio
+    home: casa
+    mobile: cellulare
+  id_code:
+    id_code: codice fiscale
+    alt: o num. Previdenza Sociale (Stati Uniti), etc.
+  
+terms:
+  accepted: Termini e Condizioni accettati
+  mandatory: obbligatorio # TODO? should be general?
+
 

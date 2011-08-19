@@ -1,4 +1,7 @@
-<% 
+<%
+  require 'facets/string'
+
+
   user      ||= nil
 
   personal  ||= nil
@@ -44,18 +47,18 @@
 
 <table class="raduserform">
   <tr>
-    <th scope="row">Name</th>
+    <th scope="row"><%= i18n.personal.name.full.capitalize %></th>
     <td>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[First-Name]"
-            value="<%= personal['First-Name'] %>"/>(First Name)</span>
+            value="<%= personal['First-Name'] %>"/>(<%= i18n.personal.name.first.capitalize %>)</span>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Last-Name]"
-            value="<%= personal['Last-Name'] %>"/>(Last Name)</span>
+            value="<%= personal['Last-Name'] %>"/>(<%= i18n.personal.name.last.capitalize %>)</span>
     </td>
   </tr>
   <tr>
@@ -66,29 +69,29 @@
     </td>
   </tr>
   <tr>
-    <th scope="row">Birth</th>
+    <th scope="row"><%= i18n.personal.birth.all_data.capitalize %></th>
     <td>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Birth-Date]"
             title="in YYYY-MM-DD format"
-            value="<%= personal['Birth-Date'] %>">(Date)</span> 
+            value="<%= personal['Birth-Date'] %>">(<%= i18n.personal.date.capitalize %>)</span> 
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Birth-City]"
-            value="<%= personal['Birth-City'] %>">(City)</span>
+            value="<%= personal['Birth-City'] %>">(<%= i18n.personal.city.capitalize %>)</span>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Birth-State]"
             style="width: 2ex;"
-            value="<%= personal['Birth-State'] %>">(State/Province)</span>
+            value="<%= personal['Birth-State'] %>">(<%= i18n.personal.state.capitalize %>)</span>
     </td>
   </tr>
   <tr>
-    <th scope="row">Address</th>
+    <th scope="row"><%= i18n.personal.address.capitalize %></th>
     <td>
       <span class="input-container">
         <input 
@@ -102,46 +105,46 @@
             type="text" 
             name="personal[City]" 
             style="width: 15ex;"
-            value="<%= personal['City'] %>"/>(City)
+            value="<%= personal['City'] %>"/>(<%= i18n.personal.city.capitalize %>)
       </span>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[State]" 
             style="width: 2ex;"
-            value="<%= personal['State'] %>"/>(State/Province)
+            value="<%= personal['State'] %>"/>(<%= i18n.personal.state.capitalize %>)
       </span>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Postal-Code]" 
             style="width: 5ex;"
-            value="<%= personal['Postal-Code'] %>"/>(Zip/Postal Code)
+            value="<%= personal['Postal-Code'] %>"/>(<%= i18n.personal.postcode %>)
       </span>   
     </td>
   </tr>
   <tr>
-    <th scope="row">Phone number</th>
+    <th scope="row"><%= i18n.personal.phone.phone.capitalize %></th>
     <td>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Work-Phone]"
-            value="<%= personal['Work-Phone'] %>">(Work)</span> 
+            value="<%= personal['Work-Phone'] %>">(<%= i18n.personal.phone.work.capitalize %>)</span> 
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Home-Phone]"
-            value="<%= personal['Home-Phone'] %>">(Home)</span>
+            value="<%= personal['Home-Phone'] %>">(<%= i18n.personal.phone.home.capitalize %>)</span>
       <span class="input-container">
         <input 
             type="text" 
             name="personal[Mobile-Phone]"
-            value="<%= personal['Mobile-Phone'] %>">(Mobile)</span>
+            value="<%= personal['Mobile-Phone'] %>">(<%= i18n.personal.phone.mobile.capitalize %>)</span>
     </td>
   </tr>
   <tr id="personal-attachments">
-    <th scope="row">Attachments</th>
+    <th scope="row"><%= i18n.attachment(3).capitalize %></th> 
     <td>
       <% if personal['Attachments'].respond_to? :each and personal['Attachments'].any? %>
         <table>
@@ -152,12 +155,12 @@
               </th>
               <td>
                 <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>">
-                  view</a>
+                  <%= i18n.view.you %></a>
                 |
                 <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>?disposition=attachment">
-                  download</a>
+                  <%= i18n.download.you %></a>
                 |
-                <span style="font-weight: bold; color: #111; ">delete</span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
+                <span style="font-weight: bold; color: #111; "><%= i18n.delete_.you %></span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
               </td>
             </tr>  
           <% end %>
@@ -170,8 +173,8 @@
   </tr>
   <tr>
     <th scope="row">
-      Personal ID code
-      <div class="optinfo">such as Tax Code, SSN, etc.</div>
+      <%= i18n.personal.id_code.id_code.titlecase %>
+      <div class="optinfo"><%= i18n.personal.id_code.alt %></div>
     </th>
     <td>
       <input type="text" name="personal[ID-Code]" value="<%= personal['ID-Code'] %>"/>
@@ -180,8 +183,8 @@
   <% if accepted_terms %>
     <tr>
       <th scope="row">
-        User has accepted the following<br/>Terms and Conditions documents:
-        <div class="optinfo"><%= mandatory_mark %> = required</div>
+        <%= i18n.terms.accepted.capitalize %>:
+        <div class="optinfo"><%= mandatory_mark %> = <%= i18n.terms.mandatory %></div>
       </th>
       <td>
         <ul>
@@ -196,7 +199,7 @@
     </tr>
   <% end %>
   <tr>
-    <th scope="row">Notes</th>
+    <th scope="row"><%= i18n.notes.capitalize %></th>
     <td>
       <textarea style="width: 40ex;" name="personal[Notes]"><%= personal['Notes'] %></textarea>
     </td>
