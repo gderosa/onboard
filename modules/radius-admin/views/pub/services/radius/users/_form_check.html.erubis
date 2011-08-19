@@ -14,7 +14,7 @@
           </div>
           <div style="margin-top:0.7em;">
             <input type="password" name="confirm[check][User-Password]"/><br/>
-            <span class="optinfo">(confirm)</span>
+            <span class="optinfo">(<%= i18n.password.type_twice.you %>)</span>
           </div>
         </td>
       </tr>

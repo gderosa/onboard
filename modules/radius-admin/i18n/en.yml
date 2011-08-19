@@ -1,5 +1,60 @@
-# radius-admin
+# radius-admin 
+# encoding: utf-8
 
-logged_in_as: Logged in as 
+logged_in_as: logged in as 
+logout:
+  you: logout
+login:
+  you: login
+signup:
+  you: signup
+
+radius:
+  user: 
+    user: user
+    name: user name
+    registered:
+      already: already registered user
+    create_new: 
+      you: create new user
+      any: user creation   
+
+hotspot:
+  signup: Hotspot signup
+  account:
+    management: "Hotspot account management"
+
+personal:
+  info: personal data
+  name:
+    full: name
+    first: first name
+    last: last name
+  birth: 
+    short: birth
+    all_data: birth
+  city: city
+  state: state
+  date: date
+  address: address
+  postcode: postcode/ZIP
+  phone:
+    phone: phone
+    work: work
+    home: home
+    mobile: mobile
+  id_code:
+    id_code: Personal ID code
+    alt: "Tax code, SSN, etc."
+  
+terms:
+  name: name / description
+  terms: Terms and Conditions
+  accept:
+    i: accept
+  accepted: accepted Terms and Conditions 
+  accepted_bare: accepted
+  mandatory: mandatory # TODO? should be general?
+  mandatory_mark: acceptance of Terms marked with “%1” is mandatory 
 
 
