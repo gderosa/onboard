@@ -12,7 +12,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/login',
-        :title    => "RADIUS End User Account Management",
+        :title    => i18n.hotspot.account.management,
       )
     end
 

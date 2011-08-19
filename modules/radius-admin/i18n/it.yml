@@ -6,6 +6,8 @@ logout:
   you: esci
 login:
   you: entra
+signup:
+  you: registrati
 
 radius:
   user: 
@@ -19,6 +21,8 @@ radius:
 
 hotspot:
   signup: registrazione Hotspot    
+  account:
+    management: "Hotspot: gestione account"
 
 personal:
   info: informazioni personali

@@ -13,5 +13,5 @@
     <td><input type="password" name="radpass"/></td>
   </tr>
 </table>
-<button type="submit">Login</button> OR <a href="signup.html">Signup</a>!
+<button type="submit"><%= i18n.login.you.capitalize %></button> <%= i18n.or %> <a href="signup.html"><%= i18n.signup.you.capitalize %></a>!
 </form>

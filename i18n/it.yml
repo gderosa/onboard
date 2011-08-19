@@ -2,6 +2,7 @@
 yes: "Sì"
 no: "No"
 
+or: o
 
 attachment: !!pl
   1: allegato
