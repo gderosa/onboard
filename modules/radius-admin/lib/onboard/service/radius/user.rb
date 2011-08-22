@@ -81,7 +81,26 @@ class OnBoard
               'users'       => users.map{|u| new(u)} 
             }
           end
-        
+
+          def by_terms(params)
+            User.setup
+            Group.setup
+
+            # we do not use sonfigutrable column names here...
+
+            page        = params[:page].to_i 
+            per_page    = params[:per_page].to_i
+
+            # use double underscore Sequel notation for tablename.columnname
+            q = RADIUS.db[:terms_accept].select(:userinfo__username).filter(:terms_id => params[:terms_id].to_i, :accept => true).join(:userinfo, :terms_accept__userinfo_id => :userinfo__id)
+            usernames = q.map(:username)
+
+            return {
+              'count' => usernames.length, # q.count would require one more query
+              'users' => usernames
+            }
+          end
+       
         end
 
         attr_reader :name, :check, :reply, :groups, :personal, :accepted_terms
