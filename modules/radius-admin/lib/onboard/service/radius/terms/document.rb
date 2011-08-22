@@ -11,9 +11,10 @@ class OnBoard
           class << self
 
             def setup
-              @@conf          ||= RADIUS.read_conf
-              @@terms_table   ||= @@conf['terms']['table'].to_sym
-              @@terms_cols    ||= @@conf['terms']['columns'].symbolize_values
+              @@conf                ||= RADIUS.read_conf
+              @@terms_table         ||= @@conf['terms']['table'].to_sym
+              @@terms_accept_table  ||= @@conf['terms_accept']['table'].to_sym
+              @@terms_cols          ||= @@conf['terms']['columns'].symbolize_values
             end
 
             def setup!
@@ -23,7 +24,9 @@ class OnBoard
 
             def get_all(filter_={})
               setup
-              RADIUS.db[@@terms_table].filter(filter_).map do |row|
+              q = RADIUS.db[@@terms_table].filter(filter_)
+
+              hashes = q.map do |row|
                 Hash[ 
                   row.map do |k, v| 
                     [
@@ -34,7 +37,13 @@ class OnBoard
                     ]
                   end
                 ]
-              end              
+              end      
+              
+              hashes.each do |h| # TODO: a smart join...
+                h[:accept_count] = RADIUS.db[@@terms_accept_table].filter(:terms_id => h[:id]).count
+              end
+
+              return hashes
             end
 
             def get(id, options={})

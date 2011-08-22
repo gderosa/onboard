@@ -11,6 +11,7 @@
     <th>Content preview</th>
     <th>Asked?</th>
     <th>Required?</th>
+    <th>Accepted by</th>
     <th>Delete!</th>
   </tr>
   <% rows.each do |row| %>
@@ -20,10 +21,15 @@
         <td><%= row[:content][0..300].gsub(/\r?\n/, '<br/>') if row[:content] %>...</td>
       <td style="text-align:center"><%= yes_no_icon row[:asked],    :print_no %></td>
       <td style="text-align:center"><%= yes_no_icon row[:required], :print_no %></td>
+      <td style="text-align:right; padding-right:1ex;">
+        <% if row[:accept_count] > 0 %><a href="users/by_terms/<%= row[:id] %>.html"><% end %>
+          <%= row[:accept_count] %> user<%= 's' if row[:accept_count] != 1 %>
+        <% if row[:accept_count] > 0 %></a><% end %> 
+      </td>
       <td style="text-align:center">
         <form method="POST" action="terms/<%= row[:id] %>.html">
           <input type="hidden" name="_method" value="delete"/>
-          <%= action_button :delete %>
+          <%= action_button :delete, :disabled => (row[:accept_count] > 0) %>
         </form>
       </td>
     </tr>
