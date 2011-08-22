@@ -31,4 +31,4 @@
     </td>
   </tr>
 </table>
-<button type="submit" style="margin-top:1em;">Create!</button>
+<button type="submit" style="margin-top:1em;"><%= button_label %></button>

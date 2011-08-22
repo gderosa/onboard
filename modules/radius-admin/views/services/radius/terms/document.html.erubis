@@ -13,7 +13,8 @@
       :module   => 'radius-admin', 
       :path     => 'services/radius/terms/_form',
       :locals   => {
-        :document => document
+        :document => document,
+        :button_label => 'Change!'
       }
     )
   %>

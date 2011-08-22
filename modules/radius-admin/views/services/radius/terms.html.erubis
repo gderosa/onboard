@@ -38,5 +38,9 @@
 
 <h3>Create a new document</h3>
 <form method="POST">
-  <%= partial(:module => 'radius-admin', :path => 'services/radius/terms/_form') %>
+  <%= partial(
+    :module => 'radius-admin', 
+    :path => 'services/radius/terms/_form',
+    :locals => {:button_label => 'Create!'}
+  ) %>
 </form>
