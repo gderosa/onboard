@@ -39,8 +39,14 @@ class OnBoard
             end
             tables
           end
-          def format_error_msg(e)
-            "#{e}\nCheck your RADIUS Database configuration!"
+          def format_error_msg(e, opts={})
+            default_opts = {:check_your_config_msg => true}
+            opts = default_opts.merge opts
+            if opts[:check_your_config_msg]
+              return "#{e}\nCheck your RADIUS Database configuration!"
+            else
+              return e
+            end
           end
         end
       end
