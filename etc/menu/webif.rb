@@ -10,7 +10,7 @@ class OnBoard
     :n    => 10
   })
   MENU_ROOT.add_path('/webif/pub', {
-    :name => 'Public interface',
+    :name => 'Public Interface',
     :desc => 'for example, signup/selfcare pages for endusers, hotspot etc.',
     :n    => 20
   })

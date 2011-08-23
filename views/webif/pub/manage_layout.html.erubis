@@ -1,0 +1,65 @@
+<%
+  textrows = 7
+  textcols = 50
+
+  # TODO:
+  logo_link = ''
+  logo = ''
+  custom_text_content = ''
+
+%>
+
+<h2><%= title %></h2>
+
+<h3>Sidebar</h3>
+
+<form method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <thead>
+      <tr>
+        <th style="background:transparent;"></th>
+        <th style="background:transparent;"></th>
+        <th style="width: <%= textcols %>ex;">Preview</th>
+        <th>Delete?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Logo and<br/>Organization link</th>
+        <td>
+          <input type="file" name="logo"/><br/>
+          <input type="text" size="<%= textcols %>" name="logo_link" value="<%= logo_link %>" class="rwtext"/>
+        </td>
+        <td style="text-align: center;">
+          <% if logo and File.exists? logo %>
+            <% if logo_link and logo_link =~ /\S/ %><a style="border:none;" href="<%= logo_link %>" target="_blank"><% end %>
+                <img style="border:none;" src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+            <% if logo_link and logo_link =~ /\S/ %></a><% end %>
+          <% end %>
+        </td>
+        <td style="text-align: center;">
+          <input type="checkbox" name="delete[logo]"/>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Custom text</th>
+        <td>
+          <textarea wrap="off" name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_text_content %></textarea>
+        </td>
+        <td>
+          <%= custom_text_content %>
+        </td>
+        <td style="text-align: center;">
+          <input type="checkbox" name="delete[custom_text]"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button
+    style="margin-top:0.7em;"
+    type="submit"
+    name="change"
+    value="change">Change!</button>
+</form>
+
