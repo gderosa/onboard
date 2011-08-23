@@ -11,6 +11,11 @@
 
 <h2><%= title %></h2>
 
+By default, web pages under <code>/pub/</code> are publicly accessible (or accessible
+through a different authentication mechanism) and get a custom layout. For example, 
+this feature is used by the <em>radius-admin</em> module to provide signup and selfcare 
+services to HotSpot end users.
+
 <h3>Sidebar</h3>
 
 <form method="POST" enctype="multipart/form-data">
