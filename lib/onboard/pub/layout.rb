@@ -7,7 +7,6 @@ class OnBoard
       FILESDIR        = File.join OnBoard::RWDIR, 'var/www/pub'
       CONFDIR         = File.join OnBoard::CONFDIR, 'webif/pub' 
       CONFFILE        = File.join CONFDIR, 'layout.yml'
-      CUSTOMTEXTFILE  = "#{FILESDIR}/custom_text.html"
 
       class << self
 
@@ -16,15 +15,17 @@ class OnBoard
           if File.exists? CONFFILE
             conf = YAML.load File.read CONFFILE
           end
-          if File.exists? CUSTOMTEXTFILE
-            conf['custom_text'] = File.read CUSTOMTEXTFILE
-          end
           return conf
         end
 
+        # TODO? a Logo namespace?
         def logo_file
           conf = read_conf
           File.join FILESDIR, conf['logo'] if conf['logo'] # else return nil ^_-
+        end
+        def logo_basename
+          conf = read_conf
+          conf['logo'] if conf['logo'] # else return nil ^_-
         end
 
         def update(params)
@@ -49,12 +50,9 @@ class OnBoard
 
           if params['delete'] and params['delete']['custom_text']
             conf.delete 'custom_text'
-            FileUtils.rm CUSTOMTEXTFILE if File.exists? CUSTOMTEXTFILE
           elsif  params['custom_text'].respond_to? :length and 
               params['custom_text'].length >    0           # useful?      
-            File.open(CUSTOMTEXTFILE, 'w') do |f|
-              f.write params['custom_text']
-            end
+            conf['custom_text'] = params['custom_text']
           end
 
           File.open(CONFFILE, 'w') do |f|
