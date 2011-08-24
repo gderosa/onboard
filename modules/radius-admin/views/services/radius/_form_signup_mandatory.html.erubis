@@ -1,5 +1,11 @@
-<% require 'facets/string' %>
+<% 
+  require 'facets/string' 
 
+  configuration                               ||= {} 
+  configuration['mandatory']                  ||= {} 
+  c = configuration['mandatory']['personal']  ||= {}
+
+%> 
 <table class="raduserform">
   <tr>
     <th scope="row"><%= i18n.personal.name.full.capitalize %></th>
@@ -7,13 +13,14 @@
         <input 
             type="checkbox" 
             name="mandatory[personal][Name]"
+            <%= 'checked' if c['Name'] %>
         />
     </td>
   </tr>
   <tr>
     <th scope="row">Email</th>
     <td>
-      <input type="checkbox" name="mandatory[personal][Email]"/>
+      <input type="checkbox" name="mandatory[personal][Email]" <%= 'checked' if c['Email'] %> />
     </td>
   </tr>
   <tr>
@@ -24,6 +31,7 @@
         <input 
             type="checkbox" 
             name="mandatory[personal][Birth]"
+            <%= 'checked' if c['Birth'] %>
         />
     </td>
   </tr>
@@ -33,6 +41,7 @@
         <input 
             type="checkbox" 
             name="mandatory[personal][Full-Address]" 
+            <%= 'checked' if c['Full-Address'] %>
         />
     </td>
   </tr>
@@ -42,6 +51,7 @@
         <input 
             type="checkbox" 
             name="mandatory[personal][Phone]"
+            <%= 'checked' if c['Phone'] %>
         />
     </td>
   </tr>
@@ -51,7 +61,7 @@
       <div class="optinfo"><%= i18n.personal.id_code.alt %></div>
     </th>
     <td>
-      <input type="checkbox" name="mandatory[personal][ID-Code]"/>
+      <input type="checkbox" name="mandatory[personal][ID-Code]" <%= 'checked' if c['ID-Code'] %> />
     </td>
   </tr>
 </table>
