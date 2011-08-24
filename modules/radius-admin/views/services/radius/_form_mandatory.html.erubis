@@ -1,19 +1,13 @@
+<% require 'facets/string' %>
+
 <table class="raduserform">
   <tr>
     <th scope="row"><%= i18n.personal.name.full.capitalize %></th>
-    <td>
-      <span class="input-container">
+    <td> 
         <input 
             type="checkbox" 
-            name="mandatory[personal][First-Name]"
-        />(<%= i18n.personal.name.first.capitalize %>)
-      </span>
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][Last-Name]"
-        />(<%= i18n.personal.name.last.capitalize %>)
-      </span>
+            name="mandatory[personal][Name]"
+        />
     </td>
   </tr>
   <tr>
@@ -27,76 +21,28 @@
       <%= i18n.personal.birth.all_data.capitalize %>
     </th>
     <td>
-      <span class="input-container">
         <input 
             type="checkbox" 
-            name="mandatory[personal][Birth-Date]"
-        />(<%= i18n.personal.date.capitalize %>)
-      </span> 
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][Birth-City]"
-        />(<%= i18n.personal.city.capitalize %>)
-      </span>
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][Birth-State]"
-        />(<%= i18n.personal.state.capitalize %>)
-      </span>
+            name="mandatory[personal][Birth]"
+        />
     </td>
   </tr>
   <tr>
     <th scope="row"><%= i18n.personal.address.capitalize %></th>
     <td>
-      <span class="input-container">
         <input 
             type="checkbox" 
-            name="mandatory[personal][Address]" 
+            name="mandatory[personal][Full-Address]" 
         />
-      </span>
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][City]" 
-        />(<%= i18n.personal.city.capitalize %>)
-      </span>
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][State]" 
-        />(<%= i18n.personal.state.capitalize %>)
-      </span>
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][Postal-Code]" 
-        />(<%= i18n.personal.postcode %>)
-      </span>   
     </td>
   </tr>
   <tr>
     <th scope="row"><%= i18n.personal.phone.phone.capitalize %></th>
     <td>
-      <span class="input-container">
         <input 
             type="checkbox" 
-            name="mandatory[personal][Work-Phone]"
-        />(<%= i18n.personal.phone.work.capitalize %>)
-      </span> 
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][Home-Phone]"
-        />(<%= i18n.personal.phone.home.capitalize %>)
-      </span>
-      <span class="input-container">
-        <input 
-            type="checkbox" 
-            name="mandatory[personal][Mobile-Phone]"
-        />(<%= i18n.personal.phone.mobile.capitalize %>)
-      </span>
+            name="mandatory[personal][Phone]"
+        />
     </td>
   </tr>
   <tr>
