@@ -40,7 +40,7 @@
   <%=
     partial(
       :module => 'radius-admin',
-      :path   => 'services/radius/_form_mandatory',
+      :path   => 'services/radius/_form_signup_mandatory',
       :locals => {:configuration => configuration}
     )
   %>
