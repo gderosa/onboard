@@ -16,6 +16,7 @@ class OnBoard
           :path     => '/pub/services/radius/signup',
           :title    => i18n.hotspot.signup,
           :locals   => {
+            :conf     => conf, 
             :terms    => Service::RADIUS::Terms::Document.get_all(:asked => true) 
           }
         )

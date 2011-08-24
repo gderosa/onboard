@@ -1,12 +1,13 @@
 <%
   user ||= nil
+  # imported locals: conf
 %>
 <form class="raduserform" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_method" value="post">
   <table class="raduserform">
     <tbody>
       <tr>
-        <th scope="row"><%= i18n.radius.user.name.capitalize %></th>
+        <th scope="row"><%= i18n.radius.user.name.capitalize %> <%= mandatory_mark %></th>
         <td>
           <% if user %>
             <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">
@@ -21,9 +22,10 @@
   <%=
     partial(
       :module => 'radius-admin',
-      :path   => 'services/radius/users/_form_personal',
+      :path   => 'pub/services/radius/users/_form_personal',
       :locals => {
-        :user             => user
+        :user             => user,
+        :conf             => conf
       }
     )
   %>
@@ -31,7 +33,7 @@
   <%=
     partial(
       :module => 'radius-admin',
-      :path   => 'pub/services/radius/_form_signup_password',
+      :path   => 'pub/services/radius/_form_signup_password'
     )
   %>
   <h4><%= i18n.terms.terms %></h4>
