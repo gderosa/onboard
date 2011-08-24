@@ -23,7 +23,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/users/user',
-        :title    => "RADIUS User: #{params[:userid]}",
+        :title    => "#{i18n.radius.user.user.capitalize}: #{params[:userid]}",
         :format   => params[:format],
         :objects  => {
           'user'    => user,

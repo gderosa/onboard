@@ -21,6 +21,7 @@ radius:
 
 hotspot:
   signup: Hotspot signup
+  signup_disabled: Hotspot signup disabled
   account:
     management: "Hotspot account management"
 

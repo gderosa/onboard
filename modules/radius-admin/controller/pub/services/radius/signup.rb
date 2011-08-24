@@ -14,6 +14,7 @@ class OnBoard
         format(
           :module   => 'radius-admin',
           :path     => '/pub/services/radius/signup',
+          :title    => i18n.hotspot.signup,
           :locals   => {
             :terms    => Service::RADIUS::Terms::Document.get_all(:asked => true) 
           }
@@ -23,6 +24,7 @@ class OnBoard
         format(
           :module   => 'radius-admin',
           :path     => '/pub/services/radius/signup_disabled',
+          :title    => i18n.hotspot.signup_disabled
         )
       end
     end
@@ -35,7 +37,8 @@ class OnBoard
           403, # Forbidden
           format(
             :module   => 'radius-admin',
-            :path     => '/pub/services/radius/signup_disabled'
+            :path     => '/pub/services/radius/signup_disabled',
+            :title    => i18n.hotspot.signup_disabled
           )
         )
       end
@@ -83,6 +86,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/signup',
+        :title    => i18n.hotspot.signup,
         :msg      => msg,
         :locals   => {
           :terms => terms
