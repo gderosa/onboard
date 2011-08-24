@@ -27,7 +27,7 @@
     </ul>
   </div>
  
-  <input type="hidden" name="_method" value="put">
+  <input type="hidden" name="_method" value="put"/>
   <%=
     partial(
       :module => 'radius-admin',
@@ -36,6 +36,16 @@
     )
   %>
 
+  <h3>Mandatory fields</h3>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_mandatory',
+      :locals => {:configuration => configuration}
+    )
+  %>
+
+  
   <h3>Default attributes for new users</h3>
   <h4>Check Attributes</h4>
   <%=
