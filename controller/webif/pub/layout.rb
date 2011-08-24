@@ -15,8 +15,14 @@ class OnBoard
       )
     end
 
-    get '/webif/pub/logo_preview' do
-      send_file OnBoard::Pub::Layout.logo_file
+    ['/webif/pub/logo_preview', '/pub/logo'].each do |path|
+      get path do
+        if logo = OnBoard::Pub::Layout.logo_file
+          send_file logo
+        else
+          not_found
+        end
+      end
     end
 
     put '/webif/pub/layout.:format' do 

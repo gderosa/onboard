@@ -40,10 +40,10 @@ services to HotSpot end users.
           <input type="file" name="logo"/><br/>
           <input type="text" size="<%= textcols %>" name="logo_link" value="<%= logo_link %>" class="rwtext"/>
         </td>
-        <td style="text-align: center;">
+        <td style="text-align: center; border:none;">
           <% if logo %>
-            <% if logo_link and logo_link =~ /\S/ %><a style="border:none;" href="<%= logo_link %>" target="_blank"><% end %>
-                <img style="border:none;" src="/webif/pub/logo_preview?nocache=<%= UUID.generate %>"/>
+            <% if logo_link and logo_link =~ /\S/ %><a class="img" href="<%= logo_link %>" target="_blank"><% end %>
+                <img src="/webif/pub/logo_preview?nocache=<%= UUID.generate %>"/>
             <% if logo_link and logo_link =~ /\S/ %></a><% end %>
           <% end %>
         </td>
