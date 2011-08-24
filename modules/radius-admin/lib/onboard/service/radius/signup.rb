@@ -32,7 +32,8 @@ class OnBoard
             'enable'          => ( params['enable']           ? true : false )  ,
             'enable_selfcare' => ( params['enable_selfcare']  ? true : false )  ,
             'check'           => params['check']                                ,
-            'reply'   => params['reply']                                        ,
+            'reply'           => params['reply']                                ,
+            'mandatory'       => params['mandatory']
           }
           File.open CONFFILE, 'w' do |f|
             f.write config_data.to_yaml
