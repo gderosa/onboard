@@ -1,11 +1,15 @@
 <%
+  require 'uuid'
+
   textrows = 7
   textcols = 50
 
+  conf = objects
+
   # TODO:
-  logo_link = ''
-  logo = ''
-  custom_text_content = ''
+  logo_link           = conf['logo_link']
+  logo                = conf['logo']
+  custom_text_content = conf['custom_text']
 
 %>
 
@@ -37,9 +41,9 @@ services to HotSpot end users.
           <input type="text" size="<%= textcols %>" name="logo_link" value="<%= logo_link %>" class="rwtext"/>
         </td>
         <td style="text-align: center;">
-          <% if logo and File.exists? logo %>
+          <% if logo %>
             <% if logo_link and logo_link =~ /\S/ %><a style="border:none;" href="<%= logo_link %>" target="_blank"><% end %>
-                <img style="border:none;" src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+                <img style="border:none;" src="/webif/pub/logo_preview?nocache=<%= UUID.generate %>"/>
             <% if logo_link and logo_link =~ /\S/ %></a><% end %>
           <% end %>
         </td>
