@@ -14,6 +14,8 @@
 
 <h2><%= i18n.hotspot.signup.titlecase %></h2>
 
+<%= mandatory_mark %> = <%= i18n.form.field.mandatory(2) %>
+
 <h3><%= i18n.radius.user.create_new.you.capitalize %></h3>
 <%=
   partial(

@@ -37,3 +37,9 @@ password:
 
 date:
   format: date format
+
+form:
+  field:
+    mandatory: !!pl
+      1: mandatory field
+      n: mandatory fields
