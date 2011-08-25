@@ -13,9 +13,10 @@
   <%=
     partial(
       :module => 'radius-admin',
-      :path   => 'services/radius/users/_form_personal',
+      :path   => 'pub/services/radius/users/_form_personal',
       :locals => {
-        :user             => user
+        :user   => user,
+        :conf   => signup_config
       }
     )
   %>

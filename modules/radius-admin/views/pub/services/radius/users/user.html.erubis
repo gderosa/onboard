@@ -18,8 +18,9 @@
     :module => 'radius-admin',
     :path   => '/pub/services/radius/users/_form_edit',
     :locals => {
-      :user     => user,
-      :heading  => 3
+      :user           => user,
+      :heading        => 3,
+      :signup_config  => signup_config
     }
   )
 %>

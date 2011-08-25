@@ -7,6 +7,7 @@ class OnBoard
 
     get '/pub/services/radius/users/:userid.:format' do
       user = Service::RADIUS::User.new(params[:userid])
+      signup_config = Service::RADIUS::Signup.get_config
       msg = {}
       msg = handle_errors do
         user.retrieve_attributes_from_db
@@ -25,6 +26,7 @@ class OnBoard
         :path     => '/pub/services/radius/users/user',
         :title    => "#{i18n.radius.user.user.capitalize}: #{params[:userid]}",
         :format   => params[:format],
+        :locals   => {:signup_config => signup_config},
         :objects  => {
           'user'    => user,
         },
@@ -54,27 +56,31 @@ class OnBoard
       end
       user = Service::RADIUS::User.new(params[:userid])
       msg = handle_errors do
+
         user.retrieve_attributes_from_db
         user.retrieve_group_membership_from_db
+
         not_found unless user.found?
         
         redirect '/pub/services/radius/login.html' unless
             user.check_password session[:radpass] 
-        
+
+        user.retrieve_personal_info_from_db
+        user.get_personal_attachment_info
+
+        Service::RADIUS::User.validate_personal_info(
+            :params => params,
+            :fields => config['mandatory']['personal'].select{|k, v| v}.keys
+        )       
         if config['enable_selfcare']
           user.update(params_filtered)
           user.retrieve_attributes_from_db
           user.retrieve_group_membership_from_db
           user.retrieve_accepted_terms_from_db
+          user.retrieve_personal_info_from_db
+          user.get_personal_attachment_info
         end
-
-        user.retrieve_personal_info_from_db
-        user.get_personal_attachment_info
       end
-
-      #if !user.found? and !msg[:err] 
-      #  msg[:warn] = "User has no longer any attribute!"
-      #end
 
       unless config['enable_selfcare']
         msg[:ok] = false
@@ -88,6 +94,7 @@ class OnBoard
         :title    => "RADIUS User: #{params[:userid]}",
         :format   => params[:format],
         :msg      => msg,
+        :locals   => {:signup_config => config}, 
         :objects  => {
           'user'    => user
         }
