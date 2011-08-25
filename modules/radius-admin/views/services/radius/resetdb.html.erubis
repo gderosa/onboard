@@ -18,6 +18,16 @@
       </th>
       <td><input type="checkbox" name="resetdata[accounting]"/></td>
     </tr>
+    <tr>
+      <th scope="row">
+        Delete Terms and Condition documents
+        <div class="optinfo">
+          You cannot delete documents already subscribed by users - unless you delete
+          those users as well. You&lsquo;ll likely get a database error otherwise.
+        </div>
+      </th>
+      <td><input type="checkbox" name="resetdata[terms]"/></td>
+    </tr>
   </table>
   <button type="submit">Submit!</button>
 </form>
