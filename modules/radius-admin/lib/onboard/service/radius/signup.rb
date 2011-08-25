@@ -16,11 +16,17 @@ class OnBoard
             'Auth-Type'         => ''
           },
           'reply'           => {},
+          'mandatory'       => {
+            'personal'        => {}
+          }
         }
 
         def self.get_config
           if File.exists? CONFFILE
-            return DEFAULT_CONFIG.deep_merge YAML.load File.read CONFFILE
+            c = DEFAULT_CONFIG.deep_merge YAML.load File.read CONFFILE
+            c['mandatory']              ||= {}
+            c['mandatory']['personal']  ||= {}
+            return c
           else
             return DEFAULT_CONFIG
           end
@@ -36,7 +42,7 @@ class OnBoard
             'mandatory'       => params['mandatory']
           }
           File.open CONFFILE, 'w' do |f|
-            f.write config_data.to_yaml
+            f.write DEFAULT_CONFIG.deep_merge(config_data).to_yaml
           end
         end
 

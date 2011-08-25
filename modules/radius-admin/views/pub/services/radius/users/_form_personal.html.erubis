@@ -1,11 +1,15 @@
 <%
   require 'facets/string'
+
+  conf                          ||= {}
+  conf['mandatory']             ||= {}
+  conf['mandatory']['personal'] ||= {}
   
-  m         = conf['mandatory']['personal']
+  m                             = conf['mandatory']['personal']
 
-  user      ||= nil
+  user                          ||= nil
 
-  personal  ||= nil
+  personal                      ||= nil
   unless personal
     if user
       personal = (user.personal || {})

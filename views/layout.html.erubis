@@ -38,7 +38,7 @@
     </div>
     <div id="main">
 
-      <%= erubis(:"_navbar.html", :layout => false) %>
+      <%= erubis(:"pub/_navbar.html", :layout => false) %>
 
       <%= 
         erubis(

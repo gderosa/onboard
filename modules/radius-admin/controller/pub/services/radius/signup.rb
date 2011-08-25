@@ -10,6 +10,7 @@ class OnBoard
 
     get '/pub/services/radius/signup.html' do
       conf = Service::RADIUS::Signup.get_config
+
       if conf['enable'] 
         format(
           :module   => 'radius-admin',
@@ -63,7 +64,6 @@ class OnBoard
         else
           raise Service::RADIUS::Terms::MandatoryDocumentNotAccepted, 'You must accept mandatory Terms and Conditions' 
         end
-
         Service::RADIUS::User.validate_personal_info(
             :params => params, 
             :fields => config['mandatory']['personal'].select{|k, v| v}.keys
@@ -74,10 +74,7 @@ class OnBoard
         user.update_reply_attributes(h) 
 
         user.update_personal_data(h)
-        #puts
         user.retrieve_personal_info_from_db
-        #puts
-        #p user.personal
 
         user.accept_terms! terms_accepted
         user.upload_attachments(h) 

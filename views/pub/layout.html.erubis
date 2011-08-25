@@ -30,7 +30,11 @@ require 'onboard/pub/layout'
       <div><%= c['custom_text'] %></div>
     </div>
     <div id="main">
+
+      <%= erubis(:"pub/_navbar.html", :layout => false) %>
+
       <%= yield %>
+
     </div>
   </body>
 </html>

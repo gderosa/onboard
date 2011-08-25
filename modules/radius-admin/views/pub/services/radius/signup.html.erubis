@@ -10,7 +10,9 @@
   )
 %>
 
-<div style="text-align: right;"><%= i18n.radius.user.registered.already.capitalize %>? <a href="login.html"><%= i18n.login.you.capitalize %></a>.</div>
+<% if request.env['REQUEST_METHOD'] == 'GET' %>
+  <div style="text-align: right;"><%= i18n.radius.user.registered.already.capitalize %>? <a href="login.html"><%= i18n.login.you.capitalize %></a>.</div>
+<% end %>
 
 <h2><%= i18n.hotspot.signup.titlecase %></h2>
 
