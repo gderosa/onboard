@@ -18,6 +18,14 @@ class OnBoard
     module RADIUS
       class User
 
+        class InvalidData < BadRequest
+=begin # TODO?
+          class Name    < BadRequest; end
+          class Email   < BadRequest; end
+          class Birth   < ...
+=end
+        end
+
         UPLOADS = File.join RADIUS::UPLOADS, 'users'
 
         class << self
@@ -100,7 +108,44 @@ class OnBoard
               'users' => usernames
             }
           end
-       
+
+          def validate_personal_info(h)
+            fields    = h[:fields]
+            personal  = h[:params]['personal']
+            invalid   = []
+            if fields.include? 'Name'
+              invalid << 'First Name' unless personal['First-Name'] =~ /\S/
+              invalid << 'Last Name'  unless personal['Last-Name']  =~ /\S/
+            end
+            invalid << 'Email' if fields.include? 'Email' and 
+                not personal['Email'] =~ /\S@\S/
+            if fields.include? 'Birth' # TODO: granularize: date vs place?
+              begin
+                Date.parse personal['Birth-Date']
+              rescue ArgumentError
+                invalid << 'Birth Date'
+              end
+              invalid << 'Birth City' unless personal['Birth-City'] =~ /\S/
+              # TODO? Birth-State?
+            end
+            if fields.include? 'Full-Address'
+              invalid << 'Address'  unless personal['Address']  =~ /\S/
+              invalid << 'City'     unless personal['City']     =~ /\S/
+              # slightly relaxed: do not demand postcode...
+            end
+            if fields.include? 'Phone'
+              invalid << 'Phone' unless
+                  personal['Work-Phone']    =~ /\d/ ||
+                  personal['Home-phone']    =~ /\d/ ||
+                  personal['Mobile-Phone']  =~ /\d/
+            end
+            if fields.include? 'ID-Code'
+              invalid << 'Tax or Social Security Code' unless personal['ID-Code'] =~ /\S/
+            end
+
+            raise InvalidData, "Invalid or missing: #{invalid.join ', '}" if invalid.any?
+          end
+
         end
 
         attr_reader :name, :check, :reply, :groups, :personal, :accepted_terms
@@ -431,6 +476,7 @@ class OnBoard
             RADIUS::Check.validate_empty_password(params)
           end
         end
+
 
         def auth_type
           find_attribute_value_by_name(:check, 'Auth-Type')

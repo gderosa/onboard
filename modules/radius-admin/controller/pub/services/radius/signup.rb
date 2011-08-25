@@ -64,6 +64,11 @@ class OnBoard
           raise Service::RADIUS::Terms::MandatoryDocumentNotAccepted, 'You must accept mandatory Terms and Conditions' 
         end
 
+        Service::RADIUS::User.validate_personal_info(
+            :params => params, 
+            :fields => config['mandatory']['personal'].select{|k, v| v}.keys
+        )
+
         Service::RADIUS::Check.insert(h)
 
         user.update_reply_attributes(h) 
@@ -90,7 +95,8 @@ class OnBoard
         :title    => i18n.hotspot.signup,
         :msg      => msg,
         :locals   => {
-          :terms => terms
+          :terms    => terms,
+          :conf     => config
         }
       )
 
