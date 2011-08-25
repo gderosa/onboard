@@ -146,6 +146,10 @@ class OnBoard
             raise InvalidData, "Invalid or missing: #{invalid.join ', '}" if invalid.any?
           end
 
+          def delete_all_attachments
+            FileUtils.rm_rf UPLOADS
+          end
+
         end
 
         attr_reader :name, :check, :reply, :groups, :personal, :accepted_terms

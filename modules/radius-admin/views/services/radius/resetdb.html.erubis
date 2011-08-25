@@ -5,9 +5,9 @@
   <table>
     <tr>
       <th scope="row">
-        Yes, I am really sure I want to reset Authorization and Authentication data
+        Yes, I am really sure I want to reset users&rsquo; data
         <div class="optinfo">
-          Also includes Reply attributes, groups etc.
+          Also includes Reply attributes, groups, attachments etc.
         </div>
       </th>
       <td><input type="checkbox" name="resetdata[default]"/></td>

@@ -44,6 +44,9 @@ class OnBoard
             tables.each do |table|
               RADIUS.db[table.to_sym].delete 
             end
+
+            Service::RADIUS::User.delete_all_attachments if params['resetdata']['default']
+
             tables
           end
           def format_error_msg(e, opts={})
