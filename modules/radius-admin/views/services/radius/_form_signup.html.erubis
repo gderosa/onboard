@@ -14,13 +14,13 @@
       <li>
         Signup:
         <ul>
-          <li>Create new account: <code><%= signup_path %></code></li>
+          <li>Create new account: <code><a href="<%= signup_path %>"><%= signup_path %></a></code></li>
         </ul>
       </li>
       <li>
         Selfcare:
         <ul>
-          <li>Login: <code><%= login_path %></code></li>
+          <li>Login: <code><a href="<%= login_path %>"><%= login_path %></a></code></li>
           <li>“My Account”: <code><%= my_path %></code></li>
         </ul>
       </li>
