@@ -65,6 +65,7 @@ class OnBoard
           user.update(params_filtered)
           user.retrieve_attributes_from_db
           user.retrieve_group_membership_from_db
+          user.retrieve_accepted_terms_from_db
         end
 
         user.retrieve_personal_info_from_db
