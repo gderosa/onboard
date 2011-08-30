@@ -1,5 +1,12 @@
 <%
   user ||= nil
+
+  template_params                     ||= {}
+  template_params['check']            ||= {}
+  template_params['personal']         ||= {}  
+  template_params['terms']            ||= {}
+  template_params['terms']['accept']  ||= {}
+
   # imported locals: conf
 %>
 <form class="raduserform" method="POST" enctype="multipart/form-data">
@@ -12,7 +19,7 @@
           <% if user %>
             <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">
           <% else %>
-            <input type="text" name="check[User-Name]"/>
+            <input type="text" name="check[User-Name]" value="<%= template_params['check']['User-Name'] %>"/>
           <% end %>
         </td>
       </tr>
@@ -25,7 +32,8 @@
       :path   => 'pub/services/radius/users/_form_personal',
       :locals => {
         :user             => user,
-        :conf             => conf
+        :conf             => conf,
+        :template_params  => template_params
       }
     )
   %>
@@ -42,7 +50,7 @@
     partial(
       :module => 'radius-admin',
       :path   => 'pub/services/radius/_form_signup_terms',
-      :locals => {:terms => terms} 
+      :locals => {:terms => terms, :template_params  => template_params}  
     )
   %>
   <button type="submit"><%= i18n.create.you.capitalize %>!</button>

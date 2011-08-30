@@ -1,6 +1,8 @@
 <%#-*- coding: UTF-8 -*-%>
 <% 
   require 'facets/string'
+
+  template_params ||= {}
 %>
 <%= message_partial(msg) %>
 <%= 
@@ -23,7 +25,7 @@
   partial(
     :module => 'radius-admin',
     :path   => 'pub/services/radius/_form_signup',
-    :locals => {:terms => terms, :conf => conf} 
+    :locals => {:terms => terms, :conf => conf, :template_params => template_params} 
   )
 %>
 

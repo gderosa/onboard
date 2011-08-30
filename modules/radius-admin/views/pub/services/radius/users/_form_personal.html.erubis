@@ -1,6 +1,8 @@
 <%
   require 'facets/string'
 
+  template_params               ||= {}
+
   conf                          ||= {}
   conf['mandatory']             ||= {}
   conf['mandatory']['personal'] ||= {}
@@ -14,7 +16,7 @@
     if user
       personal = (user.personal || {})
     else
-      personal = {}
+      personal = template_params['personal'] || {}
     end
   end
 

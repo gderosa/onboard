@@ -33,6 +33,8 @@ class OnBoard
 
     post '/pub/services/radius/signup.html' do
       terms = []
+      template_params = {} 
+          # in case of auth failure, user doesn't need to re-enter all data 
       config = Service::RADIUS::Signup.get_config
       unless config['enable']
         halt(
@@ -84,6 +86,8 @@ class OnBoard
         session[:raduser] = user.name
         session[:radpass] = params['check']['User-Password']
         msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
+      else
+        template_params = params
       end
 
       format(
@@ -92,8 +96,9 @@ class OnBoard
         :title    => i18n.hotspot.signup,
         :msg      => msg,
         :locals   => {
-          :terms    => terms,
-          :conf     => config
+          :terms            => terms,
+          :conf             => config,
+          :template_params  => params
         }
       )
 
