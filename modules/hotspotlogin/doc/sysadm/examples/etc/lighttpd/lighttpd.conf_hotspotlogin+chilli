@@ -1,0 +1,66 @@
+server.modules = (
+        "mod_alias",
+        "mod_redirect",
+	"mod_proxy"
+)
+
+server.document-root	= "/var/www"
+
+
+## where to send error-messages to
+server.errorlog            = "/var/log/lighttpd/error.log"
+
+## to help the rc.scripts
+server.pid-file            = "/var/run/lighttpd.pid"
+
+## change uid to <uid> (default: don't change)
+server.username            = "www-data"
+
+## change gid to <gid> (default: don't change)
+server.groupname           = "www-data"
+
+# $SERVER["socket"] == "0.0.0.0:80" {} # already listens on IPv4 wildcard
+$SERVER["socket"] == "[::]:80" {}
+
+# redirect *://hotspot.localdomain/ (only that Host and only the home page) 
+# to Chillispot
+$HTTP["host"] =~ "(hotspot.localdomain)" {
+  url.redirect = ( "^/?$" => "http://hotspot.localdomain:3990" )
+}
+
+# force SSL
+$SERVER["socket"] =~ ":80" {
+  $HTTP["host"] =~ "(.*)" {
+    url.redirect = ( "^/(.*)" => "https://%1/$1" )
+  }
+}
+
+
+#### SSL engine
+$SERVER["socket"] == "0.0.0.0:443" {
+                  ssl.engine                  = "enable"
+                  ssl.pemfile                 = "/etc/lighttpd/server.pem"
+                  ssl.ca-file                 = "/etc/lighttpd/ca.crt"
+}
+$SERVER["socket"] == "[::]:443" {
+                  ssl.engine                  = "enable"
+                  ssl.pemfile                 = "/etc/lighttpd/server.pem"
+                  ssl.ca-file                 = "/etc/lighttpd/ca.crt"
+}
+
+proxy.server = (
+	"/hotspotlogin" => (
+		(
+			"host" => "127.0.0.1",
+			"port" => 4990
+		)
+	),
+	"" => (
+		(
+			"host" => "127.0.0.1",
+			"port" => 4567
+		)
+
+	)
+)
+
