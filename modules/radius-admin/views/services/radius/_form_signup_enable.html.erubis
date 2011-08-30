@@ -1,0 +1,28 @@
+<%# -*- coding: UTF-8 -*-%>
+
+  <table class="radsignupenableform"> <!-- might be un-styled... -->
+    <tbody>
+      <tr>
+        <th scope="row">
+          Enable signup?
+          <div class="optinfo">
+            If checked, end users will be able to create new accounts for themselves.
+          </div>
+        </th>
+        <td style="width: 2em; text-align: center; vertical:align:middle;">
+          <input type="checkbox" name="enable" <%= 'checked' if configuration['enable'] %>/>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          Enable selfcare?
+          <div class="optinfo">
+            If checked, authenticated users will be able to edit their own personal details and password.
+          </div>
+        </th>
+        <td style="width: 2em; text-align: center; vertical:align:middle;">
+          <input type="checkbox" name="enable_selfcare" <%= 'checked' if configuration['enable_selfcare'] %>/>
+        </td>
+      </tr>
+    </tbody>
+  </table>

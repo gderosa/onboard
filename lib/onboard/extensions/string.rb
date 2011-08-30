@@ -74,21 +74,39 @@ class String
 
   end
 
-  def valid_encodings(subset=Encoding.list)
-    working_copy    = self.dup
-    valid_encs      = []
-    subset.each do |enc|
-      working_copy.force_encoding enc
-      begin
-        working_copy.encode 'utf-8'
-        working_copy =~ / test /
-      rescue EncodingError, ArgumentError
-        # do not add enc to valid_encs
-      else
-        valid_encs << enc
+  def smart_encode(to)
+    begin
+      return encode(to)
+    rescue EncodingError
+      good_encoding = valid_encodings.find{|enc| enc != Encoding::ASCII_8BIT}
+      if good_encoding
+        force_encoding good_encoding 
+        begin
+          return encode(to)
+        rescue EncodingError # last resort
+          return to_asciihex
+        end
+      else # last resort
+        return to_asciihex
       end
     end
-    valid_encs
+  end
+
+  def valid_encodings(subset=Encoding.list)
+    working_copy    = self.dup
+    Enumerator.new do |yielder|
+      subset.each do |enc|
+        working_copy.force_encoding enc
+        begin
+          working_copy.encode 'utf-8'
+          working_copy =~ / test /
+        rescue EncodingError, ArgumentError
+          # do not yield anything
+        else
+          yielder.yield enc
+        end
+      end
+    end
   end
 
   def to_asciihex
@@ -117,6 +135,9 @@ class String
     out
   end
 
+  def hex2bin
+    [self].pack('H*') 
+  end
 
   alias to_i_orig to_i
 

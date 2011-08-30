@@ -33,7 +33,7 @@
   </p>
 
   <div style="margin-top:1.2em;"><input type="text" style="width:50ex" name="groups" value="<%= user.grouplist.join(', ') %>"/></div> 
-  <div style="margin-top:2em;"><button type="submit" name="update_groups" value="on">Update group membership!</button></div>
+  <div style="margin-top:1.8em;"><button type="submit" name="update_groups" value="on">Update group membership!</button></div>
 </form>
 
 

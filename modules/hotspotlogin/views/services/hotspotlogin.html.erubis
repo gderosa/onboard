@@ -8,6 +8,9 @@
   interval        = hslogin['conf']['interval'] 
   uamsecret       = hslogin['conf']['uamsecret']
   logo            = hslogin['conf']['logo']
+  logo_link       = hslogin['conf']['logo-link']
+  signup_url      = hslogin['conf']['signup-url']
+  my_url          = hslogin['conf']['my-url']
   custom_headline = hslogin['conf']['custom-headline'] 
   custom_text     = hslogin['conf']['custom-text']
   custom_footer   = hslogin['conf']['custom-footer']
@@ -29,7 +32,7 @@
       custom_footer and File.readable? custom_footer
 
   textrows = 5
-  textcols = 38
+  textcols = 40
 
 %>
 
@@ -132,19 +135,58 @@
       <td></td>
     </tr>
     <tr>
-      <th scope="row">Logo</th>
+      <th scope="row">Logo and Organization link</th>
       <td>
-        <input type="file" name="logo"/>
+        <input type="file" name="logo"/> <br/>
+        <input type="text" size="<%= textcols %>" name="logo_link" value="<%= logo_link %>" class="rwtext"/>
       </td>
       <td style="text-align: center;">
         <% if logo and File.exists? logo %>
-          <img src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+          <% if logo_link and logo_link =~ /\S/ %><a style="border:none;" href="<%= logo_link %>" target="_blank"><% end %>
+              <img style="border:none;" src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+          <% if logo_link and logo_link =~ /\S/ %></a><% end %>
         <% end %>
       </td>
       <td style="text-align: center;">
         <input type="checkbox" name="delete[logo]"/>
       </td>
     </tr>
+
+    <tr>
+      <th scope="row">
+        Signup Link 
+        <div class="optinfo">Leave blank to not display</div>
+      </th>
+      <td>
+        <input type="text" size="<%= textcols %>" class="rwtext" name="signup_url" value="<%= signup_url %>"/> 
+      </td>
+      <td style="text-align: center;">
+      <% if signup_url and signup_url =~ /\S/ %><a title="Displayed text may vary according to localization" target="_blank" href="<%= signup_url %>">Signup</a><% end %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[signup_url]"/>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        “My Account” Link
+        <div class="optinfo">
+          <code>-USER-</code> will be replaced by the actual username, as in<br/> 
+          <code>/pub/services/radius/users/-USER-.html</code>
+        </div>
+      </th>
+      <td>
+        <input type="text" size="<%= textcols %>" class="rwtext" name="my_url" value="<%= my_url %>"/> 
+      </td>
+      <td style="text-align: center;">
+      <% if my_url and my_url =~ /\S/ %><a title="Link cannot work since an actual end user should be specified or logged in" target="_blank" href="">My Account</a><% end %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[my_url]"/>
+      </td>
+    </tr>
+   
     <tr>
       <th scope="row">
         Custom headline
@@ -163,7 +205,7 @@
     <tr>
       <th scope="row">Custom text</th>
       <td>
-        <textarea name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_text_content %></textarea>
+        <textarea name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_text_content %></textarea>
       </td>
       <td>
         <%= custom_text_content %>
@@ -175,7 +217,7 @@
     <tr>
       <th scope="row">Custom footer</th>
       <td>
-        <textarea name="custom_footer" rows="<%= textrows %>" cols="<%= textcols %>"><%= custom_footer_content %></textarea>
+        <textarea name="custom_footer" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_footer_content %></textarea>
       </td>
       <td style="text-align: center;">
         <%= custom_footer_content %>

@@ -1,0 +1,29 @@
+<%#-*- coding: UTF-8 -*-%>
+<% 
+  require 'facets/string'
+%>
+<%= message_partial(msg) %>
+<%= 
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style'
+  )
+%>
+
+<% if request.env['REQUEST_METHOD'] == 'GET' %>
+  <div style="text-align: right;"><%= i18n.radius.user.registered.already.capitalize %>? <a href="login.html"><%= i18n.login.you.capitalize %></a>.</div>
+<% end %>
+
+<h2><%= i18n.hotspot.signup.titlecase %></h2>
+
+<%= mandatory_mark %> = <%= i18n.form.field.mandatory(2) %>
+
+<h3><%= i18n.radius.user.create_new.you.capitalize %></h3>
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path   => 'pub/services/radius/_form_signup',
+    :locals => {:terms => terms, :conf => conf} 
+  )
+%>
+

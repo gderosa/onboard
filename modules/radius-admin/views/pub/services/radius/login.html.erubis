@@ -1,0 +1,17 @@
+<h2><%= title %></h2>
+
+<%= message_partial(msg) %>
+
+<form method="POST">
+<table>
+  <tr>
+    <th scope="row">Login</th>
+    <td><input type="text" name="raduser"/></td>
+  </tr>
+  <tr>
+    <th scope="row">Password</th>
+    <td><input type="password" name="radpass"/></td>
+  </tr>
+</table>
+<button type="submit"><%= i18n.login.you.capitalize %></button> <%= i18n.or %> <a href="signup.html"><%= i18n.signup.you.capitalize %></a>!
+</form>

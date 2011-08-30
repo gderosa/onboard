@@ -1,3 +1,5 @@
+require 'date'
+require 'fileutils'
 require 'facets/hash'
 require 'sequel'
 require 'sequel/extensions/pagination'
@@ -6,22 +8,49 @@ require 'onboard/extensions/sequel/dataset'
 require 'onboard/extensions/object/deep'
 require 'onboard/extensions/hash'
 
+# WARNING WARNING WARNING! We're depending upon deprecated features:
+# https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
+#
+# TODO: remove the configurable-column-names feature until a robust solution is found
+
 class OnBoard
   module Service
     module RADIUS
       class User
 
+        class InvalidData < BadRequest
+=begin # TODO?
+          class Name    < BadRequest; end
+          class Email   < BadRequest; end
+          class Birth   < ...
+=end
+        end
+
+        UPLOADS = File.join RADIUS::UPLOADS, 'users'
+
         class << self
 
           def setup
-            @@conf      ||= RADIUS.read_conf
-            @@chktable  ||= @@conf['user']['check']['table'].to_sym
-            @@chkcols   ||= @@conf['user']['check']['columns'].symbolize_values
-            @@rpltable  ||= @@conf['user']['reply']['table'].to_sym
-            @@rplcols   ||= @@conf['user']['reply']['columns'].symbolize_values
-            @@perstable ||= @@conf['user']['personal']['table'].to_sym
-            @@perscols  ||= 
+            # WARNING WARNING WARNING! We're depending upon deprecated features:
+            # https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
+            #
+            # TODO: remove the configurable-column-names feature until a robust 
+            # solution is found
+            #
+            # Most of the following hashes are used in various calls to
+            # Sequel::Dataset#select 
+
+            @@conf        ||= RADIUS.read_conf
+            @@chktable    ||= @@conf['user']['check']['table'].to_sym
+            @@chkcols     ||= @@conf['user']['check']['columns'].symbolize_values
+            @@rpltable    ||= @@conf['user']['reply']['table'].to_sym
+            @@rplcols     ||= @@conf['user']['reply']['columns'].symbolize_values
+            @@perstable   ||= @@conf['user']['personal']['table'].to_sym
+            @@perscols    ||= 
                 @@conf['user']['personal']['columns'].symbolize_values
+            @@termstable  ||= @@conf['terms']['table'].to_sym
+            @@termsaccepttable ||=
+                              @@conf['terms_accept']['table'].to_sym
           end
 
           def setup!
@@ -60,10 +89,70 @@ class OnBoard
               'users'       => users.map{|u| new(u)} 
             }
           end
-        
+
+          def by_terms(params)
+            User.setup
+            Group.setup
+
+            # we do not use sonfigutrable column names here...
+
+            page        = params[:page].to_i 
+            per_page    = params[:per_page].to_i
+
+            # use double underscore Sequel notation for tablename.columnname
+            q = RADIUS.db[:terms_accept].select(:userinfo__username).filter(:terms_id => params[:terms_id].to_i, :accept => true).join(:userinfo, :terms_accept__userinfo_id => :userinfo__id)
+            usernames = q.map(:username)
+
+            return {
+              'count' => usernames.length, # q.count would require one more query
+              'users' => usernames
+            }
+          end
+
+          def validate_personal_info(h)
+            fields    = h[:fields]
+            personal  = h[:params]['personal']
+            invalid   = []
+            if fields.include? 'Name'
+              invalid << 'First Name' unless personal['First-Name'] =~ /\S/
+              invalid << 'Last Name'  unless personal['Last-Name']  =~ /\S/
+            end
+            invalid << 'Email' if fields.include? 'Email' and 
+                not personal['Email'] =~ /\S@\S/
+            if fields.include? 'Birth' # TODO: granularize: date vs place?
+              begin
+                Date.parse personal['Birth-Date']
+              rescue ArgumentError
+                invalid << 'Birth Date'
+              end
+              invalid << 'Birth City' unless personal['Birth-City'] =~ /\S/
+              # TODO? Birth-State?
+            end
+            if fields.include? 'Full-Address'
+              invalid << 'Address'  unless personal['Address']  =~ /\S/
+              invalid << 'City'     unless personal['City']     =~ /\S/
+              # slightly relaxed: do not demand postcode...
+            end
+            if fields.include? 'Phone'
+              invalid << 'Phone' unless
+                  personal['Work-Phone']    =~ /\d/ ||
+                  personal['Home-phone']    =~ /\d/ ||
+                  personal['Mobile-Phone']  =~ /\d/
+            end
+            if fields.include? 'ID-Code'
+              invalid << 'Tax or Social Security Code' unless personal['ID-Code'] =~ /\S/
+            end
+
+            raise InvalidData, "Invalid or missing: #{invalid.join ', '}" if invalid.any?
+          end
+
+          def delete_all_attachments
+            FileUtils.rm_rf UPLOADS
+          end
+
         end
 
-        attr_reader :name, :check, :reply, :groups, :personal
+        attr_reader :name, :check, :reply, :groups, :personal, :accepted_terms
 
         def setup;  self.class.setup;   end
         def setup!; self.class.setup!;  end
@@ -118,6 +207,46 @@ class OnBoard
             @personal = {} 
           end
         end
+        alias retrieve_personal_info retrieve_personal_info_from_db
+
+        # TODO: change :terms_id, :userinfo_id, :id in something configurable
+        # but don't use hash aliasing (see above)
+        def retrieve_accepted_terms_from_db
+          @personal ||= {}
+          retrieve_personal_info unless @personal['Id']
+          list = RADIUS.db[@@termsaccepttable].select(:terms_id).filter(:userinfo_id => @personal['Id']).map{|h| h[:terms_id]}
+          @accepted_terms = Terms::Document.get_all(:id => list) 
+        end
+        alias retrieve_accepted_terms retrieve_accepted_terms_from_db
+
+        def accept_terms!(accepted_terms)
+          setup
+          retrieve_personal_info_from_db unless @personal['Id'] 
+          raise(
+              Conflict, 
+              %Q{There's no user named "#{@name}" in userinfo db table}
+          ) unless @personal['Id']
+          accepted_terms.each do |terms_id|
+            # here we use fixed column names!
+            RADIUS.db[@@termsaccepttable].insert(
+              :userinfo_id  => @personal['Id'],
+              :terms_id     => terms_id,
+              :accept       => true
+            )
+          end
+        end
+
+        def get_personal_attachment_info
+          @personal ||= {}
+          dir = "#{UPLOADS}/#{@name}/personal"
+          begin
+            @personal['Attachments'] = Dir.foreach(dir).select do |entry|
+              File.file? "#{dir}/#{entry}"
+            end
+          rescue Errno::ENOENT
+            @personal['Attachments'] = []
+          end
+        end
 
         def grouplist
           @groups.map{|h| h[:"Group-Name"]}   
@@ -128,6 +257,7 @@ class OnBoard
         end
 
         def update_reply_attributes(params)
+          return unless params['reply'].respond_to? :each_pair
           setup
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(
@@ -145,6 +275,7 @@ class OnBoard
         end
         
         def update_check_attributes(params) # no passwords
+          return unless  params['check'].respond_to? :each_pair
           params['check'].each_pair do |attribute, value|
             # passwords are managed by #update_password
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
@@ -166,6 +297,7 @@ class OnBoard
         end
 
         def update_passwd(params)
+          return unless params['check']
           if params['check']['User-Password'] !=
               params['confirm']['check']['User-Password']
             raise PasswordsDoNotMatch, 'Passwords do not match!'
@@ -183,7 +315,7 @@ class OnBoard
             @@chkcols['User-Name']  => @name
           ).filter(
             @@chkcols['Attribute'].like '%-Password'
-          ).delete
+          ).delete if params['check']['Password-Type'] # nil != '' ; nil =  unchanged
           if params['check']['Password-Type'] =~ /\S/
             RADIUS.db[@@chktable].insert(
               @@chkcols['User-Name']  => @name,
@@ -223,12 +355,19 @@ class OnBoard
         end
 
         def update_personal_data(params)
+          return unless params['personal'].respond_to? :each_pair
           setup
           match = {@@perscols['User-Name'] => @name}
           row   = match.clone
           params['personal'].each_pair do |k, v|
-            row[@@perscols[k]] = v
+            row[@@perscols[k]] = v if @@perscols[k]
           end
+          begin
+            birthdate = Date.parse params['personal']['Birth-Date']
+          rescue ArgumentError
+            birthdate = Sequel::NULL
+          end
+          row[@@perscols['Birth-Date']] = birthdate
           if RADIUS.db[@@perstable].filter(match).any?
             row[@@perscols['Update-Date']] = Time.now
             RADIUS.db[@@perstable].filter(match).update(row) 
@@ -236,6 +375,29 @@ class OnBoard
             row[@@perscols['Update-Date']] = nil # DaloRADIUS-compatible
             row[@@perscols['Creation-Date']] = Time.now
             RADIUS.db[@@perstable].insert row
+          end
+        end
+
+        def delete_attachments(params)
+          if params['delete'].respond_to? :[]
+            dir = "#{UPLOADS}/#{@name}/personal"
+            params['delete']['personal']['Attachments'].each_pair do |basename, delete|
+              FileUtils.rm "#{dir}/#{basename}" if delete == 'on'
+            end
+          end
+        end
+
+        def upload_attachments(params)
+          # user = params['check']['User-Name'] || params[:userid]
+          if params['personal'] and params['personal']['Attachments'].respond_to? :each
+            params['personal']['Attachments'].each do |attachment|
+              dir = "#{UPLOADS}/#{@name}/personal"
+              FileUtils.mkdir_p dir
+              FileUtils.cp(
+                  attachment[:tempfile].path, 
+                  File.join(dir, attachment[:filename])
+              )
+            end
           end
         end
 
@@ -247,6 +409,8 @@ class OnBoard
             update_check_attributes(params)
             update_reply_attributes(params)
             update_personal_data(params)
+            delete_attachments(params)
+            upload_attachments(params)
           end
         end
 
@@ -297,8 +461,17 @@ class OnBoard
           row ? row[:Attribute] : nil
         end
 
-        def auth_type
-          find_attribute_value_by_name(:check, 'Auth-Type')
+        def stored_password
+          find_attribute_value_by_name :check, password_type
+        end
+
+        def check_password(cleartext) 
+          begin
+            passwd = Passwd.new :type => password_type, :cleartext => cleartext
+            return passwd.check stored_password
+          rescue Passwd::UnknownType
+            return false
+          end
         end
 
         def validate_empty_password(params)
@@ -309,13 +482,19 @@ class OnBoard
           end
         end
 
+
+        def auth_type
+          find_attribute_value_by_name(:check, 'Auth-Type')
+        end
+
         def to_h
           {
-            :name     => @name,
-            :check    => @check,
-            :reply    => @reply,
-            :groups   => @groups,
-            :personal => @personal,
+            :name           => @name,
+            :check          => @check,
+            :reply          => @reply,
+            :groups         => @groups,
+            :personal       => @personal,
+            :accepted_terms => @accepted_terms
           }
         end
 

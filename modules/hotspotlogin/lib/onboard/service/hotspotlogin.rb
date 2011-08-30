@@ -95,7 +95,11 @@ end
         end
 
         def stop!
-          Process.kill 'TERM', File.read(PIDFILE).to_i
+          pid = File.read(PIDFILE).to_i
+          Process.kill 'TERM', pid
+          while (running?) do
+            sleep 0.1
+          end
         end
 
         def restart!
@@ -153,10 +157,29 @@ end
           # TODO: delete stale files or manage a collection/library of logos?
           if params['delete'] and params['delete']['logo'] == 'on'
             conf_h['logo'] = nil
+            conf_h['logo-link'] = nil
           elsif params['logo'] 
             logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
             FileUtils.mv(params['logo'][:tempfile], logo_path) 
             conf_h['logo'] = logo_path
+          end
+          if params['logo_link'] and params['logo_link'] =~ /\S/
+            conf_h['logo-link'] = params['logo_link']
+          end
+
+
+          # signup_url
+          if params['delete'] and params['delete']['signup_url']
+            conf_h['signup-url'] = nil
+          elsif params['signup_url'] and params['signup_url'] =~ /\S/
+            conf_h['signup-url'] = params['signup_url']
+          end
+         
+          # my_url # "My Account" link
+          if params['delete'] and params['delete']['my_url']
+            conf_h['my-url'] = nil
+          elsif params['my_url'] and params['my_url'] =~ /\S/
+            conf_h['my-url'] = params['my_url']
           end
 
           # custom headline

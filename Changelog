@@ -1,3 +1,14 @@
+2011.08
+
+* Public Interface (mainly for HotSpot end users)
+
+* radius-admin:
+  * end user signup and selfcare
+  * localization
+  * document upload
+
+* Further modularization: Sinatra helpers, etc.
+
 2011.03.03
 
 openvpn --local

@@ -5,9 +5,9 @@
   <table>
     <tr>
       <th scope="row">
-        Yes, I am really sure I want to reset Authorization and Authentication data
+        Yes, I am really sure I want to reset users&rsquo; data
         <div class="optinfo">
-          Also includes Reply attributes, groups etc.
+          Also includes Reply attributes, groups, attachments etc.
         </div>
       </th>
       <td><input type="checkbox" name="resetdata[default]"/></td>
@@ -17,6 +17,16 @@
         Reset <em>Accounting</em> data
       </th>
       <td><input type="checkbox" name="resetdata[accounting]"/></td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Delete Terms and Condition documents
+        <div class="optinfo">
+          You cannot delete documents already subscribed by users - unless you delete
+          those users as well. You&lsquo;ll likely get a database error otherwise.
+        </div>
+      </th>
+      <td><input type="checkbox" name="resetdata[terms]"/></td>
     </tr>
   </table>
   <button type="submit">Submit!</button>

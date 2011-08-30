@@ -10,7 +10,8 @@ class Array
     return true
   end
   
-  alias include_many? include_ary?
+  alias include_many?   include_ary? 
+  alias include_all_of? include_ary?
   
   def sum
     inject {|sum, n| sum + n } 

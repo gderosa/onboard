@@ -11,11 +11,13 @@ class OnBoard
   class Warning       < ::Exception;    end  # TODO: use catch and throw
   
   # an useful alias
-  RuntimError         = Error
+  RuntimeError         = Error
 
   class ServerError   < Error;          end
   class BadRequest    < Error;          end
   class Conflict      < Error;          end 
+
+  InternalServerError = ServerError
 
   class Error
     def http_status_code

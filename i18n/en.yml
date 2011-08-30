@@ -1,3 +1,45 @@
-"yes": Yes
-"no": No
 
+"yes": "Yes"
+"no": "No"
+
+or: or
+
+attachment: !!pl
+  1: attachment
+  n: attachments
+
+view:
+  you: view
+
+download:
+  you: download
+
+delete_: # diiirty 
+  you: delete
+
+update_: # diiirty
+  you: update
+
+create:
+  you: create
+
+notes: notes
+
+confirm: confirm
+
+password:
+  repeat: 
+    you: ripeat password
+    any: ripeat password
+  type_twice: 
+    you: type twice
+    any: type twice
+
+date:
+  format: date format
+
+form:
+  field:
+    mandatory: !!pl
+      1: mandatory field
+      n: mandatory fields

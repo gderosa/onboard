@@ -1,0 +1,14 @@
+<% terms = terms_doc = objects['terms_doc'] %>
+<% users = objects['users'] %>
+
+<% doc_link = "../../terms/#{terms[:id]}.html" %>
+
+<h2>List of users subscribing <a href="../../terms.html">Terms and Conditions</a> #<a href="<%= doc_link %>"><%= terms[:id] %></a></h2>
+
+<h3>Document: “<a href="<%= doc_link %>"><%= terms[:name] %></a>”</h3>
+
+<h3>Users list:</h3>
+<p>
+<% users[0..-2].each do |u| %><a href="../<%= u %>.html"><%= u %></a>, <% end %> 
+<a href="../<%= users.last %>.html"><%= users.last %></a>
+</p>

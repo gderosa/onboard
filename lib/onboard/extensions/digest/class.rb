@@ -12,6 +12,10 @@ module Digest
       end
     end
 
+    def self.digest_length
+      self.new.digest_length
+    end
+
   end
 end
 

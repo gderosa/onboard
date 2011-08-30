@@ -1,0 +1,74 @@
+<%
+  require 'uuid'
+
+  textrows = 7
+  textcols = 50
+
+  conf = objects
+
+  # TODO:
+  logo_link           = conf['logo_link']
+  logo                = conf['logo']
+  custom_text_content = conf['custom_text']
+
+%>
+
+<h2><%= title %></h2>
+
+By default, web pages under <code>/pub/</code> are publicly accessible (or accessible
+through a different authentication mechanism) and get a custom layout. For example, 
+this feature is used by the <em>radius-admin</em> module to provide signup and selfcare 
+services to HotSpot end users.
+
+<h3>Sidebar</h3>
+
+<form method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <thead>
+      <tr>
+        <th style="background:transparent;"></th>
+        <th style="background:transparent;"></th>
+        <th style="width: <%= textcols %>ex;">Preview</th>
+        <th>Delete?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Logo and<br/>Organization link</th>
+        <td>
+          <input type="file" name="logo"/><br/>
+          <input type="text" size="<%= textcols %>" name="logo_link" value="<%= logo_link %>" class="rwtext"/>
+        </td>
+        <td style="text-align: center; border:none;">
+          <% if logo %>
+            <% if logo_link and logo_link =~ /\S/ %><a class="img" href="<%= logo_link %>" target="_blank"><% end %>
+                <img src="/webif/pub/logo_preview?nocache=<%= UUID.generate %>"/>
+            <% if logo_link and logo_link =~ /\S/ %></a><% end %>
+          <% end %>
+        </td>
+        <td style="text-align: center;">
+          <input type="checkbox" name="delete[logo]"/>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Custom text</th>
+        <td>
+          <textarea wrap="off" name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_text_content %></textarea>
+        </td>
+        <td>
+          <%= custom_text_content %>
+        </td>
+        <td style="text-align: center;">
+          <input type="checkbox" name="delete[custom_text]"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button
+    style="margin-top:0.7em;"
+    type="submit"
+    name="change"
+    value="change">Change!</button>
+</form>
+
