@@ -1,3 +1,7 @@
+2011.08.01
+
+* RADIUS signup: preserve form data after a validation failure
+
 2011.08
 
 * Public Interface (mainly for HotSpot end users)
