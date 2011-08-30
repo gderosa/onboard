@@ -1,6 +1,6 @@
 ---
   environment: production 
-  address: '::' 
+  address: '::1' 
   user: onboard
   group: onboard
   port: 4568
