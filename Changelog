@@ -1,3 +1,14 @@
+2011.08.02
+
+* update lighty+chilli+hotspotlogin example
+
+* reset form on successful radius signup
+  * also, send Location header on 201 Created
+
+* prevent radius endusers to access other's data, even if they have same password
+
+* RADIUS signup form, more "optinfo"
+
 2011.08.01
 
 * RADIUS signup: preserve form data after a validation failure
