@@ -78,6 +78,9 @@
   <tr>
     <th scope="row">
       <%= i18n.personal.birth.all_data.capitalize %> <%= mandatory_mark if m['Birth'] %>
+      <div class="optinfo">
+        <%= i18n.date.format.capitalize %>: 1980-01-30
+      </div>
     </th>
     <td>
       <span class="input-container">
@@ -133,7 +136,10 @@
     </td>
   </tr>
   <tr>
-    <th scope="row"><%= i18n.personal.phone.phone.capitalize %> <%= mandatory_mark if m['Phone'] %></th>
+    <th scope="row">
+      <%= i18n.personal.phone.phone.capitalize %> <%= mandatory_mark if m['Phone'] %>
+      <div class="optinfo"><%= i18n.personal.phone.at_least_one.capitalize %></div>
+    </th>
     <td>
       <span class="input-container">
         <input 

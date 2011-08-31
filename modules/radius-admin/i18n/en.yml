@@ -44,6 +44,7 @@ personal:
     work: work
     home: home
     mobile: mobile
+    at_least_one: at least one number
   id_code:
     id_code: Personal ID code
     alt: "Tax code, SSN, etc."
