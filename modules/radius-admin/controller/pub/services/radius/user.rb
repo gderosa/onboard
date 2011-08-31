@@ -19,7 +19,7 @@ class OnBoard
       end
 
       redirect '/pub/services/radius/login.html' unless
-          user.check_password session[:radpass] 
+          user.check_password session[:radpass] and user.name == session[:raduser]
 
       format(
         :module   => 'radius-admin',
@@ -63,7 +63,7 @@ class OnBoard
         not_found unless user.found?
         
         redirect '/pub/services/radius/login.html' unless
-            user.check_password session[:radpass] 
+            user.check_password session[:radpass] and user.name == session[:raduser]
 
         user.retrieve_personal_info_from_db
         user.get_personal_attachment_info
@@ -110,7 +110,7 @@ class OnBoard
       end
 
       redirect '/pub/services/radius/login.html' unless
-          user.check_password session[:radpass] 
+          user.check_password session[:radpass] and user.name == session[:raduser]
      
       attachment(params[:basename]) if params['disposition'] == 'attachment'
       send_file( File.join(
