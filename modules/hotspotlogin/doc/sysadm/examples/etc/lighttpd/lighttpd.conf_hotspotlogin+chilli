@@ -22,9 +22,11 @@ server.groupname           = "www-data"
 # $SERVER["socket"] == "0.0.0.0:80" {} # already listens on IPv4 wildcard
 $SERVER["socket"] == "[::]:80" {}
 
-# redirect *://hotspot.localdomain/ (only that Host and only the home page) 
-# to Chillispot
-$HTTP["host"] =~ "(hotspot.localdomain)" {
+# Redirect to Chillispot. Use another hostname (or the IP) to access the admin hompage
+#
+# DNS should be properly set up
+#
+$HTTP["host"] =~ "(hotspot(\.localdomain)?)" {
   url.redirect = ( "^/?$" => "http://hotspot.localdomain:3990" )
 }
 
