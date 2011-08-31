@@ -20,8 +20,8 @@ radius:
       any: creazione nuovo utente   
 
 hotspot:
-  signup: registrazione Hotspot    
-  signup_disabled: registrazione Hotspot disattivata
+  signup: registrazione HotSpot    
+  signup_disabled: registrazione HotSpot disattivata
   account:
     management: "Hotspot: gestione account"
 

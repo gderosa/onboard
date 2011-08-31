@@ -16,7 +16,7 @@
   <div style="text-align: right;"><%= i18n.radius.user.registered.already.capitalize %>? <a href="login.html"><%= i18n.login.you.capitalize %></a>.</div>
 <% end %>
 
-<h2><%= i18n.hotspot.signup.titlecase %></h2>
+<h2><%= title %></h2>
 
 <%= mandatory_mark %> = <%= i18n.form.field.mandatory(2) %>
 
