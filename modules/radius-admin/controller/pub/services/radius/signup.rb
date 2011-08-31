@@ -1,4 +1,5 @@
 require 'facets/hash'
+require 'facets/string'
 require 'sinatra/base'
 
 require 'onboard/extensions/array'
@@ -15,7 +16,7 @@ class OnBoard
         format(
           :module   => 'radius-admin',
           :path     => '/pub/services/radius/signup',
-          :title    => i18n.hotspot.signup,
+          :title    => i18n.hotspot.signup.uppercase,
           :locals   => {
             :conf     => conf, 
             :terms    => Service::RADIUS::Terms::Document.get_all(:asked => true) 
@@ -26,7 +27,7 @@ class OnBoard
         format(
           :module   => 'radius-admin',
           :path     => '/pub/services/radius/signup_disabled',
-          :title    => i18n.hotspot.signup_disabled
+          :title    => i18n.hotspot.signup_disabled.uppercase
         )
       end
     end
@@ -42,7 +43,7 @@ class OnBoard
           format(
             :module   => 'radius-admin',
             :path     => '/pub/services/radius/signup_disabled',
-            :title    => i18n.hotspot.signup_disabled
+            :title    => i18n.hotspot.signup_disabled.uppercase
           )
         )
       end
@@ -95,7 +96,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/signup',
-        :title    => i18n.hotspot.signup,
+        :title    => i18n.hotspot.signup.uppercase,
         :msg      => msg,
         :locals   => {
           :terms            => terms,
