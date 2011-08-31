@@ -138,7 +138,7 @@
   <tr>
     <th scope="row">
       <%= i18n.personal.phone.phone.capitalize %> <%= mandatory_mark if m['Phone'] %>
-      <div class="optinfo"><%= i18n.personal.phone.at_least_one.capitalize %></div>
+      <div class="optinfo"><%= i18n.personal.phone.at_least_one.capitalize if m['Phone'] %></div>
     </th>
     <td>
       <span class="input-container">
