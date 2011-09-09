@@ -94,19 +94,19 @@ class String
 
   def valid_encodings(subset=Encoding.list)
     working_copy    = self.dup
-    Enumerator.new do |yielder|
-      subset.each do |enc|
-        working_copy.force_encoding enc
-        begin
-          working_copy.encode 'utf-8'
-          working_copy =~ / test /
-        rescue EncodingError, ArgumentError
-          # do not yield anything
-        else
-          yielder.yield enc
-        end
+    ary = Array.new
+    subset.each do |enc|
+      working_copy.force_encoding enc
+      begin
+        working_copy.encode 'utf-8'
+        working_copy =~ / test /  
+        # the two lines above might raise EncodingError or ArgumentError
+        ary << enc
+      rescue EncodingError, ArgumentError
+        # do not add anything to ary
       end
     end
+    return ary
   end
 
   def to_asciihex
