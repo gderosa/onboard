@@ -79,6 +79,9 @@ class OnBoard
           user.retrieve_accepted_terms_from_db
           user.retrieve_personal_info_from_db
           user.get_personal_attachment_info
+
+          session[:raduser] = user.name
+          session[:radpass] = params['check']['User-Password']
         end
       end
 
