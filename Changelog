@@ -1,3 +1,7 @@
+2011.08.05
+
+* fix RADIUS selfcare password update
+
 2011.08.04
 
 * fix String 'smart encoding' by removing useless over-engineering...
