@@ -303,6 +303,9 @@ class OnBoard
             raise PasswordsDoNotMatch, 'Passwords do not match!'
           end
           validate_empty_password(params)
+          unless params['check']['Password-Type'] =~ /\S/
+            params['check']['Password-Type'] = password_type
+          end
           if params['check']['Password-Type'] =~ /\S/
             return unless params['check']['User-Password'] =~ /\S/
             # so an incorrect Password-Type would raise an exception
