@@ -20,10 +20,10 @@ server.username            = "www-data"
 server.groupname           = "www-data"
 
 # $SERVER["socket"] == "0.0.0.0:80" {} # already listens on IPv4 wildcard
-$SERVER["socket"] == "[::]:80" {}
+#$SERVER["socket"] == "[::]:80" {}
 
 $HTTP["host"] =~ "^(hotspot(\..*)?)$" {
-  url.redirect = ( "^/?$" => "https://%1/hotspotlogin" )
+  url.redirect = ( "^/?$" => "http://%1:3990" )
 }
 
 # force SSL
