@@ -26,6 +26,9 @@
       </li>
     </ul>
   </div>
+  <div class="info" style="margin-top:1ex; margin-bottom:3ex;">
+    For a basic cutomization of public pages layout go <a href="/webif/pub/layout.html">here</a>.
+  </div>
  
   <input type="hidden" name="_method" value="put"/>
   <%=
