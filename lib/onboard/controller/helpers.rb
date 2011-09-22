@@ -12,4 +12,4 @@ require 'onboard/controller/helpers/locale.rb'
 require 'onboard/controller/helpers/menu.rb'
 require 'onboard/controller/helpers/paginate.rb'
 require 'onboard/controller/helpers/response.rb'
-
+require 'onboard/controller/helpers/user-agent.rb'
