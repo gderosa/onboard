@@ -44,14 +44,19 @@
       :path   => 'pub/services/radius/_form_signup_password'
     )
   %>
-  <h4><%= i18n.terms.terms %></h4>
-  <p><%= i18n.terms.mandatory_mark(mandatory_mark) %>.</p>
-  <%=
-    partial(
-      :module => 'radius-admin',
-      :path   => 'pub/services/radius/_form_signup_terms',
-      :locals => {:terms => terms, :template_params  => template_params}  
-    )
-  %>
-  <button type="submit"><%= i18n.create.you.capitalize %>!</button>
+
+  <% if terms.any? %>
+    <h4><%= i18n.terms.terms %></h4>
+    <p><%= i18n.terms.mandatory_mark(mandatory_mark) %>.</p>
+    <%=
+      partial(
+        :module => 'radius-admin',
+        :path   => 'pub/services/radius/_form_signup_terms',
+        :locals => {:terms => terms, :template_params  => template_params}  
+      ) 
+    %>
+  <% end %>
+  <div style="text-align:center;">
+    <button style="margin-top:1ex; font-size:150%;" type="submit"><%= i18n.create.you.capitalize %>!</button>
+  </div>
 </form>

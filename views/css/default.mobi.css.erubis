@@ -1,0 +1,20 @@
+div#header, div#main {
+  width: 100%;
+}
+
+div.optinfo {
+  font-weight: normal;
+  font-style: italic;
+}
+
+div.input-container {
+  padding: 0.1em 0;
+}
+
+th, td {
+  background: #ddd;
+}
+
+th[scope="row"] {
+  text-align: left;
+}
