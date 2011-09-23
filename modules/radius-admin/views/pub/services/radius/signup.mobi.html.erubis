@@ -5,18 +5,6 @@
   template_params ||= {}
 %>
 <%= message_partial(msg) %>
-<%= 
-  partial(
-    :module => 'radius-admin',
-    :path => 'services/radius/users/_form_style'
-  )
-%>
-
-<h1>YOU ARE MOBILE!!!!!!!!!!!!!!!!!!!</h1>
-
-<% if request.env['REQUEST_METHOD'] == 'GET' %>
-  <div style="text-align: right;"><%= i18n.radius.user.registered.already.capitalize %>? <a href="login.html"><%= i18n.login.you.capitalize %></a>.</div>
-<% end %>
 
 <h2><%= title %></h2>
 

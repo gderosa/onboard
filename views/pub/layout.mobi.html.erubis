@@ -18,8 +18,8 @@ require 'onboard/pub/layout'
     <link rel="stylesheet" href="/css/custom.css"/>
     <link rel="icon" href="/icons/favicon.ico"/> <%# TODO: make it uploadable %> 
   </head>
-  <body> 
-    <div id="sidebar-mobi">
+  <body style=""> 
+    <div id="header-mobi">
       <div style="text-align: center">
         <% if c['logo_link'] =~ /\S/ %>
           <a class="img" target="_blank" href="<%= c['logo_link'] %>"><img src="/pub/logo"/></a>
