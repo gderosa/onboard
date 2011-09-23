@@ -28,30 +28,6 @@
   end
 %>
 
-<style type="text/css">
-  table tr#personal-attachments td table {
-    margin-top: 0.4em;
-    margin-bottom: 1em;
-  }
-  table tr#personal-attachments td table tr th, 
-  table tr#personal-attachments td table tr td 
-  {
-    border: none; 
-    padding: 0;
-  }
-  table tr#personal-attachments td table tr th {
-    font-size: 100%;
-    padding-right: 1em;
-  }
-  table tr#personal-attachments td table tr td {
-    padding-left: 1em;
-  }
-  table tr#personal-attachments td table tr td input[type="checkbox"] {
-    vertical-align: bottom;
-    margin: 0 0.1em;
-  }
-</style>
-
 <table class="raduserform">
   <tr>
     <th scope="row"><%= i18n.personal.name.full.capitalize %> <%= mandatory_mark if m['Name'] %></th>
@@ -98,7 +74,7 @@
         <input 
             type="text" 
             name="personal[Birth-State]"
-            style="width: 2ex;"
+            
             value="<%= personal['Birth-State'] %>">(<%= i18n.personal.state.capitalize %>)</span>
     </td>
   </tr>
@@ -109,28 +85,28 @@
         <input 
             type="text" 
             name="personal[Address]" 
-            style="width: 27ex;"
+            
             value="<%= personal['Address'] %>"/>
       </span>
       <div class="input-container">
         <input 
             type="text" 
             name="personal[City]" 
-            style="width: 15ex;"
+            
             value="<%= personal['City'] %>"/>(<%= i18n.personal.city.capitalize %>)
       </span>
       <div class="input-container">
         <input 
             type="text" 
             name="personal[State]" 
-            style="width: 2ex;"
+            
             value="<%= personal['State'] %>"/>(<%= i18n.personal.state.capitalize %>)
       </span>
       <div class="input-container">
         <input 
             type="text" 
             name="personal[Postal-Code]" 
-            style="width: 5ex;"
+            
             value="<%= personal['Postal-Code'] %>"/>(<%= i18n.personal.postcode %>)
       </span>   
     </td>
@@ -175,14 +151,14 @@
                 <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>?disposition=attachment">
                   <%= i18n.download.you %></a>
                 |
-                <span style="font-weight: bold; color: #111; "><%= i18n.delete_.you %></span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
+                <span ><%= i18n.delete_.you %></span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
               </td>
             </tr>  
           <% end %>
         </table>
       <% end %>
       <% 3.times do %>
-        <input type="file" name="personal[Attachments][]" style="width:20em;"/><br/>
+        <input type="file" name="personal[Attachments][]" /><br/>
       <% end %>
     </td>
   </tr>
@@ -216,7 +192,7 @@
   <tr>
     <th scope="row"><%= i18n.notes.capitalize %></th>
     <td>
-      <textarea style="width: 30ex;" name="personal[Notes]"><%= personal['Notes'] %></textarea>
+      <textarea  name="personal[Notes]"><%= personal['Notes'] %></textarea>
     </td>
   </tr>
 </table>

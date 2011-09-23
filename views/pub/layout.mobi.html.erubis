@@ -14,12 +14,11 @@ require 'onboard/pub/layout'
 <html>
   <head>
     <title><%= title %></title> 
-    <link rel="stylesheet" href="/css/default.css"/>
-    <link rel="stylesheet" href="/css/custom.css"/>
+    <link rel="stylesheet" href="/css/default.mobi.css"/>
     <link rel="icon" href="/icons/favicon.ico"/> <%# TODO: make it uploadable %> 
   </head>
   <body style=""> 
-    <div id="header-mobi">
+    <div id="header">
       <div style="text-align: center">
         <% if c['logo_link'] =~ /\S/ %>
           <a class="img" target="_blank" href="<%= c['logo_link'] %>"><img src="/pub/logo"/></a>
@@ -29,7 +28,7 @@ require 'onboard/pub/layout'
       </div>
       <div><%= c['custom_text'] %></div>
     </div>
-    <div id="main-mobi">
+    <div id="main">
 
       <%= erubis(:"pub/_navbar.html", :layout => false) %>
 
