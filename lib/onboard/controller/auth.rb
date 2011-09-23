@@ -19,7 +19,11 @@ class OnBoard
       protected! unless self.class.public_access? request.path_info
 
       if request.path_info =~ %r{^/pub(/.*)?$}
-        @layout = 'pub/layout.html'
+        if mobile?
+          @layout = 'pub/layout.mobi.html'
+        else
+          @layout = 'pub/layout.html'
+        end
       end
     end    
 
