@@ -104,27 +104,6 @@ CREATE TABLE `radusergroup` (
 
 -- Non-RADIUS : personal data etc.
 
-CREATE TABLE `terms` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(200) NOT NULL,
-  `content` mediumtext,
-  `asked` tinyint(1) NOT NULL DEFAULT '0',
-  `required` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `terms_accept` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `userinfo_id` int(11) unsigned NOT NULL,
-  `terms_id` int(11) unsigned NOT NULL,
-  `accept` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `userinfo_id` (`userinfo_id`),
-  KEY `terms_id` (`terms_id`),
-  CONSTRAINT `terms_accept_ibfk_1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`),
-  CONSTRAINT `terms_accept_ibfk_2` FOREIGN KEY (`userinfo_id`) REFERENCES `userinfo` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `userinfo` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(128) DEFAULT NULL,
@@ -155,6 +134,27 @@ CREATE TABLE `userinfo` (
   `personalidcode` varchar(128) DEFAULT NULL COMMENT 'not present in DaloRADIUS',
   PRIMARY KEY (`id`),
   KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `terms` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL,
+  `content` mediumtext,
+  `asked` tinyint(1) NOT NULL DEFAULT '0',
+  `required` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `terms_accept` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userinfo_id` int(11) unsigned NOT NULL,
+  `terms_id` int(11) unsigned NOT NULL,
+  `accept` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userinfo_id` (`userinfo_id`),
+  KEY `terms_id` (`terms_id`),
+  CONSTRAINT `terms_accept_ibfk_1` FOREIGN KEY (`terms_id`) REFERENCES `terms` (`id`),
+  CONSTRAINT `terms_accept_ibfk_2` FOREIGN KEY (`userinfo_id`) REFERENCES `userinfo` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
