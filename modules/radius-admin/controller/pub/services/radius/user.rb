@@ -68,6 +68,10 @@ class OnBoard
         user.retrieve_personal_info_from_db
         user.get_personal_attachment_info
 
+        params['personal']['Birth-Date'] = 
+            r18n_normalize_date params['personal']['Birth-Date'] # Sinatra helper
+            # to manage American dates 01/30/1980 which Date.parse cannot understand
+
         Service::RADIUS::User.validate_personal_info(
             :params => params,
             :fields => config['mandatory']['personal'].select{|k, v| v}.keys
