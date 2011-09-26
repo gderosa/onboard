@@ -64,7 +64,10 @@
             type="text" 
             name="personal[Birth-Date]"
             value="<%= i18n.l personal['Birth-Date'] %>"><br/>
-        <%= i18n.personal.date.capitalize %>
+        <%= i18n.personal.date.capitalize %> 
+        <% unless personal['Birth-Date'].is_a? Date %> 
+          (<%= i18n.eg %> <%= i18n.l Date.parse('1980-01-30') %>) 
+        <% end %>
       </div>
       <div class="input-container">
         <input 
