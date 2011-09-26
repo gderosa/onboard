@@ -57,17 +57,14 @@
   <tr>
     <th scope="row">
       <%= i18n.personal.birth.all_data.capitalize %><%= mandatory_mark if m['Birth'] %>
-      <div class="optinfo">
-        <%= i18n.date.format.capitalize %>:<br/>1980-01-30
-      </div>
     </th>
     <td>
       <div class="input-container">
         <input 
             type="text" 
             name="personal[Birth-Date]"
-            title="<%= i18n.date.format.capitalize %>: 1980-01-30"
-            value="<%= personal['Birth-Date'] %>"><br/><%= i18n.personal.date.capitalize %>
+            value="<%= i18n.l personal['Birth-Date'] %>"><br/>
+        <%= i18n.personal.date.capitalize %>
       </div>
       <div class="input-container">
         <input 
