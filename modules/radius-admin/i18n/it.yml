@@ -38,6 +38,7 @@ personal:
   state: provincia
   date: data
   address: indirizzo
+  street_address: via e num. civico
   postcode: CAP
   phone:
     phone: telefono

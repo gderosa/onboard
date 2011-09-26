@@ -94,7 +94,8 @@
             type="text" 
             name="personal[Address]" 
             
-            value="<%= personal['Address'] %>"/>
+            value="<%= personal['Address'] %>"/><br/>
+            <%= i18n.personal.street_address.capitalize %>    
       </div>
       <div class="input-container">
         <input 

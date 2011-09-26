@@ -38,6 +38,7 @@ personal:
   state: state
   date: date
   address: address
+  street_address: street address
   postcode: postcode/ZIP
   phone:
     phone: phone
