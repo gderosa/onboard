@@ -147,7 +147,7 @@
   <tr id="personal-attachments" style="<%= 'display:none;' unless user %>">
     <th scope="row"><%= i18n.attachment(3).capitalize %></th> 
     <td>
-      <% if personal['Attachments'].respond_to? :each and personal['Attachments'].any? %>
+      <% if user and personal['Attachments'].respond_to? :each and personal['Attachments'].any? %>
         <table>
           <% personal['Attachments'].each do |attachment_basename| %>
             <tr>
