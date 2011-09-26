@@ -14,7 +14,7 @@
   <table class="raduserform">
     <tbody>
       <tr>
-        <th scope="row"><%= i18n.radius.user.name.capitalize %> <%= mandatory_mark %></th>
+        <th scope="row"><%= i18n.radius.user.name.capitalize %><%= mandatory_mark %></th>
         <td>
           <% if user %>
             <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">

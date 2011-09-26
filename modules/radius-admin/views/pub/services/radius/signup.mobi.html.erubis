@@ -5,7 +5,12 @@
   template_params ||= {}
 %>
 <%= message_partial(msg) %>
-
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style' # mobi
+  )
+%>
 <h2><%= title %></h2>
 
 <%= mandatory_mark %> = <%= i18n.form.field.mandatory(2) %>

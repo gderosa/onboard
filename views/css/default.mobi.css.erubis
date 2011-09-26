@@ -1,3 +1,16 @@
+.error {
+  border: 1px red solid;
+}
+
+.warn {
+  border: 1px yellow solid;
+}
+
+.info {
+  border: 1px green solid;
+}
+
+
 div#header, div#main {
   width: 100%;
 }

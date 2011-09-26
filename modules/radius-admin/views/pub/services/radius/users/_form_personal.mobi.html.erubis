@@ -80,7 +80,7 @@
             type="text"
             size="2"
             name="personal[Birth-State]"
-            
+            style="width:2em;" 
             value="<%= personal['Birth-State'] %>">)<br/>
         <%= i18n.personal.state.capitalize %>
       </div>
@@ -109,7 +109,7 @@
             type="text" 
             size="2"
             name="personal[State]" 
-            
+            style="width:2em;"
             value="<%= personal['State'] %>"/>)<br/>
         <%= i18n.personal.state.capitalize %>
       </div>
@@ -184,7 +184,7 @@
       <input type="text" name="personal[ID-Code]" value="<%= personal['ID-Code'] %>"/>
     </td>
   </tr>
-  <% if accepted_terms %>
+  <% if accepted_terms and accepted_terms.any? %>
     <tr>
       <th scope="row">
         <%= i18n.terms.accepted.capitalize %>:

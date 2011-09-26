@@ -2,7 +2,12 @@
   user    = objects['user']
 %>
 <%= message_partial(msg) %>
-
+<%=
+  partial(
+    :module => 'radius-admin',
+    :path => 'services/radius/users/_form_style' # mobi
+  )
+%>
 <div style="text-align: right;"> <%= i18n.logged_in_as.capitalize %> <em><%= user.name %></em>: <a href="../logout.html"><%= i18n.logout.you.capitalize %></a>. </div>
 
 <h2><%= i18n.radius.user.user.capitalize %>: <%= user.name %></h2>
