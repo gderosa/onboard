@@ -34,5 +34,5 @@
     )
   %>
 
-  <button type="submit" style="margin:2em 0;"><%= i18n.update_.you.capitalize %>!</button>
+  <input type="submit" style="margin:2em 0;" value="<%= i18n.update_.you.capitalize %>!"/>
 </form>

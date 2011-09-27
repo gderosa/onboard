@@ -47,6 +47,11 @@ class OnBoard
           )
         )
       end
+
+      params['personal']['Birth-Date'] =
+          r18n_normalize_date params['personal']['Birth-Date'] # Sinatra helper
+          # to manage American dates 01/30/1980 which Date.parse cannot understand
+
       name  = params['check']['User-Name']
       user  = Service::RADIUS::User.new(name) # blank slate
       msg = handle_errors do
@@ -67,6 +72,8 @@ class OnBoard
         else
           raise Service::RADIUS::Terms::MandatoryDocumentNotAccepted, 'You must accept mandatory Terms and Conditions' 
         end
+
+
         Service::RADIUS::User.validate_personal_info(
             :params => params, 
             :fields => config['mandatory']['personal'].select{|k, v| v}.keys

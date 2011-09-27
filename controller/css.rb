@@ -8,6 +8,10 @@ class OnBoard
       content_type 'text/css'
       erubis (:"css/default.css")
     end
+    get '/css/default.mobi.css' do
+      content_type 'text/css'
+      erubis (:"css/default.mobi.css")
+    end
 
     get '/css/custom.css' do
       send_file CONFDIR + '/self/custom.css'

@@ -14,13 +14,22 @@
   <table class="raduserform">
     <tbody>
       <tr>
-        <th scope="row"><%= i18n.radius.user.name.capitalize %> <%= mandatory_mark %></th>
+        <th scope="row"><%= i18n.radius.user.name.capitalize %><%= mandatory_mark %></th>
         <td>
-          <% if user %>
-            <input type="text" readonly name="check[User-Name]" value="<%= user.name %>">
-          <% else %>
-            <input type="text" name="check[User-Name]" value="<%= template_params['check']['User-Name'] %>"/>
-          <% end %>
+          <div class="input-container">
+            <% if user %>
+              <input 
+                  type="text" 
+                  readonly 
+                  name="check[User-Name]" 
+                  value="<%= user.name %>">
+            <% else %>
+              <input 
+                  type="text" 
+                  name="check[User-Name]" 
+                  value="<%= template_params['check']['User-Name'] %>"/>
+            <% end %>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -44,14 +53,19 @@
       :path   => 'pub/services/radius/_form_signup_password'
     )
   %>
-  <h4><%= i18n.terms.terms %></h4>
-  <p><%= i18n.terms.mandatory_mark(mandatory_mark) %>.</p>
-  <%=
-    partial(
-      :module => 'radius-admin',
-      :path   => 'pub/services/radius/_form_signup_terms',
-      :locals => {:terms => terms, :template_params  => template_params}  
-    )
-  %>
-  <button type="submit"><%= i18n.create.you.capitalize %>!</button>
+
+  <% if terms.any? %>
+    <h4><%= i18n.terms.terms %></h4>
+    <p><%= i18n.terms.mandatory_mark(mandatory_mark) %>.</p>
+    <%=
+      partial(
+        :module => 'radius-admin',
+        :path   => 'pub/services/radius/_form_signup_terms',
+        :locals => {:terms => terms, :template_params  => template_params}  
+      ) 
+    %>
+  <% end %>
+  <div style="text-align:center;">
+    <input style="margin-top:1ex; font-size:150%;" type="submit" value="<%= i18n.create.you.capitalize %>!"/></input>
+  </div>
 </form>

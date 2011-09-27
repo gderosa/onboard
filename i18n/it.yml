@@ -1,6 +1,6 @@
 
-yes: "Sì"
-no: "No"
+"yes": "Sì"
+"no": "No"
 
 or: o
 
@@ -26,6 +26,8 @@ create:
 notes: note
 
 confirm: conferma
+
+eg: p. es.
 
 password:
   repeat: 

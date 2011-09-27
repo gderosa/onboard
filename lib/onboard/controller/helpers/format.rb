@@ -15,22 +15,34 @@ class OnBoard
             request.path_info =~ /\.(\w+$)/ && $1
 
         return multiple_choices(h) unless h[:formats].include? h[:format]
-
+        # h[:path] and abs_path are with no extension!
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
         end
+        abs_path = File.absolute_path( File.join(settings.views, h[:path]) )
         case h[:format]
         when 'html'
           if h[:partial]
             layout = false
           elsif instance_variable_defined? :@layout and @layout
-            layout = @layout.to_sym
+            layout = @layout.to_sym 
+                # a mobile layout is set in lib/onboard/controller/auth.rb
+                # (if appropriate) only for /pub/ pages right now
           else
-            layout = :"layout.html"
+            layout = :"layout.html" # TODO? mobile layout for admin (non /pub/ ) pages?
           end
-          content_type 'text/html', :charset => 'utf-8'
+          
+          content_type 'text/html', :charset => 'utf-8' unless h[:partial]
+
+          erubis_template = (h[:path] + '.html').to_sym
+          # p abs_path + '.mobi.html.erubis' if abs_path =~ /_form_style/ # DEBUG
+          if File.exists?( abs_path + '.mobi.html.erubis' ) and mobile?
+            erubis_template = (h[:path] + '.mobi.html').to_sym
+            # p erubis_template if abs_path =~ /_form_style/ # DEBUG
+          end
+
           return erubis(
-            (h[:path] + '.html').to_sym,
+            erubis_template,
             :layout   => layout,
             :locals   => {
               :objects  => h[:objects], 
@@ -95,14 +107,11 @@ class OnBoard
       end
 
       def message_partial(msg={:ok=>true}) 
-        erubis(
-          :"/_messages.html",
-          {
-            :layout => false,
-            :locals => {
-              :msg => msg,
-              :status => status
-            }
+        partial(
+          :path => '_messages', 
+          :locals => {
+            :msg => msg,
+            :status => status
           }
         )
       end

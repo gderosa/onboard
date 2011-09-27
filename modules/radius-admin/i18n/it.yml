@@ -38,6 +38,7 @@ personal:
   state: provincia
   date: data
   address: indirizzo
+  street_address: via e num. civico
   postcode: CAP
   phone:
     phone: telefono
@@ -47,7 +48,7 @@ personal:
     at_least_one: almeno un numero
   id_code:
     id_code: codice fiscale
-    alt: o num. Previdenza Sociale (Stati Uniti), etc.
+    alt: o codice analogo per gli altri Paesi 
   
 terms:
   name: nome / descrizione
