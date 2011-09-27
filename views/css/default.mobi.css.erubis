@@ -26,6 +26,12 @@ div.error, div.warn, div.info {
   margin: 1em 0 1em 0;
 }
 
+<% etag Time.now %>
+
+div#navbar span.info, div.info {
+  padding: 0.2em 0.4em 0.2em 0.1em;
+}
+
 div.error code {
   font-size: 110%;
 }
