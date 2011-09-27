@@ -48,10 +48,11 @@
     </td>
   </tr>
   <tr>
-    <th scope="row">Email <%= mandatory_mark if m['Email'] %></th>
+    <th scope="row">Email<%= mandatory_mark if m['Email'] %></th>
     <td>
-      <input type="text" name="personal[Email]" 
-          value="<%= personal['Email'] %>"/>
+      <div class="input-container">
+        <input type="text" name="personal[Email]" value="<%= personal['Email'] %>"/>
+      </div>
     </td>
   </tr>
   <tr>
@@ -181,7 +182,9 @@
       <%= i18n.personal.id_code.id_code.titlecase %><%= mandatory_mark if m['ID-Code'] %>
     </th>
     <td>
-      <input type="text" name="personal[ID-Code]" value="<%= personal['ID-Code'] %>"/>
+      <div class="input-container">
+        <input type="text" name="personal[ID-Code]" value="<%= personal['ID-Code'] %>"/>
+      </div>
     </td>
   </tr>
   <% if accepted_terms and accepted_terms.any? %>
@@ -205,7 +208,9 @@
   <tr>
     <th scope="row"><%= i18n.notes.capitalize %></th>
     <td>
-      <textarea  name="personal[Notes]"><%= personal['Notes'] %></textarea>
+      <div class="input-container">
+        <textarea  name="personal[Notes]"><%= personal['Notes'] %></textarea>
+      </div>
     </td>
   </tr>
 </table>

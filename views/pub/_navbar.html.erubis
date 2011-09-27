@@ -17,9 +17,9 @@
               (status == 200 and request.env['REQUEST_METHOD'] != 'GET') 
         %>
         <% if http_errors %>
-          <span class="error"><%= Rack::Utils::HTTP_STATUS_CODES[status] %></span>
+          <span id="status" class="error"><%= Rack::Utils::HTTP_STATUS_CODES[status] %></span>
         <% elsif http_explicit_20x %>
-          <span class="info"><%= Rack::Utils::HTTP_STATUS_CODES[status] %></span>
+          <span id="status" class="info"><%= Rack::Utils::HTTP_STATUS_CODES[status] %></span>
         <% end %>
 
       </div>

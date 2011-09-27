@@ -10,12 +10,27 @@
   border: 1px green solid;
 }
 
-
 div#header, div#main {
   width: 100%;
 }
 
-div.optinfo {
+div#navbar {
+  margin: 1.3em 0 1em 0;
+}
+
+#status {
+  font-style: italic;
+}
+
+div.error, div.warn, div.info {
+  margin: 1em 0 1em 0;
+}
+
+div.error code {
+  font-size: 110%;
+}
+
+.optinfo {
   font-weight: normal;
   font-style: italic;
 }

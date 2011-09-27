@@ -32,12 +32,13 @@ class OnBoard
             layout = :"layout.html" # TODO? mobile layout for admin (non /pub/ ) pages?
           end
           
-          content_type 'text/html', :charset => 'utf-8'
+          content_type 'text/html', :charset => 'utf-8' unless h[:partial]
 
           erubis_template = (h[:path] + '.html').to_sym
-          # p abs_path + '.mobi.html.erubis'
+          # p abs_path + '.mobi.html.erubis' if abs_path =~ /_form_style/ # DEBUG
           if File.exists?( abs_path + '.mobi.html.erubis' ) and mobile?
             erubis_template = (h[:path] + '.mobi.html').to_sym
+            # p erubis_template if abs_path =~ /_form_style/ # DEBUG
           end
 
           return erubis(
@@ -106,14 +107,11 @@ class OnBoard
       end
 
       def message_partial(msg={:ok=>true}) 
-        erubis(
-          :"/_messages.html",
-          {
-            :layout => false,
-            :locals => {
-              :msg => msg,
-              :status => status
-            }
+        partial(
+          :path => '_messages', 
+          :locals => {
+            :msg => msg,
+            :status => status
           }
         )
       end
