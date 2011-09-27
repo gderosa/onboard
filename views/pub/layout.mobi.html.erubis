@@ -5,9 +5,7 @@
 require 'onboard/pub/layout'
 
 %>
-<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"
-"http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
-<!-- though we are far from true conformance... ;-P -->
+<!DOCTYPE html>
 <% 
   title ||= nil # avoid NameError if no title was set
 
