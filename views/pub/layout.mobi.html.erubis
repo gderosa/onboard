@@ -31,7 +31,7 @@ require 'onboard/pub/layout'
     </div>
     <div id="main">
 
-      <%= erubis(:"pub/_navbar.html", :layout => false) %>
+      <%= partial(:path => "pub/_navbar") %>
 
       <%= yield %>
 

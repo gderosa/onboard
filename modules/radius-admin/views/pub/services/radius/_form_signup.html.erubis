@@ -66,6 +66,6 @@
     %>
   <% end %>
   <div style="text-align:center;">
-    <button style="margin-top:1ex; font-size:150%;" type="submit"><%= i18n.create.you.capitalize %>!</button>
+    <input style="margin-top:1ex; font-size:150%;" type="submit" value="<%= i18n.create.you.capitalize %>!"/></input>
   </div>
 </form>
