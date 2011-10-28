@@ -31,7 +31,7 @@ if [ -r "$ENV_SH" ]; then
 	. $ENV_SH 
 fi
 
-for dir in $ONBOARD_VARRUN, $ONBOARD_VARLOG; do
+for dir in $ONBOARD_VARRUN $ONBOARD_VARLOG; do
 	if [ ! -d "$dir" ]; then
 		(mkdir -p $dir 2> /dev/null) || (
 			sudo mkdir -p $dir
