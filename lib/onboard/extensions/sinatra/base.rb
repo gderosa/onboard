@@ -1,6 +1,11 @@
 module Sinatra
   class Base
 
+    unless method_defined? :options
+      warn 'OnBoard: Sinatra::Base#options has been removed, aliasing to #settings'
+      alias options settings
+    end
+
     def routed?(path, verb="GET")
       if verb == :any
         %w{GET POST PUT DELETE}.each do |verb_|
