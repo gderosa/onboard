@@ -5,6 +5,7 @@ require 'thin'
 require 'sinatra/base'
 
 require 'onboard/extensions/sinatra/base'
+require 'onboard/extensions/sinatra/templates'
 
 require 'onboard/controller/auth'
 require 'onboard/controller/error'
