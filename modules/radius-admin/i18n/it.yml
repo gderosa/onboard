@@ -1,0 +1,63 @@
+# radius-admin 
+# encoding: utf-8
+
+logged_in_as: autenticato come 
+logout:
+  you: esci
+login:
+  you: entra
+signup:
+  you: registrati
+
+radius:
+  user: 
+    user: utente
+    name: nome utente
+    registered:
+      already: utente già registrato
+    create_new: 
+      you: crea nuovo utente 
+      any: creazione nuovo utente   
+
+hotspot:
+  signup: registrazione HotSpot    
+  signup_disabled: registrazione HotSpot disattivata
+  account:
+    management: "Hotspot: gestione account"
+
+personal:
+  info: informazioni personali
+  name:
+    full: nome e cognome
+    first: nome
+    last: cognome
+  birth: 
+    short: nascita
+    all_data: data e luogo di nascita
+  city: comune
+  state: provincia
+  date: data
+  address: indirizzo
+  street_address: via e num. civico
+  postcode: CAP
+  phone:
+    phone: telefono
+    work: ufficio
+    home: casa
+    mobile: cellulare
+    at_least_one: almeno un numero
+  id_code:
+    id_code: codice fiscale
+    alt: o codice analogo per gli altri Paesi 
+  
+terms:
+  name: nome / descrizione
+  terms: Termini e Condizioni
+  accept:
+    i: accetto
+  accepted: Termini e Condizioni accettati
+  accepted_bare: "accettati"
+  mandatory: obbligatorio # TODO? should be general?
+  mandatory_mark: l’accettazione dei Termini marcati con “%1” è obbligatoria 
+
+

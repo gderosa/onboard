@@ -1,2 +1,47 @@
+
 "yes": "Sì"
 "no": "No"
+
+or: o
+
+attachment: !!pl
+  1: allegato
+  n: allegati
+
+view:
+  you: visualizza
+
+download:
+  you: scarica
+
+delete_: # diiirty 
+  you: cancella
+
+update_: # diiirty
+  you: aggiorna
+
+create:
+  you: crea
+
+notes: note
+
+confirm: conferma
+
+eg: p. es.
+
+password:
+  repeat: 
+    you: ripeti password
+    any: ripetere password
+  type_twice: 
+    you: inserisci due volte
+    any: inserire due volte
+
+date:
+  format: formato data
+
+form:
+  field:
+    mandatory: !!pl
+      1: campo obbligatorio
+      n: campi obbligatori

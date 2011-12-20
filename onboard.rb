@@ -24,7 +24,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2011.03.01'
+  VERSION           = '2011.09.01'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -36,10 +36,12 @@ class OnBoard
   )
   FileUtils.mkdir_p RWDIR
   FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
-  CONFDIR           = File.join RWDIR, '/etc/config'
-  LOGDIR            = File.join RWDIR, '/var/log'
-  LOGFILE_BASENAME  = 'onboard.log'
-  LOGFILE_PATH      = File.join LOGDIR, LOGFILE_BASENAME
+  CONFDIR             = File.join RWDIR, '/etc/config'
+  LOGDIR              = File.join RWDIR, '/var/log'
+  # sometimes files are uploaded elsewhere, as best suitable
+  DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
+  LOGFILE_BASENAME    = 'onboard.log'
+  LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
  
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
   # NOTE: we are re-defining a constant!
@@ -86,10 +88,12 @@ class OnBoard
   end
 
   def self.prepare
-    # menu
     if web?
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
+      
+      require 'onboard/controller/helpers'
+      require 'onboard/controller'
     end
 
     # modules
@@ -160,8 +164,8 @@ end
 OnBoard.prepare
 
 if OnBoard.web?
-  require 'onboard/controller'
-  require 'onboard/controller/helpers'
+  #require 'onboard/controller'
+  #require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run!
   end

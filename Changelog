@@ -1,3 +1,56 @@
+2011.09.01
+
+* fix for new Sinatra versions
+* fix dir creation in startup shell scripts
+
+2011.09
+
+* "mobile" pages for RADIUS HotSpot Signup/Selfcare
+
+2011.08.05
+
+* fix RADIUS selfcare password update
+
+2011.08.04
+
+* fix String 'smart encoding' by removing useless over-engineering...
+	* avoid unacceptable time-consuming loops on low-end machines (mainly when
+	viewing/editing DansGuardian weighted phrase lists) 
+
+2011.08.03
+
+* hotspot: miscellaneous view fixes
+
+2011.08.02
+
+* update lighty+chilli+hotspotlogin example
+
+* reset form on successful radius signup
+	* also, send Location header on 201 Created
+
+* prevent radius endusers to access other's data, even if they have same password
+
+* RADIUS signup form, more "optinfo"
+
+2011.08.01
+
+* RADIUS signup: preserve form data after a validation failure
+
+2011.08
+
+* Public Interface (mainly for HotSpot end users)
+
+* radius-admin:
+	* end user signup and selfcare
+	* localization
+	* document upload
+
+* Further modularization: Sinatra helpers, etc.
+
+2011.03.03
+
+openvpn --local
+
 2011.03.02
 
 * OpenVPN: client wizard: fix TCP mode
@@ -21,27 +74,27 @@
 2010.12.01
 
 * radius-admin: fix #51
-  * group list displayed attributes incorrectly
+	* group list displayed attributes incorrectly
 
 2010.12
 
 * FreeRADIUS Administration
-  * users, groups and accounting on MySQL database
+	* users, groups and accounting on MySQL database
 
 2010.11.03
 
 * Chilli Improvements:
-  * NAS-Port-Type w/ autodetection
-  * NAS-Identifier
+	* NAS-Port-Type w/ autodetection
+	* NAS-Identifier
 
 * new module: radius-core
-  * a support module including files from a Radiustar fork
+	* a support module including files from a Radiustar fork
 
 2010.11.02
 
 * HotSpotLogin fixes:
-  * "Your Org. Name" field (aka --custom-headline)
-  * prevent logo image caching by browsers, via ?nocache=<unique-id> 
+	* "Your Org. Name" field (aka --custom-headline)
+	* prevent logo image caching by browsers, via ?nocache=<unique-id> 
 
 2010.11.01
 
@@ -50,11 +103,11 @@
 2010.11
 
 * Captive portal
-  * hotspotlogin module
-    * strongly founded on CoovaChilli features, namely JSON interface
-  * chilli module
-    * no wpa, statip and mac auth, just web hotspot login
-  * requires a RADIUS server (not managed by OnBoard yet)
+	* hotspotlogin module
+		* strongly founded on CoovaChilli features, namely JSON interface
+	* chilli module
+		* no wpa, statip and mac auth, just web hotspot login
+	* requires a RADIUS server (not managed by OnBoard yet)
 
 2010.10.03
 
@@ -93,16 +146,16 @@
 2010.07
 
 * OpenVPN 
-  * Virtual Ethernets (TAP), allowing IPv6 and bridging 
-  * TAP configured persistently like normal ethernets
+	* Virtual Ethernets (TAP), allowing IPv6 and bridging 
+	* TAP configured persistently like normal ethernets
 
 2010.06
 
 * Policy routing based on: 
-  * source address 
-  * input interface
-  * input bridge port
-  * QoS classification (via netfilter packet mangling)
+	* source address 
+	* input interface
+	* input bridge port
+	* QoS classification (via netfilter packet mangling)
 
 2009.12
 

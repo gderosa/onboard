@@ -10,7 +10,7 @@ DEPENDENCIES:
 
 This module depends on the module "easy-rsa".
 
-gems:
-- uuid
-- zippy
-- archive-tar-minitar
+GEMS:
+
+gem install uuid zippy archive-tar-minitar --no-ri --no-rdoc
+

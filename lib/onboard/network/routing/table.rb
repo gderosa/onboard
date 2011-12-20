@@ -301,8 +301,10 @@ class OnBoard
           msg = OnBoard::System::Command.run "ip route flush table #{@id}", :sudo
         end
         
-        def ip_route_del(str)
-          msg = OnBoard::System::Command.run "ip route del #{str} table #{@id}", :sudo
+        def ip_route_del(str, opt_h={})
+          opt_h = {:af => 'inet'}.merge opt_h
+          af = opt_h[:af]
+          msg = OnBoard::System::Command.run "ip -f #{af} route del #{str} table #{@id}", :sudo
           return msg
         end
 

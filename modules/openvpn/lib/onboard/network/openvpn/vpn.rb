@@ -222,6 +222,8 @@ class OnBoard
               cmdline << '--mode' << 'server' << '--tls-server'
             end
 
+            cmdline << '--local' << params['local_address'].to_s if
+                params['local_address'] =~ /\S/
             cmdline << '--port' << params['port'].to_s
             cmdline << '--proto' << params['proto']
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.

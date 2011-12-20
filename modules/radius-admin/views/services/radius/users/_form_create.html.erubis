@@ -1,7 +1,7 @@
 <%
   user ||= nil
 %>
-<form class="raduserform" method="POST">
+<form class="raduserform" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_method" value="post">
   <table class="raduserform">
     <tbody>

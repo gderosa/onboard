@@ -74,21 +74,39 @@ class String
 
   end
 
+  def smart_encode(to)
+    begin
+      return encode(to)
+    rescue EncodingError
+      good_encoding = valid_encodings.find{|enc| enc != Encoding::ASCII_8BIT}
+      if good_encoding
+        force_encoding good_encoding 
+        begin
+          return encode(to)
+        rescue EncodingError # last resort
+          return to_asciihex
+        end
+      else # last resort
+        return to_asciihex
+      end
+    end
+  end
+
   def valid_encodings(subset=Encoding.list)
     working_copy    = self.dup
-    valid_encs      = []
+    ary = Array.new
     subset.each do |enc|
       working_copy.force_encoding enc
       begin
         working_copy.encode 'utf-8'
-        working_copy =~ / test /
+        working_copy =~ / test /  
+        # the two lines above might raise EncodingError or ArgumentError
+        ary << enc
       rescue EncodingError, ArgumentError
-        # do not add enc to valid_encs
-      else
-        valid_encs << enc
+        # do not add anything to ary
       end
     end
-    valid_encs
+    return ary
   end
 
   def to_asciihex
@@ -117,6 +135,9 @@ class String
     out
   end
 
+  def hex2bin
+    [self].pack('H*') 
+  end
 
   alias to_i_orig to_i
 
