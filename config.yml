@@ -1,6 +1,6 @@
 ---
   environment: production 
-  address: '127.0.0.1' 
+  address: '0.0.0.0' 
   user: onboard
   group: onboard
   port: 4567
