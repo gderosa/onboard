@@ -1,11 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-module Kernel
-  def warn(str)
-    fail str
-  end
-end
-
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib'
 
 require 'rubygems'
