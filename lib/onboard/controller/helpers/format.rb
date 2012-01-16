@@ -12,7 +12,7 @@ class OnBoard
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
         h[:formats] ||= %w{html json yaml}
-        h[:formats] |= %w{rb} if options.environment == :development
+        h[:formats] |= %w{rb} if settings.environment == :development
 
         # try to guess if not provided
         h[:format]                                ||= 
