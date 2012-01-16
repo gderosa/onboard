@@ -46,7 +46,10 @@ class OnBoard
             # p erubis_template if abs_path =~ /_form_style/ # DEBUG
           end
 
-          return erubis(
+          # "Sinatra::Templates#erubis is deprecated and will be removed, 
+	  # use #erb instead. If you have Erubis installed, it will be used 
+	  # automatically"
+	  return erb(
             erubis_template,
             :layout   => layout,
             :locals   => {
@@ -126,7 +129,7 @@ class OnBoard
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
         end
-        return erubis(
+        return erb( # See above for #erb Vs #erubis
           h[:path].to_sym,
           :layout   => false,
           :locals   => h[:locals] 
