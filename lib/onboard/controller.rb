@@ -26,7 +26,7 @@ class OnBoard
     set :root, OnBoard::ROOTDIR
 
     # Sinatra::Base#static! has been overwritten to allow multiple path
-    set :public, 
+    set :public_folder, 
         Dir.glob(OnBoard::ROOTDIR + '/public')            +
         Dir.glob(OnBoard::ROOTDIR + '/modules/*/public')      
 
