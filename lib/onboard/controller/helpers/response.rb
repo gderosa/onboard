@@ -23,6 +23,11 @@ class OnBoard
           format args_h
         end
       end
+
+      def forbidden
+        status 403
+        format :path => '403' 
+      end
       
       # http://www.sinatrarb.com/intro#Triggering%20Another%20Route
       # This would have saved lots of duplicated code!
