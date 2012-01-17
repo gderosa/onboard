@@ -1,0 +1,12 @@
+At the time of writing (2012-01-17) this module just re-implement 
+for Sinatra the server-side connector of jqueryFileTree [1] .   
+
+It's strongly modeled on connectors/jqueryFileTree.rb, the CGI example
+provided within the package [2]. 
+
+-- 
+
+[1] http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/
+
+[2] http://labs.abeautifulsite.net/archived/jquery-fileTree/jquery.fileTree-1.01.zip
+
