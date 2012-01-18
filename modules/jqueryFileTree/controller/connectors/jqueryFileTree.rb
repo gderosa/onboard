@@ -25,7 +25,7 @@ class OnBoard
           if Dir.pwd[0,root.length] == root
 
             #loop through all directories
-            Dir.glob("*") do |x|
+            Dir.glob("*").sort.each do |x|
               if not File.directory?(x.untaint)
                 next
               end
@@ -33,7 +33,7 @@ class OnBoard
             end
             
             #loop through all files
-            Dir.glob("*") do |x|
+            Dir.glob("*").sort.each do |x|
               if not File.file?(x.untaint) 
                 next
               end
