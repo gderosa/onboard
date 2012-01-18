@@ -1,0 +1,31 @@
+<html>
+
+  <head>
+    <script src="js/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="js/jqueryFileTree.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="css/jqueryFileTree.css" media="screen" />
+  </head>
+
+  <body>
+
+    <div id="filetree"></div>
+
+    <script type="text/javascript">
+
+      $(document).ready( function() {
+        $('#filetree').fileTree(
+          {
+            // root: '/home/onboard/files/',
+            script: '/connectors/jqueryFileTree/files.html'
+          }, 
+          function(file) {
+            alert(file);
+          }
+        );
+      });      
+
+    </script>
+
+  </body>
+
+</html>

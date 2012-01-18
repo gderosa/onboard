@@ -59,6 +59,10 @@ class OnBoard
 
     end
 
+    post '/connectors/jqueryFileTree/:root_id.html' do
+      same_as_GET
+    end
+
   end
 
 end
