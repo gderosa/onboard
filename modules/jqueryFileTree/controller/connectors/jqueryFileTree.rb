@@ -6,7 +6,12 @@ class OnBoard
 
     # Based on connectors/jqueryFileTree.rb contained in
     # labs.abeautifulsite.net/archived/jquery-fileTree/jquery.fileTree-1.01.zip
+    #
     # An adaptation from CGI to Sinatra.
+    #
+    # Also, a "protocol specification" is at
+    # http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/#custom_connectors
+    #
     get '/connectors/jqueryFileTree/:root_id.html' do
       root = nil
       out = ''
@@ -59,6 +64,8 @@ class OnBoard
 
     end
 
+    # POST is actually required by jqueryFileTree: a GET route is just 
+    # there to naively debug with a browser :-P
     post '/connectors/jqueryFileTree/:root_id.html' do
       same_as_GET
     end
