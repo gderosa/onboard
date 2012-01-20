@@ -5,7 +5,7 @@ class OnBoard
       # $LOAD_PATH.unshift  ROOTDIR + '/lib'
       if OnBoard.web?
         OnBoard.find_n_load ROOTDIR + '/etc/menu'
-        #OnBoard.find_n_load ROOTDIR + '/controller'
+        OnBoard.find_n_load ROOTDIR + '/controller'
       end
     end
   end
