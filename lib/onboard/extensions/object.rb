@@ -1,6 +1,5 @@
 require 'json'
 require 'yaml'
-require 'syck'
 
 class Object
 
