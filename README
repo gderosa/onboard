@@ -64,16 +64,6 @@ Gem version specific requirements:
 Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append 
 the configuration to the Linux machine /etc/sysctl.conf file.
 
---
-
-Optional add-ons:
-
-You can take advantage of Ya2YAML by Akira FUNAI to get native 
-UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
-and encode them in base64). 
-
-gem install ya2yaml
-
 ---
 
 This Free/Open Source Software project is sponsored by 

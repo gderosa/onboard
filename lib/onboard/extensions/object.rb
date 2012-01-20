@@ -1,11 +1,6 @@
-require 'json' # std library
-
-begin
-  require 'ya2yaml'
-  $ya2yaml_available = true
-rescue LoadError
-  $ya2yaml_available = false
-end
+require 'json'
+require 'yaml'
+require 'syck'
 
 class Object
 
@@ -15,10 +10,10 @@ class Object
         json = JSON.pretty_generate(self)
         return json
       rescue NoMethodError
-        return self.to_json
+        return JSON.generate(self)
       end
-    elsif $ya2yaml_available and what.to_s == 'yaml'
-      return self.ya2yaml
+    elsif what.to_s == 'yaml'
+      return YAML.dump(self) 
     else
       method(('to_' + what.to_s).to_sym).call
     end
