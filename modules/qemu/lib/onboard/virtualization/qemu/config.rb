@@ -8,26 +8,48 @@ class OnBoard
       class Config
 
         class << self
+=begin
           def http_params2argv(params, opts={}) 
             uuid = opts[:uuid] || UUID.generate
             return "-uuid #{uuid} -m 512 -vnc #{params['vnc']} -drive #{params['drive'][0]['file']},index=0 -daemonize -monitor unix:/var/run/qemu-#{uuid}.sock,server,nowait -pidfile /var/run/qemu-#{uuid}.pid"
           end
+=end
         end
 
         def initialize(h)
           if h[:http_params]
-            @uuid = UUID.generate
-            @argv = self.class.http_params2argv(h[:http_params], :uuid=>@uuid)
+            @uuid = UUID.generate # creationf from POST
+            @cmd  = {
+              'exe'   => 'kvm',
+              'opts'  => {
+                '-uuid'     => @uuid,
+                '-m'        => 512,
+                '-vnc'      => h[:http_params]['vnc'],
+                '-drive'    => [
+                  {
+                    'file'    => h[:http_params]['drive'][0]['file'],
+                    'index'   => 0
+                  }
+                ],
+                '-daemonize'  => true,
+                '-monitor'    => {
+                  'unix'        => "/var/run/qemu-#{@uuid}.sock",
+                  'server'      => true,
+                  'nowait'      => true
+                },
+                '-pidfile'    => "/var/run/qemu-#{@uuid}.pid"
+              }
+            }
           else
             @uuid = h[:config]['uuid']
-            @argv = h[:config]['argv']
+            @cmd  = h[:config]['cmd']
           end
         end
 
         def to_h
           {
-            'uuid' => @uuid,
-            'argv' => @argv 
+            'uuid'  => @uuid,
+            'cmd'   => @cmd 
           }
         end
 
@@ -36,7 +58,7 @@ class OnBoard
         def save
           yaml_file = File.join QEMU::CONFDIR, "#@uuid.yml" 
           File.open yaml_file, 'w' do |f|
-            f.write YAML.dump export_data
+            f.write YAML.dump to_h 
           end
         end
 
