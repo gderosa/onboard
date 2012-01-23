@@ -3,7 +3,7 @@ gem 'uuid'
 autoload :UUID, 'uuid'
 
 class OnBoard
-  module V12n
+  module Virtualization
     module QEMU
       class Config
 
@@ -27,7 +27,6 @@ class OnBoard
         end
 
         def to_json(*a); export_data.to_json(*a); end
-        def to_yaml(*a); export_data.to_yaml(*a); end
 
         def save
           yaml_file = File.join QEMU::CONFDIR, "#@uuid.yml" 

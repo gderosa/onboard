@@ -1,10 +1,10 @@
 require 'fileutils'
 
 class OnBoard
-  module V12n 
+  module Virtualization
     module QEMU
       ROOTDIR = File.dirname(__FILE__)
-      CONFDIR = File.join OnBoard::CONFDIR, 'v12n/qemu'
+      CONFDIR = File.join OnBoard::CONFDIR, 'virtualization/qemu'
       FileUtils.mkdir_p CONFDIR
       $LOAD_PATH.unshift  ROOTDIR + '/lib'
       if OnBoard.web?
@@ -13,6 +13,6 @@ class OnBoard
       end
     end
   end
-  Virtualization = V12n 
+  V12n = Virtualization 
 end
 
