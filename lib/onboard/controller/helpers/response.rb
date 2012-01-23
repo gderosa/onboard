@@ -31,8 +31,13 @@ class OnBoard
       
       # http://www.sinatrarb.com/intro#Triggering%20Another%20Route
       # This would have saved lots of duplicated code!
+      #
+      # Also, save the original environment for proper operation in
+      # /views/_navbar.html.erb (and possibly other stuff).
+      before do
+        @real_request = @original_request = @actual_request ||= request.dup
+      end
       def same_as_get
-        @actual_env = @env.dup
         status, headers, body = call! env.merge("REQUEST_METHOD" => 'GET')
         [status, headers, body]
       end
