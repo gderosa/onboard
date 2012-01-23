@@ -11,7 +11,7 @@ class OnBoard
         :module => 'qemu',
         :path => '/virtualization/qemu',
         :format => params[:format],
-        :objects  => {}
+        :objects  => OnBoard::V12n::QEMU.get_all
       )
     end
 
