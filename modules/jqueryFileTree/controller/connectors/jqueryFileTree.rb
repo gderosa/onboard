@@ -17,7 +17,7 @@ class OnBoard
       out = ''
       if params['root_id'] == 'files' # for future extension
         begin 
-          root = ENV['HOME'] + '/files'
+          root = File.realpath(ENV['HOME']) + '/files'
           dir = params['dir'].to_s
           path = File.join root, dir
 
@@ -50,16 +50,16 @@ class OnBoard
 
             return out
 
-          else
-            forbidden
+          else # Sorry, we can't be ReSTful
+            return '<span class="error forbidden">Forbidden</span>'
           end
 
         rescue Errno::ENOENT
-          not_found
+          return '<span class="error not_found">Not Found</span>'
         end
 
       else
-        not_found
+        return '<span class="error not_found">Not Found</span>'
       end
 
     end

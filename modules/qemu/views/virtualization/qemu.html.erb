@@ -4,6 +4,13 @@
   vms = objects
 %>
 
+<script type="text/javascript">
+  function popup_filechooser() {
+    var popup = window.open('/jqueryFileTree/popup.html', 'Choose File', 'width=300,height=300');
+    popup.target = document.getElementById('drive');
+  }
+</script>
+
 <h2>QEMU / kvm</h2>
 
 <h3>Virtual Machines</h3>
@@ -50,7 +57,7 @@
         <th scope="row">Disk Image</th>
         <td>
           <!-- <input type="hidden" name="drive[]" value=""/> -->
-          <input type="text" name="drive[][file]"/> 
+          <input type="text" name="drive[][file]" id="drive" onclick="javascript:popup_filechooser();" /> 
         </td>
       </tr>
       <tr>

@@ -6,7 +6,7 @@ class OnBoard
   })
  
   MENU_ROOT.add_path('/virtualization/qemu', {
-    :name => 'QEMU',
+    :name => 'QEMU / kvm',
     :href => '/virtualization/qemu',
     :n    => 0
   })
