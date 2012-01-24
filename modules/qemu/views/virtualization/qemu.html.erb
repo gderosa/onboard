@@ -12,7 +12,7 @@
   <thead>
     <tr>
       <th>Running?</th>
-      <th>ID</th>
+      <th>Name or ID</th>
       <th>Drives</th>
       <th>Network</th>
       <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port<br/>5900 + n</div></th>
@@ -22,7 +22,7 @@
 <% vms.each do |vm| %>
     <tr>
       <td style="text-align:center"><%= yes_no_icon(false, :print_no) %></td>
-      <td><a title="<%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= vm.config.uuid_short %></a></td>
+      <td><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
       <td>
         <pre><%== vm.config.opts['-drive'][0].pretty_inspect %></pre>
       </td>
@@ -40,6 +40,12 @@
     <thead>
     </thead>
     <tbody>
+      <tr>
+        <th title="A descriptive name" scope="row">Name</th>
+        <td>
+          <input type="text" name="name"/>
+        </td>
+      </tr>
       <tr>
         <th scope="row">Disk Image</th>
         <td>

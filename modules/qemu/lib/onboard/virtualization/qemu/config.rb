@@ -20,11 +20,12 @@ class OnBoard
 
         def initialize(h)
           if h[:http_params]
-            @uuid = UUID.generate # creationf from POST
+            @uuid = UUID.generate # creation from POST
             @cmd  = {
               'exe'   => 'kvm',
               'opts'  => {
                 '-uuid'     => @uuid,
+                '-name'     => h[:http_params]['name'],
                 '-m'        => 512,
                 '-vnc'      => h[:http_params]['vnc'],
                 '-drive'    => [
