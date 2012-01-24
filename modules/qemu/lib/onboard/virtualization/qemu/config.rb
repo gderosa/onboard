@@ -16,6 +16,8 @@ class OnBoard
 =end
         end
 
+        attr_reader :uuid, :cmd
+
         def initialize(h)
           if h[:http_params]
             @uuid = UUID.generate # creationf from POST
@@ -28,6 +30,7 @@ class OnBoard
                 '-drive'    => [
                   {
                     'file'    => h[:http_params]['drive'][0]['file'],
+                    'media'   => 'disk',
                     'index'   => 0
                   }
                 ],
@@ -44,6 +47,14 @@ class OnBoard
             @uuid = h[:config]['uuid']
             @cmd  = h[:config]['cmd']
           end
+        end
+
+        def uuid_short
+          @uuid.split('-')[0] 
+        end
+
+        def opts
+          @cmd['opts']
         end
 
         def to_h

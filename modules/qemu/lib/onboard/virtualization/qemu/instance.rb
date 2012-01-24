@@ -5,9 +5,14 @@ class OnBoard
     module QEMU
       class Instance
 
+        attr_reader :config
+
         def initialize(config)
           @config = config
         end
+
+        def uuid;       @config.uuid;       end
+        def uuid_short; @config.uuid_short; end
 
         def to_h
           {'config' => @config.to_h}
