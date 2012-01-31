@@ -272,12 +272,9 @@ table tr th {
   padding: 0 1em;
 }
 
-table tr td, table tr th, fieldset {
-  background: <%= lightbg %>; 
-  /*
-  background: url("/backgrounds/kollermedia.at/pattern4u/funky/18original.gif");
+table tr td, table tr th, fieldset { 
+  background: url("/backgrounds/kollermedia.at/pattern4u/dirty/10original.jpg"); 
   background-attachment: fixed;
-  */
 }
 
 .term {
@@ -378,6 +375,11 @@ button[disabled] {
 button[disabled] img { /* CSS3 */ 
   opacity: 0.4; /* Firefox */
   filter: alpha(opacity=40); /* MSIE */
+}
+
+input[disabled] {
+  color: <%= lowlight %>;
+  background: <%= lightbg %>;
 }
 
 ul li ul li .hmenu-content  {

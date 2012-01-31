@@ -63,10 +63,10 @@
         <th scope="row"><div class="optinfo">Or create a new disk</div></th> 
         <td>
           <span style="vertical-align:middle;">
-            <input title="Check this box to confirm" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]"/> 
+            <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]"/> 
           </span>
-          &nbsp;Size <input type="text" name="qemu-img[size]" size="2" value="8" style="text-align:right"/>GB;
-          &nbsp;Format <select name="qemu-img[fmt]">
+          &nbsp;Size <input type="text" name="qemu-img[size]" size="2" value="8" style="text-align:right" disabled/>GB;
+          &nbsp;Format <select name="qemu-img[fmt]" disabled>
             <option value="qcow2">QCOW2 (recommended)</option>
             <option value="raw">Raw</option>
             <!-- exclude "alien" image formats for now... -->
