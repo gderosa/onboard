@@ -18,7 +18,7 @@ class OnBoard
       if params['root_id'] == 'files' # for future extension
         begin 
           root = File.realpath(ENV['HOME']) + '/files'
-          dir = params['dir'].to_s
+          dir = url_decode params['dir'] 
           path = File.join root, dir
 
           out << "<ul class=\"jqueryFileTree\" style=\"display:none;\">"
@@ -55,7 +55,7 @@ class OnBoard
           end
 
         rescue Errno::ENOENT
-          return '<span class="error not_found">Not Found</span>'
+          return %Q{<span class="error not_found">Not Found; dir="#{dir}"</span>}
         end
 
       else

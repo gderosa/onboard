@@ -17,9 +17,12 @@ class OnBoard
         )
       end
 
-      # backward-compatibility for code based on ERB::Util
+      # same interface as ERB::Util
       def url_encode(str)
         Rack::Utils.escape(str) 
+      end
+      def url_decode(str)
+        Rack::Utils.unescape(str)
       end
 
       def current_encoding
