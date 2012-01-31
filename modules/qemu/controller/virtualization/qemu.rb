@@ -16,8 +16,17 @@ class OnBoard
     end
 
     post '/virtualization/qemu.:format' do
-      OnBoard::V12n::QEMU::Config.new(:http_params=>params).save()
-      same_as_GET
+      msg = handle_errors do
+        OnBoard::V12n::QEMU::Config.new(:http_params=>params).save()
+        # raise OnBoard::Confict, 'aaargh!!'
+      end
+      format(
+        :module => 'qemu',
+        :path => '/virtualization/qemu',
+        :format => params[:format],
+        :objects  => OnBoard::V12n::QEMU.get_all,
+        :msg => msg.merge(:info => "I Feel Happy")
+      )
     end
 
   end
