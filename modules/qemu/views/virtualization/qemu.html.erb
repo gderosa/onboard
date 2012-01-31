@@ -56,9 +56,26 @@
       <tr>
         <th scope="row">Disk Image</th>
         <td>
-          <!-- <input type="hidden" name="drive[]" value=""/> -->
           <input type="text" name="drive[][file]" id="drive" onclick="javascript:popup_filechooser();" /> 
+        </td>  
+      </tr>
+      <tr>
+        <th scope="row"><div class="optinfo">Or create a new disk</div></th> 
+        <td>
+          <span style="vertical-align:middle;">
+            <input title="Check this box to confirm" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]"/> 
+          </span>
+          &nbsp;Size <input type="text" name="qemu-img[size]" size="2" value="8" style="text-align:right"/>GB;
+          &nbsp;Format <select name="qemu-img[fmt]">
+            <option value="qcow2">QCOW2 (recommended)</option>
+            <option value="raw">Raw</option>
+            <!-- exclude "alien" image formats for now... -->
+          </select>   
         </td>
+      </tr> 
+      <tr>
+        <th scope="row">RAM</th>
+        <td><input style="text-align:right" type="text" name="m"size="5" value="256"/> MB <!-- names recall cmdline opts --></td> 
       </tr>
       <tr>
         <th scope="row">VNC Display</th>
