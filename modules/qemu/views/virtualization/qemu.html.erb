@@ -9,6 +9,18 @@
     var popup = window.open('/jqueryFileTree/popup.html', 'Choose File', 'width=300,height=300');
     popup.target = document.getElementById('drive');
   }
+  function qemuImgCreateControls() {
+    var checkbox = document.getElementById('qemu-img_create_checkbox');
+    if ( checkbox.checked ) {
+      document.getElementById('drive').disabled = true;
+      document.getElementById('qemu-img_create_size').disabled = false;
+      document.getElementById('qemu-img_create_fmt' ).disabled = false;
+    } else {
+      document.getElementById('drive').disabled = false;
+      document.getElementById('qemu-img_create_size').disabled = true;
+      document.getElementById('qemu-img_create_fmt' ).disabled = true;
+    }
+  }
 </script>
 
 <h2>QEMU / kvm</h2>
@@ -63,10 +75,10 @@
         <th scope="row"><div class="optinfo">Or create a new disk</div></th> 
         <td>
           <span style="vertical-align:middle;">
-            <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]"/> 
+            <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]" id="qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls()"/> 
           </span>
-          &nbsp;Size <input type="text" name="qemu-img[size]" size="2" value="8" style="text-align:right" disabled/>GB;
-          &nbsp;Format <select name="qemu-img[fmt]" disabled>
+          &nbsp;Size <input type="text" name="qemu-img[size]" id="qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
+          &nbsp;Format <select name="qemu-img[fmt]" id="qemu-img_create_fmt" disabled>
             <option value="qcow2">QCOW2 (recommended)</option>
             <option value="raw">Raw</option>
             <!-- exclude "alien" image formats for now... -->
