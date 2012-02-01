@@ -16,6 +16,7 @@ class OnBoard
     end
 
     post '/virtualization/qemu.:format' do
+      pp params
       msg = handle_errors do
         OnBoard::Virtualization::QEMU::Img.create(:http_params=>params) 
         #OnBoard::Virtualization::QEMU::Config.new(:http_params=>params).save()

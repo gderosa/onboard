@@ -5,18 +5,18 @@
 %>
 
 <script type="text/javascript">
-  function popup_filechooser() {
+  function popup_filechooser(target) {
     var popup = window.open('/jqueryFileTree/popup.html', 'Choose File', 'width=300,height=300');
-    popup.target = document.getElementById('drive');
+    popup.target = target;
   }
   function qemuImgCreateControls() {
     var checkbox = document.getElementById('qemu-img_create_checkbox');
     if ( checkbox.checked ) {
-      document.getElementById('drive').disabled = true;
+      document.getElementById('disk').disabled = true;
       document.getElementById('qemu-img_create_size').disabled = false;
       document.getElementById('qemu-img_create_fmt' ).disabled = false;
     } else {
-      document.getElementById('drive').disabled = false;
+      document.getElementById('disk').disabled = false;
       document.getElementById('qemu-img_create_size').disabled = true;
       document.getElementById('qemu-img_create_fmt' ).disabled = true;
     }
@@ -67,13 +67,19 @@
           <input type="text" name="name"/>
         </td>
       </tr>
+      <tr>  
+        <th scope="row">CD/DVD image (optional)</th>
+        <td>
+          <input type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" />
+        </td>
+      </tr>
       <tr>
         <th scope="row">
           Disk Image
           <div class="optinfo">Choose existing</div>
         </th>
         <td>
-          <input type="text" name="drive[][file]" id="drive" onclick="javascript:popup_filechooser();" /> 
+          <input type="text" name="disk" id="disk" onclick="javascript:popup_filechooser(this);" /> 
         </td>  
       </tr>
       <tr>

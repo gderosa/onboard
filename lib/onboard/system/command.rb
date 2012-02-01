@@ -100,8 +100,14 @@ class OnBoard
         stdin.close
         stdout.close
         stderr.close
-        if !msg[:ok] and !opts.include?(:try) and opts.include?(:raise_exception)
-          raise RuntimeError, msg[:err]
+        if !msg[:ok] and !opts.include?(:try) 
+          if opts.include?(:raise_exception)
+            raise RuntimeError, msg[:err]
+          elsif opts.include?(:raise_Conflict) 
+            raise Conflict, msg[:err] + "\n" + msg[:stderr]
+          elsif opts.include?(:raise_BadRequest)
+            raise BadRequest, msg[:err] + "\n" + msg[:stderr] 
+          end
         end
         return msg
       end
