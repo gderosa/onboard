@@ -1,6 +1,6 @@
 require 'sinatra/base'
 
-require 'onboard/v12n/qemu'
+require 'onboard/virtualization/qemu'
 
 class OnBoard
 
@@ -11,21 +11,21 @@ class OnBoard
         :module => 'qemu',
         :path => '/virtualization/qemu',
         :format => params[:format],
-        :objects  => OnBoard::V12n::QEMU.get_all
+        :objects  => OnBoard::Virtualization::QEMU.get_all
       )
     end
 
     post '/virtualization/qemu.:format' do
       msg = handle_errors do
-        OnBoard::V12n::QEMU::Config.new(:http_params=>params).save()
-        # raise OnBoard::Confict, 'aaargh!!'
+        OnBoard::Virtualization::QEMU::Img.create(:http_params=>params) 
+        #OnBoard::Virtualization::QEMU::Config.new(:http_params=>params).save()
       end
       format(
         :module => 'qemu',
         :path => '/virtualization/qemu',
         :format => params[:format],
         :objects  => OnBoard::V12n::QEMU.get_all,
-        :msg => msg.merge(:info => "I Feel Happy")
+        :msg => msg
       )
     end
 

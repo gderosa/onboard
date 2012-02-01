@@ -1,14 +1,13 @@
 require 'yaml'
-require 'json'
-
 require 'uuid'
-
-require 'onboard/virtualization/qemu/config'
-require 'onboard/virtualization/qemu/instance'
 
 class OnBoard
   module Virtualization
     module QEMU
+
+      autoload :Config,   'onboard/virtualization/qemu/config'
+      autoload :Instance, 'onboard/virtualization/qemu/instance'
+      autoload :Img,      'onboard/virtualization/qemu/img'
       
       class << self
         def get_all
