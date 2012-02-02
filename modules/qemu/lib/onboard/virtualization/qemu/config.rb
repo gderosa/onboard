@@ -7,14 +7,7 @@ class OnBoard
     module QEMU
       class Config
 
-        class << self
-=begin
-          def http_params2argv(params, opts={}) 
-            uuid = opts[:uuid] || UUID.generate
-            return "-uuid #{uuid} -m 512 -vnc #{params['vnc']} -drive #{params['drive'][0]['file']},index=0 -daemonize -monitor unix:/var/run/qemu-#{uuid}.sock,server,nowait -pidfile /var/run/qemu-#{uuid}.pid"
-          end
-=end
-        end
+        autoload :Common, 'onboard/virtualization/qemu/config/common'
 
         attr_reader :uuid, :cmd
 
@@ -24,15 +17,16 @@ class OnBoard
             @cmd  = {
               #'exe'   => 'kvm',
               'opts'  => {
-                '-uuid'     => @uuid,
-                '-name'     => h[:http_params]['name'],
-                '-m'        => h[:http_params]['m'].to_i,
-                '-vnc'      => h[:http_params]['vnc'],
-                #'-drive'    => [
+                '-enable-kvm' => true,
+                '-uuid'       => @uuid,
+                '-name'       => h[:http_params]['name'],
+                '-m'          => h[:http_params]['m'].to_i,
+                '-vnc'        => h[:http_params]['vnc'],
+                #'-drive'     => [
                 #  {
-                #    'file'    => h[:http_params]['disk'], 
-                #    'media'   => 'disk',
-                #    'index'   => 0
+                #    'file'     => h[:http_params]['disk'], 
+                #    'media'    => 'disk',
+                #    'index'    => 0
                 #  }
                 #],
                 '-daemonize'  => true,
@@ -51,8 +45,6 @@ class OnBoard
                 'media' => 'disk',
                 'index' => 0
               }
-            elsif true
-              # do nothing
             end
             if h[:http_params]['cdrom'] =~ /\S/
               @cmd['opts']['-drive'] ||= []

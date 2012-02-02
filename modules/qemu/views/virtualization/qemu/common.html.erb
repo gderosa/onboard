@@ -1,0 +1,20 @@
+<%= message_partial(msg) %>
+
+<h2>QEMU / kvm</h2>
+
+<h3>Common Settings</h3>
+<p class="optinfo">
+  Either to use <code>qemu</code> or <code>qemu-system-x86_64</code> or 
+  <code>kvm</code> etc.
+</p>
+<form method="POST">
+  <input type="hidden" name="_method" value="put">
+  <table>
+    <tr>
+      <th scope="row">QEMU executable / command</th>
+      <td><input type="text" name="exe"/></td>
+    </tr>
+  </table>
+  <button type="submit">Change!</button>
+</form>
+
