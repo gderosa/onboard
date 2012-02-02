@@ -1,11 +1,12 @@
 require 'yaml'
 require 'uuid'
 
-require 'onboard/virtualization/qemu/constants'
-
 class OnBoard
   module Virtualization
     module QEMU
+
+      # TODO: do not hardcode so badly 
+      FILESDIR = '/home/onboard/files'
 
       autoload :Config,   'onboard/virtualization/qemu/config'
       autoload :Instance, 'onboard/virtualization/qemu/instance'

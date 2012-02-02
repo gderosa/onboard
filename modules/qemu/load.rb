@@ -1,7 +1,5 @@
 require 'fileutils'
 
-require 'onboard/virtualization/qemu/constants'
-
 class OnBoard
   module Virtualization
     module QEMU
