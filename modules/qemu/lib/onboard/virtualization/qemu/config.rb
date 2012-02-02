@@ -9,6 +9,15 @@ class OnBoard
 
         autoload :Common, 'onboard/virtualization/qemu/config/common'
 
+        class << self
+
+          def absolute_path(path)
+            return path if path =~ /^\//
+            return File.join FILESDIR, path
+          end
+
+        end
+
         attr_reader :uuid, :cmd
 
         def initialize(h)
@@ -41,7 +50,7 @@ class OnBoard
             if h[:http_params]['disk'] =~ /\S/
               @cmd['opts']['-drive'] ||= []
               @cmd['opts']['-drive'] << {
-                'file'  => h[:http_params]['disk'],
+                'file'  => self.class.absolute_path(h[:http_params]['disk']),
                 'media' => 'disk',
                 'index' => 0
               }
@@ -49,7 +58,7 @@ class OnBoard
             if h[:http_params]['cdrom'] =~ /\S/
               @cmd['opts']['-drive'] ||= []
               @cmd['opts']['-drive'] << {
-                'file'  => h[:http_params]['cdrom'],
+                'file'  => self.class.absolute_path(h[:http_params]['cdrom']),
                 'media' => 'cdrom',
                 'index' => 1
               }
