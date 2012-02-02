@@ -1,7 +1,7 @@
 <%
   require 'pp'
 
-  vms = objects
+  virtual_machines = objects
 %>
 
 <script type="text/javascript">
@@ -33,6 +33,7 @@
   <thead>
     <tr>
       <th>Running?</th>
+      <th>Actions</th>
       <th>Name or ID</th>
       <th>Drives</th>
       <th>Network</th>
@@ -40,17 +41,25 @@
     </tr>
   </thead>
   <tbody>
-<% vms.each do |vm| %>
-    <tr>
-      <td style="text-align:center"><%= yes_no_icon(false, :print_no) %></td>
-      <td><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
-      <td>
-        <pre><%== vm.config.opts['-drive'].pretty_inspect %></pre>
-      </td>
-      <td></td>
-      <td style="text-align:right;padding:0 1em;"><%= vm.config.opts['-vnc'] %></td>
-    </tr>
+    <form method="POST">
+      <input type="hidden" name="_method" value="put"/>
+<% virtual_machines.each do |vm| %>
+      <tr>
+        <td style="text-align:center"><%= yes_no_icon(false, :print_no) %></td>
+        <td style="text-align:center"><%= action_button(
+          :start, 
+          :name   => 'start[uuid]', 
+          :value  => vm.uuid
+        ) %></td>
+        <td><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
+        <td>
+          <pre><%== vm.config.opts['-drive'].pretty_inspect %></pre>
+        </td>
+        <td></td>
+        <td style="text-align:right;padding:0 1em;"><%= vm.config.opts['-vnc'] %></td>
+      </tr>
 <% end %>
+    </form>
   </tbody>
 </table>
 
