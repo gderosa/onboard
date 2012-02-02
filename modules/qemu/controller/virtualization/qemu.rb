@@ -18,8 +18,12 @@ class OnBoard
     post '/virtualization/qemu.:format' do
       pp params
       msg = handle_errors do
-        OnBoard::Virtualization::QEMU::Img.create(:http_params=>params) 
-        #OnBoard::Virtualization::QEMU::Config.new(:http_params=>params).save()
+        created_disk_image = 
+            OnBoard::Virtualization::QEMU::Img.create(:http_params=>params) 
+        if created_disk_image
+          params['disk'] = created_disk_image
+        end
+        OnBoard::Virtualization::QEMU::Config.new(:http_params=>params).save()
       end
       format(
         :module => 'qemu',

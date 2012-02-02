@@ -45,7 +45,7 @@
       <td style="text-align:center"><%= yes_no_icon(false, :print_no) %></td>
       <td><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
       <td>
-        <pre><%== vm.config.opts['-drive'][0].pretty_inspect %></pre>
+        <pre><%== vm.config.opts['-drive'].pretty_inspect %></pre>
       </td>
       <td></td>
       <td style="text-align:right;padding:0 1em;"><%= vm.config.opts['-vnc'] %></td>
@@ -83,11 +83,15 @@
         </td>  
       </tr>
       <tr>
-        <th scope="row"><div class="optinfo">Or check the box to create a new one</div></th> 
+        <th scope="row">
+          <div class="optinfo">
+            Or create a new one 
+            <span style="vertical-align:middle; margin: 0 0 0 2em">
+              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]" id="qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls()"/>
+            </span>
+          </div>        
+        </th> 
         <td>
-          <span style="vertical-align:middle;">
-            <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]" id="qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls()"/> 
-          </span>
           &nbsp;Size <input type="text" name="qemu-img[size][G]" id="qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
           &nbsp;Format <select name="qemu-img[fmt]" id="qemu-img_create_fmt" disabled>
             <option value="qcow2">QCOW2 (recommended)</option>

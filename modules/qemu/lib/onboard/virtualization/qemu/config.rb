@@ -22,19 +22,19 @@ class OnBoard
           if h[:http_params]
             @uuid = UUID.generate # creation from POST
             @cmd  = {
-              'exe'   => 'kvm',
+              #'exe'   => 'kvm',
               'opts'  => {
                 '-uuid'     => @uuid,
                 '-name'     => h[:http_params]['name'],
-                '-m'        => 512,
+                '-m'        => h[:http_params]['m'].to_i,
                 '-vnc'      => h[:http_params]['vnc'],
-                '-drive'    => [
-                  {
-                    'file'    => h[:http_params]['drive'][0]['file'],
-                    'media'   => 'disk',
-                    'index'   => 0
-                  }
-                ],
+                #'-drive'    => [
+                #  {
+                #    'file'    => h[:http_params]['disk'], 
+                #    'media'   => 'disk',
+                #    'index'   => 0
+                #  }
+                #],
                 '-daemonize'  => true,
                 '-monitor'    => {
                   'unix'        => "/var/run/qemu-#{@uuid}.sock",
@@ -44,6 +44,24 @@ class OnBoard
                 '-pidfile'    => "/var/run/qemu-#{@uuid}.pid"
               }
             }
+            if h[:http_params]['disk'] =~ /\S/
+              @cmd['opts']['-drive'] ||= []
+              @cmd['opts']['-drive'] << {
+                'file'  => h[:http_params]['disk'],
+                'media' => 'disk',
+                'index' => 0
+              }
+            elsif true
+              # do nothing
+            end
+            if h[:http_params]['cdrom'] =~ /\S/
+              @cmd['opts']['-drive'] ||= []
+              @cmd['opts']['-drive'] << {
+                'file'  => h[:http_params]['cdrom'],
+                'media' => 'cdrom',
+                'index' => 1
+              }
+            end
           else
             @uuid = h[:config]['uuid']
             @cmd  = h[:config]['cmd']
