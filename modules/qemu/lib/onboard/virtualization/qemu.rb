@@ -1,6 +1,8 @@
 require 'yaml'
 require 'uuid'
 
+require 'onboard/virtualization/qemu/constants'
+
 class OnBoard
   module Virtualization
     module QEMU
@@ -10,6 +12,7 @@ class OnBoard
       autoload :Img,      'onboard/virtualization/qemu/img'
       
       class << self
+
         def get_all
           ary = []
           Dir.glob "#{CONFDIR}/*.yml" do |file|
@@ -18,6 +21,18 @@ class OnBoard
           end
           return ary
         end
+
+        def manage(h)
+          all = get_all
+          if h[:http_params]
+            params = h[:http_params]
+            if params['start'] and params['start']['uuid']
+              vm = all.find{|x| x.uuid == params['start']['uuid']} 
+              vm.start
+            end
+          end
+        end
+
       end
 
     end

@@ -16,20 +16,32 @@ class OnBoard
     end
 
     post '/virtualization/qemu.:format' do
-      # pp params # DEBUG
       msg = handle_errors do
         created_disk_image = 
-            OnBoard::Virtualization::QEMU::Img.create(:http_params=>params) 
+            OnBoard::Virtualization::QEMU::Img.create(:http_params => params) 
         if created_disk_image
           params['disk'] = created_disk_image
         end
-        OnBoard::Virtualization::QEMU::Config.new(:http_params=>params).save()
+        OnBoard::Virtualization::QEMU::Config.new(:http_params => params).save()
       end
       format(
         :module => 'qemu',
         :path => '/virtualization/qemu',
         :format => params[:format],
-        :objects  => OnBoard::V12n::QEMU.get_all,
+        :objects  => OnBoard::Virtualization::QEMU.get_all,
+        :msg => msg
+      )
+    end
+
+    put '/virtualization/qemu.:format' do
+      msg = handle_errors do
+        OnBoard::Virtualization::QEMU.manage(:http_params => params)
+      end
+      format(
+        :module => 'qemu',
+        :path => '/virtualization/qemu',
+        :format => params[:format],
+        :objects  => OnBoard::Virtualization::QEMU.get_all,
         :msg => msg
       )
     end
