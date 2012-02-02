@@ -1,3 +1,5 @@
+<% config = objects %>
+
 <%= message_partial(msg) %>
 
 <h2>QEMU / kvm</h2>
@@ -12,7 +14,7 @@
   <table>
     <tr>
       <th scope="row">QEMU executable / command</th>
-      <td><input type="text" name="exe"/></td>
+      <td><input type="text" name="exe" value="<%= config['exe'] %>"/></td>
     </tr>
   </table>
   <button type="submit">Change!</button>
