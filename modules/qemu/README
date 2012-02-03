@@ -1,5 +1,12 @@
+== Sysyetm permissions
+
 You should grant rw access to /dev/kvm to the OnBoard user!
 
-Gem dependencies:
+== OnBoard module dependencies:
+
+jqueyFileTree
+
+== Gem dependencies:
 
 gem install uuid
+
