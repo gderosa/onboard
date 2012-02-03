@@ -56,6 +56,9 @@ class OnBoard
               cmdline << '-drive ' << drive_args.join(',') << ' '
             end
           end
+          # Useful defaults: TODO? make them configurable?
+          cmdline << '-boot' << ' ' << 'menu=on' << ' '
+          cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  # vnc etc.
           puts cmdline
         end
 
