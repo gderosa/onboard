@@ -50,10 +50,10 @@
       <input type="hidden" name="_method" value="put"/>
 <% virtual_machines.each do |vm| %>
       <tr>
-        <td class="lowlight" style="font-style:italic">
+        <td>
   <%= 
     if vm.running?
-      'Running'
+      vm.status || 'Running'
     else
       'Not Running'
     end

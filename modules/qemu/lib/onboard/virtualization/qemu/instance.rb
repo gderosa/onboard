@@ -1,4 +1,5 @@
 require 'json'
+require 'socket'
 
 require 'onboard/extensions/process'
 require 'onboard/system/command'
@@ -8,10 +9,19 @@ class OnBoard
     module QEMU
       class Instance
 
+        @@monitor_connections ||= {}
+
         attr_reader :config
 
         def initialize(config)
-          @config = config
+          @config   = config
+          update_info
+          @monitor_connection = nil
+        end
+
+        def update_info
+          @running  = running?
+          @pid      = pid
         end
 
         def uuid;       @config.uuid;       end
@@ -20,7 +30,8 @@ class OnBoard
         def to_h
           {
             'config'  => @config.to_h,
-            'running' => running?
+            'running' => running?,
+            'status'  => status,
           }
         end
 
@@ -90,11 +101,19 @@ class OnBoard
           return Process.running?(pid) if pid
         end
 
-        def monitor_query(q)
-        end
-
-        def qemu_status
-          monitor_query 'info status'
+        def status 
+          out = ''
+          begin
+            UNIXSocket.open(@config['-monitor']['unix']) do |u|
+              u.puts 'info status'
+              u.gets # help banner
+              u.gets # an unreadable sequence... :-P
+              out << u.gets
+            end
+            return out
+          rescue Errno::ECONNREFUSED
+            return  
+          end
         end
 
       end
