@@ -20,6 +20,10 @@ class OnBoard
 
         attr_reader :uuid, :cmd
 
+        def [](k)
+          @cmd['opts'][k] 
+        end
+
         def initialize(h)
           if h[:http_params]
             @uuid = UUID.generate # creation from POST

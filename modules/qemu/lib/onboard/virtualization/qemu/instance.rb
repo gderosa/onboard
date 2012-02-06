@@ -1,5 +1,6 @@
 require 'json'
 
+require 'onboard/extensions/process'
 require 'onboard/system/command'
 
 class OnBoard
@@ -17,7 +18,10 @@ class OnBoard
         def uuid_short; @config.uuid_short; end
 
         def to_h
-          {'config' => @config.to_h}
+          {
+            'config'  => @config.to_h,
+            'running' => running?
+          }
         end
 
         def to_json(*a)
@@ -73,6 +77,24 @@ class OnBoard
           cmdline = format_cmdline
           cmdline << ' ' << '-S'
           return System::Command.run cmdline, :raise_Conflict
+        end
+
+        def pid
+          pidfile = @config['-pidfile']
+          if pidfile and File.exists? pidfile
+            return File.read(pidfile).to_i
+          end
+        end
+
+        def running? 
+          return Process.running?(pid) if pid
+        end
+
+        def monitor_query(q)
+        end
+
+        def qemu_status
+          monitor_query 'info status'
         end
 
       end
