@@ -39,8 +39,7 @@ class OnBoard
         name = h[:name] || action.to_s 
         value = h[:value] || name
         disabled = h[:disabled] ? 'disabled' : ''
-        title = h[:title] || name
-        title = title.capitalize 
+        title = h[:title] || name.capitalize
         alt = h[:alt] || title
         image = case action
                 when :start

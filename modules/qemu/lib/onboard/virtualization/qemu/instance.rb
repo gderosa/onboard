@@ -101,6 +101,10 @@ class OnBoard
           return Process.running?(pid) if pid
         end
 
+        def paused?
+          status =~ /paused/
+        end
+
         def status 
           out = ''
           begin
@@ -113,6 +117,18 @@ class OnBoard
             return out
           rescue Errno::ECONNREFUSED
             return  
+          end
+        end
+
+        def pause
+          UNIXSocket.open(@config['-monitor']['unix']) do |u|
+            u.puts 'stop'
+          end
+        end
+
+        def resume
+          UNIXSocket.open(@config['-monitor']['unix']) do |u|
+            u.puts 'cont'
           end
         end
 
