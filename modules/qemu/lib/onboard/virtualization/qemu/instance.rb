@@ -1,5 +1,7 @@
 require 'json'
 
+require 'onboard/system/command'
+
 class OnBoard
   module Virtualization
     module QEMU
@@ -22,7 +24,7 @@ class OnBoard
           to_h.to_json(*a)
         end
 
-        def start
+        def format_cmdline
           opts = @config.cmd['opts'] 
           exe = Config::Common.get['exe'] 
           cmdline = ''
@@ -59,7 +61,18 @@ class OnBoard
           # Useful defaults: TODO? make them configurable?
           cmdline << '-boot' << ' ' << 'menu=on' << ' '
           cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  # vnc etc.
-          puts cmdline
+          return cmdline
+        end
+
+        def start
+          cmdline = format_cmdline
+          return System::Command.run cmdline, :raise_Conflict
+        end
+
+        def start_paused
+          cmdline = format_cmdline
+          cmdline << ' ' << '-S'
+          return System::Command.run cmdline, :raise_Conflict
         end
 
       end

@@ -42,6 +42,8 @@ class OnBoard
   DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
   LOGFILE_BASENAME    = 'onboard.log'
   LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
+
+  VARRUN              ||= '/var/run/onboard'
  
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
   # NOTE: we are re-defining a constant!
@@ -88,6 +90,9 @@ class OnBoard
   end
 
   def self.prepare
+    system "sudo mkdir -p #{VARRUN}"
+    system "sudo chown onboard #{VARRUN}"
+
     if web?
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'

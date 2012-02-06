@@ -40,11 +40,11 @@ class OnBoard
                 #],
                 '-daemonize'  => true,
                 '-monitor'    => {
-                  'unix'        => "/var/run/qemu-#{@uuid}.sock",
+                  'unix'        => "#{VARRUN}/qemu-#{uuid_short}.sock",
                   'server'      => true,
                   'nowait'      => true
                 },
-                '-pidfile'    => "/var/run/qemu-#{@uuid}.pid"
+                '-pidfile'    => "#{VARRUN}/qemu-#{uuid_short}.pid"
               }
             }
             if h[:http_params]['disk'] =~ /\S/

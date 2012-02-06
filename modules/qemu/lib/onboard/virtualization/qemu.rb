@@ -31,6 +31,10 @@ class OnBoard
               vm = all.find{|x| x.uuid == params['start']['uuid']} 
               vm.start
             end
+            if params['start_paused'] and params['start_paused']['uuid']
+              vm = all.find{|x| x.uuid == params['start_paused']['uuid']}
+              vm.start_paused
+            end
           end
         end
 

@@ -16,6 +16,7 @@ class OnBoard
           end
         end
       end
+
       def action_button(action, *attributes)
         h = attributes[0] || {} 
         raise ArgumentError, "Invalid action: #{action.inspect}" unless 
@@ -25,10 +26,12 @@ class OnBoard
               :config, 
               :reload, 
               :restart, 
-              :delete
+              :delete,
+              :pause,
+              :start_paused, 
             ].include? action 
         type = h[:type] || case action
-        when :start, :stop, :reload, :delete
+        when :start, :stop, :restart, :reload, :delete, :pause, :start_paused
           'submit'
         when :config
           'button'
@@ -44,6 +47,10 @@ class OnBoard
                   "#{IconDir}/#{IconSize}/actions/media-playback-start.png"
                 when :stop
                   "#{IconDir}/#{IconSize}/actions/media-playback-stop.png"
+                when :pause
+                  "#{IconDir}/#{IconSize}/actions/media-playback-pause.png"
+                when :start_paused # used by qemu module...
+                  "#{IconDir}/#{IconSize}/actions/media-skip-forward.png"
                 when :config
                   "#{IconDir}/#{IconSize}/actions/system-run.png"
                 when :reload, :restart
@@ -53,6 +60,7 @@ class OnBoard
                 end
         return %Q{<button type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
       end
+
       def mandatory_mark
         '<span style="font-weight:bold; color:red">*</span>'
       end
