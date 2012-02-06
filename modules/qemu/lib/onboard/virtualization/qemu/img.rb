@@ -8,7 +8,6 @@ class OnBoard
           # for example an image is created at: ~/files/qemu/Win7/Win7.qcow2
           # or ~/files/qemu/Debian/Debian.raw
           def create(h)
-            pp h # DEBUG
             raise OnBoard::BadRequest, 'Virtual machine must have a name' unless
                 h[:http_params]['name'] and h[:http_params]['name'] =~ /\S/
             name = h[:http_params]['name']

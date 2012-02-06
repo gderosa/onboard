@@ -49,6 +49,7 @@ class OnBoard
             -name 
             -m
             -vnc
+            -k
             -pidfile
           }.each do |o|
             cmdline << o << ' ' << opts[o] << ' ' if opts[o] =~ /\S/  
@@ -70,7 +71,9 @@ class OnBoard
               drive_args << %Q{media=#{d['media']}} 
               drive_args << %Q{index=#{d['index']}} if 
                   d['index'] =~ /\S/
-              cmdline << '-drive ' << drive_args.join(',') << ' '
+              drive_args << %Q{cache=#{d['cache']}} if
+                  d['cache'] =~ /\S/
+              cmdline << '-drive' << ' ' << drive_args.join(',') << ' '
             end
           end
           # Useful defaults: TODO? make them configurable?

@@ -9,6 +9,13 @@ class OnBoard
 
         autoload :Common, 'onboard/virtualization/qemu/config/common'
 
+        # paste from man page
+        KEYBOARD_LAYOUTS = %w{ 
+            ar  de-ch  es  fo     fr-ca  hu  ja  mk     no  pt-br  sv
+            da  en-gb  et  fr     fr-ch  is  lt  nl     pl  ru     th
+            de  en-us  fi  fr-be  hr     it  lv  nl-be  pt  sl     tr        
+        }.sort
+
         class << self
 
           def absolute_path(path)
@@ -35,6 +42,7 @@ class OnBoard
                 '-name'       => h[:http_params]['name'],
                 '-m'          => h[:http_params]['m'].to_i,
                 '-vnc'        => h[:http_params]['vnc'],
+                '-k'          => h[:http_params]['k'], 
                 #'-drive'     => [
                 #  {
                 #    'file'     => h[:http_params]['disk'], 
@@ -56,7 +64,8 @@ class OnBoard
               @cmd['opts']['-drive'] << {
                 'file'  => self.class.absolute_path(h[:http_params]['disk']),
                 'media' => 'disk',
-                'index' => 0
+                'index' => 0,
+                'cache' => 'writeback'
               }
             end
             if h[:http_params]['cdrom'] =~ /\S/

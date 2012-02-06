@@ -1,6 +1,8 @@
 <%
   require 'pp'
 
+  require 'onboard/virtualization/qemu/config'
+
   virtual_machines = objects
 %>
 
@@ -27,6 +29,8 @@
 
 <h2>QEMU / kvm</h2>
 
+<% if virtual_machines.any? %>
+
 <h3>Virtual Machines</h3>
 
 <table>
@@ -48,16 +52,16 @@
   <tbody>
     <form method="POST">
       <input type="hidden" name="_method" value="put"/>
-<% virtual_machines.each do |vm| %>
+  <% virtual_machines.each do |vm| %>
       <tr>
         <td>
-  <%= 
-    if vm.running?
-      vm.status || 'Running'
-    else
-      'Not Running'
-    end
-  %>
+    <%= 
+      if vm.running?
+        vm.status || 'Running'
+      else
+        'Not Running'
+      end
+    %>
         </td>
         <td style="text-align:center">
           <%= action_button(
@@ -92,10 +96,13 @@
         <td></td>
         <td style="text-align:right;padding:0 1em;"><%= vm.config.opts['-vnc'] %></td>
       </tr>
-<% end %>
+  <% end %>
+
     </form>
   </tbody>
 </table>
+
+<% end %>
 
 <h3>Create a new VM</h3>
 
@@ -145,7 +152,7 @@
       </tr> 
       <tr>
         <th scope="row">RAM</th>
-        <td><input style="text-align:right" type="text" name="m"size="5" value="256"/> MB <!-- names recall cmdline opts --></td> 
+        <td><input style="text-align:right" type="text" name="m" size="5" value="256"/> MB <!-- names recall cmdline opts --></td> 
       </tr>
       <tr>
         <th scope="row">VNC Display</th>
@@ -153,6 +160,17 @@
           <select name="vnc">
             <% 1.upto(31) do |n| %>
               <option value=":<%= n %>">:<%= n %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Keyboard layout</th>
+        <td>
+          <select name="k">
+            <option value=""></option>
+            <% OnBoard::V12n::QEMU::Config::KEYBOARD_LAYOUTS.each do |k| %>
+              <option value="<%= k %>"><%= k %></option>
             <% end %>
           </select>
         </td>

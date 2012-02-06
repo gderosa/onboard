@@ -11,7 +11,7 @@ class OnBoard
       autoload :Config,   'onboard/virtualization/qemu/config'
       autoload :Instance, 'onboard/virtualization/qemu/instance'
       autoload :Img,      'onboard/virtualization/qemu/img'
-      
+
       class << self
 
         def get_all
