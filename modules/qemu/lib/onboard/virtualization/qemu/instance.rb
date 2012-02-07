@@ -107,6 +107,7 @@ class OnBoard
         end
 
         def status
+          return 'Not Running' unless running?
           @cache ||= {} 
           unless @cache['status'] =~ /\S/
             get_status
