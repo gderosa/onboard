@@ -151,6 +151,8 @@ class OnBoard
             pngfile = "#{VARRUN}/qemu-#{uuid_short}.png"
             ppm = Magick::ImageList.new ppmfile
             ppm.write pngfile
+            FileUtils.rm_f ppmfile 
+                # May be large, on a RAM fs, let's save memory.
             return pngfile
           when 'ppm'
             return ppmfile
