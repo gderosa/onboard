@@ -125,15 +125,11 @@ class OnBoard
         end
 
         def pause
-          UNIXSocket.open(@config['-monitor']['unix']) do |u|
-            u.puts 'stop'
-          end
+          @monitor.sendrecv 'stop'
         end
 
         def resume
-          UNIXSocket.open(@config['-monitor']['unix']) do |u|
-            u.puts 'cont'
-          end
+          @monitor.sendrecv 'cont'
         end
 
       end

@@ -1,4 +1,5 @@
 require 'socket'
+require 'timeout'
 
 class OnBoard
   module Virtualization
@@ -13,29 +14,40 @@ class OnBoard
           @config['unix']
         end
 
-        def sendrecv(msg) # UNIXSocket only currently supported
+        def sendrecv(msg='', opts={}) # UNIXSocket only currently supported
+          
           out = ''
-          UNIXSocket.open(unix_path) do |uds|
-            uds.puts                  # just to get the prompt
-            banner = uds.gets         # unused, just to go ahead
-            prompt = uds.gets         # tipically "(qemu) \r\n"
+          opts = {:timeout => 0.4}.merge(opts)  
 
-            uds.puts msg
-            spurious_line = uds.gets  # lots of terminal escape sequences, go ahead
+          begin
+            timeout(opts[:timeout]) do
+              UNIXSocket.open(unix_path) do |uds|
+                uds.puts                  # just to get the prompt
+                banner = uds.gets         # unused, just to go ahead
+                prompt = uds.gets         # tipically "(qemu) \r\n"
 
-            line = ''
+                uds.puts msg
+                spurious_line = uds.gets  # lots of terminal escape sequences, go ahead
 
-            # Last line has no trailing line-terminating char, so we have to
-            # perform some character-level operations.
-
-            while (line != prompt.sub(/\r?\n/, '') ) # "(qemu) " or something
-              c = uds.getc
-              line << c
-              if c == "\n"
-                out << line
                 line = ''
-              end
-            end
+
+                # Last line has no trailing line-terminating char, so we have to
+                # perform some character-level operations.
+
+                while (line != prompt.sub(/\r?\n/, '') ) 
+                    # "(qemu) " or something
+                  c = uds.getc
+                  line << c
+                  if c == "\n"
+                    out << line
+                    line = ''
+                  end
+                end
+
+              end # UNIXSocket
+            end # Timeout
+          rescue Timeout::Error
+            out << '[Socket Timed Out]'
           end
           return out
         end
