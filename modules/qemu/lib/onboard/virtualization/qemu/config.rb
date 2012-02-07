@@ -99,8 +99,12 @@ class OnBoard
 
         def to_json(*a); to_h.to_json(*a); end
 
+        def file
+          File.join QEMU::CONFDIR, "#@uuid.yml"
+        end
+
         def save
-          yaml_file = File.join QEMU::CONFDIR, "#@uuid.yml" 
+          yaml_file = file
           File.open yaml_file, 'w' do |f|
             f.write YAML.dump to_h 
           end

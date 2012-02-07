@@ -135,6 +135,11 @@ class OnBoard
           @monitor.sendrecv 'quit'
         end
 
+        def delete
+          quit if running?
+          FileUtils.rm_f @config.file
+        end
+
       end
     end
   end
