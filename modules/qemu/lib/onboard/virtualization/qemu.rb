@@ -27,6 +27,15 @@ class OnBoard
           return ary
         end
 
+        def find(h)
+          Dir.glob "#{CONFDIR}/*.yml" do |file|
+            config = Config.new(:config => YAML.load(File.read file))
+            if config.uuid =~ /^#{h[:vmid]}/
+              return Instance.new(config)
+            end
+          end
+        end
+
         def manage(h)
           all = get_all
           if h[:http_params]

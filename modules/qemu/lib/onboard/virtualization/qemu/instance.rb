@@ -140,6 +140,12 @@ class OnBoard
           FileUtils.rm_f @config.file
         end
 
+        def screendump
+          ppmfile = "#{VARRUN}/qemu-#{uuid_short}.ppm"
+          @monitor.sendrecv "screendump #{ppmfile}"
+          return ppmfile
+        end
+
       end
     end
   end
