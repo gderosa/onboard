@@ -23,6 +23,7 @@ class OnBoard
             [
               :start, 
               :stop, 
+              :process_stop,
               :config, 
               :reload, 
               :restart, 
@@ -31,21 +32,24 @@ class OnBoard
               :start_paused, 
             ].include? action 
         type = h[:type] || case action
-        when :start, :stop, :restart, :reload, :delete, :pause, :start_paused
-          'submit'
         when :config
           'button'
+        else 
+          'submit'
         end
         name = h[:name] || action.to_s 
         value = h[:value] || name
         disabled = h[:disabled] ? 'disabled' : ''
-        title = h[:title] || name.capitalize
-        alt = h[:alt] || title
+        title_str =  h[:title] || name.capitalize
+        alt = h[:alt] || title_str
+        title = (!h[:disabled] or h[:title_always]) ? title_str : ''
         image = case action
                 when :start
                   "#{IconDir}/#{IconSize}/actions/media-playback-start.png"
                 when :stop
                   "#{IconDir}/#{IconSize}/actions/media-playback-stop.png"
+                when :process_stop
+                  "#{IconDir}/#{IconSize}/actions/process-stop.png"
                 when :pause
                   "#{IconDir}/#{IconSize}/actions/media-playback-pause.png"
                 when :start_paused # used by qemu module...

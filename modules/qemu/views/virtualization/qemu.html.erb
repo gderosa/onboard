@@ -6,6 +6,17 @@
   virtual_machines = objects
 %>
 
+<style type="text/css">
+  table#vmlist tbody tr td.vminfo {
+    padding-left:   1ex;
+    padding-right:  1ex;
+  }
+  table#vmlist tbody tr td.button {
+    padding-left:   3px;
+    padding-right:  3px;
+  }
+</style>
+
 <script type="text/javascript">
   function popup_filechooser(target) {
     var popup = window.open('/jqueryFileTree/popup.html', 'Choose File', 'width=300,height=300');
@@ -31,77 +42,110 @@
 
 <% if virtual_machines.any? %>
 
-<h3>Virtual Machines</h3>
+  <h3>Virtual Machines</h3>
 
-<table>
-  <thead>
-    <tr>
-      <th>Status</th>
-      <th>Actions</th>
-      <th>
-        Name or ID
-        <div class="optinfo">
-          Click to access detailed configuration and deletion
-        </div>
-      </th>
-      <th>Drives</th>
-      <th>Network</th>
-      <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port 5900 + n</div></th>
-    </tr>
-  </thead>
-  <tbody>
-    <form method="POST">
-      <input type="hidden" name="_method" value="put"/>
-  <% virtual_machines.each do |vm| %>
+  <table id="vmlist">
+    <thead>
       <tr>
-        <td class="<%= 'error' if vm.status =~ /error/i %>" style="padding-left:0.6em">
-          <%= vm.status %>
-        </td>
-        <td style="text-align:center; white-space:nowrap">
-          <%= 
-            action_button(
-            :start, 
-            :name   => 'start[uuid]', 
-            :title  => 'Start',
-            :value  => vm.uuid
-          ) unless vm.running? %><%= 
-          action_button(
-            :start_paused, 
-            :name   => 'start_paused[uuid]', 
-            :title  => 'Start paused (so you have time to open a vnc client etc.)',
-            :value  => vm.uuid
-          ) unless vm.running? %><%= 
-          action_button(
-            :pause, 
-            :name   => 'pause[uuid]', 
-            :title  => 'Pause VM',
-            :value  => vm.uuid
-          ) if vm.running? and not vm.paused? %><%= 
-          action_button(
-            :start, 
-            :name   => 'resume[uuid]', 
-            :title  => 'Resume VM',
-            :value  => vm.uuid
-          ) if vm.running? and vm.paused? %><%=
-          action_button(
-            :stop,
-            :name   => 'powerdown[uuid]',
-            :title  => 'ACPI Shutdown',
-            :value  => vm.uuid
-          ) if vm.running? and not vm.paused? %>
-        </td>
-        <td><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
-        <td>
-          <pre><%# vm.config.opts['-drive'].pretty_inspect %></pre>
-        </td>
-        <td></td>
-        <td style="text-align:right;padding:0 1em;"><%= vm.config.opts['-vnc'] %></td>
+        <th>Status</th>
+        <th colspan="5">Actions</th>
+        <th>
+          Name or ID
+          <div class="optinfo">Click to access detailed configuration</div>
+        </th>
+        <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port 5900+n</div></th>
       </tr>
-  <% end %>
+    </thead>
+    <tbody>
+      <form method="POST">
+        <input type="hidden" name="_method" value="put"/>
+        <% virtual_machines.each do |vm| %>
+          <tr>
+            <td class="vminfo<%= ' error' if vm.status =~ /error/i %>">
+              <%= vm.status %>
+            </td>
 
-    </form>
-  </tbody>
-</table>
+            <!-- action buttons -->
+            <td class="button">
+              <%= 
+                if vm.running?
+                  if vm.paused?
+                    action_button(
+                      :start, 
+                      :name     => 'resume[uuid]', 
+                      :title    => 'Resume VM',
+                      :value    => vm.uuid
+                    )
+                  else
+                    action_button(
+                      :pause, 
+                      :name     => 'pause[uuid]', 
+                      :title    => 'Pause VM',
+                      :value    => vm.uuid
+                    ) 
+                  end
+                else
+                  action_button(
+                    :start, 
+                    :name     => 'start[uuid]', 
+                    :title    => 'Start',
+                    :value    => vm.uuid
+                  )
+                end 
+              %>
+            </td>
+            <td class="button">    
+              <%= 
+                action_button(
+                  :start_paused, 
+                  :name     => 'start_paused[uuid]', 
+                  :title    => 'Start paused (so you have time to open a vnc client etc.)',
+                  :value    => vm.uuid,
+                  :disabled => (vm.running?)
+                ) 
+              %>
+            </td>
+            <td class="button">
+              <%=
+                action_button(
+                  :stop,
+                  :name     => 'powerdown[uuid]',
+                  :title    => 'ACPI Shutdown',
+                  :value    => vm.uuid,
+                  :disabled => (vm.paused? or not vm.running?)
+                ) 
+              %>
+            </td>
+            <td class="button">
+              <%=
+                action_button(
+                  :process_stop,
+                  :name     => 'quit[uuid]',
+                  :title    => 'Kill QEMU process (may cause data corruption in the guest)',
+                  :value    => vm.uuid,
+                  :disabled => !vm.running?
+                ) 
+              %>
+            </td>
+            <td class="button">
+              <%=
+                action_button(
+                  :delete,
+                  :name     => 'delete[uuid]',
+                  :title    => 'Delete VM!',
+                  :value    => vm.uuid,
+                  :disabled => vm.running?
+                )
+              %>
+            </td>
+
+            <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
+            <td class="vminfo" style="text-align:right"><%= vm.config.opts['-vnc'] %></td>
+          </tr>
+        <% end %>
+      </form>
+    </tbody>
+  </table>
 
 <% end %>
 

@@ -38,6 +38,7 @@ class OnBoard
                 while (line != prompt.sub(/\r?\n/, '') ) 
                     # "(qemu) " or something
                   c = uds.getc
+                  break unless c
                   line << c
                   if c == "\n"
                     out << line
