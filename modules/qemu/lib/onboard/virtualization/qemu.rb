@@ -1,5 +1,8 @@
 require 'yaml'
 require 'uuid'
+require 'fileutils'
+
+require 'onboard/extensions/process'
 
 class OnBoard
   module Virtualization
@@ -35,6 +38,17 @@ class OnBoard
                 vm = all.find{|x| x.uuid == params[cmd]['uuid']} 
                 vm.send cmd.to_s
               end
+            end
+          end
+        end
+
+        def cleanup
+          Dir.glob "#{VARRUN}/qemu-*.pid" do |pidfile|
+            pidfile =~ /qemu-(.*)\.pid/ and vmid = $1
+            unless Process.running? File.read(pidfile).to_i
+              sockfile = "#{VARRUN}/qemu-#{vmid}.sock"
+              FileUtils.rm_f sockfile
+              FileUtils.rm_f pidfile
             end
           end
         end

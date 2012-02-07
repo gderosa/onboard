@@ -36,6 +36,7 @@ class OnBoard
     put '/virtualization/qemu.:format' do
       msg = handle_errors do
         OnBoard::Virtualization::QEMU.manage(:http_params => params)
+        OnBoard::Virtualization::QEMU.cleanup
       end
       format(
         :module => 'qemu',

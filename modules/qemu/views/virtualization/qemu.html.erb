@@ -40,114 +40,110 @@
 
 <h2>QEMU / kvm</h2>
 
-<% if virtual_machines.any? %>
+<h3>Virtual Machines</h3>
 
-  <h3>Virtual Machines</h3>
+<table id="vmlist">
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th colspan="5">Actions</th>
+      <th>
+        Name or ID
+        <div class="optinfo">Click to access detailed configuration</div>
+      </th>
+      <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port 5900+n</div></th>
+    </tr>
+  </thead>
+  <tbody>
+    <form method="POST">
+      <input type="hidden" name="_method" value="put"/>
+      <% virtual_machines.each do |vm| %>
+        <tr>
+          <td class="vminfo<%= ' error' if vm.status =~ /error/i %>">
+            <%= vm.status %>
+          </td>
 
-  <table id="vmlist">
-    <thead>
-      <tr>
-        <th>Status</th>
-        <th colspan="5">Actions</th>
-        <th>
-          Name or ID
-          <div class="optinfo">Click to access detailed configuration</div>
-        </th>
-        <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port 5900+n</div></th>
-      </tr>
-    </thead>
-    <tbody>
-      <form method="POST">
-        <input type="hidden" name="_method" value="put"/>
-        <% virtual_machines.each do |vm| %>
-          <tr>
-            <td class="vminfo<%= ' error' if vm.status =~ /error/i %>">
-              <%= vm.status %>
-            </td>
-
-            <!-- action buttons -->
-            <td class="button">
-              <%= 
-                if vm.running?
-                  if vm.paused?
-                    action_button(
-                      :start, 
-                      :name     => 'resume[uuid]', 
-                      :title    => 'Resume VM',
-                      :value    => vm.uuid
-                    )
-                  else
-                    action_button(
-                      :pause, 
-                      :name     => 'pause[uuid]', 
-                      :title    => 'Pause VM',
-                      :value    => vm.uuid
-                    ) 
-                  end
-                else
+          <!-- action buttons -->
+          <td class="button">
+            <%= 
+              if vm.running?
+                if vm.paused?
                   action_button(
                     :start, 
-                    :name     => 'start[uuid]', 
-                    :title    => 'Start',
+                    :name     => 'resume[uuid]', 
+                    :title    => 'Resume VM',
                     :value    => vm.uuid
                   )
-                end 
-              %>
-            </td>
-            <td class="button">    
-              <%= 
+                else
+                  action_button(
+                    :pause, 
+                    :name     => 'pause[uuid]', 
+                    :title    => 'Pause VM',
+                    :value    => vm.uuid
+                  ) 
+                end
+              else
                 action_button(
-                  :start_paused, 
-                  :name     => 'start_paused[uuid]', 
-                  :title    => 'Start paused (so you have time to open a vnc client etc.)',
-                  :value    => vm.uuid,
-                  :disabled => (vm.running?)
-                ) 
-              %>
-            </td>
-            <td class="button">
-              <%=
-                action_button(
-                  :stop,
-                  :name     => 'powerdown[uuid]',
-                  :title    => 'ACPI Shutdown',
-                  :value    => vm.uuid,
-                  :disabled => (vm.paused? or not vm.running?)
-                ) 
-              %>
-            </td>
-            <td class="button">
-              <%=
-                action_button(
-                  :process_stop,
-                  :name     => 'quit[uuid]',
-                  :title    => 'Kill QEMU process (may cause data corruption in the guest)',
-                  :value    => vm.uuid,
-                  :disabled => !vm.running?
-                ) 
-              %>
-            </td>
-            <td class="button">
-              <%=
-                action_button(
-                  :delete,
-                  :name     => 'delete[uuid]',
-                  :title    => 'Delete VM!',
-                  :value    => vm.uuid,
-                  :disabled => vm.running?
+                  :start, 
+                  :name     => 'start[uuid]', 
+                  :title    => 'Start',
+                  :value    => vm.uuid
                 )
-              %>
-            </td>
+              end 
+            %>
+          </td>
+          <td class="button">    
+            <%= 
+              action_button(
+                :start_paused, 
+                :name     => 'start_paused[uuid]', 
+                :title    => 'Start paused (so you have time to open a VNC client etc.)',
+                :value    => vm.uuid,
+                :disabled => (vm.running?)
+              ) 
+            %>
+          </td>
+          <td class="button">
+            <%=
+              action_button(
+                :stop,
+                :name     => 'powerdown[uuid]',
+                :title    => 'ACPI Shutdown (may require some time to cleanly power off).',
+                :value    => vm.uuid,
+                :disabled => (vm.paused? or not vm.running?)
+              ) 
+            %>
+          </td>
+          <td class="button">
+            <%=
+              action_button(
+                :process_stop,
+                :name     => 'quit[uuid]',
+                :title    => 'Quit QEMU process immediately (may cause data corruption in the guest).',
+                :value    => vm.uuid,
+                :disabled => !vm.running?
+              ) 
+            %>
+          </td>
+          <td class="button">
+            <%=
+              action_button(
+                :delete,
+                :name     => 'delete[uuid]',
+                :title    => 'Delete VM!',
+                :value    => vm.uuid,
+                :disabled => vm.running?
+              )
+            %>
+          </td>
 
-            <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
-            <td class="vminfo" style="text-align:right"><%= vm.config.opts['-vnc'] %></td>
-          </tr>
-        <% end %>
-      </form>
-    </tbody>
-  </table>
-
-<% end %>
+          <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
+          <td class="vminfo" style="text-align:right"><%= vm.config.opts['-vnc'] %></td>
+        </tr>
+      <% end %>
+    </form>
+  </tbody>
+</table>
 
 <h3>Create a new VM</h3>
 
