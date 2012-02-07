@@ -9,14 +9,12 @@ class OnBoard
     module QEMU
       class Instance
 
-        @@monitor_connections ||= {}
-
         attr_reader :config
 
         def initialize(config)
           @config   = config
           update_info
-          @monitor_connection = nil
+          @monitor = Monitor.new config['-monitor']
         end
 
         def update_info
@@ -109,6 +107,7 @@ class OnBoard
         end
 
         def status 
+=begin
           out = ''
           begin
             UNIXSocket.open(@config['-monitor']['unix']) do |u|
@@ -121,6 +120,8 @@ class OnBoard
           rescue Errno::ECONNREFUSED
             return  
           end
+=end
+          @monitor.sendrecv 'info status'
         end
 
         def pause
