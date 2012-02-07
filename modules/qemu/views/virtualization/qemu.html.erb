@@ -82,11 +82,17 @@
             :name   => 'resume[uuid]', 
             :title  => 'Resume VM',
             :value  => vm.uuid
-          ) if vm.running? and vm.paused? %>         
+          ) if vm.running? and vm.paused? %><%=
+          action_button(
+            :stop,
+            :name   => 'powerdown[uuid]',
+            :title  => 'ACPI Shutdown',
+            :value  => vm.uuid
+          ) if vm.running? and not vm.paused? %>
         </td>
         <td><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
         <td>
-          <pre><%== vm.config.opts['-drive'].pretty_inspect %></pre>
+          <pre><%# vm.config.opts['-drive'].pretty_inspect %></pre>
         </td>
         <td></td>
         <td style="text-align:right;padding:0 1em;"><%= vm.config.opts['-vnc'] %></td>

@@ -127,6 +127,10 @@ class OnBoard
           @monitor.sendrecv 'cont'
         end
 
+        def powerdown
+          @monitor.sendrecv 'system_powerdown'
+        end
+
       end
     end
   end
