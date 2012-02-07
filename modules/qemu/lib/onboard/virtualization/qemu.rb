@@ -55,9 +55,9 @@ class OnBoard
           Dir.glob "#{VARRUN}/qemu-*.pid" do |pidfile|
             pidfile =~ /qemu-(.*)\.pid/ and vmid = $1
             unless Process.running? File.read(pidfile).to_i
-              sockfile = "#{VARRUN}/qemu-#{vmid}.sock"
-              FileUtils.rm_f sockfile
-              FileUtils.rm_f pidfile
+              Dir.glob "#{VARRUN}/qemu-#{vmid}.*" do |file|
+                FileUtils.rm_f file 
+              end
             end
           end
         end

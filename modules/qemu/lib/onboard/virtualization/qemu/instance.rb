@@ -1,6 +1,9 @@
 require 'json'
 require 'socket'
 
+gem 'rmagick'
+autoload :Magick, 'RMagick'
+
 require 'onboard/extensions/process'
 require 'onboard/system/command'
 
@@ -140,10 +143,20 @@ class OnBoard
           FileUtils.rm_f @config.file
         end
 
-        def screendump
+        def screendump(format='ppm')
           ppmfile = "#{VARRUN}/qemu-#{uuid_short}.ppm"
           @monitor.sendrecv "screendump #{ppmfile}"
-          return ppmfile
+          case format
+          when 'png'
+            pngfile = "#{VARRUN}/qemu-#{uuid_short}.png"
+            ppm = Magick::ImageList.new ppmfile
+            ppm.write pngfile
+            return pngfile
+          when 'ppm'
+            return ppmfile
+          else
+            raise ArgumentError, "Unsupported format '#{format}'"
+          end
         end
 
       end
