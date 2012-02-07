@@ -27,7 +27,8 @@ class OnBoard
                 prompt = uds.gets         # tipically "(qemu) \r\n"
 
                 uds.puts msg
-                spurious_line = uds.gets  # lots of terminal escape sequences, go ahead
+                spurious_line = uds.gets  
+                    # lots of terminal escape sequences, go ahead
 
                 line = ''
 

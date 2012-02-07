@@ -55,15 +55,9 @@
   <% virtual_machines.each do |vm| %>
       <tr>
         <td class="<%= 'error' if vm.status =~ /error/i %>" style="padding-left:0.6em">
-    <%= 
-      if vm.running?
-        vm.status || 'Running'
-      else
-        'Not Running'
-      end
-    %>
+          <%= vm.status %>
         </td>
-        <td style="text-align:center">
+        <td style="text-align:center; white-space:nowrap">
           <%= 
             action_button(
             :start, 
