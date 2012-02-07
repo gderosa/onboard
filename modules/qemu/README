@@ -8,5 +8,5 @@ jqueyFileTree
 
 == Gem dependencies:
 
-gem install uuid
+gem install uuid rmagick
 
