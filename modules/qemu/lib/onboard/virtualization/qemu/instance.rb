@@ -106,22 +106,16 @@ class OnBoard
           status =~ /paused/
         end
 
-        def status 
-=begin
-          out = ''
-          begin
-            UNIXSocket.open(@config['-monitor']['unix']) do |u|
-              u.puts 'info status'
-              u.gets # help banner
-              u.gets # an unreadable sequence... :-P
-              out << u.gets
-            end
-            return out
-          rescue Errno::ECONNREFUSED
-            return  
+        def status
+          @cache ||= {} 
+          unless @cache['status'] =~ /\S/
+            get_status
           end
-=end
-          @monitor.sendrecv 'info status'
+          return @cache['status']
+        end
+
+        def get_status
+          @cache['status'] = @monitor.sendrecv 'info status'
         end
 
         def pause

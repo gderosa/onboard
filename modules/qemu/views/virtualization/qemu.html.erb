@@ -54,7 +54,7 @@
       <input type="hidden" name="_method" value="put"/>
   <% virtual_machines.each do |vm| %>
       <tr>
-        <td>
+        <td class="<%= 'error' if vm.status =~ /error/i %>">
     <%= 
       if vm.running?
         vm.status || 'Running'

@@ -17,7 +17,7 @@ class OnBoard
         def sendrecv(msg='', opts={}) # UNIXSocket only currently supported
           
           out = ''
-          opts = {:timeout => 0.4}.merge(opts)  
+          opts = {:timeout => 1}.merge(opts)  
 
           begin
             timeout(opts[:timeout]) do
@@ -47,7 +47,7 @@ class OnBoard
               end # UNIXSocket
             end # Timeout
           rescue Timeout::Error
-            out << '[Socket Timed Out]'
+            out << '[Monitor Error: Socket Timed Out]'
           end
           return out
         end
