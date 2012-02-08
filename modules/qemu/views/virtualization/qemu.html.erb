@@ -49,7 +49,7 @@
   <thead>
     <tr>
       <th>Status</th>
-      <th colspan="5">Actions</th>
+      <th colspan="4">Actions</th>
       <th>
         Name or ID
         <div class="optinfo">Click to access detailed configuration</div>
@@ -69,53 +69,54 @@
 
           <!-- action buttons -->
           <td class="button">
+            <%=
+              action_button(
+                :shutdown,
+                :name     => (
+                  if vm.running?
+                    'powerdown[uuid]'
+                  else
+                    'start[uuid]'
+                  end
+                ),
+                :title    => (
+                  if vm.running?
+'ACPI Shutdown (may require some time to cleanly power off).'
+                  else
+                    'Start'
+                  end
+                ),
+                :value    => vm.uuid
+              ) 
+            %>
+          </td>
+          <td class="button">
             <%= 
               if vm.running?
                 if vm.paused?
                   action_button(
                     :start, 
                     :name     => 'resume[uuid]', 
-                    :title    => 'Resume VM',
+                    :title    => 'Resume from Pause',
                     :value    => vm.uuid
                   )
                 else
                   action_button(
                     :pause, 
                     :name     => 'pause[uuid]', 
-                    :title    => 'Pause VM',
+                    :title    => 'Pause',
                     :value    => vm.uuid
                   ) 
                 end
               else
                 action_button(
-                  :start, 
-                  :name     => 'start[uuid]', 
-                  :title    => 'Start',
+                  :start_paused, 
+                  :name     => 'start_paused[uuid]', 
+                  :title    => 
+'Start paused (so you have time to open a VNC client etc.)',
                   :value    => vm.uuid
-                )
+                ) 
               end 
-            %>
-          </td>
-          <td class="button">    
-            <%= 
-              action_button(
-                :start_paused, 
-                :name     => 'start_paused[uuid]', 
-                :title    => 'Start paused (so you have time to open a VNC client etc.)',
-                :value    => vm.uuid,
-                :disabled => (vm.running?)
-              ) 
-            %>
-          </td>
-          <td class="button">
-            <%=
-              action_button(
-                :shutdown,
-                :name     => 'powerdown[uuid]',
-                :title    => 'ACPI Shutdown (may require some time to cleanly power off).',
-                :value    => vm.uuid,
-                :disabled => (vm.paused? or not vm.running?)
-              ) 
             %>
           </td>
           <td class="button">
@@ -134,7 +135,7 @@
               action_button(
                 :delete,
                 :name     => 'delete[uuid]',
-                :title    => 'Delete VM!',
+                :title    => 'Delete!',
                 :value    => vm.uuid,
                 :disabled => vm.running?
               )

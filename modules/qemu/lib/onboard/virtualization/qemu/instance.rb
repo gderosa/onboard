@@ -82,11 +82,18 @@ class OnBoard
               cmdline << '-drive' << ' ' << drive_args.join(',') << ' '
             end
           end
+
           # Useful defaults: TODO? make them configurable?
-          cmdline << '-boot' << ' ' << 'menu=on,order=ndc' << ' '
-              # boot order: Net, CDROM, disk
-          cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
-              # should fix some problems with VNC
+          cmdline << '-boot' << ' ' << 'menu=on,order=dc' << ' '
+              # boot order: CDROM, disk (Network would be 'n') 
+
+          # cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
+          # The above should fix some problems with VNC,
+          # but you have problems anyway with -loadvm ...
+          #
+          # Solution: use a VNC client like Vinagre, supporting
+          # capture/release.
+          
           return cmdline
         end
 
