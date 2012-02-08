@@ -81,6 +81,9 @@ class OnBoard
           # Useful defaults: TODO? make them configurable?
           cmdline << '-boot' << ' ' << 'menu=on' << ' '
           cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  # vnc etc.
+
+          cmdline << '-loadvm _last'
+
           return cmdline
         end
 
@@ -137,6 +140,16 @@ class OnBoard
 
         def quit
           @monitor.sendrecv 'quit'
+        end
+
+        def savevm(name)
+          @monitor.sendrecv "savevm #{name}", :timeout => 90
+        end
+
+        def savevm_quit
+          pause
+          savevm DEFAULT_SNAPSHOT
+          quit
         end
 
         def delete

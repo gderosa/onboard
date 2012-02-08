@@ -11,6 +11,8 @@ class OnBoard
       # TODO: do not hardcode so badly 
       FILESDIR = '/home/onboard/files'
 
+      DEFAULT_SNAPSHOT = '_last'
+
       autoload :Config,   'onboard/virtualization/qemu/config'
       autoload :Instance, 'onboard/virtualization/qemu/instance'
       autoload :Img,      'onboard/virtualization/qemu/img'
@@ -42,11 +44,11 @@ class OnBoard
           if h[:http_params]
             params = h[:http_params]
             %w{
-                start start_paused pause resume powerdown quit delete
+start start_paused pause resume powerdown savevm_quit quit delete
             }.each do |cmd|
               if params[cmd] and params[cmd]['uuid']
                 vm = all.find{|x| x.uuid == params[cmd]['uuid']} 
-                vm.send cmd.to_s
+                vm.send cmd
               end
             end
           end
