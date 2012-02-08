@@ -260,6 +260,7 @@ a.img, a.img:hover, a img  {
 
 table {
   font-size: 90%;
+  border-spacing: 0;
 }
 
 table caption {
@@ -272,20 +273,20 @@ table tr th {
   padding: 0 1em;
 }
 
+table tr td, table tr th, table thead tr th, table tbody tr td {
+  border: 1px white solid;
+}
+
 table tr td, table tr th, fieldset { 
   /* background: url("/backgrounds/kollermedia.at/pattern4u/dirty/10yellow.jpg"); */
   background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.gif"); 
   background-attachment: fixed;
 }
 
-.term {
-  text-decoration: none;
-  border-bottom: 1px #444 dashed;
-}
-
 table tr td fieldset {
   background: transparent;
 }
+
 
 table tr th, fieldset, .term {
   font-size: 80%;
@@ -303,14 +304,6 @@ table tr th .optinfo ul {
   padding-left: 0;
 }
 
-em.term {
-  font-style: normal;
-}
-
-fieldset {
-  border: none;
-  display: inline;
-}
 
 table tr th small {
   font-weight: normal;
@@ -351,9 +344,6 @@ table tr td ul, table tr th ul {
   padding: 0 0 0 1.15em;
 }
 
-button[type="submit"] {
-  margin: 1ex 0;
-}
 
 table tr td button {
   padding: 1px;
@@ -366,6 +356,24 @@ table tr td button img {
 
 table tr td div {
   margin: 0.3em 0;
+}
+
+.term {
+  text-decoration: none;
+  border-bottom: 1px #444 dashed;
+}
+
+em.term {
+  font-style: normal;
+}
+
+fieldset {
+  border: none;
+  display: inline;
+}
+
+button[type="submit"] {
+  margin: 1ex 0;
 }
 
 button[disabled] {
