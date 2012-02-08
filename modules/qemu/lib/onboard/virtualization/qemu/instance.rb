@@ -53,7 +53,7 @@ class OnBoard
             -k
             -pidfile
           }.each do |o|
-            cmdline << o << ' ' << opts[o] << ' ' if opts[o] =~ /\S/  
+            cmdline << %Q{#{o} "#{opts[o]}" } if opts[o].to_s =~ /\S/  
           end
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
