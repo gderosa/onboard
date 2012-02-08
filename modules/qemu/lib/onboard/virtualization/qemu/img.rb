@@ -17,7 +17,7 @@ class OnBoard
               FileUtils.mkdir_p File.join ROOTDIR, name
               filepath = "#{ROOTDIR}/#{name}/#{name}.#{fmt}"
               System::Command.run(
-                  "qemu-img create -f #{fmt} #{filepath} #{size_str}", :raise_BadRequest) 
+                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :raise_BadRequest) 
               return filepath
             end
           end
