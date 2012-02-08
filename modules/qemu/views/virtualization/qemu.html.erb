@@ -70,24 +70,22 @@
           <!-- action buttons -->
           <td class="button">
             <%=
-              action_button(
-                :shutdown,
-                :name     => (
-                  if vm.running?
-                    'powerdown[uuid]'
-                  else
-                    'start[uuid]'
-                  end
-                ),
-                :title    => (
-                  if vm.running?
-'ACPI Shutdown (may require some time to cleanly power off).'
-                  else
-                    'Start'
-                  end
-                ),
-                :value    => vm.uuid
-              ) 
+              if vm.running?
+                action_button(
+                  :shutdown,
+                  :name     => 'powerdown[uuid]',
+                  :title    =>
+'ACPI Shutdown (may require some time to cleanly power off)',
+                  :value    => vm.uuid
+                )
+              else
+                action_button(
+                  :start,                 
+                  :name     => 'start[uuid]',
+                  :title    => 'Start (resuming a saved state, if available)',
+                  :value    => vm.uuid
+                ) 
+              end
             %>
           </td>
           <td class="button">
