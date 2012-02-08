@@ -150,10 +150,15 @@
           <td>
             <% if vm.running? %>
               <% screenshot_path = "qemu/vm/#{vm.uuid_short}/screen.png" %>
-              <a href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:200px"/></a>
+              <a class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:200px"/></a>
             <% end %>
           </td>
-          <td class="vminfo" style="text-align:right"><%= vm.config.opts['-vnc'] %></td>
+          <td class="vminfo" style="text-align:right">
+            <% vnc_uri = "vnc://#{request.host}#{vm.config.opts['-vnc']}"%>
+            <a href="<%= vnc_uri %>" title="<%= vnc_uri %>">
+              <%= vm.config.opts['-vnc'] %>
+            </a>
+          </td>
         </tr>
       <% end %>
     </form>
