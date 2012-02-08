@@ -1,7 +1,5 @@
 <%
-  require 'pp'
-
-  require 'onboard/virtualization/qemu/config'
+  require 'onboard/virtualization/qemu'
 
   virtual_machines = objects
 %>
@@ -16,6 +14,9 @@
     padding-right:  3px;
     border-left: none;
     border-right: none;
+  }
+  table#vmlist tbody tr td.vmscreenshot {
+    padding-bottom: 0;
   }
 </style>
 
@@ -141,7 +142,7 @@
           </td>
 
           <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
-          <td>
+          <td class="vmscreenshot">
             <% if vm.running? %>
               <% screenshot_path = "qemu/vm/#{vm.uuid_short}/screen.png" %>
               <a class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:200px"/></a>
@@ -214,7 +215,14 @@
         <td>
           <select name="vnc">
             <% 1.upto(31) do |n| %>
-              <option value=":<%= n %>">:<%= n %></option>
+              <% 
+                available = OnBoard::V12n::QEMU::VNC::Display.available
+                selected = ''
+                disabled = ''
+                selected = 'selected' if      n == available.first
+                disabled = 'disabled' unless  available.include? n
+              %>
+              <option <%= selected %> <%= disabled %> value=":<%= n %>">:<%= n %></option>
             <% end %>
           </select>
         </td>
