@@ -12,7 +12,9 @@ class OnBoard
     module QEMU
       class Instance
 
-        SAVEVM_TIMEOUT = 90
+        SAVEVM_TIMEOUT = 240
+        # Very slow with qcow2 and cache=writethrough;
+        # as opposite, it take a few seconds with cache=unsafe :-P
 
         attr_reader :config
 
