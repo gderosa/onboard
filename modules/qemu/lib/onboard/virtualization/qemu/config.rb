@@ -65,17 +65,18 @@ class OnBoard
                 'file'  => self.class.absolute_path(h[:http_params]['disk']),
                 'media' => 'disk',
                 'index' => 0,
-                'cache' => 'writeback'
+                'cache' => 'unsafe'
               }
             end
-            if h[:http_params]['cdrom'] =~ /\S/
-              @cmd['opts']['-drive'] ||= []
-              @cmd['opts']['-drive'] << {
-                'file'  => self.class.absolute_path(h[:http_params]['cdrom']),
-                'media' => 'cdrom',
-                'index' => 1
-              }
-            end
+            @cmd['opts']['-drive'] ||= []
+            @cmd['opts']['-drive'] << {
+              'file'  =>  (
+                self.class.absolute_path(h[:http_params]['cdrom']) if 
+                    h[:http_params]['cdrom'] =~ /\S/  
+              ),
+              'media' => 'cdrom',
+              'index' => 2
+            }
           else
             @uuid = h[:config]['uuid']
             @cmd  = h[:config]['cmd']

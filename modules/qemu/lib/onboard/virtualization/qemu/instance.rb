@@ -68,10 +68,11 @@ class OnBoard
           if opts['-drive'].respond_to? :each
             opts['-drive'].each do |d|
               drive_args = []
-              drive_args << %Q{file="#{d['file']}"} 
+              drive_args << %Q{file="#{d['file']}"} if
+                  d['file'] =~ /\S/ 
               drive_args << %Q{media=#{d['media']}} 
               drive_args << %Q{index=#{d['index']}} if 
-                  d['index'] =~ /\S/
+                  d['index'] # numeric or nil
               drive_args << %Q{cache=#{d['cache']}} if
                   d['cache'] =~ /\S/
               cmdline << '-drive' << ' ' << drive_args.join(',') << ' '
