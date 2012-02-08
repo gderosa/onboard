@@ -24,6 +24,7 @@ class OnBoard
               :start, 
               :stop, 
               :process_stop,
+              :shutdown,
               :config, 
               :reload, 
               :restart, 
@@ -50,6 +51,8 @@ class OnBoard
                   "#{IconDir}/#{IconSize}/actions/media-playback-stop.png"
                 when :process_stop
                   "#{IconDir}/#{IconSize}/actions/process-stop.png"
+                when :shutdown
+                  "#{IconDir}/#{IconSize}/actions/shutdown.png"
                 when :pause
                   "#{IconDir}/#{IconSize}/actions/media-playback-pause.png"
                 when :start_paused # used by qemu module...
