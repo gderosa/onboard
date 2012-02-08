@@ -31,6 +31,10 @@ class OnBoard
           @cmd['opts'][k] 
         end
 
+        def []=(k, val)
+          @cmd['opts'][k] = val
+        end 
+
         def initialize(h)
           if h[:http_params]
             @uuid = UUID.generate # creation from POST

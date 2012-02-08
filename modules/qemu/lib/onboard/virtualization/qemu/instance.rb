@@ -12,6 +12,8 @@ class OnBoard
     module QEMU
       class Instance
 
+        SAVEVM_TIMEOUT = 90
+
         attr_reader :config
 
         def initialize(config)
@@ -49,11 +51,13 @@ class OnBoard
             -uuid 
             -name 
             -m
+            -loadvm
             -vnc
             -k
             -pidfile
           }.each do |o|
-            cmdline << %Q{#{o} "#{opts[o]}" } if opts[o].to_s =~ /\S/  
+            cmdline << %Q{#{o} "#{opts[o]}" }     if 
+                opts[o] and opts[o].to_s =~ /\S/  
           end
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
@@ -79,11 +83,10 @@ class OnBoard
             end
           end
           # Useful defaults: TODO? make them configurable?
-          cmdline << '-boot' << ' ' << 'menu=on' << ' '
-          cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  # vnc etc.
-
-          cmdline << '-loadvm _last'
-
+          cmdline << '-boot' << ' ' << 'menu=on,order=ndc' << ' '
+              # boot order: Net, CDROM, disk
+          cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
+              # should fix some problems with VNC
           return cmdline
         end
 
@@ -134,21 +137,30 @@ class OnBoard
           @monitor.sendrecv 'cont'
         end
 
+        def loadvm_on_next_boot(name)
+          @config['-loadvm'] = name
+          @config.save
+        end
+
         def powerdown
           @monitor.sendrecv 'system_powerdown'
+          loadvm_on_next_boot false
         end
 
         def quit
           @monitor.sendrecv 'quit'
         end
 
-        def savevm(name)
-          @monitor.sendrecv "savevm #{name}", :timeout => 90
+        def savevm(name, *opts)
+          @monitor.sendrecv "savevm #{name}", :timeout => SAVEVM_TIMEOUT
+          if opts.include? :loadvm_on_next_boot
+            loadvm_on_next_boot name
+          end
         end
 
         def savevm_quit
           pause
-          savevm DEFAULT_SNAPSHOT
+          savevm DEFAULT_SNAPSHOT, :loadvm_on_next_boot
           quit
         end
 
