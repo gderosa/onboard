@@ -9,6 +9,7 @@ require 'etc'
 
 require 'onboard/exceptions'
 require 'onboard/extensions/object'
+require 'onboard/extensions/logger'
 require 'onboard/menu/node'
 require 'onboard/system/command'
 require 'onboard/platform/debian'

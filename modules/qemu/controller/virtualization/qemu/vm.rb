@@ -7,12 +7,22 @@ class OnBoard
   class Controller < Sinatra::Base
 
     get '/virtualization/qemu/vm/:vmid/screen.:format' do
+
       vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
-      if vm.respond_to? :screendump and vm.running?
-        send_file vm.screendump(params[:format]) 
+
+      if 
+          vm.respond_to? :screendump                  and 
+          vm.running?                                 and 
+          screendump = vm.screendump(params[:format])
+
+        send_file screendump 
+
       else
+
         not_found
+
       end
+
     end
 
   end

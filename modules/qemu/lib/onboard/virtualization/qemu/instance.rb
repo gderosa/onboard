@@ -149,11 +149,16 @@ class OnBoard
           case format
           when 'png'
             pngfile = "#{VARRUN}/qemu-#{uuid_short}.png"
-            ppm = Magick::ImageList.new ppmfile
-            ppm.write pngfile
-            FileUtils.rm_f ppmfile 
-                # May be large, on a RAM fs, let's save memory.
-            return pngfile
+            begin
+              ppm = Magick::ImageList.new ppmfile
+              ppm.write pngfile
+              FileUtils.rm_f ppmfile 
+                  # May be large, on a RAM fs, let's save memory.
+              return pngfile
+            rescue Magick::ImageMagickError
+              LOGGER.handled_error $!
+              return nil
+            end
           when 'ppm'
             return ppmfile
           else

@@ -48,8 +48,9 @@ class OnBoard
 
               end # UNIXSocket
             end # Timeout
-          rescue Timeout::Error
-            out << '[Monitor Error: Socket Timed Out]'
+          rescue Timeout::Error, Errno::ECONNRESET, Errno::ECONNREFUSED
+            LOGGER.handled_error $! 
+            out << "[Monitor Error: #{$!}]" 
           end
           return out
         end
