@@ -9,6 +9,9 @@
     padding-left:   1ex;
     padding-right:  1ex;
   }
+  table#vmlist tbody tr td div.vmdetails {
+    font-size: 95%;
+  }
   table#vmlist tbody tr td.button {
     padding-left:   3px;
     padding-right:  3px;
@@ -51,8 +54,7 @@
       <th>Status</th>
       <th colspan="4">Actions</th>
       <th>
-        Name or ID
-        <div class="optinfo">Click to access detailed configuration</div>
+        VM Details 
       </th>
       <th>Screenshot</th>
       <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port 5900 + n</div></th>
@@ -140,7 +142,19 @@
             %>
           </td>
 
-          <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td>
+          <!-- <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td> -->
+          <td class="vminfo">
+            <a title="Machine UUID = <%= vm.config.uuid %>" href="">
+              <%= 
+                (vm.config.opts['-name'] =~ /\S/) ? 
+                    vm.config.opts['-name']       : 
+                    vm.config.uuid_short 
+              %>
+            </a>
+            <div class="vmdetails">
+              RAM: <%= vm.config.opts['-m'] %> MB 
+            </div>
+          </td>
           <td class="vmscreenshot">
             <% if vm.running? %>
               <% screenshot_path = "qemu/vm/#{vm.uuid_short}/screen.png" %>
