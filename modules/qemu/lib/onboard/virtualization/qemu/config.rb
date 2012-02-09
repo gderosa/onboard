@@ -68,8 +68,11 @@ class OnBoard
               @cmd['opts']['-drive'] << {
                 'file'  => self.class.absolute_path(h[:http_params]['disk']),
                 'media' => 'disk',
-                'index' => 0,
-                'cache' => 'unsafe'
+                'if'    => 'ide',   # IDE (default)
+                'bus'   => 0,       # Primary
+                'unit'  => 0,       # Master
+                'cache' => 'unsafe' # Dramatically improve performance on
+                                    # savevm / loadvm
               }
             end
             @cmd['opts']['-drive'] ||= []
@@ -79,7 +82,9 @@ class OnBoard
                     h[:http_params]['cdrom'] =~ /\S/  
               ),
               'media' => 'cdrom',
-              'index' => 2
+              'if'    => 'ide',     # IDE (default)
+              'bus'   => 1,         # Secondary
+              'unit'  => 0,         # Master
             }
           else
             @uuid = h[:config]['uuid']
