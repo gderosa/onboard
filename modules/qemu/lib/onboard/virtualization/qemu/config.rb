@@ -8,6 +8,7 @@ class OnBoard
       class Config
 
         autoload :Common, 'onboard/virtualization/qemu/config/common'
+        autoload :Drive,  'onboard/virtualization/qemu/config/drive'
 
         # paste from man page
         KEYBOARD_LAYOUTS = %w{ 

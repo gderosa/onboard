@@ -171,7 +171,14 @@ class OnBoard
               end
             end
           end
-          drives_h
+          # Now, determine correspondance with configured (non runtime)
+          # drives
+          @config['-drive'].each do |configured_drive|
+            d = QEMU::Config::Drive.new configured_drive
+            runtime_name = d.to_runtime_name # "ide-cd0", etc., as in monitor
+            drives_h[runtime_name]['serial'] = configured_drive['serial']
+          end
+          return drives_h
         end
 
         def pause
