@@ -167,7 +167,8 @@ class String
   # into
   #   ['AAA', 'BBB CCC']
   def split_unescaping_spaces
-    split(/[^\\]\s/).map{|x| x.sub('\ ', ' ')}
+    strip!
+    gsub(/([^\\])\s+/, "\\1\0").split("\0").map{|x| x.gsub '\ ',  ' '} 
   end
 
 end

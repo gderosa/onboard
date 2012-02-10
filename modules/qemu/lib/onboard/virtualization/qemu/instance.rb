@@ -123,6 +123,7 @@ class OnBoard
 
         def running? 
           return Process.running?(pid) if pid
+          return false
         end
 
         def paused?
@@ -142,6 +143,7 @@ class OnBoard
         end
 
         def drives
+          return nil unless running?
           drives_h = {}
           @cache['block'] ||= @monitor.sendrecv 'info block'
           @cache['block'].each_line do |line|
