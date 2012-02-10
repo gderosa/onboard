@@ -21,9 +21,9 @@ class OnBoard
 
         def initialize(config)
           @config   = config
-          update_info
-          @monitor = Monitor.new config['-monitor']
           @cache = {}
+          @monitor = Monitor.new config['-monitor']
+          update_info
         end
 
         def update_info
@@ -39,6 +39,7 @@ class OnBoard
             'config'  => @config.to_h,
             'running' => running?,
             'status'  => status,
+            'drives'  => drives
           }
         end
 
@@ -141,10 +142,17 @@ class OnBoard
         end
 
         def drives
+          drives_h = {}
           @cache['block'] ||= @monitor.sendrecv 'info block'
           @cache['block'].each_line do |line|
-            ary = line.split_unescaping_spaces
+            name, info = line.split(/:\s+/)
+            drives_h[name] = {}
+            info.split_unescaping_spaces.each do |pair|
+              k, val = pair.split('=')
+              drives_h[name][k] = val 
+            end
           end
+          drives_h
         end
 
         def pause
