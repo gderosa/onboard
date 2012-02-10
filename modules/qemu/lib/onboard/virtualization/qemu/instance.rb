@@ -147,6 +147,10 @@ class OnBoard
           @cache['block'].each_line do |line|
             name, info = line.split(/:\s+/)
             drives_h[name] = {}
+            if info =~ /\[not inserted\]/
+              info.sub! /\[not inserted\]/, ''
+              drives_h[name]['file'] = nil
+            end
             info.split_unescaping_spaces.each do |pair|
               k, val = pair.split('=')
               drives_h[name][k] = val 
