@@ -66,6 +66,7 @@ class OnBoard
             if h[:http_params]['disk'] =~ /\S/
               @cmd['opts']['-drive'] ||= []
               @cmd['opts']['-drive'] << {
+                'serial'=> generate_drive_serial,
                 'file'  => self.class.absolute_path(h[:http_params]['disk']),
                 'media' => 'disk',
                 'if'    => 'ide',   # IDE (default)
@@ -77,7 +78,8 @@ class OnBoard
             end
             @cmd['opts']['-drive'] ||= []
             @cmd['opts']['-drive'] << {
-              'file'  =>  (
+              'serial'=> generate_drive_serial, 
+              'file'  => (
                 self.class.absolute_path(h[:http_params]['cdrom']) if 
                     h[:http_params]['cdrom'] =~ /\S/  
               ),
@@ -89,6 +91,18 @@ class OnBoard
           else
             @uuid = h[:config]['uuid']
             @cmd  = h[:config]['cmd']
+          end
+        end
+
+        def generate_drive_serial
+          return ('QM' + uuid_short + sprintf('%02x', drive_counter)).upcase
+        end
+
+        def drive_counter
+          if @cmd['opts'] and @cmd['opts']['-drive'].respond_to? :length
+            @cmd['opts']['-drive'].length
+          else
+            0
           end
         end
 

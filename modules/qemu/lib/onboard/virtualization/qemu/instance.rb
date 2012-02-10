@@ -75,7 +75,7 @@ class OnBoard
             opts['-drive'].each do |d|
               drive_args = []
               # Non empty nor space-only Strings
-              %w{if file media cache}.each do |par|  
+              %w{serial if file media cache}.each do |par|  
                 drive_args << %Q{#{par}="#{d[par]}"} if d[par] =~ /\S/
               end
               # Numeric or nil
