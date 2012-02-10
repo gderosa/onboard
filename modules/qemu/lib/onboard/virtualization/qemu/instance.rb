@@ -5,6 +5,7 @@ gem 'rmagick'
 autoload :Magick, 'RMagick'
 
 require 'onboard/extensions/process'
+require 'onboard/extensions/string'
 require 'onboard/system/command'
 
 class OnBoard
@@ -22,6 +23,7 @@ class OnBoard
           @config   = config
           update_info
           @monitor = Monitor.new config['-monitor']
+          @cache = {}
         end
 
         def update_info
@@ -128,7 +130,6 @@ class OnBoard
 
         def status
           return 'Not Running' unless running?
-          @cache ||= {} 
           unless @cache['status'] =~ /\S/
             get_status
           end
@@ -137,6 +138,13 @@ class OnBoard
 
         def get_status
           @cache['status'] = @monitor.sendrecv 'info status'
+        end
+
+        def drives
+          @cache['block'] ||= @monitor.sendrecv 'info block'
+          @cache['block'].each_line do |line|
+            ary = line.split_unescaping_spaces
+          end
         end
 
         def pause

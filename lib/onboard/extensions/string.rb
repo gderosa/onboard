@@ -162,4 +162,12 @@ class String
 
   end
 
+  # Turn
+  #  'AAA BBB\ CCC'
+  # into
+  #   ['AAA', 'BBB CCC']
+  def split_unescaping_spaces
+    split(/[^\\]\s/).map{|x| x.sub('\ ', ' ')}
+  end
+
 end
