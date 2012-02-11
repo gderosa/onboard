@@ -27,11 +27,13 @@ class OnBoard
                   "#{IconDir}/#{IconSize}/devices/drive-harddisk.png"     
                 when :optical, :cdrom, :cd, :dvd, :blueray
                   "#{IconDir}/#{IconSize}/devices/drive-optical.png"
+                when :eject
+                  "#{IconDir}/#{IconSize}/actions/media-eject.png"
                 else
                   raise ArgumentError, "Invalid drive category: #{drive}"
                 end
         if h[:img]
-          return %Q{<img class="drive" src="#{image}"/>} 
+          return %Q{<img class="drive" src="#{image}" title="#{title}"/>} 
         else
           return image
         end
@@ -51,6 +53,7 @@ class OnBoard
               :delete,
               :pause,
               :start_paused, 
+              :eject
             ].include? action 
         type = h[:type] || case action
         when :config
@@ -83,6 +86,8 @@ class OnBoard
                   "#{IconDir}/#{IconSize}/actions/reload.png"
                 when :delete
                   "#{IconDir}/#{IconSize}/actions/delete.png"
+                when :eject
+                  "#{IconDir}/#{IconSize}/actions/media-eject.png"
                 end
         return %Q{<button type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
       end

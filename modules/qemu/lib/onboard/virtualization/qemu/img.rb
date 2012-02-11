@@ -5,6 +5,14 @@ class OnBoard
         ROOTDIR = '/home/onboard/files/QEMU'
         class << self
 
+          def absolute_path(*a)
+            QEMU::Config.absolute_path *a
+          end
+
+          def relative_path(*a)
+            QEMU::Config.relative_path *a
+          end
+
           # for example an image is created at: ~/files/qemu/Win7/Win7.qcow2
           # or ~/files/qemu/Debian/Debian.raw
           def create(h)

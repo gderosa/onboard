@@ -24,6 +24,11 @@ class OnBoard
             return File.join FILESDIR, path
           end
 
+          def relative_path(path)
+            return nil unless path
+            return path.sub /^#{FILESDIR}\//, ''
+          end
+
         end
 
         attr_reader :uuid, :cmd

@@ -28,6 +28,9 @@
   ul.drives li.drive {
     white-space: nowrap;
   }
+  ul.drives li.drive button {
+    margin: 0;
+  }
   img.drive {
     vertical-align: middle;
   }
@@ -173,12 +176,12 @@
             <ul class="drives">
               <% vm.drives.each_pair do |name, h| %>
                 <% if h['config'] %>
-                  <li class="drive <%= h['config']['media'] %>" title="<%= name %>"> 
-                    <%= drive_icon h['config']['media'] %>
+                  <li class="drive <%= h['config']['media'] %>" title="<%= name %>">
+                    <%= drive_icon h['config']['media'], :title => name %>
+                    <% disabled = h['removable'] ? '' : 'disabled' %>
+                    <input <%= disabled %> type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= OnBoard::V12n::QEMU::Img.relative_path(h['file']) || '' %>"/>
                     <% if h['removable'] %>
-                      <input type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= h['file'] || '' %>"/>
-                    <% else %>
-                      <input disabled type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= h['file'] || '' %>"/>
+                      <button title="Eject / Change media" name="drive[<%= vm.config.uuid %>][<%= name %>][action]" value="eject" type="submit"><%= drive_icon :eject %></button>
                     <% end %>
                   </li>
                 <% end %>
