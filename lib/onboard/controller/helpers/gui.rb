@@ -17,6 +17,26 @@ class OnBoard
         end
       end
 
+      def drive_icon(drive, *attributes)
+        defaults = {:img => true}
+        h     = defaults.update( attributes[0] || {} ) 
+        title = h[:title]     || h['name']  || ''
+        alt   = title         || ''
+        image = case drive.to_sym
+                when :hard_disk, :hard_drive, :hd, :disk
+                  "#{IconDir}/#{IconSize}/devices/drive-harddisk.png"     
+                when :optical, :cdrom, :cd, :dvd, :blueray
+                  "#{IconDir}/#{IconSize}/devices/drive-optical.png"
+                else
+                  raise ArgumentError, "Invalid drive category: #{drive}"
+                end
+        if h[:img]
+          return %Q{<img class="drive" src="#{image}"/>} 
+        else
+          return image
+        end
+      end
+
       def action_button(action, *attributes)
         h = attributes[0] || {} 
         raise ArgumentError, "Invalid action: #{action.inspect}" unless 

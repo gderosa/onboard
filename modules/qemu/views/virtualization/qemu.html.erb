@@ -21,6 +21,16 @@
   table#vmlist tbody tr td.vmscreenshot {
     padding-bottom: 0;
   }
+  ul.drives {
+    list-style: none;
+    padding: 0;
+  }
+  ul.drives li.drive {
+    white-space: nowrap;
+  }
+  img.drive {
+    vertical-align: middle;
+  }
 </style>
 
 <script type="text/javascript">
@@ -160,10 +170,17 @@
             </div>
           </td>
           <td class="vmdetails">
-            <ul>
+            <ul class="drives">
               <% vm.drives.each_pair do |name, h| %>
                 <% if h['config'] %>
-                  <li><%= name %></li>
+                  <li class="drive <%= h['config']['media'] %>" title="<%= name %>"> 
+                    <%= drive_icon h['config']['media'] %>
+                    <% if h['removable'] %>
+                      <input type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= h['file'] || '' %>"/>
+                    <% else %>
+                      <input disabled type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= h['file'] || '' %>"/>
+                    <% end %>
+                  </li>
                 <% end %>
               <% end if vm.drives.respond_to? :each_pair %>
             </ul>
