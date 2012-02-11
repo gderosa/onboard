@@ -93,7 +93,6 @@ class OnBoard
               'if'        => 'ide',     # IDE (default)
               'bus'       => 1,         # Secondary
               'unit'      => 0,         # Master
-              #'readonly'  => true       # ...and how about CD/DVD burning? :-P
             }
           else
             @uuid = h[:config]['uuid']

@@ -89,6 +89,10 @@ class OnBoard
               %w{readonly}.each do |par|
                 drive_args << par if d[par] 
               end
+              # Boolean mapped to 'on'|'off'
+              %w{snapshot}.each do |par|
+                drive_args << %Q{#{par}=on} if d[par]
+              end
               cmdline << '-drive' << ' ' << drive_args.join(',') << ' '
             end
           end
