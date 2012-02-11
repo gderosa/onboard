@@ -188,12 +188,18 @@
                       if h['removable'] and not inserted
                         onclick   = 'javascript:popup_filechooser(this);'
                       end
-                      showed_path = 
-                          inserted                                          ?
-                          OnBoard::V12n::QEMU::Img.relative_path(h['file']) :
-                          '[choose an image]'
-                     %>
-                     <input <%= disabled %> onclick="<%= onclick %>" type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= showed_path %>" title="<%= name %>: <%= inserted ? showed_path : '[not inserted]' %>"/>
+                      showed_path = ''
+                      if h['removable']
+                        showed_path = 
+                            inserted                                          ?
+                            OnBoard::V12n::QEMU::Img.relative_path(h['file']) :
+                            '[choose an image]'
+                      else
+                        showed_path = 
+                            OnBoard::V12n::QEMU::Img.relative_path(h['file'])
+                      end
+                    %>
+                    <input <%= disabled %> onclick="<%= onclick %>" type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= showed_path %>" title="<%= name %>: <%= inserted ? showed_path : '[not inserted]' %>"/>
                     <% if h['removable'] %>
                       <button title="Eject / Change media" name="drive[<%= vm.config.uuid %>][<%= name %>][action]" value="<%= inserted ? 'eject' : 'change' %>" type="submit"><%= drive_icon :eject %></button>
                     <% end %>
