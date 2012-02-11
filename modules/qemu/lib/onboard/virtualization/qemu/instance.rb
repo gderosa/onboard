@@ -85,6 +85,10 @@ class OnBoard
               %w{index bus unit}.each do |par|
                 drive_args << %Q{#{par}=#{d[par]}} if d[par] # numeric or nil
               end
+              # Boolean
+              %w{readonly}.each do |par|
+                drive_args << par if d[par] 
+              end
               cmdline << '-drive' << ' ' << drive_args.join(',') << ' '
             end
           end
@@ -202,6 +206,14 @@ class OnBoard
 
         def quit
           @monitor.sendrecv 'quit'
+        end
+
+        def eject(drive)
+          @monitor.sendrecv "eject #{drive}", :log => :verbose 
+        end
+
+        def drive_change(drive, file)
+          @monitor.sendrecv %Q{change #{drive} "#{file}"}, :log => :verbose
         end
 
         def savevm(name, *opts)

@@ -15,7 +15,7 @@ class OnBoard
         end
 
         def sendrecv(msg='', opts={}) # UNIXSocket only currently supported
-          
+         
           out = ''
           opts = {:timeout => 1}.merge(opts)  
 
@@ -51,6 +51,11 @@ class OnBoard
           rescue Timeout::Error, Errno::ECONNRESET, Errno::ECONNREFUSED
             LOGGER.handled_error $! 
             out << "[Monitor Error: #{$!}]" 
+          end
+          if opts[:log] == :verbose  
+            LOGGER.debug "qemu: Monitor socket at #{unix_path}"
+            LOGGER.debug "qemu: message to Monitor: #{msg}"
+            LOGGER.debug "qemu: Monitor result: #{out}" 
           end
           return out
         end
