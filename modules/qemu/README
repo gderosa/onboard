@@ -1,6 +1,9 @@
-== Sysyetm permissions
+== System permissions
 
-You should grant rw access to /dev/kvm to the OnBoard user!
+You should grant rw access on /dev/kvm to the OnBoard user!
+
+OnBoard user needs read/WRITE access even on DVD/CDROM ISO images,
+if you want to change them at runtime: maybe a bug in QEMU Monitor...
 
 == OnBoard module dependencies:
 
@@ -9,4 +12,5 @@ jqueyFileTree
 == Gem dependencies:
 
 gem install uuid rmagick
+
 
