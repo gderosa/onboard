@@ -43,7 +43,6 @@ class OnBoard
           all = get_all
           if h[:http_params]
             params = h[:http_params]
-            # pp params # DEBUG 
             %w{
 start start_paused pause resume powerdown savevm_quit quit delete
             }.each do |cmd|
@@ -58,7 +57,9 @@ start start_paused pause resume powerdown savevm_quit quit delete
               drives.each_pair do |drive_name, drive|
                 if    drive['action'] == 'eject'
                   vm.eject drive_name
-                elsif drive['action'] == 'change'
+                elsif drive['action'] == 'change'         and 
+                    not drive['file'] =~ /^\s*\[.*\]\s*$/
+                        # special messages like '[choose an image]' 
                   drive_file = QEMU::Img.absolute_path drive['file']
                   vm.drive_change drive_name, drive_file
                 end
