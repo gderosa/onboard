@@ -9,7 +9,7 @@
     padding-left:   1ex;
     padding-right:  1ex;
   }
-  table#vmlist tbody tr td div.vmdetails {
+  .vmdetails {
     font-size: 95%;
   }
   table#vmlist tbody tr td.button {
@@ -55,6 +55,9 @@
       <th colspan="4">Actions</th>
       <th>
         VM Details 
+      </th>
+      <th>
+        Drives
       </th>
       <th>Screenshot</th>
       <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port 5900 + n</div></th>
@@ -143,6 +146,7 @@
           </td>
 
           <!-- <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td> -->
+
           <td class="vminfo">
             <a title="Machine UUID = <%= vm.config.uuid %>" href="">
               <%= 
@@ -154,6 +158,15 @@
             <div class="vmdetails">
               RAM: <%= vm.config.opts['-m'] %> MB 
             </div>
+          </td>
+          <td class="vmdetails">
+            <ul>
+              <% vm.drives.each_pair do |name, h| %>
+                <% if h['config'] %>
+                  <li><%= name %></li>
+                <% end %>
+              <% end if vm.drives.respond_to? :each_pair %>
+            </ul>
           </td>
           <td class="vmscreenshot">
             <% if vm.running? %>
