@@ -13,4 +13,8 @@ jqueyFileTree
 
 gem install uuid rmagick
 
+== VNC clients
+
+To avoid mouse pointer mismatches, a client with capture/release is 
+strongly suggested, such as Vinagre on Unix or [FIXME] on Windows.
 
