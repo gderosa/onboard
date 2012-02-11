@@ -173,10 +173,10 @@ class OnBoard
           end
           # Now, determine correspondance with configured (non runtime)
           # drives
-          @config['-drive'].each do |configured_drive|
-            d = QEMU::Config::Drive.new configured_drive
+          @config['-drive'].each do |drive_config|
+            d = QEMU::Config::Drive.new drive_config
             runtime_name = d.to_runtime_name # "ide-cd0", etc., as in monitor
-            drives_h[runtime_name]['config'] = configured_drive
+            drives_h[runtime_name]['config'] = d
           end
           drives_h
         end

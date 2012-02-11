@@ -23,6 +23,14 @@ class OnBoard
             name << @config['unit'].to_s
           end
 
+          def [](k) 
+            @config[k]
+          end
+
+          def to_json(*a)
+            @config.to_json(*a)
+          end
+
         end
 
       end
