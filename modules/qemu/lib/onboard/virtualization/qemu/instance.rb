@@ -176,6 +176,7 @@ class OnBoard
           @config['-drive'].each do |drive_config|
             d = QEMU::Config::Drive.new drive_config
             runtime_name = d.to_runtime_name # "ide-cd0", etc., as in monitor
+            drives_h[runtime_name] ||= {}
             drives_h[runtime_name]['config'] = d
           end
           drives_h
