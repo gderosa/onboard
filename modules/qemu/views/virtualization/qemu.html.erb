@@ -5,6 +5,12 @@
 %>
 
 <style type="text/css">
+  table#vmlist thead tr th div.optinfo {
+    text-align: center;
+    line-height: 1.2em;
+    margin-top: 0.3em;
+    margin-bottom: 0.1em;
+  }
   table#vmlist tbody tr td.vminfo {
     padding-left:   1ex;
     padding-right:  1ex;
@@ -71,9 +77,12 @@
       </th>
       <th>
         Drives
+        <div class="optinfo">
+          Change / Eject removable media at runtime
+        </div>
       </th>
       <th>Screenshot</th>
-      <th>VNC Display<div class="optinfo" style="text-align:center;">Uses TCP port 5900 + n</div></th>
+      <th>VNC Display<div class="optinfo">Uses TCP port 5900 + n</div></th>
     </tr>
   </thead>
   <tbody>
