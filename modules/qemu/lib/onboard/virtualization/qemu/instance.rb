@@ -151,31 +151,32 @@ class OnBoard
         end
 
         def drives
-          return nil unless running?
           drives_h = {}
-          @cache['block'] ||= @monitor.sendrecv 'info block'
-          @cache['block'].each_line do |line|
-            name, info = line.split(/:\s+/)
-            drives_h[name] = {}
-            if info =~ /\[not inserted\]/
-              info.sub! /\[not inserted\]/, ''
-              drives_h[name]['file'] = nil
-            end
-            info.split_unescaping_spaces.each do |pair|
-              k, val = pair.split('=')
-              if %w{removable ro encrypted locked tray-open}.include? k
-                drives_h[name][k] = case val
-                                    when '0'
-                                      false
-                                    when '1'
-                                      true
-                                    else
-                                      raise ArgumentError, 
-"Asking 'info block' to monitor, either #{k}=0 or #{k}=1 was expected; "
-"got #{k}=#{val} instead"
-                                    end
-              else
-                drives_h[name][k] = val 
+          if running?
+            @cache['block'] ||= @monitor.sendrecv 'info block'
+            @cache['block'].each_line do |line|
+              name, info = line.split(/:\s+/)
+              drives_h[name] = {}
+              if info =~ /\[not inserted\]/
+                info.sub! /\[not inserted\]/, ''
+                drives_h[name]['file'] = nil
+              end
+              info.split_unescaping_spaces.each do |pair|
+                k, val = pair.split('=')
+                if %w{removable ro encrypted locked tray-open}.include? k
+                  drives_h[name][k] = case val
+                                      when '0'
+                                        false
+                                      when '1'
+                                        true
+                                      else
+                                        raise ArgumentError, 
+  "Asking 'info block' to monitor, either #{k}=0 or #{k}=1 was expected; "
+  "got #{k}=#{val} instead"
+                                      end
+                else
+                  drives_h[name][k] = val 
+                end
               end
             end
           end
