@@ -56,12 +56,14 @@ start start_paused pause resume powerdown savevm_quit quit delete
               vm = all.find{|x| x.uuid == vm_uuid} 
               drives.each_pair do |drive_name, drive|
                 if    drive['action'] == 'eject'
-                  vm.eject drive_name
+                  vm.drive_eject  drive_name
+                  vm.drive_save   drive_name, nil
                 elsif drive['action'] == 'change'         and 
                     not drive['file'] =~ /^\s*\[.*\]\s*$/
                         # special messages like '[choose an image]' 
                   drive_file = QEMU::Img.absolute_path drive['file']
                   vm.drive_change drive_name, drive_file
+                  vm.drive_save   drive_name, drive_file
                 end
               end
             end if params['drive'].respond_to? :each_pair 

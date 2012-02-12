@@ -213,12 +213,24 @@ class OnBoard
           @monitor.sendrecv 'quit'
         end
 
-        def eject(drive)
+        def drive_eject(drive)
           @monitor.sendrecv "eject #{drive}", :log => :verbose 
         end
+        alias eject drive_eject
 
         def drive_change(drive, file)
           @monitor.sendrecv %Q{change #{drive} "#{file}"}, :log => :verbose
+        end
+
+        def drive_save(drive, file)
+          config_h = drives[drive]['config'].to_h
+          idx = @config['-drive'].index( config_h )  
+          if idx
+            @config['-drive'][idx]['file'] = file
+            @config.save
+          else
+            raise OnBoard::Warning, "#{__FILE__}:#{__LINE__}: No imedia/disk image has been saved for #{config_h.inspect}" 
+          end
         end
 
         def savevm(name, *opts)

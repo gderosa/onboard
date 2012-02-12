@@ -5,9 +5,13 @@ class OnBoard
 
         class Drive 
 
+          attr_reader :config
+
           def initialize(config)
             @config = config
           end
+
+          alias to_h config
 
           # Corresponding name in 'info block' output from QEMU Monitor
           def to_runtime_name
