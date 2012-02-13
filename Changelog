@@ -1,3 +1,9 @@
+2012.01.02
+
+* fix bridged interfaces
+	* "ip addr" shell command now inserts "master brname" to its output
+	* do not hide on single-interface page
+
 2012.01.01
 
 * jqueryFileTree integration (to be used by other modules)
