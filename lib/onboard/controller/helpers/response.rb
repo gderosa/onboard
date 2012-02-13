@@ -24,6 +24,19 @@ class OnBoard
         end
       end
 
+      def forbidden
+        status 403
+        format :path => '403' 
+      end
+      
+      # http://www.sinatrarb.com/intro#Triggering%20Another%20Route
+      # This would have saved lots of duplicated code!
+      def same_as_get
+        status, headers, body = call env.merge("REQUEST_METHOD" => 'GET')
+        [status, headers, body]
+      end
+      alias same_as_GET same_as_get
+
     end
   end
 end

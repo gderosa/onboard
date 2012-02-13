@@ -12,7 +12,7 @@ class OnBoard
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
         h[:formats] ||= %w{html json yaml}
-        h[:formats] |= %w{rb} if options.environment == :development
+        h[:formats] |= %w{rb} if settings.environment == :development
 
         # try to guess if not provided
         h[:format]                                ||= 
@@ -46,7 +46,10 @@ class OnBoard
             # p erubis_template if abs_path =~ /_form_style/ # DEBUG
           end
 
-          return erubis(
+          # "Sinatra::Templates#erubis is deprecated and will be removed, 
+	  # use #erb instead. If you have Erubis installed, it will be used 
+	  # automatically"
+	  return erb(
             erubis_template,
             :layout   => layout,
             :locals   => {
@@ -65,11 +68,7 @@ class OnBoard
           if h[:format] == 'json'
             content_type  'application/json'
           elsif h[:format] == 'yaml' # "explicit is better than implicit" :-)
-            if $ya2yaml_available
-              content_type 'application/x-yaml', :charset => 'utf-8'
-            else
-              content_type 'application/x-yaml' # base64(ASCII) used by std lib
-            end
+            content_type 'application/x-yaml', :charset => 'utf-8'
           end
           # The following is common to YAML and JSON.
           #
@@ -126,7 +125,7 @@ class OnBoard
         if h[:module] 
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
         end
-        return erubis(
+        return erb( # See above for #erb Vs #erubis
           h[:path].to_sym,
           :layout   => false,
           :locals   => h[:locals] 
