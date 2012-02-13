@@ -8,10 +8,11 @@ class OnBoard
 
     get '/virtualization/qemu.:format' do
       format(
-        :module => 'qemu',
-        :path => '/virtualization/qemu',
-        :format => params[:format],
-        :objects  => OnBoard::Virtualization::QEMU.get_all
+        :module   => 'qemu',
+        :path     => '/virtualization/qemu',
+        :format   => params[:format],
+        :objects  => OnBoard::Virtualization::QEMU.get_all,
+        :title    => 'QEMU Virtualization'
       )
     end
 
@@ -25,11 +26,12 @@ class OnBoard
         OnBoard::Virtualization::QEMU::Config.new(:http_params => params).save()
       end
       format(
-        :module => 'qemu',
-        :path => '/virtualization/qemu',
-        :format => params[:format],
+        :module   => 'qemu',
+        :path     => '/virtualization/qemu',
+        :format   => params[:format],
         :objects  => OnBoard::Virtualization::QEMU.get_all,
-        :msg => msg
+        :msg      => msg,
+        :title    => 'QEMU Virtualization'
       )
     end
 
@@ -39,11 +41,12 @@ class OnBoard
         OnBoard::Virtualization::QEMU.cleanup
       end
       format(
-        :module => 'qemu',
-        :path => '/virtualization/qemu',
-        :format => params[:format],
+        :module   => 'qemu',
+        :path     => '/virtualization/qemu',
+        :format   => params[:format],
         :objects  => OnBoard::Virtualization::QEMU.get_all,
-        :msg => msg
+        :msg      => msg,
+        :title    => 'QEMU Virtualization'
       )
     end
 
