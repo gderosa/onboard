@@ -227,9 +227,13 @@
           </td>
           <td class="vminfo" style="text-align:right">
             <% vnc_uri = "vnc://#{request.host}#{vm.config.opts['-vnc']}"%>
-            <a href="<%= vnc_uri %>" title="<%= vnc_uri %>">
-              <%= vm.config.opts['-vnc'] %>
-            </a>
+            <% if vm.running? %>
+              <a href="<%= vnc_uri %>" title="<%= vnc_uri %>">
+            <% end %>
+                <%= vm.config.opts['-vnc'] %>
+            <% if vm.running? %>
+              </a>
+            <% end %>
           </td>
         </tr>
       <% end %>
