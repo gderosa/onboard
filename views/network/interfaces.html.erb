@@ -7,7 +7,7 @@
 <% if objects.class == Array %>
   <h2><%= title %></h2>
   <%= 
-    erubis(
+    erb(
       :"network/_interfaces_table.html", 
       {
         :layout => false, 
