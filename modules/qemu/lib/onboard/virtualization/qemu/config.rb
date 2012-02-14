@@ -94,6 +94,31 @@ class OnBoard
               'bus'       => 1,         # Secondary
               'unit'      => 0,         # Master
             }
+            @cmd['opts']['-net'] ||= []
+            valid_netifs = h[:http_params]['net'].reject do |netif_h|
+              netif_h['type'] =~ /^\s*(none)?\s*$/
+            end
+            if valid_netifs.length == 0
+              @cmd['opts']['-net'] << {'type' => 'none'}
+            else
+              valid_netifs.each do |netif_h|
+                netif_h.each_pair do |k, v|
+                  netif_h[k] = nil if (v =~ /^\s*(\[auto\])?\s*$/) 
+                end
+                @cmd['opts']['-net'] << {
+                  'type'    => 'nic',
+                  'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
+                  'model'   => netif_h['model'],
+                  'mac'     => netif_h['mac'],
+                }
+                @cmd['opts']['-net'] << {
+                  'type'    => netif_h['type'],
+                  'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
+                  'ifname'  => netif_h['ifname'], 
+                  'bridge'  => netif_h['bridge'],
+                }
+              end 
+            end
           else
             @uuid = h[:config]['uuid']
             @cmd  = h[:config]['cmd']
