@@ -1,17 +1,28 @@
 <%
+  require 'onboard/network/bridge'
+
   require 'onboard/virtualization/qemu'
 
   virtual_machines = objects
+  all_bridges = OnBoard::Network::Bridge.get_all
 %>
 
 <style type="text/css">
-  table#vmlist thead tr th div.optinfo {
+  table thead tr th {
+    padding: 0.3em 0.4em;
+  }
+  table thead tr th div.optinfo {
     text-align: center;
     line-height: 1.2em;
     margin-top: 0.3em;
     margin-bottom: 0.1em;
   }
-  table#vmlist tbody tr td.vminfo {
+  table thead tr th div.optinfo p {
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+  }
+  table tbody tr td.vminfo {
     padding-left:   1ex;
     padding-right:  1ex;
   }
@@ -332,23 +343,58 @@
       <tr>
         <th>Type</th>
         <th>
-          Name
+          Name (visible in the host)
           <div class="optinfo">
-            (where applicable)
+            <p>For TAP interfaces only.</p>
+            <p>Choose something descriptive, if possible.</p>
           </div>
         </th>
         <th>
-          <a href="/network/bridges.html">Bridge</a> to
+          Bridge to
           <div class="optinfo">
-            (where applicable)
+            <p>For TAP interfaces only.</p>
+            <p>You can manage bridges <a href="/network/bridges.html">here</a>.</p>
           </div>
         </th>
         <th>Hardware</th>
+        <th>MAC Address</th>
       </tr>
     </thead>
     <tbody>
+      <% 0.upto 5 do |n| %>
+        <!-- TODO? make VLAN no. choosable by the user/admin -->
+        <input type="hidden" name="net[][vlan]" value="<%= n %>"/>
+        <tr>
+          <td>
+            <select name="net[][type]">
+              <option value="none">(none)</option>
+              <option value="user" title="For simpler setups, not recommended for servers">User/Default</option>
+              <option value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" maxlength="15" name="net[][ifname]" value="[auto]"/>
+          </td>
+          <td>
+            <select name="net[][bridge]"> 
+              <% all_bridges.each do |br| %>
+                <option value="<%= br.name %>"><%= br.name %></option>
+              <% end %>
+            </select>
+          </td>
+          <td>
+            <select name="net[][model]">
+              <option value="">(default)</option>
+              <% OnBoard::V12n::QEMU::Network::NIC.models.sort.each do |model| %>
+                <option value="<%= model %>"><%= model %></option> 
+              <% end %>
+            </select>
+          </td>
+          <td><input type="text" name="net[][mac]" value="[auto]"/></td>
+        </tr>
+      <% end %>
     </tbody>
   </table>
 
-  <button type="submit">Create!</button>
+  <button style="margin-top:2ex;" type="submit">Create!</button>
 </form>
