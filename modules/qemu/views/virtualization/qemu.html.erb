@@ -341,6 +341,7 @@
   <table>
     <thead>
       <tr>
+        <th>VLAN</th>
         <th>Type</th>
         <th>
           Name (visible in the host)
@@ -361,14 +362,20 @@
       </tr>
     </thead>
     <tbody>
-      <% 0.upto 5 do |n| %>
-        <!-- TODO? make VLAN no. choosable by the user/admin -->
-        <input type="hidden" name="net[][vlan]" value="<%= n %>"/>
+      <% nn = 5 %>
+      <% 0.upto nn do |n| %>
         <tr>
           <td>
+            <select name="net[][vlan]">
+              <% 0.upto nn do |vlan| %>
+                <option <%= 'selected' if vlan == n %> value="<%= vlan %>"><%= vlan %></option> 
+              <% end %>
+            </select>
+          </td>
+          <td>
             <select name="net[][type]">
-              <option value="none">(none)</option>
-              <option value="user" title="For simpler setups, not recommended for servers">User/Default</option>
+              <option <%= 'selected' if n >   0   %> value="none">(none)</option>
+              <option <%= 'selected' if n ==  0   %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
               <option value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
             </select>
           </td>
@@ -377,6 +384,7 @@
           </td>
           <td>
             <select name="net[][bridge]"> 
+              <option value="">(none)</option>
               <% all_bridges.each do |br| %>
                 <option value="<%= br.name %>"><%= br.name %></option>
               <% end %>
