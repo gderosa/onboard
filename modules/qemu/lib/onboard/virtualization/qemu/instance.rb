@@ -132,6 +132,12 @@ class OnBoard
                 :sudo, 
                 :raise_Conflict 
             )
+            # TODO: use OnBoard Network library
+            System::Command.run( 
+                "ip link set up dev #{tap['ifname']}",
+                :sudo, 
+                :raise_Conflict 
+            )
             System::Command.run(
                 "brctl addif #{tap['bridge']} #{tap['ifname']}", 
                 :sudo 
