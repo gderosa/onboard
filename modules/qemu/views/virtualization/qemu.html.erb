@@ -71,6 +71,36 @@
       document.getElementById('qemu-img_create_fmt' ).disabled = true;
     }
   }
+  function qemuNetIfControls() {
+    var i = 0;
+    var typeSelect;
+    while(typeSelect = document.getElementById('net[' + i + '][type]')) {
+      switch(typeSelect.value) {
+        case 'none':
+          document.getElementById('net[' + i + '][vlan]'  ).disabled = true;
+          document.getElementById('net[' + i + '][ifname]').disabled = true;
+          document.getElementById('net[' + i + '][bridge]').disabled = true;
+          document.getElementById('net[' + i + '][model]' ).disabled = true;
+          document.getElementById('net[' + i + '][mac]'   ).disabled = true;
+          break;
+        case 'user':
+          document.getElementById('net[' + i + '][vlan]'  ).disabled = false;
+          document.getElementById('net[' + i + '][ifname]').disabled = true;
+          document.getElementById('net[' + i + '][bridge]').disabled = true;
+          document.getElementById('net[' + i + '][model]' ).disabled = false;
+          document.getElementById('net[' + i + '][mac]'   ).disabled = false;
+          break;
+        case 'tap':
+          document.getElementById('net[' + i + '][vlan]'  ).disabled = false;
+          document.getElementById('net[' + i + '][ifname]').disabled = false;
+          document.getElementById('net[' + i + '][bridge]').disabled = false;
+          document.getElementById('net[' + i + '][model]' ).disabled = false;
+          document.getElementById('net[' + i + '][mac]'   ).disabled = false;
+          break;
+      }
+      i++;
+    }
+  }
 </script>
 
 <%= message_partial(msg) %>
@@ -366,24 +396,24 @@
       <% 0.upto nn do |n| %>
         <tr>
           <td>
-            <select name="net[][vlan]">
+            <select id="net[<%= n %>][vlan]" name="net[][vlan]">
               <% 0.upto nn do |vlan| %>
                 <option <%= 'selected' if vlan == n %> value="<%= vlan %>"><%= vlan %></option> 
               <% end %>
             </select>
           </td>
           <td>
-            <select name="net[][type]">
+            <select onclick="javascript:qemuNetIfControls();" id="net[<%= n %>][type]" name="net[][type]">
               <option <%= 'selected' if n >   0   %> value="none">(none)</option>
               <option <%= 'selected' if n ==  0   %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
               <option value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
             </select>
           </td>
           <td>
-            <input type="text" maxlength="15" name="net[][ifname]" value="[auto]"/>
+            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="[auto]"/>
           </td>
           <td>
-            <select name="net[][bridge]"> 
+            <select id="net[<%= n %>][bridge]" name="net[][bridge]"> 
               <option value="">(none)</option>
               <% all_bridges.each do |br| %>
                 <option value="<%= br.name %>"><%= br.name %></option>
@@ -391,14 +421,14 @@
             </select>
           </td>
           <td>
-            <select name="net[][model]">
+            <select id="net[<%= n %>][model]" name="net[][model]">
               <option value="">(default)</option>
               <% OnBoard::V12n::QEMU::Network::NIC.models.sort.each do |model| %>
                 <option value="<%= model %>"><%= model %></option> 
               <% end %>
             </select>
           </td>
-          <td><input type="text" name="net[][mac]" value="[auto]"/></td>
+          <td><input type="text" id="net[<%= n %>][mac]" name="net[][mac]" value="[auto]"/></td>
         </tr>
       <% end %>
     </tbody>
@@ -406,3 +436,7 @@
 
   <button style="margin-top:2ex;" type="submit">Create!</button>
 </form>
+
+<script type="text/javascript">
+  qemuNetIfControls();
+</script>
