@@ -97,6 +97,19 @@ class OnBoard
             end
           end
 
+          # Network interfaces
+          opts['-net'].each do |net|
+            net_args = [ net['type'] ] 
+            net.each_pair do |k, v|
+              net_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
+            end
+            if net['type'] == 'tap'
+              net_args << 'script=no' 
+              net_args << 'downscript=no'
+            end
+            cmdline << '-net' << ' ' << net_args.join(',') << ' '
+          end
+
           # Useful defaults: TODO? make them configurable?
           cmdline << '-boot' << ' ' << 'menu=on,order=dc' << ' '
               # boot order: CDROM, disk (Network would be 'n') 
@@ -111,12 +124,29 @@ class OnBoard
           return cmdline
         end
 
+        def setup_networking
+          uid = Process.uid
+          @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap| 
+            System::Command.run(
+                "tunctl -u #{uid} -t #{tap['ifname']}",
+                :sudo, 
+                :raise_Conflict 
+            )
+            System::Command.run(
+                "brctl addif #{tap['bridge']} #{tap['ifname']}", 
+                :sudo 
+            )  
+          end
+        end
+
         def start
+          setup_networking 
           cmdline = format_cmdline
           return System::Command.run cmdline, :raise_Conflict
         end
 
         def start_paused
+          setup_networking
           cmdline = format_cmdline
           cmdline << ' ' << '-S'
           return System::Command.run cmdline, :raise_Conflict

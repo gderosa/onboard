@@ -77,25 +77,25 @@
     while(typeSelect = document.getElementById('net[' + i + '][type]')) {
       switch(typeSelect.value) {
         case 'none':
-          document.getElementById('net[' + i + '][vlan]'  ).disabled = true;
-          document.getElementById('net[' + i + '][ifname]').disabled = true;
-          document.getElementById('net[' + i + '][bridge]').disabled = true;
-          document.getElementById('net[' + i + '][model]' ).disabled = true;
-          document.getElementById('net[' + i + '][mac]'   ).disabled = true;
+          document.getElementById('net[' + i + '][vlan]'    ).disabled = true;
+          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
+          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
+          document.getElementById('net[' + i + '][model]'   ).disabled = true;
+          document.getElementById('net[' + i + '][macaddr]' ).disabled = true;
           break;
         case 'user':
-          document.getElementById('net[' + i + '][vlan]'  ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]').disabled = true;
-          document.getElementById('net[' + i + '][bridge]').disabled = true;
-          document.getElementById('net[' + i + '][model]' ).disabled = false;
-          document.getElementById('net[' + i + '][mac]'   ).disabled = false;
+          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
+          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
+          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
+          document.getElementById('net[' + i + '][model]'   ).disabled = false;
+          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
           break;
         case 'tap':
-          document.getElementById('net[' + i + '][vlan]'  ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]').disabled = false;
-          document.getElementById('net[' + i + '][bridge]').disabled = false;
-          document.getElementById('net[' + i + '][model]' ).disabled = false;
-          document.getElementById('net[' + i + '][mac]'   ).disabled = false;
+          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
+          document.getElementById('net[' + i + '][ifname]'  ).disabled = false;
+          document.getElementById('net[' + i + '][bridge]'  ).disabled = false;
+          document.getElementById('net[' + i + '][model]'   ).disabled = false;
+          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
           break;
       }
       i++;
@@ -428,7 +428,7 @@
               <% end %>
             </select>
           </td>
-          <td><input type="text" id="net[<%= n %>][mac]" name="net[][mac]" value="[auto]"/></td>
+          <td><input type="text" id="net[<%= n %>][macaddr]" name="net[][macaddr]" value="[auto]"/></td>
         </tr>
       <% end %>
     </tbody>

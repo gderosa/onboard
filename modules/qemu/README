@@ -1,17 +1,28 @@
-== System permissions
+== System requirements
+
+=== QEMU
+
+QEMU with KVM support (and kernel and hardware accordingly).
 
 You should grant rw access on /dev/kvm to the OnBoard user!
 
 OnBoard user needs read/WRITE access even on DVD/CDROM ISO images,
 if you want to change them at runtime: maybe a bug in QEMU Monitor...
 
+=== Other programs
+
+'tunctl': on Debian, it's provided by uml-utilities package 
+
+
 == OnBoard module dependencies:
 
 jqueyFileTree
 
+
 == Gem dependencies:
 
 gem install uuid rmagick
+
 
 == VNC clients
 

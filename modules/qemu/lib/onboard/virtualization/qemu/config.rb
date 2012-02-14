@@ -109,7 +109,7 @@ class OnBoard
                   'type'    => 'nic',
                   'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
                   'model'   => netif_h['model'],
-                  'mac'     => netif_h['mac'],
+                  'macaddr' => netif_h['macaddr'],
                 }
                 @cmd['opts']['-net'] << {
                   'type'    => netif_h['type'],
