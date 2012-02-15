@@ -45,11 +45,24 @@ class OnBoard
           if h[:http_params]
             params = h[:http_params]
             %w{
-start start_paused pause resume powerdown savevm_quit quit delete
+start start_paused pause resume powerdown delete
             }.each do |cmd|
               if params[cmd] and params[cmd]['uuid']
-                vm = all.find{|x| x.uuid == params[cmd]['uuid']} 
+                uuid = params[cmd]['uuid']
+                vm = all.find{|x| x.uuid == uuid}  
+                vm.loadvm_on_next_boot false unless 
+                    params['saverestore'] and params['saverestore'][uuid] == 'on'
                 vm.send cmd
+              end
+            end
+            if params['quit'] and params['quit']['uuid']
+              uuid = params['quit']['uuid']
+              vm = all.find{|x| x.uuid == uuid}
+              if params['saverestore'] and params['saverestore'][uuid] == 'on'
+                vm.savevm_quit
+              else
+                vm.loadvm_on_next_boot false
+                vm.quit
               end
             end
             # eject / change removable media: cdrom etc.

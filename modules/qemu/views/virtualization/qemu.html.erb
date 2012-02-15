@@ -34,6 +34,14 @@
     padding-right:  3px;
     border-left: none;
     border-right: none;
+    /* height: 20px; */
+    border-bottom: none; 
+  }
+  table#vmlist tbody tr td.saverestore {
+    border-top: none;
+    vertical-align: top;
+    padding-top: 0.4em; 
+    padding-bottom: 0.4em;
   }
   table#vmlist tbody tr td.vmscreenshot {
     padding-bottom: 0;  
@@ -151,12 +159,14 @@
       <input type="hidden" name="_method" value="put"/>
       <% virtual_machines.each do |vm| %>
         <tr>
-          <td class="vminfo<%= ' error' if vm.status =~ /error/i %>">
+          <td rowspan="2" class="vminfo<%= ' error' if vm.status =~ /error/i %>">
             <%= vm.status %>
           </td>
 
           <!-- action buttons -->
-          <td class="button">
+          <% show_saverestore = ( vm.running? or vm.config['-loadvm'] ) %> 
+          <% action_button_rowspan = 1 %>
+          <td class="button" rowspan="<%= action_button_rowspan %>">
             <%=
               if vm.running?
                 action_button(
@@ -170,13 +180,13 @@
                 action_button(
                   :start,                 
                   :name     => 'start[uuid]',
-                  :title    => 'Start (resuming a saved state, if available)',
+                  :title    => 'Start',
                   :value    => vm.uuid
                 ) 
               end
             %>
           </td>
-          <td class="button">
+          <td class="button" rowspan="<%= action_button_rowspan %>">
             <%= 
               if vm.running?
                 if vm.paused?
@@ -205,18 +215,19 @@
               end 
             %>
           </td>
-          <td class="button">
+          <td class="button" rowspan="<%= action_button_rowspan %>">
             <%=
               action_button(
                 :stop,
-                :name     => 'savevm_quit[uuid]',
-                :title    => 'Quit Virtualization and save current state',
+                :name     => 'quit[uuid]',
+                :title    => 
+                    'Quit Virtualization (save state, or you may lose data!)',
                 :value    => vm.uuid,
                 :disabled => !vm.running?
               ) 
             %>
           </td>
-          <td class="button">
+          <td class="button" rowspan="<%= action_button_rowspan %>">
             <%=
               action_button(
                 :delete,
@@ -230,7 +241,7 @@
 
           <!-- <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td> -->
 
-          <td class="vminfo">
+          <td rowspan="2" class="vminfo">
             <a title="Machine UUID = <%= vm.config.uuid %>" href="">
               <%= 
                 (vm.config.opts['-name'] =~ /\S/) ? 
@@ -242,7 +253,7 @@
               RAM: <%= vm.config.opts['-m'] %>&nbsp;MB 
             </div>
           </td>
-          <td class="vmdetails">
+          <td rowspan="2" class="vmdetails">
             <ul class="drives">
               <% vm.drives.each_pair do |name, h| %>
                 <% if h['config'] %>
@@ -281,8 +292,8 @@
           </td>
 
           <!-- Network Interfaces -->
-          <td class="vmnetwork">            
-            <table>
+          <td rowspan="2" class="vmnetwork">            
+            <table> <!-- nested table, yeah :-P -->
               <% vm.config['-net'].each do |netif| %>
                 <% next if netif['type'] == 'nic' %>
                 <tr>
@@ -294,13 +305,13 @@
             </table>
           </td>
 
-          <td class="vmscreenshot">
+          <td rowspan="2" class="vmscreenshot">
             <% if vm.running? %>
               <% screenshot_path = "qemu/vm/#{vm.uuid_short}/screen.png" %>
               <a class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:200px"/></a>
             <% end %>
           </td>
-          <td class="vminfo" style="text-align:right">
+          <td rowspan="2" class="vminfo" style="text-align:right">
             <% vnc_uri = "vnc://#{request.host}#{vm.config.opts['-vnc']}"%>
             <% if vm.running? %>
               <a href="<%= vnc_uri %>" title="<%= vnc_uri %>">
@@ -311,6 +322,21 @@
             <% end %>
           </td>
         </tr>
+
+        <tr>
+          <!-- <td></td> --> <!-- "Status":             rowspan="2" -->
+
+          <td colspan="4" class="saverestore<%= ' lowlight' unless show_saverestore %>"> <!-- under "Actions" -->
+            <input style="vertical-align:middle;" title="Save VM State when quitting; restore at boot if available" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> name="saverestore[<%= vm.uuid %>]"/>
+            <span style="vertical-align:middle;"><%= vm.running? ? 'Save' : 'Restore' %> state</span>
+          </td> 
+          <!-- <td></td> --> <!-- "VM Details":         rowspan="2" -->
+          <!-- <td></td> --> <!-- "Drives":             rowspan="2" -->
+          <!-- <td></td> --> <!-- "Network Interfaces": rowspan="2" -->
+          <!-- <td></td> --> <!-- "Screenshot":         rowspan="2" -->
+          <!-- <td></td> --> <!-- "VNC Display":        rowspan="2" -->
+        </tr>
+
       <% end %>
     </form>
   </tbody>
