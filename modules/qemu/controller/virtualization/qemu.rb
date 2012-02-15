@@ -40,6 +40,7 @@ class OnBoard
         OnBoard::Virtualization::QEMU.manage(:http_params => params)
         OnBoard::Virtualization::QEMU.cleanup
       end
+      sleep 0.2 # diiirty, but avoid querying dead Monitors...
       format(
         :module   => 'qemu',
         :path     => '/virtualization/qemu',
