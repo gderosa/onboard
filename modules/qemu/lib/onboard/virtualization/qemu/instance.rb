@@ -111,8 +111,12 @@ class OnBoard
           end
 
           # Useful defaults: TODO? make them configurable?
+          #
+          # Boot order: CDROM, disk (Network would be 'n')
           cmdline << '-boot' << ' ' << 'menu=on,order=dc' << ' '
-              # boot order: CDROM, disk (Network would be 'n') 
+          # 
+          # Guest CPU will have host CPU features ('flags') 
+          cmdline << '-cpu' << ' ' << 'host' << ' '
 
           # cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
           # The above should fix some problems with VNC,
