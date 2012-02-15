@@ -36,7 +36,13 @@
     border-right: none;
   }
   table#vmlist tbody tr td.vmscreenshot {
-    padding-bottom: 0;
+    padding-bottom: 0;  
+  }
+  table#vmlist tbody tr td.vmnetwork table{
+    width: 100%;
+  }
+  table#vmlist tbody tr td.vmnetwork table tr td {
+    border: none;
   }
   ul.drives {
     list-style: none;
@@ -266,7 +272,7 @@
 
           <!-- Network Interfaces -->
           <td class="vmnetwork">            
-            <table style="width:100%;">
+            <table>
               <tr>
                 <td>-</td>
                 <td>-</td>
