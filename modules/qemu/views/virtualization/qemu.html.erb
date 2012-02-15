@@ -43,6 +43,13 @@
   }
   table#vmlist tbody tr td.vmnetwork table tr td {
     border: none;
+    white-space: nowrap; 
+  }
+  table#vmlist tbody tr td.vmnetwork table tr td.vlan {
+    width: 4em;
+  }
+  table#vmlist tbody tr td.vmnetwork table tr td.ifname {
+    width: 9em;
   }
   ul.drives {
     list-style: none;
@@ -273,21 +280,14 @@
           <!-- Network Interfaces -->
           <td class="vmnetwork">            
             <table>
-              <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
+              <% vm.config['-net'].each do |netif| %>
+                <% next if netif['type'] == 'nic' %>
+                <tr>
+                  <td class="vlan">VLAN#<%= netif['vlan'] %></td>
+                  <td class="ifname"><em><%= netif['type'] %></em><%= ": #{netif['ifname']}" if netif['ifname'] =~ /\S/ %></td>
+                  <td class="bridge"><%= %Q{<a href="/network/bridges.html">Bridged to</a>: #{netif['bridge']}} if netif['bridge'] =~ /\S/ %></td>
+                </tr>
+              <% end if vm.config['-net'].respond_to? :each %>
             </table>
           </td>
 
