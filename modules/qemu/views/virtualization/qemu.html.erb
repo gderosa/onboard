@@ -284,8 +284,8 @@
                 <% next if netif['type'] == 'nic' %>
                 <tr>
                   <td class="vlan">VLAN#<%= netif['vlan'] %></td>
-                  <td class="ifname"><em><%= netif['type'] %></em><%= ": #{netif['ifname']}" if netif['ifname'] =~ /\S/ %></td>
-                  <td class="bridge"><%= %Q{<a href="/network/bridges.html">Bridged to</a>: #{netif['bridge']}} if netif['bridge'] =~ /\S/ %></td>
+                  <td class="ifname"><em><%= netif['type'] %></em><%= %Q{: <a href="/network/interfaces.html">#{netif['ifname']}</a>} if netif['ifname'] =~ /\S/ %></td>
+                  <td class="bridge"><%= %Q{<em>Bridged to</em>: <a href="/network/bridges.html">#{netif['bridge']}</a>} if netif['bridge'] =~ /\S/ %></td>
                 </tr>
               <% end if vm.config['-net'].respond_to? :each %>
             </table>
