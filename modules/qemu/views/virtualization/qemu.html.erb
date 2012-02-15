@@ -328,7 +328,7 @@
 
           <td colspan="4" class="saverestore<%= ' lowlight' unless show_saverestore %>"> <!-- under "Actions" -->
             <input style="vertical-align:middle;" title="Save VM State when quitting; restore at boot if available" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> name="saverestore[<%= vm.uuid %>]"/>
-            <span style="vertical-align:middle;"><%= vm.running? ? 'Save' : 'Restore' %> state</span>
+            <span style="vertical-align:middle;"><%= vm.running? ? 'Save state on Quit' : 'Restore state' %></span>
           </td> 
           <!-- <td></td> --> <!-- "VM Details":         rowspan="2" -->
           <!-- <td></td> --> <!-- "Drives":             rowspan="2" -->
