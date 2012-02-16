@@ -1,8 +1,12 @@
+require 'fileutils'
+
 class OnBoard
   module Virtualization
     module QEMU
       class Img
-        ROOTDIR = '/home/onboard/files/QEMU'
+
+        ROOTDIR = ENV['HOME'] + 'files/QEMU'
+
         class << self
 
           def absolute_path(*a)
