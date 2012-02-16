@@ -5,7 +5,7 @@ class OnBoard
     module QEMU
       class Img
 
-        ROOTDIR = ENV['HOME'] + 'files/QEMU'
+        ROOTDIR = File.join ENV['HOME'], 'files/QEMU'
 
         class << self
 
