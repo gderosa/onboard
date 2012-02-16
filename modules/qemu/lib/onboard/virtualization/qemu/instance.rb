@@ -118,7 +118,7 @@ class OnBoard
           # Guest CPU will have host CPU features ('flags') 
           cmdline << '-cpu' << ' ' << 'host' << ' '
 
-          # cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
+          cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
           # The above should fix some problems with VNC,
           # but you have problems anyway with -loadvm ...
           #

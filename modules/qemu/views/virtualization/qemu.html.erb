@@ -263,31 +263,35 @@
             <ul class="drives">
               <% vm.drives.each_pair do |name, h| %>
                 <% if h['config'] %>
-                  <li class="drive <%= h['config']['media'] %>" title="<%= name %>">
-                    <%= drive_icon h['config']['media'], :title => name %>
-                    <%
-                      file      = vm.running? ? h['file'] : h['config']['file']
-                      inserted  = !h['tray-open'] && file
-                      disabled  = 
-                          (vm.running? && h['removable']) ? 
-                          ''                              : 
-                          'disabled' 
-                      onclick   = ''
-                      if vm.running? and h['removable'] and not inserted
-                        onclick   = 'javascript:popup_filechooser(this);'
-                      end
-                      showed_path = ''
-                      if h['removable']
-                        showed_path = 
-                            inserted                                          ?
-                            OnBoard::V12n::QEMU::Img.relative_path(file) :
-                            '[choose an image]'
-                      else
-                        showed_path = 
-                            OnBoard::V12n::QEMU::Img.relative_path(file)
-                      end
-                    %>
-                    <input <%= disabled %> onclick="<%= onclick %>" type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= showed_path %>" title="<%= name %>: <%= inserted ? showed_path : '[not inserted]' %>"/>
+                  <%
+                    file      = vm.running? ? h['file'] : h['config']['file']
+                    inserted  = !h['tray-open'] && file
+                    disabled  = 
+                        (vm.running? && h['removable']) ? 
+                        ''                              : 
+                        'disabled' 
+                    onclick   = ''
+                    if vm.running? and h['removable'] and not inserted
+                      onclick   = 'javascript:popup_filechooser(this);'
+                    end
+                    showed_path = ''
+                    if h['removable']
+                      showed_path = 
+                          inserted                                          ?
+                          OnBoard::V12n::QEMU::Img.relative_path(file) :
+                          '[choose an image]'
+                    else
+                      showed_path = 
+                          OnBoard::V12n::QEMU::Img.relative_path(file)
+                    end
+
+                    field_title = 
+                        "#{name}: #{inserted ? showed_path : '[not inserted]'}" 
+                  %>
+                  <li class="drive <%= h['config']['media'] %>"> 
+                    <%= drive_icon h['config']['media'], :title => field_title %>
+
+                    <input <%= disabled %> onclick="<%= onclick %>" type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= showed_path %>" title="<%= field_title %>"/>
                     <% if h['removable'] %>
                       <button title="Eject / Change media" name="drive[<%= vm.config.uuid %>][<%= name %>][action]" value="<%= inserted ? 'eject' : 'change' %>" type="submit"><%= drive_icon :eject %></button>
                     <% end %>
