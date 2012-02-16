@@ -1,10 +1,14 @@
 <%
+  require 'onboard/network/interface'
   require 'onboard/network/bridge'
 
   require 'onboard/virtualization/qemu'
 
-  virtual_machines = objects
-  all_bridges = OnBoard::Network::Bridge.get_all
+  virtual_machines    = objects
+
+  all_netifs          = OnBoard::Network::Interface.get_all
+  all_bridges         = all_netifs.select { |i| i.bridge? }  
+  all_running_ifnames = all_netifs.map    { |i| i.name    }        
 %>
 
 <style type="text/css">
@@ -58,6 +62,8 @@
   }
   table#vmlist tbody tr td.vmnetwork table tr td.ifname {
     width: 9em;
+  }
+  span.ifname{
   }
   ul.drives {
     list-style: none;
@@ -298,7 +304,17 @@
                 <% next if netif['type'] == 'nic' %>
                 <tr>
                   <td class="vlan">VLAN#<%= netif['vlan'] %></td>
-                  <td class="ifname"><em><%= netif['type'] %></em><%= %Q{: <a href="/network/interfaces.html">#{netif['ifname']}</a>} if netif['ifname'] =~ /\S/ %></td>
+                  <td class="ifname">
+                    <em><%= netif['type'] %></em><%= 
+                      if netif['ifname'] =~ /\S/
+                        if all_running_ifnames.include? netif['ifname']
+%Q{: <a href="/network/interfaces.html">#{netif['ifname']}</a>}
+                        else
+                          %Q{: #{netif['ifname']}}
+                        end
+                      end                    
+                    %>
+                  </td>
                   <td class="bridge"><%= %Q{<em>Bridged to</em>: <a href="/network/bridges.html">#{netif['bridge']}</a>} if netif['bridge'] =~ /\S/ %></td>
                 </tr>
               <% end if vm.config['-net'].respond_to? :each %>

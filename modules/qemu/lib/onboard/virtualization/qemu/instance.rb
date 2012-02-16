@@ -131,11 +131,6 @@ class OnBoard
         def setup_networking
           uid = Process.uid
           @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap| 
-            System::Command.run(
-                "tunctl -u #{uid} -t #{tap['ifname']}",
-                :sudo, 
-                :raise_Conflict 
-            )
             # TODO: use OnBoard Network library
             System::Command.run( 
                 "ip link set up dev #{tap['ifname']}",
@@ -145,21 +140,31 @@ class OnBoard
             System::Command.run(
                 "brctl addif #{tap['bridge']} #{tap['ifname']}", 
                 :sudo 
-            )  
+            ) if tap['bridge'] =~ /\S/ 
           end
         end
 
-        def start
-          setup_networking 
+        def fix_permissions
+          uid = Process.uid
+          gid = Process.gid
+          System::Command.run(
+            "chown #{uid}:#{gid} #{VARRUN}/qemu-#{uuid_short}.*",
+            :sudo
+          )
+        end
+
+        def start(*opts)
           cmdline = format_cmdline
-          return System::Command.run cmdline, :raise_Conflict
+          cmdline << ' -S' if opts.include? :paused
+          cmdline << " -runas #{ENV['USER']}"
+          msg = System::Command.run cmdline, :sudo, :raise_Conflict
+          fix_permissions
+          setup_networking
+          return msg
         end
 
         def start_paused
-          setup_networking
-          cmdline = format_cmdline
-          cmdline << ' ' << '-S'
-          return System::Command.run cmdline, :raise_Conflict
+          start :paused
         end
 
         def pid
