@@ -114,7 +114,7 @@ class OnBoard
                 @cmd['opts']['-net'] << {
                   'type'    => netif_h['type'],
                   'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
-                  'ifname'  => netif_h['ifname'], 
+                  'ifname'  => netif_h['ifname'] || generate_tapname(netif_h),
                   'bridge'  => netif_h['bridge'],
                 }
               end 
@@ -127,6 +127,21 @@ class OnBoard
 
         def generate_drive_serial
           return ('QM' + uuid_short + sprintf('%02x', drive_counter)).upcase
+        end
+
+        def generate_tapname(parms)
+          return nil unless parms['type'] == 'tap'
+          base = "qm#{uuid_short}"
+          count = 0
+          loop do
+            name = "#{base}.#{sprintf('%02x', count)}"
+            already_existing_names = @cmd['opts']['-net'].map{|x| x['ifname']}
+            if already_existing_names.include? name
+              count += 1
+            else
+              return name
+            end
+          end
         end
 
         def drive_counter
