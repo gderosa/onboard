@@ -397,7 +397,7 @@
         <th scope="row">VNC Display</th>
         <td>
           <select name="vnc">
-            <% 1.upto(31) do |n| %>
+            <% 1.upto(OnBoard::V12n::QEMU::VNC::Display::MAX) do |n| %>
               <% 
                 available = OnBoard::V12n::QEMU::VNC::Display.available
                 selected = ''

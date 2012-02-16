@@ -4,6 +4,8 @@ class OnBoard
       module VNC
         class Display
 
+          MAX = 31
+
           class << self
 
             def available
@@ -14,7 +16,7 @@ class OnBoard
                 rescue NoMethodError
                 end
               end
-              return (1..31).to_a - busy 
+              return (1..MAX).to_a - busy 
             end
 
           end
