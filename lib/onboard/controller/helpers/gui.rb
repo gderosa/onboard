@@ -39,22 +39,36 @@ class OnBoard
         end
       end
 
+      def action_icon_path(action)
+        case action
+        when :start
+          "#{IconDir}/#{IconSize}/actions/media-playback-start.png"
+        when :stop
+          "#{IconDir}/#{IconSize}/actions/media-playback-stop.png"
+        when :process_stop
+          "#{IconDir}/#{IconSize}/actions/process-stop.png"
+        when :shutdown
+          "#{IconDir}/#{IconSize}/actions/shutdown.png"
+        when :pause
+          "#{IconDir}/#{IconSize}/actions/media-playback-pause.png"
+        when :start_paused # used by qemu module...
+          "#{IconDir}/#{IconSize}/actions/media-skip-forward.png"
+        when :config
+          "#{IconDir}/#{IconSize}/actions/system-run.png"
+        when :reload, :restart
+          "#{IconDir}/#{IconSize}/actions/reload.png"
+        when :delete
+          "#{IconDir}/#{IconSize}/actions/delete.png"
+        when :eject
+          "#{IconDir}/#{IconSize}/actions/media-eject.png"
+        else
+          raise ArgumentError, "Invalid action: #{action.inspect}"
+        end
+      end
+
+
       def action_button(action, *attributes)
         h = attributes[0] || {} 
-        raise ArgumentError, "Invalid action: #{action.inspect}" unless 
-            [
-              :start, 
-              :stop, 
-              :process_stop,
-              :shutdown,
-              :config, 
-              :reload, 
-              :restart, 
-              :delete,
-              :pause,
-              :start_paused, 
-              :eject
-            ].include? action 
         type = h[:type] || case action
         when :config
           'button'
@@ -67,28 +81,7 @@ class OnBoard
         title_str =  h[:title] || name.capitalize
         alt = h[:alt] || title_str
         title = (!h[:disabled] or h[:title_always]) ? title_str : ''
-        image = case action
-                when :start
-                  "#{IconDir}/#{IconSize}/actions/media-playback-start.png"
-                when :stop
-                  "#{IconDir}/#{IconSize}/actions/media-playback-stop.png"
-                when :process_stop
-                  "#{IconDir}/#{IconSize}/actions/process-stop.png"
-                when :shutdown
-                  "#{IconDir}/#{IconSize}/actions/shutdown.png"
-                when :pause
-                  "#{IconDir}/#{IconSize}/actions/media-playback-pause.png"
-                when :start_paused # used by qemu module...
-                  "#{IconDir}/#{IconSize}/actions/media-skip-forward.png"
-                when :config
-                  "#{IconDir}/#{IconSize}/actions/system-run.png"
-                when :reload, :restart
-                  "#{IconDir}/#{IconSize}/actions/reload.png"
-                when :delete
-                  "#{IconDir}/#{IconSize}/actions/delete.png"
-                when :eject
-                  "#{IconDir}/#{IconSize}/actions/media-eject.png"
-                end
+        image = action_icon_path action
         return %Q{<button type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
       end
 
