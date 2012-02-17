@@ -82,7 +82,7 @@ class OnBoard
         alt = h[:alt] || title_str
         title = (!h[:disabled] or h[:title_always]) ? title_str : ''
         image = action_icon_path action
-        return %Q{<button id="#{h[:id]}" type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img src="#{image}" alt="#{alt}"/></button>} 
+        return %Q{<button id="#{h[:id]}" type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img id="#{h[:imgid]}" src="#{image}" alt="#{alt}"/></button>} 
       end
 
       def mandatory_mark

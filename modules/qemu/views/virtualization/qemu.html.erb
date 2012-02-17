@@ -5,10 +5,11 @@
   require 'onboard/virtualization/qemu'
 
   virtual_machines    = objects
+  all_vm_uuids        = virtual_machines.map  { |vm| vm.uuid  }   
 
   all_netifs          = OnBoard::Network::Interface.get_all
-  all_bridges         = all_netifs.select { |i| i.bridge? }  
-  all_running_ifnames = all_netifs.map    { |i| i.name    }        
+  all_bridges         = all_netifs.select     { |i| i.bridge? }  
+  all_running_ifnames = all_netifs.map        { |i| i.name    }        
 %>
 
 <style type="text/css">
@@ -128,6 +129,31 @@
       i++;
     }
   }
+  function qemuSaveRestoreControls(uuid) {
+    if ( uuid ) {
+      this.uuids = [uuid];
+      this.uuidsLength = 1;
+    } else {
+      this.uuids = this.uuids || <%= all_vm_uuids %>;
+      this.uuidsLength = this.uuids.length; 
+    } 
+    for (var i=0; i<uuidsLength; i++) {
+      var uuid = uuids[i];
+      var quit_button =
+          document.getElementById('quit[' + uuid + ']');
+      var quit_button_img = 
+          document.getElementById('quit_button_img[' + uuid + ']');
+      var saverestore_checkbox =
+          document.getElementById('saverestore[' + uuid + ']');
+      if (saverestore_checkbox.checked || quit_button.disabled) {
+        quit_button_img.src = '<%= action_icon_path(:stop) %>';
+        quit_button.title = 'Quit virtualization and save machine state';
+      } else {
+        quit_button_img.src = '<%= action_icon_path(:process_stop) %>';
+      quit_button.title = 'Quit virtualization immediately (beware: you may corrupt data!)';  
+      }
+    }
+  }
 </script>
 
 <%= message_partial(msg) %>
@@ -226,6 +252,9 @@
               action_button(
                 :stop,
                 :name     => 'quit[uuid]',
+                :id       => "quit[#{vm.uuid}]",
+                :imgid    => "quit_button_img[#{vm.uuid}]",
+                :alt      => '',
                 :title    => 
                     "Quit Virtualization (beware: if you don&rsquo;t or can&rsquo;t save state, you may corrupt data!)",
                 :value    => vm.uuid,
@@ -347,7 +376,7 @@
           <!-- <td></td> --> <!-- "Status":             rowspan="2" -->
 
           <td colspan="4" class="saverestore<%= ' lowlight' unless show_saverestore %>"> <!-- under "Actions" -->
-            <input style="vertical-align:middle;" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> name="saverestore[<%= vm.uuid %>]"/>
+            <input style="vertical-align:middle;" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> id="saverestore[<%= vm.uuid %>]" name="saverestore[<%= vm.uuid %>]" onclick="javascript:qemuSaveRestoreControls('<%= vm.uuid %>');"/> 
             <span style="vertical-align:middle;"><%= vm.running? ? 'Save state on Quit' : 'Restore state' %></span>
           </td> 
           <!-- <td></td> --> <!-- "VM Details":         rowspan="2" -->
@@ -519,4 +548,5 @@
 
 <script type="text/javascript">
   qemuNetIfControls();
+  qemuSaveRestoreControls();
 </script>
