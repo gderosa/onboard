@@ -5,6 +5,9 @@ class OnBoard
 
         class Drive 
 
+          # NOTE: directsync available on recent versions only 
+          CACHE = %w{unsafe writeback writethrough directsync none}
+
           attr_reader :config
 
           def initialize(config)

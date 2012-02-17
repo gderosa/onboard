@@ -78,8 +78,7 @@ class OnBoard
                 'if'    => 'ide',   # IDE (default)
                 'bus'   => 0,       # Primary
                 'unit'  => 0,       # Master
-                'cache' => 'unsafe' # Dramatically improve performance on
-                                    # savevm / loadvm
+                'cache' => h[:http_params]['cache']
               }
             end
             @cmd['opts']['-drive'] ||= []

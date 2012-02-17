@@ -10,6 +10,13 @@
   all_netifs          = OnBoard::Network::Interface.get_all
   all_bridges         = all_netifs.select     { |i| i.bridge? }  
   all_running_ifnames = all_netifs.map        { |i| i.name    }        
+
+  cache_description   = {
+    'unsafe'        => 'Allows snapshots on the fly, but it&rsquo;s also the most prone to data corruption',
+    'writethrough'  => 'The slowest and most reliable',
+    'writeback'     => '<span class="em-special">Recommended</span>, especially with QCOW2 images'
+  }
+  cache_default       = 'writeback' 
 %>
 
 <style type="text/css">
@@ -439,6 +446,16 @@
           </select>   
         </td>
       </tr> 
+      <tr>
+        <th scope="row" class="optinfo">Disk Caching</th>
+        <td>
+          <fieldset>
+            <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
+              <input name="cache" <%= 'checked' if c == cache_default %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 12ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
+            <% end %>
+          </fieldset>
+        </td>
+      </tr>
       <tr>
         <th scope="row">RAM</th>
         <td><input style="text-align:right" type="text" name="m" size="5" value="256"/> MB <!-- names recall cmdline opts --></td> 
