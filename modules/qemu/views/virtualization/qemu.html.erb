@@ -196,7 +196,8 @@
           </td>
 
           <!-- action buttons -->
-          <% show_saverestore = ( vm.running? or vm.config['-loadvm'] ) %> 
+          <% show_saverestore = ( 
+              vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
           <% action_button_rowspan = 1 %>
           <td class="button" rowspan="<%= action_button_rowspan %>">
             <%=

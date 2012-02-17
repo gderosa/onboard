@@ -152,6 +152,12 @@ class OnBoard
           end
         end
 
+        def quick_snapshots?
+          @cmd['opts']['-drive'].any? do |drive|
+            drive['cache'] == 'unsafe'
+          end
+        end
+
         def uuid_short
           @uuid.split('-')[0] 
         end

@@ -321,6 +321,10 @@ class OnBoard
           end
         end
 
+        def quick_snapshots?
+          @config.quick_snapshots?
+        end
+
       end
     end
   end
