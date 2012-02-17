@@ -124,6 +124,8 @@ class OnBoard
           #
           # Solution: use a VNC client like Vinagre, supporting
           # capture/release.
+
+          cmdline << '-enable-kvm' << ' ' 
           
           return cmdline
         end
