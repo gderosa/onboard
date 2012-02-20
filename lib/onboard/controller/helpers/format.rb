@@ -48,9 +48,9 @@ class OnBoard
           end
 
           # "Sinatra::Templates#erubis is deprecated and will be removed, 
-	  # use #erb instead. If you have Erubis installed, it will be used 
-	  # automatically"
-	  return erb(
+          # use #erb instead. If you have Erubis installed, it will be used 
+          # automatically"
+          return erb(
             erubis_template,
             :layout   => layout,
             :locals   => {

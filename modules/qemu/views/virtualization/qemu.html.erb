@@ -19,149 +19,22 @@
   cache_default       = 'writeback' 
 %>
 
-<style type="text/css">
-  table thead tr th {
-    padding: 0.3em 0.4em;
-  }
-  table thead tr th div.optinfo {
-    text-align: center;
-    line-height: 1.2em;
-    margin-top: 0.3em;
-    margin-bottom: 0.1em;
-  }
-  table thead tr th div.optinfo p {
-    margin: 0;
-    padding: 0;
-    line-height: 1em;
-  }
-  table tbody tr td.vminfo {
-    padding-left:   1ex;
-    padding-right:  1ex;
-  }
-  .vmdetails {
-    font-size: 95%;
-  }
-  table#vmlist tbody tr td.button {
-    padding-left:   3px;
-    padding-right:  3px;
-    border-left: none;
-    border-right: none;
-    /* height: 20px; */
-    border-bottom: none; 
-  }
-  table#vmlist tbody tr td.saverestore {
-    border-top: none;
-    vertical-align: top;
-    padding-top: 0.4em; 
-    padding-bottom: 0.4em;
-  }
-  table#vmlist tbody tr td.vmscreenshot {
-    padding-bottom: 0;  
-  }
-  table#vmlist tbody tr td.vmnetwork table{
-    width: 100%;
-  }
-  table#vmlist tbody tr td.vmnetwork table tr td {
-    border: none;
-    white-space: nowrap; 
-  }
-  table#vmlist tbody tr td.vmnetwork table tr td.vlan {
-    width: 4em;
-  }
-  table#vmlist tbody tr td.vmnetwork table tr td.ifname {
-    width: 9em;
-  }
-  span.ifname{
-  }
-  ul.drives {
-    list-style: none;
-    padding: 0;
-    margin: 4px 0;
-  }
-  ul.drives li.drive {
-    white-space: nowrap;
-  }
-  ul.drives li.drive button {
-    margin: 0;
-  }
-  img.drive {
-    vertical-align: middle;
-  }
-</style>
+<%= 
+  partial(
+    :module => 'qemu',
+    :path   => 'virtualization/qemu/_style'
+  )
+%>
 
-<script type="text/javascript">
-  function popup_filechooser(target) {
-    var popup = window.open('/jqueryFileTree/popup.html', 'Choose File', 'width=300,height=300');
-    popup.target = target;
-  }
-  function qemuImgCreateControls() {
-    var checkbox = document.getElementById('qemu-img_create_checkbox');
-    if ( checkbox.checked ) {
-      document.getElementById('disk').disabled = true;
-      document.getElementById('qemu-img_create_size').disabled = false;
-      document.getElementById('qemu-img_create_fmt' ).disabled = false;
-    } else {
-      document.getElementById('disk').disabled = false;
-      document.getElementById('qemu-img_create_size').disabled = true;
-      document.getElementById('qemu-img_create_fmt' ).disabled = true;
+<%= 
+  partial(
+    :module => 'qemu',
+    :path   => 'virtualization/qemu/_js',
+    :locals => {
+      :all_vm_uuids => all_vm_uuids
     }
-  }
-  function qemuNetIfControls() {
-    var i = 0;
-    var typeSelect;
-    while(typeSelect = document.getElementById('net[' + i + '][type]')) {
-      switch(typeSelect.value) {
-        case 'none':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = true;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
-          document.getElementById('net[' + i + '][model]'   ).disabled = true;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = true;
-          break;
-        case 'user':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
-          document.getElementById('net[' + i + '][model]'   ).disabled = false;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
-          break;
-        case 'tap':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = false;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = false;
-          document.getElementById('net[' + i + '][model]'   ).disabled = false;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
-          break;
-      }
-      i++;
-    }
-  }
-  function qemuSaveRestoreControls(uuid) {
-    if ( uuid ) {
-      this.uuids = [uuid];
-      this.uuidsLength = 1;
-    } else {
-      this.uuids = this.uuids || <%= all_vm_uuids %>;
-      this.uuidsLength = this.uuids.length; 
-    } 
-    for (var i=0; i<uuidsLength; i++) {
-      var uuid = uuids[i];
-      var quit_button =
-          document.getElementById('quit[' + uuid + ']');
-      var quit_button_img = 
-          document.getElementById('quit_button_img[' + uuid + ']');
-      var saverestore_checkbox =
-          document.getElementById('saverestore[' + uuid + ']');
-      if (saverestore_checkbox.checked || quit_button.disabled) {
-        quit_button_img.src = '<%= action_icon_path(:stop) %>';
-        quit_button.title = 'Quit virtualization and save machine state';
-      } else {
-        quit_button_img.src = '<%= action_icon_path(:process_stop) %>';
-      quit_button.title = 'Quit virtualization immediately (beware: you may corrupt data!)';  
-      }
-    }
-  }
-</script>
+  )
+%>
 
 <%= message_partial(msg) %>
 
@@ -563,6 +436,7 @@
 </form>
 
 <script type="text/javascript">
+  <%# js functions implemented in qemu/_js.html.erb %>
   qemuNetIfControls();
   qemuSaveRestoreControls();
 </script>
