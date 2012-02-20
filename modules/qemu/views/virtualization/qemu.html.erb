@@ -274,163 +274,17 @@
 
 <form method="POST">
 
-  <table>
-    <thead>
-    </thead>
-    <tbody>
-      <tr>
-        <th title="A descriptive name" scope="row">Name</th>
-        <td>
-          <input type="text" name="name"/>
-        </td>
-      </tr>
-      <tr> 
-        <th scope="row">CD/DVD image (optional)</th>
-        <td>
-          <input type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" />
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          Hard Disk Image
-          <div class="optinfo">Choose existing</div>
-        </th>
-        <td>
-          <input type="text" name="disk" id="disk" onclick="javascript:popup_filechooser(this);" /> 
-        </td>  
-      </tr>
-      <tr>
-        <th scope="row">
-          <div class="optinfo">
-            Or create a new one 
-            <span style="vertical-align:middle; margin: 0 0 0 2em">
-              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]" id="qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls()"/>
-            </span>
-          </div>        
-        </th> 
-        <td>
-          &nbsp;Size <input type="text" name="qemu-img[size][G]" id="qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
-          &nbsp;Format <select name="qemu-img[fmt]" id="qemu-img_create_fmt" disabled>
-            <option value="qcow2">QCOW2 (recommended)</option>
-            <option value="raw">Raw</option>
-            <!-- exclude "alien" image formats for now... -->
-          </select>   
-        </td>
-      </tr> 
-      <tr>
-        <th scope="row" class="optinfo">Disk Caching</th>
-        <td>
-          <fieldset>
-            <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
-              <input name="cache" <%= 'checked' if c == cache_default %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 12ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
-            <% end %>
-          </fieldset>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">RAM</th>
-        <td><input style="text-align:right" type="text" name="m" size="5" value="256"/> MB <!-- names recall cmdline opts --></td> 
-      </tr>
-      <tr>
-        <th scope="row">VNC Display</th>
-        <td>
-          <select name="vnc">
-            <% 1.upto(OnBoard::V12n::QEMU::VNC::Display::MAX) do |n| %>
-              <% 
-                available = OnBoard::V12n::QEMU::VNC::Display.available
-                selected = ''
-                disabled = ''
-                selected = 'selected' if      n == available.first
-                disabled = 'disabled' unless  available.include? n
-              %>
-              <option <%= selected %> <%= disabled %> value=":<%= n %>">:<%= n %></option>
-            <% end %>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          Keyboard layout
-          <div class="optinfo">For VNC, etc.</div>
-        </th>
-        <td>
-          <select name="k">
-            <option value=""></option>
-            <% OnBoard::V12n::QEMU::Config::KEYBOARD_LAYOUTS.each do |k| %>
-              <option value="<%= k %>"><%= k %></option>
-            <% end %>
-          </select>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h4>Network Interfaces</h4>
-  <table>
-    <thead>
-      <tr>
-        <th>VLAN</th>
-        <th>Type</th>
-        <th>
-          Name (visible in the host)
-          <div class="optinfo">
-            <p>For TAP interfaces only.</p>
-            <p>Choose something descriptive, if possible.</p>
-          </div>
-        </th>
-        <th>
-          Bridge to
-          <div class="optinfo">
-            <p>For TAP interfaces only.</p>
-            <p>You can manage bridges <a href="/network/bridges.html">here</a>.</p>
-          </div>
-        </th>
-        <th>Hardware</th>
-        <th>MAC Address</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% nn = 5 %>
-      <% 0.upto nn do |n| %>
-        <tr>
-          <td>
-            <select id="net[<%= n %>][vlan]" name="net[][vlan]">
-              <% 0.upto nn do |vlan| %>
-                <option <%= 'selected' if vlan == n %> value="<%= vlan %>"><%= vlan %></option> 
-              <% end %>
-            </select>
-          </td>
-          <td>
-            <select onclick="javascript:qemuNetIfControls();" id="net[<%= n %>][type]" name="net[][type]">
-              <option <%= 'selected' if n >   0   %> value="none">(none)</option>
-              <option <%= 'selected' if n ==  0   %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
-              <option value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
-            </select>
-          </td>
-          <td>
-            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="[auto]"/>
-          </td>
-          <td>
-            <select id="net[<%= n %>][bridge]" name="net[][bridge]"> 
-              <option value="">(none)</option>
-              <% all_bridges.each do |br| %>
-                <option value="<%= br.name %>"><%= br.name %></option>
-              <% end %>
-            </select>
-          </td>
-          <td>
-            <select id="net[<%= n %>][model]" name="net[][model]">
-              <option value="">(default)</option>
-              <% OnBoard::V12n::QEMU::Network::NIC.models.sort.each do |model| %>
-                <option value="<%= model %>"><%= model %></option> 
-              <% end %>
-            </select>
-          </td>
-          <td><input type="text" id="net[<%= n %>][macaddr]" name="net[][macaddr]" value="[auto]"/></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <%= 
+    partial(
+      :module => 'qemu',
+      :path   => 'virtualization/qemu/_form_create',
+      :locals => {
+        :cache_default      => cache_default,
+        :cache_description  => cache_description,
+        :all_bridges        => all_bridges
+      }
+    )
+  %>
 
   <button style="margin-top:2ex;" type="submit">Create!</button>
 </form>
