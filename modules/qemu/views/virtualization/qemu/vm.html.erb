@@ -1,0 +1,61 @@
+<%
+  require 'onboard/network/interface'
+  require 'onboard/network/bridge'
+
+  require 'onboard/virtualization/qemu'
+
+  vm                  = objects[:vm] 
+
+  all_netifs          = OnBoard::Network::Interface.get_all
+  all_bridges         = all_netifs.select     { |i| i.bridge? }  
+  all_running_ifnames = all_netifs.map        { |i| i.name    }        
+
+  cache_description   = {
+    'unsafe'        => 'Allows snapshots on the fly, but it&rsquo;s also the most prone to data corruption',
+    'writethrough'  => 'The slowest and most reliable',
+    'writeback'     => '<span class="em-special">Recommended</span>, especially with QCOW2 images'
+  }
+  cache_default       = 'writeback' 
+%>
+
+<%= 
+  partial(
+    :module => 'qemu',
+    :path   => 'virtualization/qemu/_style'
+  )
+%>
+
+<%= 
+  partial(
+    :module => 'qemu',
+    :path   => 'virtualization/qemu/_js',
+  )
+%>
+
+<%= message_partial(msg) %>
+
+<h2>QEMU / kvm</h2>
+
+<h3>Virtual Machine: <%= vm.config['-name'] %> </h3>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <%= 
+    partial(
+      :module => 'qemu',
+      :path   => 'virtualization/qemu/_form_create',
+      :locals => {
+        :cache_default      => cache_default,
+        :cache_description  => cache_description,
+        :all_bridges        => all_bridges
+      }
+    )
+  %>
+
+  <button style="margin-top:2ex;" type="submit">Change!</button>
+</form>
+
+<script type="text/javascript">
+  <%# js functions implemented in qemu/_js.html.erb %>
+  qemuNetIfControls();
+</script>

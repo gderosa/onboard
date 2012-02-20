@@ -6,6 +6,19 @@ class OnBoard
 
   class Controller < Sinatra::Base
 
+    get '/virtualization/qemu/vm/:vmid.:format' do
+      vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
+      format(
+        :module => 'qemu',
+        :path => 'virtualization/qemu/vm',
+        :format => params[:format],
+        :title => "QEMU: #{vm.config['-name']}",
+        :objects => {
+          :vm => vm,
+        }
+      )
+    end
+
     get '/virtualization/qemu/vm/:vmid/screen.:format' do
 
       vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
