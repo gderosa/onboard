@@ -282,10 +282,8 @@
             %>
           </td>
 
-          <!-- <td class="vminfo"><a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html"><%= (vm.config.opts['-name'] =~ /\S/) ? vm.config.opts['-name'] : vm.config.uuid_short %></a></td> -->
-
           <td rowspan="2" class="vminfo">
-            <a title="Machine UUID = <%= vm.config.uuid %>" href="">
+            <a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html">
               <%= 
                 (vm.config.opts['-name'] =~ /\S/) ? 
                     vm.config.opts['-name']       : 
