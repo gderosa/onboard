@@ -10,19 +10,62 @@
   formvals = {}
   # On a single-vm page, grab data from the vm object:
   if vm
+
     %w{name m vnc k}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
     optical_drive      = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
-    formvals['cdrom']  = optical_drive['file']
+    formvals['cdrom']  = 
+        OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
+
     hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
-    formvals['disk']   = hd_drive['file']
+    formvals['disk']   = 
+        OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
     formvals['cache']  = hd_drive['cache']
+
+    # Now, the -net machinery: there are two (or more???) -net Hashes for
+    # each row in the form: -net nic,... -net tap,... , or 
+    # -net nic,... -net user,... and so...
+    #
+    # Do as follows: for each -net nic, associate th first -net (tap|user) 
+    # with same VLAN. Besides, does it make sense to have several host TAPs 
+    # on the same QEMU VLAN? I guess, no...
+
+    formvals['net'] = []
+
+    vm.config['-net'].select{|x| x['type'] == 'nic'}.each do |nic|
+      hostside = vm.config['-net'].detect do |x| 
+        x['vlan'] == nic['vlan'] and not %w{none nic}.include? x['type'] 
+      end
+      formvals['net'] << nic.merge( hostside )
+    end
+
   end
+
   # Some defaults:
-  formvals['m']     ||= 348
-  formvals['vnc']   ||= ":#{vnc_available.first}"
-  formvals['cache'] ||= cache_default
+  formvals['m']       ||= 348
+  formvals['vnc']     ||= ":#{vnc_available.first}"
+  formvals['cache']   ||= cache_default
+
+  formvals['net']     ||= []
+  formvals['net'][0]  ||= {
+    'type'    => 'user',
+    'vlan'    => '0',
+    'ifname'  => '[auto]',
+    'macaddr' => '[auto]'
+  }
+  1.upto(5) do |i|
+    formvals['net'][i] ||= {
+      'type'    => 'none',
+      'vlan'    => i.to_s,
+      'ifname'  => '[auto]',
+      'macaddr' => '[auto]'
+    } 
+  end
+  formvals['net'].each do |fv|
+    fv['ifname']  ||= '[auto]'
+    fv['macaddr'] ||= '[auto]'
+  end
 %>
   <table>
     <thead>
@@ -148,25 +191,25 @@
           <td>
             <select id="net[<%= n %>][vlan]" name="net[][vlan]">
               <% 0.upto nn do |vlan| %>
-                <option <%= 'selected' if vlan == n %> value="<%= vlan %>"><%= vlan %></option> 
+                <option <%= 'selected' if formvals['net'][n]['vlan'] == vlan.to_s %> value="<%= vlan %>"><%= vlan %></option> 
               <% end %>
             </select>
           </td>
           <td>
             <select onclick="javascript:qemuNetIfControls();" id="net[<%= n %>][type]" name="net[][type]">
-              <option <%= 'selected' if n >   0   %> value="none">(none)</option>
-              <option <%= 'selected' if n ==  0   %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
-              <option value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
+              <option <%= 'selected' if formvals['net'][n]['type'] == 'none' %> value="none">(none)</option>
+              <option <%= 'selected' if formvals['net'][n]['type'] == 'user' %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
+              <option <%= 'selected' if formvals['net'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
             </select>
           </td>
           <td>
-            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="[auto]"/>
+            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="<%= formvals['net'][n]['ifname'] %>"/>
           </td>
           <td>
             <select id="net[<%= n %>][bridge]" name="net[][bridge]"> 
               <option value="">(none)</option>
               <% all_bridges.each do |br| %>
-                <option value="<%= br.name %>"><%= br.name %></option>
+                <option <%= 'selected' if br.name == formvals['net'][n]['bridge'] %> value="<%= br.name %>"><%= br.name %></option>
               <% end %>
             </select>
           </td>
@@ -174,11 +217,11 @@
             <select id="net[<%= n %>][model]" name="net[][model]">
               <option value="">(default)</option>
               <% OnBoard::V12n::QEMU::Network::NIC.models.sort.each do |model| %>
-                <option value="<%= model %>"><%= model %></option> 
+                <option <%= 'selected' if model == formvals['net'][n]['model'] %> value="<%= model %>"><%= model %></option> 
               <% end %>
             </select>
           </td>
-          <td><input type="text" id="net[<%= n %>][macaddr]" name="net[][macaddr]" value="[auto]"/></td>
+          <td><input type="text" id="net[<%= n %>][macaddr]" name="net[][macaddr]" value="<%= formvals['net'][n]['macaddr'] %>"/></td>
         </tr>
       <% end %>
     </tbody>
