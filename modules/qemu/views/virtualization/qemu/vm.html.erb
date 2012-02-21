@@ -43,11 +43,12 @@
   <%= 
     partial(
       :module => 'qemu',
-      :path   => 'virtualization/qemu/_form_create',
+      :path   => 'virtualization/qemu/_form_create_edit',
       :locals => {
         :cache_default      => cache_default,
         :cache_description  => cache_description,
-        :all_bridges        => all_bridges
+        :all_bridges        => all_bridges,
+        :vm                 => vm
       }
     )
   %>
