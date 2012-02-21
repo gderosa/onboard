@@ -38,6 +38,10 @@
 
 <h3>Virtual Machine: <%= vm.config['-name'] %> </h3>
 
+<div class="warn" style="margin-bottom:4.3ex; margin-top: 4ex;">
+  This is the static configuration: changes will take effect the next time you start the VM.
+</div>
+
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <%= 
@@ -53,7 +57,7 @@
     )
   %>
 
-  <button style="margin-top:2ex;" type="submit">Change!</button>
+  <button style="margin-top:3.3ex;" type="submit">Change!</button>
 </form>
 
 <script type="text/javascript">
