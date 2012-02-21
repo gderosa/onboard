@@ -13,9 +13,9 @@
     %w{name m vnc k}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
-    optical_drive         = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
+    optical_drive      = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
     formvals['cdrom']  = optical_drive['file']
-    hd_drive              = vm.config['-drive'].find{|d| d['media'] == 'disk' }
+    hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
     formvals['disk']   = hd_drive['file']
     formvals['cache']  = hd_drive['cache']
   end
