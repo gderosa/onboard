@@ -36,9 +36,35 @@
 
 <h2>QEMU Virtual Machine: &ldquo;<%= vm.config['-name'] %>&rdquo;</h2>
 
-<h3>Static configuration</h3>
+<h3>Actions</h3>
 
-<div class="warn" style="margin-bottom:4.3ex; margin-top: 3ex;">
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">Turn On</th>
+      <td>[btn]</td>
+    </tr>
+      <th scope="row">
+        Powerdown (ACPI)
+        <div class="optinfo">Might require some time to cleanly shutdown the system.</div>
+      </th>
+      <td>[btn]</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Quit!
+        <div class="optinfo">
+          Dangerous! (unless you save a snapshot <em>and</em> restore it at the next boot).
+        </div>
+      </th>
+      <td>[btn]</td>
+    </tr> 
+  </tbody>
+</table>
+
+<h3>Static Configuration</h3>
+
+<div class="warn" style="margin-bottom:4.3ex; margin-top: 0;">
   Changes will take effect the next time you start the VM.
 </div>
 
