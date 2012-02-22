@@ -43,7 +43,7 @@ class OnBoard
 
         def initialize(h)
           if h[:http_params]
-            @uuid = UUID.generate # creation from POST
+            @uuid = h[:uuid] || h[:http_params][:uuid] || UUID.generate 
             @cmd  = {
               #'exe'   => 'kvm',
               'opts'  => {
