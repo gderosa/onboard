@@ -34,12 +34,12 @@
 
 <%= message_partial(msg) %>
 
-<h2>QEMU / kvm</h2>
+<h2>QEMU Virtual Machine: &ldquo;<%= vm.config['-name'] %>&rdquo;</h2>
 
-<h3>Virtual Machine: <%= vm.config['-name'] %> </h3>
+<h3>Static configuration</h3>
 
-<div class="warn" style="margin-bottom:4.3ex; margin-top: 4ex;">
-  This is the static configuration: changes will take effect the next time you start the VM.
+<div class="warn" style="margin-bottom:4.3ex; margin-top: 3ex;">
+  Changes will take effect the next time you start the VM.
 </div>
 
 <form method="POST">
