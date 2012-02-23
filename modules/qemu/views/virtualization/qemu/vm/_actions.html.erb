@@ -1,0 +1,88 @@
+        <tr>
+          <% show_saverestore = ( 
+              vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
+          <% action_button_rowspan = 1 %>
+          <td class="button button_left" rowspan="<%= action_button_rowspan %>">
+            <%=
+              if vm.running?
+                action_button(
+                  :shutdown,
+                  :name     => 'powerdown[uuid]',
+                  :title    =>
+'ACPI Shutdown (may require some time to cleanly power off)',
+                  :value    => vm.uuid
+                )
+              else
+                action_button(
+                  :start,                 
+                  :name     => 'start[uuid]',
+                  :title    => 'Start',
+                  :value    => vm.uuid
+                ) 
+              end
+            %>
+          </td>
+          <td class="button" rowspan="<%= action_button_rowspan %>">
+            <%= 
+              if vm.running?
+                if vm.paused?
+                  action_button(
+                    :start, 
+                    :name     => 'resume[uuid]', 
+                    :title    => 'Resume from Pause',
+                    :value    => vm.uuid
+                  )
+                else
+                  action_button(
+                    :pause, 
+                    :name     => 'pause[uuid]', 
+                    :title    => 'Pause',
+                    :value    => vm.uuid
+                  ) 
+                end
+              else
+                action_button(
+                  :start_paused, 
+                  :name     => 'start_paused[uuid]', 
+                  :title    => 
+'Start paused (so you have time to open a VNC client etc.)',
+                  :value    => vm.uuid
+                ) 
+              end 
+            %>
+          </td>
+          <td class="button" rowspan="<%= action_button_rowspan %>">
+            <%=
+              action_button(
+                :stop,
+                :name     => 'quit[uuid]',
+                :id       => "quit[#{vm.uuid}]",
+                :imgid    => "quit_button_img[#{vm.uuid}]",
+                :alt      => '',
+                :title    => 
+                    "Quit Virtualization (beware: if you don&rsquo;t or can&rsquo;t save state, you may corrupt data!)",
+                :value    => vm.uuid,
+                :disabled => !vm.running?
+              ) 
+            %>
+          </td>
+          <td class="button button_right" rowspan="<%= action_button_rowspan %>">
+            <%=
+              action_button(
+                :delete,
+                :name     => 'delete[uuid]',
+                :title    => 'Delete!',
+                :value    => vm.uuid,
+                :disabled => vm.running?
+              )
+            %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" class="saverestore<%= ' lowlight' unless show_saverestore %>"> 
+            <input style="vertical-align:middle;" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> id="saverestore[<%= vm.uuid %>]" name="saverestore[<%= vm.uuid %>]" onclick="javascript:qemuSaveRestoreControls('<%= vm.uuid %>');"/>
+            <span style="vertical-align:middle;"><%= vm.running? ? 'Save state on Quit' : 'Restore state' %></span>
+          </td>          
+        </tr>
+
+

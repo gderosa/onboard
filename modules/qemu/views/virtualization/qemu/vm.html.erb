@@ -51,29 +51,20 @@
 
 <h3>Actions</h3>
 
-<table>
-  <tbody>
-    <tr>
-      <th scope="row">Turn On</th>
-      <td>[btn]</td>
-    </tr>
-      <th scope="row">
-        Powerdown (ACPI)
-        <div class="optinfo">Might require some time to cleanly shutdown the system.</div>
-      </th>
-      <td>[btn]</td>
-    </tr>
-    <tr>
-      <th scope="row">
-        Quit!
-        <div class="optinfo">
-          Dangerous! (unless you save a snapshot <em>and</em> restore it at the next boot).
-        </div>
-      </th>
-      <td>[btn]</td>
-    </tr> 
-  </tbody>
-</table>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table id="vmlist">
+    <tbody>
+      <%= 
+        partial(
+          :module => 'qemu',
+          :path   => 'virtualization/qemu/vm/_actions',
+          :locals => {:vm => vm} 
+        )
+      %>
+    </tbody>
+  </table>
+</form>
 
 <h3>Static Configuration</h3>
 
@@ -101,5 +92,6 @@
 
 <script type="text/javascript">
   <%# js functions implemented in qemu/_js.html.erb %>
+  qemuSaveRestoreControls('<%= vm.uuid %>');
   qemuNetIfControls();
 </script>
