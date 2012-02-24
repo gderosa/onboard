@@ -41,7 +41,7 @@
 
 <% if vm.running? %>
   <% screenshot_path = "#{vm.uuid_short}/screen.png" %>
-  <a title="Click for full-size snapshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:30em"/></a>
+  <a title="Click for full-size screenshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:30em"/></a>
   <% if vnc_uri %>
     <p class="optinfo" style="font-size:100%;">
       VNC available at <a href="<%= vnc_uri %>"><%= vnc_uri %></a>
@@ -49,21 +49,15 @@
   <% end %>
 <% end %>
 
-<h3>Actions</h3>
-
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
-  <table id="vmlist">
-    <tbody>
-      <%= 
-        partial(
-          :module => 'qemu',
-          :path   => 'virtualization/qemu/vm/_actions',
-          :locals => {:vm => vm} 
-        )
-      %>
-    </tbody>
-  </table>
+    <%= 
+      partial(
+        :module => 'qemu',
+        :path   => 'virtualization/qemu/vm/_run',
+        :locals => {:vm => vm} 
+      )
+    %>
 </form>
 
 <h3>Static Configuration</h3>

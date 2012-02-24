@@ -1,4 +1,15 @@
+    <table id="vmlist">
+      <thead>
         <tr>
+          <th>Status</th>
+          <th colspan="4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+
+          <td rowspan="2" class="vminfo<%= ' error' if vm.status =~ /error/i %>"><%= vm.status %></td>
+
           <% show_saverestore = ( 
               vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
           <% action_button_rowspan = 1 %>
@@ -84,5 +95,7 @@
             <span style="vertical-align:middle;"><%= vm.running? ? 'Save state on Quit' : 'Restore state' %></span>
           </td>          
         </tr>
+      </tbody>
+    </table>
 
 
