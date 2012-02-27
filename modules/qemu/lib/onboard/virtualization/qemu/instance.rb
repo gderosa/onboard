@@ -234,6 +234,8 @@ class OnBoard
             runtime_name = d.to_runtime_name # "ide-cd0", etc., as in monitor
             drives_h[runtime_name] ||= {}
             drives_h[runtime_name]['config'] = d
+            img = QEMU::Img.new :drive => d
+            drives_h[runtime_name]['snapshots'] = img.snapshots
           end
           drives_h
         end

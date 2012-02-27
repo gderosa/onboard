@@ -35,6 +35,19 @@ class OnBoard
           end
 
         end
+
+        def initialize(h)
+          @drive = h[:drive]
+        end
+
+        def snapshots
+          [{'i_am'=>'a_stub'}] 
+        end
+
+        def to_json(*a)
+          snapshots.to_json(*a)
+        end
+
       end
     end
   end
