@@ -20,6 +20,10 @@ class OnBoard
         def initialize(h)
           @data = h
         end
+
+        def method_missing(id, *a)
+          @data[id] or @data[id.to_s] 
+        end
       
         def to_json(*a)
           @data.to_json(*a) 

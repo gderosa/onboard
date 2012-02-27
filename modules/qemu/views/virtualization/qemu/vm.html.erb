@@ -53,9 +53,39 @@
     %>
 </form>
 
-<h3>Snapshot management</h3>
+<h3>Snapshots</h3>
 <table>
-
+  <thead>
+    <tr>
+      <th>Drive</th>
+      <th>Snapshot ID</th>
+      <th>Tag / Name</th>
+      <th>Type</th>
+      <th>Date / Time</th>
+      <!-- VM Clock ? -->
+    </tr>
+  </thead>
+  <tbody>
+    <% vm.drives.select{|k,v| v['snapshots'].any?}.each_pair do |drive_name, drive| %>
+      <% drive['snapshots'].each do |snapshot| %>
+        <tr>
+          <td><%= drive_name %></td>
+          <td style="text-align:right;"><%= snapshot.id %></td>
+          <td><%= snapshot.tag %></td>
+          <td>
+            <%= 
+              if snapshot.vmsize == '0'
+                'Disk Only'
+              else
+                "VM, size=#{snapshot.vmsize}"
+              end
+            %>
+          </td>
+          <td><%= snapshot.time %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
 </table>
 
 <h3>Static Configuration</h3>
