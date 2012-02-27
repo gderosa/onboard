@@ -11,12 +11,6 @@
   all_bridges         = all_netifs.select     { |i| i.bridge? }  
   all_running_ifnames = all_netifs.map        { |i| i.name    }        
 
-  cache_description   = {
-    'unsafe'        => 'Allows snapshots on the fly, but it&rsquo;s also the most prone to data corruption',
-    'writethrough'  => 'The slowest and most reliable',
-    'writeback'     => '<em>Recommended</em>, especially with QCOW2 images'
-  }
-  cache_default       = 'writeback' 
 %>
 
 <%= 
@@ -282,8 +276,6 @@
       :module => 'qemu',
       :path   => 'virtualization/qemu/_form_create_edit',
       :locals => {
-        :cache_default      => cache_default,
-        :cache_description  => cache_description,
         :all_bridges        => all_bridges
       }
     )
