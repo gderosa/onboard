@@ -66,7 +66,12 @@
     </tr>
   </thead>
   <tbody>
-    <% vm.drives.select{|k,v| v['snapshots'].any?}.each_pair do |drive_name, drive| %>
+    <% 
+      drives_w_snapshots = vm.drives.select do |k,v| 
+        v['snapshots'] and v['snapshots'].any?
+      end
+      drives_w_snapshots.each_pair do |drive_name, drive| 
+    %>
       <% drive['snapshots'].each do |snapshot| %>
         <tr>
           <td><%= drive_name %></td>
