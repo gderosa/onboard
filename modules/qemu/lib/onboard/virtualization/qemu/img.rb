@@ -17,8 +17,8 @@ class OnBoard
             QEMU::Config.relative_path *a
           end
 
-          # for example an image is created at: ~/files/qemu/Win7/Win7.qcow2
-          # or ~/files/qemu/Debian/Debian.raw
+          # for example an image is created at: ~/files/QEMU/Win7/Win7.qcow2
+          # or ~/files/QEMU/Debian/Debian.raw
           def create(h)
             raise OnBoard::BadRequest, 'Virtual machine must have a name' unless
                 h[:http_params]['name'] and h[:http_params]['name'] =~ /\S/
