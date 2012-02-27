@@ -18,6 +18,7 @@ class OnBoard
       autoload :Img,      'onboard/virtualization/qemu/img'
       autoload :Monitor,  'onboard/virtualization/qemu/monitor'
       autoload :Network,  'onboard/virtualization/qemu/network'
+      autoload :Snapshot, 'onboard/virtualization/qemu/snapshot' 
       autoload :VNC,      'onboard/virtualization/qemu/vnc'
 
       class << self

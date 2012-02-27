@@ -37,15 +37,12 @@ class OnBoard
         end
 
         def initialize(h)
-          @drive = h[:drive]
+          @drive_config = h[:drive_config]
+          @file = @drive_config['file']
         end
 
         def snapshots
-          [{'i_am'=>'a_stub'}] 
-        end
-
-        def to_json(*a)
-          snapshots.to_json(*a)
+          [Snapshot.new] 
         end
 
       end
