@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'time'
 
 class OnBoard
   module Virtualization
@@ -42,7 +43,21 @@ class OnBoard
         end
 
         def snapshots
-          [Snapshot.new] 
+          list = []
+          if @file and File.exists? @file
+            `qemu-img snapshot -l "#{@file}"`.each_line do |line|
+              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d+[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
+                list << Snapshot.new(
+                  :id       =>                                $1.to_i,
+                  :tag      =>                                $2,
+                  :vmsize   =>                                $3,
+                  :time     => Time.parse(                    $4),
+                  :vmclock  => QEMU::Snapshot::VMClock.parse( $5)
+                )
+              end
+            end
+          end
+          return list
         end
 
       end
