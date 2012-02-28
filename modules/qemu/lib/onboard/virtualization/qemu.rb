@@ -35,10 +35,11 @@ class OnBoard
         def find(h)
           Dir.glob "#{CONFDIR}/*.yml" do |file|
             config = Config.new(:config => YAML.load(File.read file))
-            if config.uuid =~ /^#{h[:vmid]}/
+            if config.uuid =~ /^#{h[:vmid]}/ # may be uuid or a shortened uuid
               return Instance.new(config)
             end
           end
+          return nil
         end
 
         def manage(h)

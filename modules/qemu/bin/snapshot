@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+__dir__         = File.dirname __FILE__
+__qemu_lib__    = File.realpath File.join __dir__, '../lib'
+__onboard_lib__ = File.realpath File.join __dir__, '../../../lib'
+
+$LOAD_PATH.unshift __onboard_lib__
+$LOAD_PATH.unshift __qemu_lib__
+
+require 'pp'
+
+require 'onboard/virtualization/qemu'
+
+class OnBoard
+  module Virtualization
+    module QEMU
+      CONFDIR ||= (
+        ENV['ONBOARD_QEMU_CONFDIR']                               or
+        "#{ENV['HOME']}/.onboard/etc/config/virtualization/qemu"
+      )
+    end
+  end
+end
+
+include OnBoard::Virtualization
+
+_action_, _vmid_, _snapid_, _drive_name_ = ARGV
+
+vm = QEMU.find :vmid => _vmid_
+
+case _action_
+when 'take'
+  if vm.running?
+  else
+    drive_name, drive = nil
+    if _drive_name_ 
+      drive_name, drive = _drive_name_, vm.drives[_drive_name_]           
+    else
+      drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
+    end
+    pp drive
+  end
+end
+
+
