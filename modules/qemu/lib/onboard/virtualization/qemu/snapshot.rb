@@ -21,8 +21,20 @@ class OnBoard
           @data = h
         end
 
+        def disk_only?
+          vmsize == '0'
+        end
+
+        def full_vm?
+          not disk_only?
+        end
+
         def method_missing(id, *a)
-          @data[id] or @data[id.to_s] 
+          if @data.keys.include? id or @data.keys.include? id.to_s
+            @data[id] or @data[id.to_s] 
+          else
+            raise NoMethodError, "Undefined method `#{id}' for #{self}"
+          end
         end
       
         def to_json(*a)

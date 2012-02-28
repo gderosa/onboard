@@ -97,11 +97,17 @@
               %>
             </td>
             <td><%= snapshot.time %></td>
+            <% 
+              disabled = (
+                  ( vm.running?     and snapshot.disk_only? ) or
+                  ( not vm.running? and snapshot.full_vm?   )           
+              )
+            %>
             <td>
-              <%= action_button :save, :name=>"snapshot_take[id]", :value=>snapshot.id, :title=>'Take Snapshot / Save VM!' %>
+              <%= action_button :save, :name=>"snapshot_take[id]", :value=>snapshot.id, :title=>'Take Snapshot / Save VM!', :disabled=>disabled %>
             </td>
             <td>
-              <%= action_button :redo, :name=>"snapshot_apply[id]", :value=>snapshot.id, :title=>'Apply Snapshot / Load VM!' %>
+              <%= action_button :redo, :name=>"snapshot_apply[id]", :value=>snapshot.id, :title=>'Apply Snapshot / Load VM!', :disabled=>disabled %>
             </td>
           </tr>
         <% end %>
