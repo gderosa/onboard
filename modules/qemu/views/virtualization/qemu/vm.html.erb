@@ -71,8 +71,8 @@
         <th>Tag / Name</th>
         <th>Type</th>
         <th>Date / Time</th>
-        <!-- VM Clock ? -->
-        <th colspan="2">Actions</th>
+        <th>Take</th>
+        <th>Apply</th>
       </tr>
     </thead>
     <tbody>
@@ -98,11 +98,10 @@
             </td>
             <td><%= snapshot.time %></td>
             <td>
-              <button type="submit" name="snapshot_take[id]" value="<%= snapshot.id %>"/>Take!</button> 
+              <%= action_button :save, :name=>"snapshot_take[id]", :value=>snapshot.id, :title=>'Take Snapshot / Save VM!' %>
             </td>
             <td>
-              <button type="submit" name="snapshot_apply[id]" value="<%= snapshot.id %>"/>Apply!</button> 
-   
+              <%= action_button :redo, :name=>"snapshot_apply[id]", :value=>snapshot.id, :title=>'Apply Snapshot / Load VM!' %>
             </td>
           </tr>
         <% end %>

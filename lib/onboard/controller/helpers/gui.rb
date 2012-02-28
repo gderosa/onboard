@@ -57,6 +57,10 @@ class OnBoard
           "#{IconDir}/#{IconSize}/actions/system-run.png"
         when :reload, :restart
           "#{IconDir}/#{IconSize}/actions/reload.png"
+        when :redo
+          "#{IconDir}/#{IconSize}/actions/edit-redo.png"
+        when :save
+          "#{IconDir}/#{IconSize}/actions/document-save.png"
         when :delete
           "#{IconDir}/#{IconSize}/actions/delete.png"
         when :eject
