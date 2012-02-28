@@ -38,8 +38,9 @@ when 'take'
     else
       drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
     end
-    pp drive
-    system 'qemu-img', 'snapshot', '-c', _snapid_, drive['config']['file']
+    pid = fork do
+      exec 'qemu-img', 'snapshot', '-c', _snapid_, drive['config']['file']
+    end
   end
 end
 
