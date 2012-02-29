@@ -84,37 +84,40 @@
       %>
         <% drive['snapshots'].each do |snapshot| %>
           <tr>
-            <td><%= drive_name %></td>
-            <td style="text-align:right;"><%= snapshot.id %></td>
-            <td><%= snapshot.tag %></td>
-            <td>
-              <%= 
-                if snapshot.vmsize == '0'
-                  'Disk Only'
-                else
-                  "VM, size=#{snapshot.vmsize}"
-                end
+            <form method="POST">
+              <input type="hidden" name="_method" value="put"/>
+              <input type="hidden" name="snapshot_drive" value="<%= drive_name %>"/>
+              <td><%= drive_name %></td>
+              <td style="text-align:right;"><%= snapshot.id %></td>
+              <td><%= snapshot.tag %></td>
+              <td>
+                <%= 
+                  if snapshot.vmsize == '0'
+                    'Disk Only'
+                  else
+                    "VM, size=#{snapshot.vmsize}"
+                  end
+                %>
+              </td>
+              <td><%= snapshot.time %></td>
+              <% 
+                disabled = (
+                    ( vm.running?     and snapshot.disk_only? ) or
+                    ( not vm.running? and snapshot.full_vm?   )           
+                )
               %>
-            </td>
-            <td><%= snapshot.time %></td>
-            <% 
-              disabled = (
-                  ( vm.running?     and snapshot.disk_only? ) or
-                  ( not vm.running? and snapshot.full_vm?   )           
-              )
-            %>
-            <td>
-              <%= action_button :save, :name=>"snapshot_take[id]", :value=>snapshot.id, :title=>'Take Snapshot / Save VM!', :disabled=>disabled %>
-            </td>
-            <td>
-              <%= action_button :redo, :name=>"snapshot_apply[id]", :value=>snapshot.id, :title=>'Apply Snapshot / Load VM!', :disabled=>disabled %>
-            </td>
+              <td>
+                <%= action_button :save, :name=>"snapshot_take[id]", :value=>snapshot.id, :title=>'Take Snapshot / Save VM!', :disabled=>disabled %>
+              </td>
+              <td>
+                <%= action_button :redo, :name=>"snapshot_apply[id]", :value=>snapshot.id, :title=>'Apply Snapshot / Load VM!', :disabled=>disabled %>
+              </td>
+            </form>
           </tr>
         <% end %>
       <% end %>
     </tbody>
   </table>
-</form>
 
 <h3>Static Configuration</h3>
 

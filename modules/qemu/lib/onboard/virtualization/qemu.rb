@@ -8,8 +8,10 @@ class OnBoard
   module Virtualization
     module QEMU
 
+      ROOTDIR ||= File.realpath File.join File.dirname(__FILE__), '..'
       # TODO: do not hardcode so badly 
       FILESDIR = '/home/onboard/files'
+      BINDIR = ROOTDIR + '/bin'
 
       DEFAULT_SNAPSHOT = '_last'
 
@@ -44,6 +46,7 @@ class OnBoard
 
         def manage(h)
           all = get_all
+
           if h[:http_params]
             params = h[:http_params]
             %w{
@@ -67,6 +70,7 @@ start start_paused pause resume powerdown delete
                 vm.quit
               end
             end
+
             # eject / change removable media: cdrom etc.
             params['drive'].each_pair do |vm_uuid, drives|
               vm = all.find{|x| x.uuid == vm_uuid} 
@@ -83,6 +87,15 @@ start start_paused pause resume powerdown delete
                 end
               end
             end if params['drive'].respond_to? :each_pair 
+
+            # Snapshots
+            if params['snapshot_take'] and params['snapshot_take']['id'] # and \
+                  # not QEMU::Snapshot.running?
+              cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} #{params['snapshot_take']['id']} #{params['snapshot_drive']}}
+              p cmd # DEBUG 
+              #System::Command.run(cmd, :raise_Conflict) 
+            end
+
           end
         end
 
