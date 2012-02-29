@@ -56,6 +56,7 @@ class OnBoard
       vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
       redirect "/virtualization/qemu.#{params[:format]}" if 
           params['delete'] and not vm
+      status 202 if params.keys.include_any_of?(%w{snapshot_take snapshot_accept})
       format(
         :module => 'qemu',
         :path => 'virtualization/qemu/vm',

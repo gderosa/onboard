@@ -92,8 +92,8 @@ start start_paused pause resume powerdown delete
             if params['snapshot_take'] and params['snapshot_take']['id'] # and \
                   # not QEMU::Snapshot.running?
               cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} #{params['snapshot_take']['id']} #{params['snapshot_drive']}}
-              p cmd # DEBUG 
-              #System::Command.run(cmd, :raise_Conflict) 
+              #System::Command.run cmd # doesn't play well w/ Open3
+              system cmd # :-/
             end
 
           end
