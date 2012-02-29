@@ -41,12 +41,14 @@ when 'take'
     else
       drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
     end
-    pid = fork do
-      exec %Q{qemu-img snapshot -c "#{_snapid_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}    
-    end
+    #pid = fork do
+    #  exec %Q{qemu-img snapshot -c "#{_snapid_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}    
+    #end
+    Process.daemon
     File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
-      f.write pid
+      f.write Process.pid
     end
+    system %Q{qemu-img snapshot -c "#{_snapid_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
   end
 end
 
