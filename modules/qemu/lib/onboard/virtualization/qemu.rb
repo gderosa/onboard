@@ -92,7 +92,9 @@ start start_paused pause resume powerdown delete
             if params['snapshot_take'] and params['snapshot_take']['name'] 
               raise OnBoard::BadRequest, 'Another snapshot process is running!' if
                   QEMU::Snapshot.running?
-              cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} #{params['snapshot_take']['name']} #{params['snapshot_drive']}}
+              cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} "#{params['snapshot_take']['name']}"}          
+              cmd << %Q{ "#{params['snapshot_drive']}"} if 
+                  params['snapshot_drive'] =~ /\S/
               System::Command.run cmd 
               #system cmd # :-/
             end
