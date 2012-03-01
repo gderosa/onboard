@@ -7,7 +7,8 @@ __onboard_lib__ = File.realpath File.join __dir__, '../../../lib'
 $LOAD_PATH.unshift __onboard_lib__
 $LOAD_PATH.unshift __qemu_lib__
 
-require 'pp'
+# require 'pp' # DEBUG
+require 'escape'
 
 require 'onboard/virtualization/qemu'
 
@@ -48,7 +49,8 @@ when 'take'
     File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
       f.write Process.pid
     end
-    system %Q{qemu-img snapshot -c "#{_snapid_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
+    snapid_shellword = Escape.shell_single_word _snapid_
+    system %Q{qemu-img snapshot -c #{snapid_shellword} "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
   end
 end
 
