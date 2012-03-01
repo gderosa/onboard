@@ -47,11 +47,14 @@ when 'take'
     File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
       f.write Process.pid
     end
-    # 'take' is a create-or-update operation
+    outdbg = File.open '/tmp/snaphot', 'w' 
+    outdbg.puts drive['snapshots'].any?{|snap| snap.name == _snap_name_}
+    ## 'take' is a create-or-update operation
     if drive['snapshots'].any?{|snap| snap.name == _snap_name_}
-      system %Q{qemu-img snapshot -d "#{_snap_name_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
+       outdbg.puts %Q{qemu-img snapshot -d "#{_snap_name_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
     end
-    system %Q{qemu-img snapshot -c "#{_snap_name_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
+    #system %Q{qemu-img snapshot -c "#{_snap_name_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
+    outdbg.close
   end
 end
 
