@@ -89,8 +89,9 @@ start start_paused pause resume powerdown delete
             end if params['drive'].respond_to? :each_pair 
 
             # Snapshots
-            if params['snapshot_take'] and params['snapshot_take']['id'] # and \
-                  # not QEMU::Snapshot.running?
+            if params['snapshot_take'] and params['snapshot_take']['id'] 
+              raise OnBoard::BadRequest, 'Another snapshot process is running!' if
+                  QEMU::Snapshot.running?
               cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} #{params['snapshot_take']['id']} #{params['snapshot_drive']}}
               System::Command.run cmd 
               #system cmd # :-/
