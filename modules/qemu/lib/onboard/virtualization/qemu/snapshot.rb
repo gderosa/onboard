@@ -2,6 +2,8 @@ require 'fileutils'
 
 require 'onboard/extensions/process'
 
+require 'onboard/system/process'
+
 class OnBoard
   module Virtualization
     module QEMU
@@ -49,6 +51,10 @@ class OnBoard
 
         def full_vm?
           not disk_only?
+        end
+
+        def name
+          tag
         end
 
         def method_missing(id, *a)

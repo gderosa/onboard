@@ -89,10 +89,10 @@ start start_paused pause resume powerdown delete
             end if params['drive'].respond_to? :each_pair 
 
             # Snapshots
-            if params['snapshot_take'] and params['snapshot_take']['id'] 
+            if params['snapshot_take'] and params['snapshot_take']['name'] 
               raise OnBoard::BadRequest, 'Another snapshot process is running!' if
                   QEMU::Snapshot.running?
-              cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} #{params['snapshot_take']['id']} #{params['snapshot_drive']}}
+              cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} #{params['snapshot_take']['name']} #{params['snapshot_drive']}}
               System::Command.run cmd 
               #system cmd # :-/
             end
@@ -102,10 +102,12 @@ start start_paused pause resume powerdown delete
 
         def cleanup
           Dir.glob "#{VARRUN}/qemu-*.pid" do |pidfile|
-            pidfile =~ /qemu-(.*)\.pid/ and vmid = $1
-            unless Process.running? File.read(pidfile).to_i
-              Dir.glob "#{VARRUN}/qemu-#{vmid}.*" do |file|
-                FileUtils.rm_f file 
+            if pidfile =~ /qemu-([^\.]+)\.pid/ 
+              vmid = $1
+              unless Process.running? File.read(pidfile).to_i
+                Dir.glob "#{VARRUN}/qemu-#{vmid}.*" do |file|
+                  FileUtils.rm_f file 
+                end
               end
             end
           end

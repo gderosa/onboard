@@ -7,8 +7,7 @@ __onboard_lib__ = File.realpath File.join __dir__, '../../../lib'
 $LOAD_PATH.unshift __onboard_lib__
 $LOAD_PATH.unshift __qemu_lib__
 
-# require 'pp' # DEBUG
-require 'escape'
+require 'pp' # DEBUG
 
 require 'onboard/virtualization/qemu'
 
@@ -28,7 +27,7 @@ include OnBoard::Virtualization
 VARRUN ||= '/var/run/onboard'
 
 # Usage:
-_action_, _vmid_, _snapid_, _drive_name_ = ARGV
+_action_, _vmid_, _snap_name_, _drive_name_ = ARGV
 
 vm = QEMU.find :vmid => _vmid_
 
@@ -42,15 +41,17 @@ when 'take'
     else
       drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
     end
-    #pid = fork do
-    #  exec %Q{qemu-img snapshot -c "#{_snapid_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}    
-    #end
+
     Process.daemon
+
     File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
       f.write Process.pid
     end
-    snapid_shellword = Escape.shell_single_word _snapid_
-    system %Q{qemu-img snapshot -c #{snapid_shellword} "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
+    # 'take' is a create-or-update operation
+    if drive['snapshots'].any?{|snap| snap.name == _snap_name_}
+      system %Q{qemu-img snapshot -d "#{_snap_name_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
+    end
+    system %Q{qemu-img snapshot -c "#{_snap_name_}" "#{drive['config']['file']}" > #{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out 2>&1}
   end
 end
 
