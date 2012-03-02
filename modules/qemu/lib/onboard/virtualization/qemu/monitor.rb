@@ -1,6 +1,8 @@
 require 'socket'
 require 'timeout'
 
+require 'onboard/extensions/logger'
+
 class OnBoard
   module Virtualization
     module QEMU

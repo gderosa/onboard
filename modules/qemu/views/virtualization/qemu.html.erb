@@ -68,7 +68,17 @@
       <input type="hidden" name="_method" value="put"/>
       <% virtual_machines.each do |vm| %>
         <tr>
-          <td rowspan="2" class="vminfo<%= ' error' if vm.status =~ /error/i %>">
+          <%
+            extra_class = case vm.status
+                          when /error/i
+                            'error'
+                          when /snapshot/i
+                            'warn'
+                          else
+                            ''
+                          end
+          %>
+          <td rowspan="2" class="vminfo <%= extra_class %>">
             <%= vm.status %>
           </td>
 

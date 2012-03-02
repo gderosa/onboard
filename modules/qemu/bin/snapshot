@@ -31,23 +31,30 @@ _action_, _vmid_, _snap_name_, _drive_name_ = ARGV
 
 vm = QEMU.find :vmid => _vmid_
 
-if vm.running?
+drive_name, drive = nil
+if _drive_name_ 
+  drive_name, drive = _drive_name_, vm.drives[_drive_name_]           
 else
-  drive_name, drive = nil
-  if _drive_name_ 
-    drive_name, drive = _drive_name_, vm.drives[_drive_name_]           
-  else
-    drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
+  drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
+end
+
+Process.daemon
+
+STDOUT.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out"
+STDERR.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.err"
+
+File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
+  f.write Process.pid
+end
+
+if vm.running?
+  case _action_
+  when 'take'
+    vm.savevm _snap_name_
+  when 'apply'
+    vm.loadvm _snap_name_
   end
-
-  Process.daemon
-
-  STDOUT.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out"
-  STDERR.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.err"
-
-  File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
-    f.write Process.pid
-  end
+else
   case _action_
   when 'take'
     ## 'take' is a create-or-update operation
@@ -61,5 +68,4 @@ else
     system 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file']
   end
 end
-
 

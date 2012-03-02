@@ -7,8 +7,17 @@
       </thead>
       <tbody>
         <tr>
-
-          <td rowspan="2" class="vminfo<%= ' error' if vm.status =~ /error/i %>"><%= vm.status %></td>
+          <%
+            extra_class = case vm.status
+                          when /error/i
+                            'error'
+                          when /snapshot/i
+                            'warn'
+                          else
+                            ''
+                          end
+          %>
+          <td rowspan="2" class="vminfo <%= extra_class %>"><%= vm.status %></td>
 
           <% show_saverestore = ( 
               vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 

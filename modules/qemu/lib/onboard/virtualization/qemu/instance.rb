@@ -13,11 +13,11 @@ class OnBoard
     module QEMU
       class Instance
 
-        SAVEVM_TIMEOUT = 240
+        SAVEVM_TIMEOUT = 0 # 0 means infinite...
         # Very slow with qcow2 and cache=writethrough;
         # as opposite, it take a few seconds with cache=unsafe :-P
 
-        attr_reader :config
+        attr_reader :config, :monitor
 
         def initialize(config)
           @config   = config
@@ -194,7 +194,22 @@ class OnBoard
         end
 
         def get_status
-          @cache['status'] = @monitor.sendrecv 'info status'
+          str = @monitor.sendrecv 'info status'
+          if str =~ /error/i
+            if snapshotting?
+              str = 'Snapshotting' 
+            end
+          end
+          @cache['status'] = str
+        end
+
+        def snapshotting?
+          pidfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.pid"
+          if File.exists? pidfile
+            return Process.running?(File.read(pidfile).to_i)
+          else
+            return nil
+          end
         end
 
         def drives
