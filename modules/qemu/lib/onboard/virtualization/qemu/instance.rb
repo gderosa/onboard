@@ -16,6 +16,8 @@ class OnBoard
         SAVEVM_TIMEOUT = 0 # 0 means infinite...
         # Very slow with qcow2 and cache=writethrough;
         # as opposite, it take a few seconds with cache=unsafe :-P
+        
+        LOADVM_TIMEOUT = SAVEVM_TIMEOUT
 
         attr_reader :config, :monitor
 
@@ -302,6 +304,10 @@ class OnBoard
           if opts.include? :loadvm_on_next_boot
             loadvm_on_next_boot name
           end
+        end
+
+        def loadvm(name, *opts)
+          @monitor.sendrecv "loadvm #{name}", :timeout => LOADVM_TIMEOUT
         end
 
         def savevm_quit
