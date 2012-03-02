@@ -88,7 +88,7 @@ start start_paused pause resume powerdown delete
               end
             end if params['drive'].respond_to? :each_pair 
 
-            # Snapshots
+            # Snapshots # TODO: DRY DRY DRY
             if params['snapshot_take'] and params['snapshot_take']['name'] 
               raise OnBoard::BadRequest, 'Another snapshot process is running!' if
                   QEMU::Snapshot.running?
@@ -105,7 +105,14 @@ start start_paused pause resume powerdown delete
                   params['snapshot_drive'] =~ /\S/
               System::Command.run cmd 
             end
-
+            if params['snapshot_delete'] and params['snapshot_delete']['name'] 
+              raise OnBoard::BadRequest, 'Another snapshot process is running!' if
+                  QEMU::Snapshot.running?
+              cmd = %Q{#{BINDIR}/snapshot delete #{params['vmid']} "#{params['snapshot_delete']['name']}"}          
+              cmd << %Q{ "#{params['snapshot_drive']}"} if 
+                  params['snapshot_drive'] =~ /\S/
+              System::Command.run cmd 
+            end
           end
         end
 

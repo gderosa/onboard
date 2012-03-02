@@ -39,7 +39,7 @@ class OnBoard
         # Action buttons / runtime
         if params.keys.include_any_of?(%w{
                 start start_paused stop pause quit powerdown resume delete 
-                snapshot_take snapshot_apply
+                snapshot_take snapshot_apply snapshot_delete
         }) 
                 # Yup, deleting with a PUT is unRESTful... :-P
           OnBoard::Virtualization::QEMU.manage(:http_params => params)
@@ -57,7 +57,7 @@ class OnBoard
       redirect "/virtualization/qemu.#{params[:format]}" if 
           params['delete'] and not vm
       status 202 if msg[:ok] and params.keys.include_any_of? %w{
-          snapshot_take snapshot_apply } 
+          snapshot_take snapshot_apply snapshot_delete } 
       format(
         :module => 'qemu',
         :path => 'virtualization/qemu/vm',

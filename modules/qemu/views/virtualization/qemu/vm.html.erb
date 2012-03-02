@@ -73,6 +73,7 @@
         <th>Date / Time</th>
         <th>Take</th>
         <th>Apply</th>
+        <th>Delete</th>
       </tr>
     </thead>
     <tbody>
@@ -113,6 +114,9 @@
               <td>
                 <%= action_button :redo, :name=>"snapshot_apply[name]", :value=>snapshot.name, :title=>'Apply Snapshot / Load VM!', :disabled=>disabled %>
               </td>
+              <td>
+                <%= action_button :delete, :name=>"snapshot_delete[name]", :value=>snapshot.name, :title=>'Delete Snapshot!', :disabled=>disabled %>
+              </td>             
             </form>
           </tr>
         <% end %>

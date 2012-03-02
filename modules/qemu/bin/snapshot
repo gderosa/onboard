@@ -48,14 +48,17 @@ else
   File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
     f.write Process.pid
   end
-  if _action_ == 'take'
+  case _action_
+  when 'take'
     ## 'take' is a create-or-update operation
     if drive['snapshots'].any?{|snap| snap.name == _snap_name_}
        system 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file'] 
     end
     system 'qemu-img', 'snapshot', '-c', _snap_name_, drive['config']['file'] 
-  elsif _action_ == 'apply'
+  when 'apply'
     system 'qemu-img', 'snapshot', '-a', _snap_name_, drive['config']['file']
+  when 'delete'
+    system 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file']
   end
 end
 
