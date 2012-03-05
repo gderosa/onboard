@@ -7,7 +7,8 @@ __onboard_lib__ = File.realpath File.join __dir__, '../../../lib'
 $LOAD_PATH.unshift __onboard_lib__
 $LOAD_PATH.unshift __qemu_lib__
 
-require 'pp' # DEBUG
+# require 'pp' # DEBUG
+require 'fileutils'
 
 require 'onboard/virtualization/qemu'
 
@@ -46,6 +47,7 @@ STDERR.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.err"
 File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
   f.write Process.pid
 end
+FileUtils.cp "/proc/#{Process.pid}/cmdline", "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.cmdline"    
 
 if vm.running?
   case _action_
