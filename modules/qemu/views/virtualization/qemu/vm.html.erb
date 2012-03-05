@@ -121,6 +121,40 @@
           </tr>
         <% end %>
       <% end %>
+      <tr>
+        <form method="POST">
+          <input type="hidden" name="_method" value="put"/>
+          <td>
+            <select name="snapshot_drive" "<%= 'disabled' if vm.running? %>">
+              <% drives_w_snapshots.keys.each do |drive_name| %>
+                <option value="<%= drive_name %>"><%= drive_name %></option>
+              <% end %>
+            </select>
+          </td>
+          <td style="text-align:right;"></td>
+          <td><input type="text" name="snapshot_take[name]" title="Add New"/></td>
+          <td>
+            <%= 
+              if vm.running?
+                'VM'
+              else
+                'Disk Only'
+              end
+            %>
+          </td>
+          <td><!-- snapshot time -->(Add New)</td>
+          <td>
+            <%= action_button :save, :title=>'Take New Snapshot / Save VM!', :disabled=>(OnBoard::V12n::QEMU::Snapshot.running?) %>
+          </td>
+          <td>
+            <%= action_button :redo, :name=>"snapshot_apply[name]", :title=>'Apply Snapshot / Load VM!', :disabled=>true %>
+          </td>
+          <td>
+            <%= action_button :delete, :name=>"snapshot_delete[name]", :title=>'Delete Snapshot!', :disabled=>true %>
+          </td>             
+        </form>
+      </tr>
+
     </tbody>
   </table>
 
