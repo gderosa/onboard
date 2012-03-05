@@ -37,7 +37,8 @@
                   :start,                 
                   :name     => 'start[uuid]',
                   :title    => 'Start',
-                  :value    => vm.uuid
+                  :value    => vm.uuid,
+                  :disabled => vm.snapshotting?
                 ) 
               end
             %>
@@ -50,7 +51,8 @@
                     :start, 
                     :name     => 'resume[uuid]', 
                     :title    => 'Resume from Pause',
-                    :value    => vm.uuid
+                    :value    => vm.uuid,
+                    :disabled => vm.snapshotting?
                   )
                 else
                   action_button(
@@ -66,7 +68,8 @@
                   :name     => 'start_paused[uuid]', 
                   :title    => 
 'Start paused (so you have time to open a VNC client etc.)',
-                  :value    => vm.uuid
+                  :value    => vm.uuid,
+                  :disabled => vm.snapshotting?
                 ) 
               end 
             %>
@@ -82,7 +85,7 @@
                 :title    => 
                     "Quit Virtualization (beware: if you don&rsquo;t or can&rsquo;t save state, you may corrupt data!)",
                 :value    => vm.uuid,
-                :disabled => !vm.running?
+                :disabled => (!vm.running? or vm.snapshotting?)
               ) 
             %>
           </td>
@@ -93,7 +96,7 @@
                 :name     => 'delete[uuid]',
                 :title    => 'Delete!',
                 :value    => vm.uuid,
-                :disabled => vm.running?
+                :disabled => (vm.running? or vm.snapshotting?)
               )
             %>
           </td>
