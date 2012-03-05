@@ -125,7 +125,7 @@
         <form method="POST">
           <input type="hidden" name="_method" value="put"/>
           <td>
-            <select name="snapshot_drive" "<%= 'disabled' if vm.running? %>">
+            <select name="snapshot_drive" <%= 'disabled' if vm.running? %>>
               <% drives_w_snapshots.keys.each do |drive_name| %>
                 <option value="<%= drive_name %>"><%= drive_name %></option>
               <% end %>

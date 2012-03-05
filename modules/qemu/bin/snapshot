@@ -47,7 +47,9 @@ STDERR.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.err"
 File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
   f.write Process.pid
 end
-FileUtils.cp "/proc/#{Process.pid}/cmdline", "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.cmdline"    
+cmdline_file = "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.cmdline"
+FileUtils.rm cmdline_file if File.exists? cmdline_file
+FileUtils.cp "/proc/#{Process.pid}/cmdline", cmdline_file    
 
 if vm.running?
   case _action_
