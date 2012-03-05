@@ -16,6 +16,8 @@ class OnBoard
         SAVEVM_TIMEOUT = 0 # 0 means infinite...
         # Very slow with qcow2 and cache=writethrough;
         # as opposite, it take a few seconds with cache=unsafe :-P
+        #
+        # Obviously snapshot operations are handled asynchronously.
         
         LOADVM_TIMEOUT = SAVEVM_TIMEOUT
 
@@ -188,7 +190,7 @@ class OnBoard
         end
 
         def status
-          return 'Not Running' unless running?
+          return "Not Running#{', Snapshotting' if snapshotting?}" unless running?
           unless @cache['status'] =~ /\S/
             get_status
           end

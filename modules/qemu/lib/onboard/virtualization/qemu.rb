@@ -89,7 +89,9 @@ start start_paused pause resume powerdown delete
             end if params['drive'].respond_to? :each_pair 
 
             # Snapshots # TODO: DRY DRY DRY
-            if params['snapshot_take'] and params['snapshot_take']['name'] 
+            if params['snapshot_take'] 
+              raise OnBoard::BadRequest, 'Snapshot must have a name!' unless
+                  params['snapshot_take']['name'] =~ /\S/
               raise OnBoard::BadRequest, 'Another snapshot process is running!' if
                   QEMU::Snapshot.running?
               cmd = %Q{#{BINDIR}/snapshot take #{params['vmid']} "#{params['snapshot_take']['name']}"}          
@@ -97,7 +99,9 @@ start start_paused pause resume powerdown delete
                   params['snapshot_drive'] =~ /\S/
               System::Command.run cmd 
             end
-            if params['snapshot_apply'] and params['snapshot_apply']['name'] 
+            if params['snapshot_apply'] 
+              raise OnBoard::BadRequest, 'Snapshot must have a name!' unless
+                  params['snapshot_apply']['name'] =~ /\S/
               raise OnBoard::BadRequest, 'Another snapshot process is running!' if
                   QEMU::Snapshot.running?
               cmd = %Q{#{BINDIR}/snapshot apply #{params['vmid']} "#{params['snapshot_apply']['name']}"}          
@@ -105,7 +109,9 @@ start start_paused pause resume powerdown delete
                   params['snapshot_drive'] =~ /\S/
               System::Command.run cmd 
             end
-            if params['snapshot_delete'] and params['snapshot_delete']['name'] 
+            if params['snapshot_delete'] 
+              raise OnBoard::BadRequest, 'Snapshot must have a name!' unless
+                  params['snapshot_delete']['name'] =~ /\S/
               raise OnBoard::BadRequest, 'Another snapshot process is running!' if
                   QEMU::Snapshot.running?
               cmd = %Q{#{BINDIR}/snapshot delete #{params['vmid']} "#{params['snapshot_delete']['name']}"}          
