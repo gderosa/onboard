@@ -30,7 +30,8 @@
                   :name     => 'powerdown[uuid]',
                   :title    =>
 'ACPI Shutdown (may require some time to cleanly power off)',
-                  :value    => vm.uuid
+                  :value    => vm.uuid,
+                  :disabled => vm.snapshotting?
                 )
               else
                 action_button(
@@ -59,7 +60,8 @@
                     :pause, 
                     :name     => 'pause[uuid]', 
                     :title    => 'Pause',
-                    :value    => vm.uuid
+                    :value    => vm.uuid,
+                    :disabled => vm.snapshotting?
                   ) 
                 end
               else
