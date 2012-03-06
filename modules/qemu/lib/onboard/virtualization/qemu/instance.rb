@@ -201,10 +201,10 @@ class OnBoard
           str = @monitor.sendrecv 'info status'
           if str =~ /error/i
             if snapshotting?
-              str = 'Snapshotting' 
+              str = 'Running, Snapshotting' 
             end
           end
-          @cache['status'] = str
+          @cache['status'] = str.sub(/^VM status(: )?/, '').capitalize
         end
 
         def snapshotting?
@@ -310,6 +310,10 @@ class OnBoard
 
         def loadvm(name, *opts)
           @monitor.sendrecv "loadvm #{name}", :timeout => LOADVM_TIMEOUT
+        end
+
+        def delvm(name, *opts)
+          @monitor.sendrecv "delvm #{name}", :timeout => LOADVM_TIMEOUT
         end
 
         def savevm_quit

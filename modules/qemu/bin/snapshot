@@ -57,6 +57,8 @@ if vm.running?
     vm.savevm _snap_name_
   when 'apply'
     vm.loadvm _snap_name_
+  when 'delete'
+    vm.delvm  _snap_name_
   end
 else
   case _action_
