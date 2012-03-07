@@ -162,7 +162,13 @@
   <thead>
     <tr>
       <th>Enable</th>
-      <th>At</th>
+      <th>
+        Disks
+        <div class="optinfo">
+          Ignored for full VM / running machine
+        </div>
+      </th>
+      <th>At <span class="optinfo">(hh:mm)</span></th>
       <th>Day of Week</th>
       <th>Day of Month</th>
       <th>Delete older than</th>
@@ -172,6 +178,15 @@
     <tr>
       <td style="text-align:center">
         <input type="checkbox" name="snapshot_schedule[enable]"/> 
+      </td>
+      <td style="text-align:right;">
+        <% drives_w_snapshots.keys.each do |drive_name| %>
+          <%= drive_name %> <input 
+            type="checkbox" 
+            name="snapshot_schedule[drives][<%= drive_name %>]"
+            checked
+          > 
+        <% end %>
       </td>
       <td>
         <!-- try to follow strftime(3) conventions --> 
