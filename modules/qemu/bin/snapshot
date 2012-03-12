@@ -51,6 +51,12 @@ cmdline_file = "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.cmdline"
 FileUtils.rm cmdline_file if File.exists? cmdline_file
 FileUtils.cp "/proc/#{Process.pid}/cmdline", cmdline_file    
 
+# useful if running under cron
+while QEMU::Snapshot.running? :except => Process.pid
+  puts "#{Time.now}: Another snapshot process running: waiting..."
+  sleep 30
+end
+
 if vm.running?
   case _action_
   when 'take'

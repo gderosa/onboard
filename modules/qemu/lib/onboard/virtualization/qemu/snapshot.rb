@@ -23,9 +23,10 @@ class OnBoard
 
         class << self
           # true if *any* save/restore process is running
-          def running?
+          def running?(opts={})
             Dir.glob "#{VARRUN}/qemu-*.snapshot.pid" do |pidfile|
               pid = File.read(pidfile).to_i
+              next if opts[:except] and opts[:except] == pid
               return true if pid > 0 and ::Process.running? pid 
             end
             # Maybe we missed something...?
