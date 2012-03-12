@@ -158,88 +158,89 @@
 
 <h4>Schedule Snapshot</h4>
 
-<table>
-  <thead>
-    <tr>
-      <th>Enable</th>
-      <th>
-        Disks
-        <div class="optinfo">
-          Ignored for full VM / running machine
-        </div>
-      </th>
-      <th>At <span class="optinfo">(hh:mm)</span></th>
-      <th>Day of Week</th>
-      <th>Day of Month</th>
-      <th>Delete older than</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align:center">
-        <input type="checkbox" name="snapshot_schedule[enable]"/> 
-      </td>
-      <td style="text-align:right;">
-        <% drives_w_snapshots.keys.each do |drive_name| %>
-          <%= drive_name %> <input 
-            type="checkbox" 
-            name="snapshot_schedule[drives][<%= drive_name %>]"
-            checked
-            style="vertical-align:middle; margin-left:1ex;"
-          > 
-        <% end %>
-      </td>
-      <td>
-        <!-- try to follow strftime(3) conventions --> 
-        <% selected_H, selected_M = 3, 20 # 3:20 AM %>
-        <select name="snapshot_schedule[H]">
-          <option value="*">*</option>
-          <% 0.upto(23) do |_H| %>
-            <option value="<%= _H %>" <%= 'selected' if _H == selected_H%>><%= _H %></option>
+<form method="POST">
+  <table>
+    <thead>
+      <tr>
+        <th>Enable</th>
+        <th>
+          Disks
+          <div class="optinfo">
+            Ignored for full VM / running machine
+          </div>
+        </th>
+        <th>At <span class="optinfo">(hh:mm)</span></th>
+        <th>Day of Week</th>
+        <th>Day of Month</th>
+        <th>Delete older than</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:center">
+          <input type="checkbox" name="snapshot_schedule[enable]"/> 
+        </td>
+        <td style="text-align:right;">
+          <% drives_w_snapshots.keys.each do |drive_name| %>
+            <%= drive_name %> <input 
+              type="checkbox" 
+              name="snapshot_schedule[drives][<%= drive_name %>]"
+              checked
+              style="vertical-align:middle; margin-left:1ex;"
+            > 
           <% end %>
-        </select>
-        :
-        <select name="snapshot_schedule[M]">
-          <option value="*">*</option>
-          <% 0.upto(59) do |_M| %>
-            <option value="<%= _M %>" <%= 'selected' if _M == selected_M %>><%= _M %></option>
-          <% end %>
-        </select>
-      </td>
-      <td>
-        <select name="snapshot_schedule[w]">
-          <option value="*">*</option>
-          <option value="0">Sunday</option>
-          <option value="1">Monday</option>
-          <option value="2">Tuesday</option>
-          <option value="3">Wednesday</option>
-          <option value="4">Thursday</option>
-          <option value="5">Friday</option>
-          <option value="6">Saturday</option>
-        </select> 
-      </td>
-      <td>
-        <select name="snapshot_schedule[d]">
-          <option value="*">*</option>
-          <% 1.upto(31) do |d| %>
-            <% 
-              dstr = sprintf('%02d', d) 
-                  # not really necessary, but follow strftime(3) ...
-            %> 
-            <option value="<%= dstr %>"><%= dstr %></option>
-          <% end %>
-        </select>
-      </td>
-      <td>
-        <input 
-          type="text" size="2" name="snapshot_schedule[delete_older_than_days]"
-          value="7"
-        /> days
-      </td>
-    </tr>
-  </tbody>
-</table>
-<button type="submit">Set!</button>
+        </td>
+        <td>
+          <!-- try to follow strftime(3) conventions --> 
+          <% selected_H, selected_M = 3, 20 # 3:20 AM %>
+          <select name="snapshot_schedule[H]">
+            <option value="*">*</option>
+            <% 0.upto(23) do |_H| %>
+              <option value="<%= _H %>" <%= 'selected' if _H == selected_H%>><%= _H %></option>
+            <% end %>
+          </select>
+          :
+          <select name="snapshot_schedule[M]">
+            <option value="*">*</option>
+            <% 0.upto(59) do |_M| %>
+              <option value="<%= _M %>" <%= 'selected' if _M == selected_M %>><%= _M %></option>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <select name="snapshot_schedule[w]">
+            <option value="*">*</option>
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+          </select> 
+        </td>
+        <td>
+          <select name="snapshot_schedule[d]">
+            <option value="*">*</option>
+            <% 1.upto(31) do |d| %>
+              <% 
+                dstr = sprintf('%02d', d) 
+                    # not really necessary, but follow strftime(3) ...
+              %> 
+              <option value="<%= dstr %>"><%= dstr %></option>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <input 
+            type="text" size="2" name="snapshot_schedule[delete_older_than_days]"
+            value="7"
+          /> days
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="submit">Set!</button>
 
 <h3>Configuration</h3>
 
