@@ -9,6 +9,8 @@ class OnBoard
     module QEMU
       class Snapshot
 
+        autoload :Schedule, 'onboard/virtualization/qemu/snapshot/schedule'
+
         class VMClock # allow further data manipulation...
           def self.parse(str)
             new(str) 

@@ -39,7 +39,7 @@ class OnBoard
         # Action buttons / runtime
         if params.keys.include_any_of?(%w{
                 start start_paused stop pause quit powerdown resume delete 
-                snapshot_take snapshot_apply snapshot_delete
+                snapshot_take snapshot_apply snapshot_delete snapshot_schedule
         }) 
                 # Yup, deleting with a PUT is unRESTful... :-P
           OnBoard::Virtualization::QEMU.manage(:http_params => params)

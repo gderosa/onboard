@@ -119,6 +119,10 @@ start start_paused pause resume powerdown delete
                   params['snapshot_drive'] =~ /\S/
               System::Command.run cmd 
             end
+
+            if params['snapshot_schedule']
+              QEMU::Snapshot::Schedule.manage :http_params => params
+            end
           end
         end
 
