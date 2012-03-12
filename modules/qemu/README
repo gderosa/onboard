@@ -21,7 +21,7 @@ jqueyFileTree
 
 == Gem dependencies:
 
-gem install uuid rmagick
+gem install uuid rmagick cronedit
 
 
 == VNC clients
