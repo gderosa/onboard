@@ -57,25 +57,24 @@
 
 <h4>Status</h4>
 
-<% if vm.snapshotting? %>
-  Running: <code class="highlight" style="margin-left:0.2em;"> <%= vm.snapshot_cmdline.join(' ').sub(
+<p><%= vm.snapshotting? ? 'Running: ' : 'Last snapshot process: ' %><code class="highlight" style="margin-left:0.2em;"> <%= vm.snapshot_cmdline.join(' ').sub(
     %r{(^.*)bin/snapshot(.*)$}, 'snapshot\2'
   )  
   %></code>
-  <div class="optinfo">
+<p>
+  <% if vm.snapshotting? %>
     <% if vm.snapshot_waiting? %>
       Waiting for other processes to complete. 
     <% else %>
       Taking / Applying a snapshot.
     <% end %>
-  </div>
-<% else %>
-  <% if OnBoard::V12n::QEMU::Snapshot.running? %>
-    Other VMs are currently under snapshotting (taking and/or applying).
   <% else %>
-    No snanpshot operations running.
+    <% if OnBoard::V12n::QEMU::Snapshot.running? %>
+      Other VMs are currently under snapshotting (taking and/or applying).
+    <% else %>
+      No snanpshot operations running.
+    <% end %>
   <% end %>
-<% end %>
 
 <h4>Saved Snapshots</h4>
 
