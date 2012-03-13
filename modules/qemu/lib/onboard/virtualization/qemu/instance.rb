@@ -216,6 +216,16 @@ class OnBoard
           end
         end
 
+        def snapshot_waiting?
+          pidfile       = "#{VARRUN}/qemu-#{uuid_short}.snapshot.pid"
+          waiting_file  = "#{VARRUN}/qemu-#{uuid_short}.snapshot.waiting"
+          return (
+            File.exists? pidfile and
+            Process.running?(File.read(pidfile).to_i) and
+            File.exists? waiting_file
+          )
+        end
+
         def drives
           drives_h = {}
           if running?

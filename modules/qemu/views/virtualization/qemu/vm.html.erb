@@ -54,6 +54,21 @@
 </form>
 
 <h3>Snapshots</h3>
+
+<h4>Status</h4>
+
+<% if vm.snapshotting? %>
+  <% if vm.snapshot_waiting? %>
+  <% else %>
+  <% end %>
+<% else %>
+  <% if OnBoard::V12n::QEMU::Snapshot.running? %>
+  <% else %>
+  <% end %>
+<% end %>
+
+<h4>Saved Snapshots</h4>
+
 <p class="info" style="margin-top:0;">
   <span class="term">Disk Only</span> snapshots are taken and applied at 
   machine turned off. Full <span class="term">VM</span> snapshots also include 
