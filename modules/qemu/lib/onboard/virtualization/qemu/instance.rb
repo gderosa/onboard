@@ -239,7 +239,7 @@ class OnBoard
           end
         end
         def snapshot_stderr
-          errfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.out"
+          errfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.err"
           if File.exists? errfile
             File.read errfile
           end

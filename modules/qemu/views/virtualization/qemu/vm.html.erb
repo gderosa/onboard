@@ -72,17 +72,19 @@
     <% end %>
   <% end %>
 
-<p><%= vm.snapshotting? ? 'Running: ' : 'Last snapshot process: ' %><code class="highlight" style="margin-left:0.2em;"> <%= vm.snapshot_cmdline.join(' ').sub(
+<% if vm.snapshot_cmdline %>
+  <p><%= vm.snapshotting? ? 'Running: ' : 'Last snapshot process: ' %><code class="highlight" style="margin-left:0.2em;"> <%= vm.snapshot_cmdline.join(' ').sub(
     %r{(^.*)bin/snapshot(.*)$}, 'snapshot\2'
   )  
   %></code>
+<% end %>
 
 <% snapshot_stdout, snapshot_stderr = vm.snapshot_stdout, vm.snapshot_stderr %>
 <% if snapshot_stdout =~ /\S/m %>
-  <pre class="warn" style="margin-top:0.3em;"><%= snapshot_stdout %></pre>
+  <pre class="warn" style="margin-top:0.3em;"><%== snapshot_stdout %></pre>
 <% end %>
 <% if snapshot_stderr =~ /\S/m %>
- <pre class="error" style="margin-top:0.3em;"><%= snapshot_stderr %></pre>
+ <pre class="error" style="margin-top:0.3em;"><%== snapshot_stderr %></pre>
 <% end %>
 
 <h4>Saved Snapshots</h4>
