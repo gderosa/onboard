@@ -59,11 +59,15 @@
 
 <% if vm.snapshotting? %>
   <% if vm.snapshot_waiting? %>
+    Waiting for other processes to complete. 
   <% else %>
+    Taking / Applying a snapshot.
   <% end %>
 <% else %>
   <% if OnBoard::V12n::QEMU::Snapshot.running? %>
+    Other VMs are currently under snapshotting (taking and/or applying).
   <% else %>
+    No snanpshot operations running.
   <% end %>
 <% end %>
 
