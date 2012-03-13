@@ -28,7 +28,10 @@ class OnBoard
           def running?(opts={})
             Dir.glob "#{VARRUN}/qemu-*.snapshot.pid" do |pidfile|
               pid = File.read(pidfile).to_i
-              next if opts[:except] and opts[:except] == pid
+              waiting_file = pidfile.sub(/\.pid$/, '.waiting') 
+              waiting = File.exists? waiting_file
+              next if waiting and opts[:except_waiting] 
+              next if opts[:except_pid] and opts[:except_pid] == pid
               return true if pid > 0 and ::Process.running? pid 
             end
             # Maybe we missed something...?

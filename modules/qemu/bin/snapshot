@@ -60,11 +60,12 @@ FileUtils.rm cmdline_file if File.exists? cmdline_file
 FileUtils.cp "/proc/#{Process.pid}/cmdline", cmdline_file    
 
 # useful if running under cron
-while QEMU::Snapshot.running? :except => Process.pid
-  puts "#{Time.now}: Another snapshot process running: waiting..."
-  STDOUT.flush
+waiting_file = "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.waiting"
+File.open(waiting_file, 'w') {|f| } # FileUtils.touch ?
+while QEMU::Snapshot.running? :except_waiting => true, :except_pid => Process.pid
   sleep 30
 end
+FileUtils.rm waiting_file
 
 if vm.running?
   case _action_
