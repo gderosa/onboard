@@ -8,8 +8,6 @@ class OnBoard
           class << self
 
             def manage(h)
-              pp h[:http_params]['snapshot_schedule'] # DEBUG
-
               enable      = h[:http_params]['snapshot_schedule']['enable']
               drives      = h[:http_params]['snapshot_schedule']['drives']
               hour        = h[:http_params]['snapshot_schedule']['H']
@@ -21,7 +19,7 @@ class OnBoard
 h[:http_params]['snapshot_schedule']['delete_older_than_days']
 
               vmid    = h[:http_params]['vmid']            
-              cronid  = "qemu_#{vmid}"
+              cronid  = "qemu_snapshot_#{vmid}"
 
               if enable
                 CronEdit::Crontab.Add cronid, {
@@ -29,7 +27,10 @@ h[:http_params]['snapshot_schedule']['delete_older_than_days']
                   :hour     => hour,
                   :day      => dayofmonth,
                   :weekday  => weekday,
-                  :command  => "#{QEMU::BINDIR}/snapshot take #{vmid} _scheduled" 
+                  :command  => 
+"#{QEMU::BINDIR}/snapshot take #{vmid} `date '+scheduled_\\%y\\%m\\%d_\\%H\\%M'`" 
+                      # escape cron comment sign '%' 
+                      # TODO: patch CronEdit to do this trasparently?
                 } 
               else
                 CronEdit::Crontab.Remove cronid

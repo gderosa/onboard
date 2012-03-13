@@ -54,6 +54,7 @@ FileUtils.cp "/proc/#{Process.pid}/cmdline", cmdline_file
 # useful if running under cron
 while QEMU::Snapshot.running? :except => Process.pid
   puts "#{Time.now}: Another snapshot process running: waiting..."
+  STDOUT.flush
   sleep 30
 end
 
