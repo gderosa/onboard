@@ -203,7 +203,7 @@
           <select name="snapshot_schedule[M]">
             <option value="*">*</option>
             <% 0.upto(59) do |_M| %>
-              <option value="<%= _M %>" <%= 'selected' if _M == selected_M %>><%= _M %></option>
+              <option value="<%= _M %>" <%= 'selected' if _M == selected_M %>><%= sprintf('%02d',_M) %></option>
             <% end %>
           </select>
         </td>
