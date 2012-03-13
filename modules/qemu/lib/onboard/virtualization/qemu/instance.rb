@@ -207,6 +207,8 @@ class OnBoard
           @cache['status'] = str.sub(/^VM status(: )?/, '').capitalize
         end
 
+        # TODO: move to QEMU::Snapshot::Runtime
+        
         def snapshotting?
           pidfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.pid"
           if File.exists? pidfile
@@ -224,6 +226,13 @@ class OnBoard
             Process.running?(File.read(pidfile).to_i) and
             File.exists? waiting_file
           )
+        end
+
+        def snapshot_cmdline
+          cmdline_file = "#{VARRUN}/qemu-#{uuid_short}.snapshot.cmdline"
+          if File.exists? cmdline_file
+            File.read(cmdline_file).split("\0")
+          end
         end
 
         def drives
