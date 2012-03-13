@@ -217,7 +217,6 @@ class OnBoard
             return nil
           end
         end
-
         def snapshot_waiting?
           pidfile       = "#{VARRUN}/qemu-#{uuid_short}.snapshot.pid"
           waiting_file  = "#{VARRUN}/qemu-#{uuid_short}.snapshot.waiting"
@@ -227,11 +226,22 @@ class OnBoard
             File.exists? waiting_file
           )
         end
-
         def snapshot_cmdline
           cmdline_file = "#{VARRUN}/qemu-#{uuid_short}.snapshot.cmdline"
           if File.exists? cmdline_file
             File.read(cmdline_file).split("\0")
+          end
+        end
+        def snapshot_stdout
+          outfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.out"
+          if File.exists? outfile
+            File.read outfile
+          end
+        end
+        def snapshot_stderr
+          errfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.out"
+          if File.exists? errfile
+            File.read errfile
           end
         end
 
