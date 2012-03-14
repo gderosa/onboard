@@ -192,7 +192,31 @@
 </table>
 
 <h4>Schedule Snapshot</h4>
-
+<% 
+  snapshot_cron_entry     = vm.snapshot_cron_entry # CronEdit::CronEntry
+  # CronEdit::CronEntry[:minute] (for example) gives "0,1,2,3...59"
+  # instead of "*"; so we guess that, whenever a comma is present, the
+  # whole string has to be interpreted as '*'
+  snapshot_cron_defaults  = {
+    'enable'  => snapshot_cron_entry,
+  }
+  if snapshot_cron_entry
+    snapshot_cron_defaults.update( {
+      'H'       => snapshot_cron_entry[:hour    ].sub(/^.*,.*$/, '*'),
+      'M'       => snapshot_cron_entry[:minute  ].sub(/^.*,.*$/, '*'),
+      'w'       => snapshot_cron_entry[:weekday ].sub(/^.*,.*$/, '*'),
+      'd'       => snapshot_cron_entry[:day     ].sub(/^.*,.*$/, '*')
+    } ) 
+  else
+    snapshot_cron_defaults.update( {
+      'H'       => '3',
+      'M'       => '20',
+      'w'       => '*',
+      'd'       => '*'
+    } ) 
+  end
+  vals = snapshot_cron_defaults # shorten
+%>
 <form method="POST">
   <table>
     <thead>
@@ -213,7 +237,7 @@
     <tbody>
       <tr>
         <td style="text-align:center">
-          <input type="checkbox" name="snapshot_schedule[enable]"/> 
+          <input type="checkbox" name="snapshot_schedule[enable]" <%= 'checked' if vals['enable'] %>/> 
         </td>
         <td style="text-align:right;">
           <% drives_w_snapshots.keys.each do |drive_name| %>
@@ -227,31 +251,30 @@
         </td>
         <td>
           <!-- try to follow strftime(3) conventions --> 
-          <% selected_H, selected_M = 3, 20 # 3:20 AM %>
           <select name="snapshot_schedule[H]">
             <option value="*">*</option>
             <% 0.upto(23) do |_H| %>
-              <option value="<%= _H %>" <%= 'selected' if _H == selected_H%>><%= _H %></option>
+              <option value="<%= _H %>" <%= 'selected' if _H == vals['H'].to_i %>><%= _H %></option>
             <% end %>
           </select>
           :
           <select name="snapshot_schedule[M]">
             <option value="*">*</option>
             <% 0.upto(59) do |_M| %>
-              <option value="<%= _M %>" <%= 'selected' if _M == selected_M %>><%= sprintf('%02d',_M) %></option>
+              <option value="<%= _M %>" <%= 'selected' if _M == vals['M'].to_i %>><%= sprintf('%02d',_M) %></option>
             <% end %>
           </select>
         </td>
         <td>
           <select name="snapshot_schedule[w]">
             <option value="*">*</option>
-            <option value="0">Sunday</option>
-            <option value="1">Monday</option>
-            <option value="2">Tuesday</option>
-            <option value="3">Wednesday</option>
-            <option value="4">Thursday</option>
-            <option value="5">Friday</option>
-            <option value="6">Saturday</option>
+            <option value="0" <%= 'selected' if vals['w'] == '0' %>>Sunday</option>
+            <option value="1" <%= 'selected' if vals['w'] == '1' %>>Monday</option>
+            <option value="2" <%= 'selected' if vals['w'] == '2' %>>Tuesday</option>
+            <option value="3" <%= 'selected' if vals['w'] == '3' %>>Wednesday</option>
+            <option value="4" <%= 'selected' if vals['w'] == '4' %>>Thursday</option>
+            <option value="5" <%= 'selected' if vals['w'] == '5' %>>Friday</option>
+            <option value="6" <%= 'selected' if vals['w'] == '6' %>>Saturday</option>
           </select> 
         </td>
         <td>
@@ -262,7 +285,7 @@
                 dstr = sprintf('%02d', d) 
                     # not really necessary, but follow strftime(3) ...
               %> 
-              <option value="<%= dstr %>"><%= dstr %></option>
+              <option value="<%= dstr %>" <%= 'selected' if d == vals['d'].to_i %>><%= dstr %></option>
             <% end %>
           </select>
         </td>

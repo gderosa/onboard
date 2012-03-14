@@ -7,6 +7,10 @@ class OnBoard
         module Schedule
           class << self
 
+            def cronid(vmid)
+              "qemu_snapshot_#{vmid}"
+            end
+
             def manage(h)
               enable      = h[:http_params]['snapshot_schedule']['enable']
               drive_names = (
@@ -24,7 +28,6 @@ class OnBoard
 h[:http_params]['snapshot_schedule']['delete_older_than_days']
 
               vmid      = h[:http_params]['vmid']            
-              cronid    = "qemu_snapshot_#{vmid}"
               snapname  = "`date '+scheduled_\\%y\\%m\\%d_\\%H\\%M'`"
                   # Will be replaced by the shell at time of snapshotting.
                   # Cron comment sign '%' are escaped. 
@@ -38,7 +41,7 @@ h[:http_params]['snapshot_schedule']['delete_older_than_days']
               cmd       << comma_separated_drive_names                       
 
               if enable 
-                CronEdit::Crontab.Add cronid, {
+                CronEdit::Crontab.Add cronid(vmid), {
                   :minute   => minute,
                   :hour     => hour,
                   :day      => dayofmonth,
@@ -46,7 +49,14 @@ h[:http_params]['snapshot_schedule']['delete_older_than_days']
                   :command  => cmd 
                 } 
               else
-                CronEdit::Crontab.Remove cronid
+                CronEdit::Crontab.Remove cronid(vmid)
+              end
+            end
+
+            def get_entry(vmid)
+              crontab_line = CronEdit::Crontab.List[cronid(vmid)]
+              if crontab_line
+                CronEdit::CronEntry.new CronEdit::Crontab.List[cronid(vmid)]
               end
             end
 

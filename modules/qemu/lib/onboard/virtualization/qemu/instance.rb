@@ -246,6 +246,9 @@ class OnBoard
             File.read errfile
           end
         end
+        def snapshot_cron_entry
+          Snapshot::Schedule.get_entry(uuid_short) 
+        end
 
         def drives
           drives_h = {}
