@@ -13,11 +13,15 @@ class OnBoard
 
             def manage(h)
               enable      = h[:http_params]['snapshot_schedule']['enable']
-              drive_names = (
+              begin
+                drive_names = (
                   h[:http_params]['snapshot_schedule']['drives'].select do |k, v|
                     v and v != 0 and v != ''
                   end
-              ).keys
+                ).keys
+              rescue NoMethodError
+                drive_names = []
+              end
               comma_separated_drive_names = drive_names.join(',')
               hour        = h[:http_params]['snapshot_schedule']['H']
               minute      = h[:http_params]['snapshot_schedule']['M']

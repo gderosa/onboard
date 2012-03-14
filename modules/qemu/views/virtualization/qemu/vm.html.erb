@@ -194,12 +194,15 @@
 <h4>Schedule Snapshot</h4>
 <% 
   snapshot_cron_entry     = vm.snapshot_cron_entry # CronEdit::CronEntry
+
+  snapshot_cron_defaults  = {
+    'enable'                  => snapshot_cron_entry,
+    'delete_older_than_days'  => '7'
+  }
+
   # CronEdit::CronEntry[:minute] (for example) gives "0,1,2,3...59"
   # instead of "*"; so we guess that, whenever a comma is present, the
   # whole string has to be interpreted as '*'
-  snapshot_cron_defaults  = {
-    'enable'  => snapshot_cron_entry,
-  }
   if snapshot_cron_entry
     snapshot_cron_defaults.update( {
       'H'       => snapshot_cron_entry[:hour    ].sub(/^.*,.*$/, '*'),
@@ -214,6 +217,13 @@
       'w'       => '*',
       'd'       => '*'
     } ) 
+  end
+  if 
+      snapshot_cron_entry and 
+      snapshot_cron_entry[:command] =~ /DELETE_SCHEDULED_OLDER_THAN=\s*([\d\.]+)d/
+    snapshot_cron_defaults.update({
+      'delete_older_than_days' => $1
+    }) 
   end
   vals = snapshot_cron_defaults # shorten
 %>
@@ -241,10 +251,18 @@
         </td>
         <td style="text-align:right;">
           <% drives_w_snapshots.keys.each do |drive_name| %>
+            <% 
+              checked = true 
+              if snapshot_cron_entry
+                unless snapshot_cron_entry[:command].include? drive_name # naive!!
+                  checked = false
+                end
+              end
+            %>
             <%= drive_name %> <input 
               type="checkbox" 
               name="snapshot_schedule[drives][<%= drive_name %>]"
-              checked
+              <%= 'checked' if checked %>
               style="vertical-align:middle; margin-left:1ex;"
             > 
           <% end %>
@@ -292,7 +310,7 @@
         <td>
           <input 
             type="text" size="2" name="snapshot_schedule[delete_older_than_days]"
-            value="7"
+            value="<%= vals['delete_older_than_days'] %>"
           /> days
         </td>
       </tr>
