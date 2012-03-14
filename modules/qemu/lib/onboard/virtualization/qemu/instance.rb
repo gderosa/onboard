@@ -1,3 +1,5 @@
+require 'pp' # DEBUG
+
 require 'json'
 require 'socket'
 
@@ -96,7 +98,7 @@ class OnBoard
               # Boolean mapped to 'on'|'off'
               %w{snapshot}.each do |par|
                 drive_args << %Q{#{par}=on} if d[par]
-              end
+              end # which is different from taking/applying snapshots...
               cmdline << '-drive' << ' ' << drive_args.join(',') << ' '
             end
           end
@@ -343,6 +345,16 @@ class OnBoard
 
         def delvm(name, *opts)
           @monitor.sendrecv "delvm #{name}", :timeout => LOADVM_TIMEOUT
+        end
+
+        def delvm_all(match)
+          drives.each_pair do |drive_name, drive|
+            drive['snapshots'].each do |snap|
+              next if match[:name] and not match[:name] === snap.name
+              next if match[:older_than] and snap.newer_than match[:older_than]
+              delvm snap.name
+            end if drive['snapshots'].respond_to? :each
+          end
         end
 
         def savevm_quit

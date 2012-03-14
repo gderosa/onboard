@@ -51,6 +51,8 @@ Process.daemon
 
 STDOUT.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out"
 STDERR.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.err"
+STDOUT.sync = true
+STDERR.sync = true
 
 File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
   f.write Process.pid
@@ -68,6 +70,10 @@ end
 FileUtils.rm waiting_file
 
 if vm.running?
+  vm.delvm_all( 
+    :name => /^scheduled_/, 
+    :older_than => ENV['DELETE_SCHEDULED_OLDER_THAN']
+  ) if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /^\d+/
   case _action_
   when 'take'
     vm.savevm _snap_name_

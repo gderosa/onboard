@@ -59,6 +59,26 @@ class OnBoard
           not disk_only?
         end
 
+        def newer_than(str)
+          unit_conversion = {
+            's' => 1,
+            'm' => 60,
+            'h' => 60*60,
+            'd' => 60*60*24,
+            'w' => 60*60*24*7,
+          } # TODO: move elsewhere
+
+          if str =~ /(\d+)\s*(s|m|h|d|w)?/ 
+            n, unit = $1.to_i, $2
+            unit ||= 's'
+          else
+            raise ArgumentError, "invalid time interval string '#{str}'"
+          end
+          age = Time.now - time
+          seconds = n * unit_conversion[unit]  
+          return (age < seconds)
+        end
+
         def name
           tag
         end
