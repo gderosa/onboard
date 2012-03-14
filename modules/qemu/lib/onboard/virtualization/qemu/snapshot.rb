@@ -66,9 +66,9 @@ class OnBoard
             'h' => 60*60,
             'd' => 60*60*24,
             'w' => 60*60*24*7,
-          } # TODO: move elsewhere
+          } # TODO: use ChronicDuration
 
-          if str =~ /(\d+)\s*(s|m|h|d|w)?/ 
+          if str =~ /([\d\.]+)\s*(s|m|h|d|w)?/ 
             n, unit = $1.to_i, $2
             unit ||= 's'
           else

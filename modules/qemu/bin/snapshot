@@ -10,6 +10,8 @@ $LOAD_PATH.unshift __qemu_lib__
 # require 'pp' # DEBUG
 require 'fileutils'
 
+require 'chronic_duration'
+
 require 'onboard/virtualization/qemu'
 
 class OnBoard
@@ -73,7 +75,7 @@ if vm.running?
   vm.delvm_all( 
     :name => /^scheduled_/, 
     :older_than => ENV['DELETE_SCHEDULED_OLDER_THAN']
-  ) if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /^\d+/
+  ) if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /\d/
   case _action_
   when 'take'
     vm.savevm _snap_name_
@@ -84,6 +86,17 @@ if vm.running?
   end
 else
   drives.each_pair do |drive_name, drive|
+    if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /\d/
+      drive['snapshots'].each do |snap|    
+        next unless snap.disk_only?
+        age = Time.now - snap.time
+        if \
+            age > ChronicDuration.parse(ENV['DELETE_SCHEDULED_OLDER_THAN']) and
+            snap.name =~ /^scheduled_/
+          system 'qemu-img', 'snapshot', '-d', snap.name, drive['config']['file']
+        end
+      end 
+    end
     case _action_
     when 'take'
       ## 'take' is a create-or-update operation
