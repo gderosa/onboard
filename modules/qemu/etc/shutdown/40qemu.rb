@@ -5,9 +5,13 @@ require 'onboard/virtualization/qemu'
 SHUTDOWN_TIMEOUT      = 420 
 QUICK_SAVEVM_TIMEOUT  = 120
 
-OnBoard::Virtualization::QEMU.get_all.each do |vm|
+running_VMs = OnBoard::Virtualization::QEMU.get_all.select{|vm| vm.running?}
+
+puts if running_VMs.any?
+
+running_VMs.each do |vm|
   next unless vm.running?
-  print "\n  Shutting down VM '#{vm.name}'... "
+  puts "  Shutting down VM '#{vm.name}'... "
   STDOUT.flush
   if vm.quick_snapshots?
     begin
@@ -30,5 +34,7 @@ OnBoard::Virtualization::QEMU.get_all.each do |vm|
     end
   end
 end
+
+
 
 
