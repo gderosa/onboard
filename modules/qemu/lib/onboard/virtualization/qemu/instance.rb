@@ -42,10 +42,18 @@ class OnBoard
 
         def to_h
           {
-            'config'  => @config.to_h,
-            'running' => running?,
-            'status'  => status,
-            'drives'  => drives
+            'config'        => @config.to_h,
+            'running'       => running?,
+            'status'        => status,
+            'drives'        => drives,
+            'snapshotting'  => {
+              'running'       => snapshotting?,
+              'waiting'       => snapshot_waiting?,
+              'cmdline'       => snapshot_cmdline,
+              'stdout'        => snapshot_stdout,
+              'stderr'        => snapshot_stderr,
+              'schedule'      => snapshot_cron_entry.to_hash
+            }
           }
         end
 
@@ -209,7 +217,7 @@ class OnBoard
           @cache['status'] = str.sub(/^VM status(: )?/, '').capitalize
         end
 
-        # TODO: move to QEMU::Snapshot::Runtime
+        # TODO: move to QEMU::Snapshot::Runtime or something
         
         def snapshotting?
           pidfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.pid"
