@@ -93,8 +93,16 @@
   <span class="term">Disk Only</span> snapshots are taken and applied at 
   machine turned off. Full <span class="term">VM</span> snapshots also include 
   CPU and memory state, and are taken and applied on a <em>running</em> machine 
-  (which is temporarily paused during the process).
+  (which is temporarily paused during the process). 
+  <span class="term">size</span> is the size of non-disk data in such case.
 </p>
+
+<% if vm.quick_snapshots? %>
+  <p class="info" style="margin-top:1ex; margin-bottom:2.75ex;">
+    A snapshot named <code class="term">_last</code> will be applyed by default
+    at next VM startup if possible.
+  </p>
+<% end %>
 
 <table>
   <thead>
