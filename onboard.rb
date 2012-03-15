@@ -146,6 +146,32 @@ class OnBoard
         end
       end
     end
+    # TODO: DRY DRY DRY
+    if ARGV.include? '--shutdown' 
+      shutdown_scripts = 
+          Dir.glob(ROOTDIR + '/etc/shutdown/[0-9][0-9]*.rb')           
+      Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
+        next if File.exists? "#{module_dir}/.disable"
+        shutdown_scripts += Dir.glob("#{module_dir}/etc/shutdown/[0-9][0-9]*.rb")
+      end
+      shutdown_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
+      shutdown_scripts.each do |script|
+        print "loading: #{script}... "
+        STDOUT.flush
+        begin
+          load script and puts "OK"
+        rescue Exception
+          exception = $!
+
+          puts exception.inspect
+
+          LOGGER.error "loading #{script}: #{exception.inspect}"
+          backtrace_str = "Exception backtrace follows:"
+          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          LOGGER.error backtrace_str
+        end
+      end
+    end
 
   end
 
