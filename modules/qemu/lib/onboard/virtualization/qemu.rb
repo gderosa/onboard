@@ -28,8 +28,12 @@ class OnBoard
         def get_all
           ary = []
           Dir.glob "#{CONFDIR}/*.yml" do |file|
-            config = Config.new(:config => YAML.load(File.read file)) 
-            ary << Instance.new(config)
+            begin
+              config = Config.new(:config => YAML.load(File.read file)) 
+              ary << Instance.new(config)
+            rescue TypeError
+              LOGGER.error "qemu: Found an invalid config file: #{file}"
+            end
           end
           return ary
         end
@@ -137,6 +141,15 @@ start start_paused pause resume powerdown delete
               end
             end
           end
+        end
+
+        def save
+          File.open "#{CONFDIR}/common/instances.yml", 'w' do |f|
+            f.write YAML.dump get_all
+          end
+        end
+
+        def restore
         end
 
       end
