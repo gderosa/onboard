@@ -151,6 +151,7 @@ start start_paused pause resume powerdown delete
 
         def restore
           # TODO: DRY this config file name
+          return unless File.exists? "#{CONFDIR}/common/instances.yml"
           saved_VMs   = YAML.load File.read "#{CONFDIR}/common/instances.yml"
           current_VMs = get_all
           saved_VMs.each do |saved_vm|

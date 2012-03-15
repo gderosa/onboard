@@ -321,6 +321,7 @@ class OnBoard
           @monitor.sendrecv 'system_powerdown'
           loadvm_on_next_boot false
         end
+        alias acpi_powerdown powerdown
 
         def quit
           @monitor.sendrecv 'quit'
