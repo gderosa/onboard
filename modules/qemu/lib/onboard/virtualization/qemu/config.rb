@@ -41,6 +41,10 @@ class OnBoard
           @cmd['opts'][k] = val
         end 
 
+        def name
+          self['-name'] 
+        end
+
         def initialize(h)
           if h[:http_params]
             @uuid = h[:uuid] || h[:http_params][:uuid] || UUID.generate 

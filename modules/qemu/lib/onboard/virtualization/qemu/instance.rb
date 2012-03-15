@@ -23,7 +23,10 @@ class OnBoard
         
         LOADVM_TIMEOUT = SAVEVM_TIMEOUT
 
-        attr_reader :config, :monitor
+        attr_reader :config, :monitor, :running
+
+        # "running" is the saved state, "running?" is the actual state;
+        # useful for save/restore after a host machine reboot
 
         def initialize(config)
           @config   = config
@@ -404,6 +407,10 @@ class OnBoard
 
         def quick_snapshots?
           @config.quick_snapshots?
+        end
+
+        def method_missing(id, *a)
+          @config.send(id, *a)
         end
 
       end
