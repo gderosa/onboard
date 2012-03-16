@@ -143,6 +143,9 @@ class OnBoard
           # capture/release.
 
           cmdline << '-enable-kvm' << ' ' 
+
+          spice_port = opts['-vnc'].sub(/[^\d]/,'').to_i + 12300
+          cmdline << "-spice port=#{spice_port},disable-ticketing" << ' '
           
           return cmdline
         end

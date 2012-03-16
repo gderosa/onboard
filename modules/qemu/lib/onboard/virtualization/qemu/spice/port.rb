@@ -1,10 +1,10 @@
 class OnBoard
   module Virtualization
     module QEMU
-      module VNC
-        class Display
+      module Spice 
+        class Port
 
-          MAX = 29 
+          MAX = 29
 
           class << self
 
@@ -12,7 +12,7 @@ class OnBoard
               busy = []
               QEMU.get_all.map do |vm|
                 begin
-                  busy << vm.config['-vnc'].sub(/[^\d]/, '').to_i 
+                  busy << vm.config['-spice']['port'].to_i
                 rescue NoMethodError
                 end
               end
