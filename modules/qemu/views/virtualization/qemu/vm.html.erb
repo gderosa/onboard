@@ -12,6 +12,10 @@
 
   vnc_uri             = ( 
       "vnc://#{request.host}#{vm.config['-vnc']}" if vm.config['-vnc'] =~ /\d/ )
+  spice_uri           = ( 
+      "spice://#{request.host}:#{vm.config['-spice']['port']}" if 
+          vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'] ) 
+
 %>
 
 <%= 
@@ -34,12 +38,15 @@
 
 <% if vm.running? %>
   <% screenshot_path = "#{vm.uuid_short}/screen.png" %>
-  <a title="Click for full-size screenshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:30em"/></a>
-  <% if vnc_uri %>
-    <p class="optinfo" style="font-size:100%;">
-      VNC available at <a href="<%= vnc_uri %>"><%= vnc_uri %></a>
-    </p>
-  <% end %>
+  <a title="Click for full-size screenshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:30em;margin-bottom:0"/></a>
+  <div style="margin:0 0 1.5em 0; font-style:italic;">
+    <% if vnc_uri %>
+      <br/>VNC available at <a href="<%= vnc_uri %>"><%= vnc_uri %></a>
+    <% end %>
+    <% if spice_uri %>
+      <br/>SPICE available at <a href="<%= spice_uri %>"><%= spice_uri %></a>
+    <% end %>
+  </div>
 <% end %>
 
 <form method="POST">
