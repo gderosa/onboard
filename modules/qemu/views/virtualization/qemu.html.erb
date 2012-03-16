@@ -59,8 +59,7 @@
           Static info
         </div>
       </th>
-      <th>Screenshot</th>
-      <th>VNC Display<div class="optinfo">Uses TCP port 5900 + n</div></th>
+      <th style="width:202px;">Screen (and Remote Display)</th>
     </tr>
   </thead>
   <tbody>
@@ -254,17 +253,29 @@
               <% screenshot_path = "qemu/vm/#{vm.uuid_short}/screen.png" %>
               <a class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:200px"/></a>
             <% end %>
-          </td>
-          <td rowspan="2" class="vminfo" style="text-align:right">
+
             <% vnc_uri = "vnc://#{request.host}#{vm.config.opts['-vnc']}"%>
             <% if vm.running? %>
               <a href="<%= vnc_uri %>" title="<%= vnc_uri %>">
             <% end %>
-                <%= vm.config.opts['-vnc'] %>
+              <em><%= vnc_uri %></em>
             <% if vm.running? %>
               </a>
             <% end %>
+
+            <% if vm.config.opts['-spice'] and vm.config.opts['-spice']['port'] %>
+              <% spice_uri = "spice://#{request.host}:#{vm.config.opts['-spice']['port']}"%>       
+              <% if vm.running? %>
+                <a href="<%= spice_uri %>" title="<%= spice_uri %>">
+              <% end %>
+                  <em><%= spice_uri %></em>
+              <% if vm.running? %>
+                </a>
+              <% end %>
+            <% end %>       
+
           </td>
+
         </tr>
 
         <tr>
@@ -278,7 +289,6 @@
           <!-- <td></td> --> <!-- "Drives":             rowspan="2" -->
           <!-- <td></td> --> <!-- "Network Interfaces": rowspan="2" -->
           <!-- <td></td> --> <!-- "Screenshot":         rowspan="2" -->
-          <!-- <td></td> --> <!-- "VNC Display":        rowspan="2" -->
         </tr>
 
       <% end %>
