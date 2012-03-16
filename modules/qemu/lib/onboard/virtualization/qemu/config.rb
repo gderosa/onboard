@@ -56,6 +56,11 @@ class OnBoard
                 '-name'       => h[:http_params]['name'],
                 '-m'          => h[:http_params]['m'].to_i,
                 '-vnc'        => h[:http_params]['vnc'],
+                '-spice'      => {
+                  'port'        => (
+h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to_i
+                  ),
+                },
                 '-k'          => h[:http_params]['k'], 
                 #'-drive'     => [
                 #  {

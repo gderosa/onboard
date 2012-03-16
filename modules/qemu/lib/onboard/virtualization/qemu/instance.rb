@@ -81,6 +81,12 @@ class OnBoard
             cmdline << %Q{#{o} "#{opts[o]}" }     if 
                 opts[o] and opts[o].to_s =~ /\S/  
           end
+          if opts['-spice'].respond_to? :[]
+            if opts['-spice']['port']
+              cmdline << "-spice port=#{opts['-spice']['port']},disable-ticketing "
+              # TODO: make ticketing based on config 
+            end
+          end
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
             if opts['-monitor']['unix']
@@ -144,9 +150,6 @@ class OnBoard
 
           cmdline << '-enable-kvm' << ' ' 
 
-          spice_port = opts['-vnc'].sub(/[^\d]/,'').to_i + 12300
-          cmdline << "-spice port=#{spice_port},disable-ticketing" << ' '
-          
           return cmdline
         end
 
