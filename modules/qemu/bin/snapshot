@@ -34,6 +34,11 @@ _action_, _vmid_, _snap_name_, _comma_separated_drive_names_ = ARGV
 
 vm = QEMU.find :vmid => _vmid_
 
+unless vm 
+  STDERR.puts "  Couldn't find VM: #{_vmid_}"
+  exit 1
+end
+
 if _comma_separated_drive_names_.respond_to? :split
   _drive_names_ = _comma_separated_drive_names_.split ','
 else
