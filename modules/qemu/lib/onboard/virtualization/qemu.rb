@@ -22,6 +22,7 @@ class OnBoard
       autoload :Network,  'onboard/virtualization/qemu/network'
       autoload :Snapshot, 'onboard/virtualization/qemu/snapshot' 
       autoload :VNC,      'onboard/virtualization/qemu/vnc'
+      autoload :SPICE,    'onboard/virtualization/qemu/spice'
 
       class << self
 

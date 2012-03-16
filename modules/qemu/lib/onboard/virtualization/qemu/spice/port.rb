@@ -1,10 +1,11 @@
 class OnBoard
   module Virtualization
     module QEMU
-      module Spice 
+      module SPICE
         class Port
 
-          MAX = 29
+          MIN = 5931
+          MAX = 5959
 
           class << self
 
@@ -16,7 +17,7 @@ class OnBoard
                 rescue NoMethodError
                 end
               end
-              return (1..MAX).to_a - busy 
+              return (MIN..MAX).to_a - busy 
             end
 
           end

@@ -1,8 +1,11 @@
 <% 
   vm ||= nil
 
-  vnc_available = OnBoard::V12n::QEMU::VNC::Display.available
-  vnc_max       = OnBoard::V12n::QEMU::VNC::Display::MAX
+  vnc_available   = OnBoard::V12n::QEMU::VNC::Display.available
+  vnc_max         = OnBoard::V12n::QEMU::VNC::Display::MAX
+  spice_available = OnBoard::V12n::QEMU::SPICE::Port.available
+  spice_min       = OnBoard::V12n::QEMU::SPICE::Port::MIN
+  spice_max       = OnBoard::V12n::QEMU::SPICE::Port::MAX
 
   cache_description   = {
     'unsafe'        => 'Allows snapshots on the fly, but it&rsquo;s also the most prone to data corruption',
@@ -48,12 +51,14 @@
   end
 
   # Some defaults:
-  formvals['m']       ||= 348
-  formvals['vnc']     ||= ":#{vnc_available.first}"
-  formvals['cache']   ||= cache_default
+  formvals['m']             ||= 348
+  formvals['vnc']           ||= ":#{vnc_available.first}"
+  formvals['spice']         ||= {}
+  formvals['spice']['port'] ||= spice_available.first
+  formvals['cache']         ||= cache_default
 
-  formvals['net']     ||= []
-  formvals['net'][0]  ||= {
+  formvals['net']           ||= []
+  formvals['net'][0]        ||= {
     'type'    => 'user',
     'vlan'    => '0',
     'ifname'  => '[auto]',
@@ -130,8 +135,9 @@
         <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
       </tr>
       <tr>
-        <th scope="row">VNC Display</th>
+        <th scope="row">Remote Display</th>
         <td>
+          VNC Display
           <select name="vnc">
             <% 1.upto(vnc_max) do |n| %>
               <% 
@@ -146,6 +152,23 @@
               <option <%= selected %> <%= disabled %> value=":<%= n %>">:<%= n %></option>
             <% end %>
           </select>
+          &nbsp;&nbsp; <!-- horrible -->
+          SPICE port
+          <select name="spice[port]">
+            <% spice_min.upto(spice_max) do |n| %>
+              <% 
+                selected = ''
+                disabled = ''
+                if n == formvals['spice']['port']
+                  selected = 'selected'
+                elsif not spice_available.include? n 
+                  disabled = 'disabled'
+                end
+              %>
+              <option <%= selected %> <%= disabled %> value="<%= n %>"><%= n %></option>
+            <% end %>
+          </select>
+
         </td>
       </tr>
       <tr>
