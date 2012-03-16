@@ -384,6 +384,7 @@ class OnBoard
         def delete
           quit if running?
           FileUtils.rm_f @config.file
+          QEMU::Snapshot::Schedule.remove uuid_short
         end
 
         def screendump(format='ppm')

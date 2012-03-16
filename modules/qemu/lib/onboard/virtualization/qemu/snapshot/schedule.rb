@@ -53,8 +53,12 @@ h[:http_params]['snapshot_schedule']['delete_older_than_days']
                   :command  => cmd 
                 } 
               else
-                CronEdit::Crontab.Remove cronid(vmid)
+                remove(vmid)
               end
+            end
+
+            def remove(vmid)
+              CronEdit::Crontab.Remove cronid(vmid)
             end
 
             def get_entry(vmid)
