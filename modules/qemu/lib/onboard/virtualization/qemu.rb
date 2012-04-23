@@ -159,7 +159,9 @@ start start_paused pause resume powerdown delete
             # QEMU::Instance#running is the saved state
             # QEMU::Instance#running? is the actual state
             current_VM = current_VMs.find{|vm| vm.uuid == saved_vm.uuid} 
-            current_VM.start if saved_vm.running and not current_VM.running?
+            if current_VM
+              current_VM.start if saved_vm.running and not current_VM.running?
+            end
           end
         end
 
