@@ -97,6 +97,19 @@ class OnBoard
               cmdline << '-monitor ' << unix_args.join(',') << ' '
             end 
           end
+          if opts['-smp']
+            args = []
+            args << opts['-smp']['n'].to_s if opts['-smp']['n'].to_i > 0
+            %w{cores threads sockets maxcpus}.each do |name|
+              if opts['-smp'][name].to_i > 0
+                value = opts['-smp'][name]
+                args << "#{name}=#{value}"
+              end
+            end
+            if args.any?
+              cmdline << '-smp ' << args.join(',') << ' ' 
+            end
+          end
           if opts['-drive'].respond_to? :each
             opts['-drive'].each do |d|
               drive_args = []
