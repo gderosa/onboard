@@ -62,14 +62,14 @@
     'type'    => 'user',
     'vlan'    => '0',
     'ifname'  => '[auto]',
-    'macaddr' => '[auto]'
+    'macaddr' => OnBoard::V12n::QEMU::Network::NIC::MAC.random.to_s.upcase
   }
   1.upto(5) do |i|
     formvals['net'][i] ||= {
       'type'    => 'none',
       'vlan'    => i.to_s,
       'ifname'  => '[auto]',
-      'macaddr' => '[auto]'
+      'macaddr' => OnBoard::V12n::QEMU::Network::NIC::MAC.random.to_s.upcase
     } 
   end
   formvals['net'].each do |fv|
@@ -209,7 +209,12 @@
           </div>
         </th>
         <th>Hardware</th>
-        <th>MAC Address</th>
+        <th style="width:13em;">
+          MAC Address
+          <div class="optinfo">
+            By default, MAC addresses are randomly generated in an address range which will avoid conflicts. You can change them if you wish, but be careful to avoid duplicates!
+          </div>
+        </th>
       </tr>
     </thead>
     <tbody>

@@ -3,6 +3,8 @@ class OnBoard
     module QEMU
       module Network
         class NIC
+
+          autoload :MAC, 'onboard/virtualization/qemu/network/nic/mac'
         
           class << self
 
