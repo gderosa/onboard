@@ -44,7 +44,7 @@ class OnBoard
             FileUtils.mkdir_p File.dirname SAVEFILE
           end
           File.open SAVEFILE, 'w' do |f|
-            f.write data.to_yaml
+            f.write YAML.dump data
           end
           FileUtils.chmod 0640, SAVEFILE
         end
@@ -218,7 +218,7 @@ end
           end
          
           File.open CONFFILE, 'w' do |f|
-            f.write conf_h.to_yaml
+            f.write YAML.dump conf_h
           end
           FileUtils.chmod 0640, CONFFILE
         end
