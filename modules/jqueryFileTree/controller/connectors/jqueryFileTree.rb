@@ -17,8 +17,8 @@ class OnBoard
       out = ''
       if params['root_id'] == 'files' # for future extension
         begin 
-          root = ENV['HOME'] + '/files'
-          dir = params['dir'].to_s
+          root = File.realpath(ENV['HOME']) + '/files'
+          dir = url_decode params['dir'] 
           path = File.join root, dir
 
           out << "<ul class=\"jqueryFileTree\" style=\"display:none;\">"
@@ -50,16 +50,16 @@ class OnBoard
 
             return out
 
-          else
-            forbidden
+          else # Sorry, we can't be ReSTful
+            return '<span class="error forbidden">Forbidden</span>'
           end
 
         rescue Errno::ENOENT
-          not_found
+          return %Q{<span class="error not_found">Not Found; dir="#{dir}"</span>}
         end
 
       else
-        not_found
+        return '<span class="error not_found">Not Found</span>'
       end
 
     end

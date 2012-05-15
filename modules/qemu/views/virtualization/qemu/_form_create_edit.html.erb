@@ -1,0 +1,262 @@
+<% 
+  vm ||= nil
+
+  vnc_available   = OnBoard::V12n::QEMU::VNC::Display.available
+  vnc_max         = OnBoard::V12n::QEMU::VNC::Display::MAX
+  spice_available = OnBoard::V12n::QEMU::SPICE::Port.available
+  spice_min       = OnBoard::V12n::QEMU::SPICE::Port::MIN
+  spice_max       = OnBoard::V12n::QEMU::SPICE::Port::MAX
+
+  cache_description   = {
+    'unsafe'        => 'Allows snapshots on the fly, but it&rsquo;s also the most prone to data corruption',
+    'writethrough'  => 'The slowest and most reliable',
+    'writeback'     => '<em>Recommended</em>, especially with QCOW2 images'
+  }
+  cache_default       = 'writeback'  
+
+  # Pre-fill form fields.
+  formvals = {}
+  # On a single-vm page, grab data from the vm object:
+  if vm
+
+    %w{name m vnc k}.each do |k|
+      formvals[k] = vm.config["-#{k}"] 
+    end
+    optical_drive      = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
+    formvals['cdrom']  = 
+        OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
+
+    hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
+    formvals['disk']   = 
+        OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
+    formvals['cache']  = hd_drive['cache']
+
+    # Now, the -net machinery: there are two (or more???) -net Hashes for
+    # each row in the form: -net nic,... -net tap,... , or 
+    # -net nic,... -net user,... and so...
+    #
+    # Do as follows: for each -net nic, associate th first -net (tap|user) 
+    # with same VLAN. Besides, does it make sense to have several host TAPs 
+    # on the same QEMU VLAN? I guess, no...
+
+    formvals['net'] = []
+
+    vm.config['-net'].select{|x| x['type'] == 'nic'}.each do |nic|
+      hostside = vm.config['-net'].detect do |x| 
+        x['vlan'] == nic['vlan'] and not %w{none nic}.include? x['type'] 
+      end
+      formvals['net'] << nic.merge( hostside )
+    end
+
+  end
+
+  # Some defaults:
+  formvals['m']             ||= 348
+  formvals['vnc']           ||= ":#{vnc_available.first}"
+  formvals['spice']         ||= {}
+  formvals['spice']['port'] ||= spice_available.first
+  formvals['cache']         ||= cache_default
+
+  formvals['net']           ||= []
+  formvals['net'][0]        ||= {
+    'type'    => 'user',
+    'vlan'    => '0',
+    'ifname'  => '[auto]',
+    'macaddr' => OnBoard::V12n::QEMU::Network::NIC::MAC.random.to_s.upcase
+  }
+  1.upto(5) do |i|
+    formvals['net'][i] ||= {
+      'type'    => 'none',
+      'vlan'    => i.to_s,
+      'ifname'  => '[auto]',
+      'macaddr' => OnBoard::V12n::QEMU::Network::NIC::MAC.random.to_s.upcase
+    } 
+  end
+  formvals['net'].each do |fv|
+    fv['ifname']  ||= '[auto]'
+    fv['macaddr'] ||= '[auto]'
+  end
+%>
+  <table>
+    <thead>
+    </thead>
+    <tbody>
+      <tr>
+        <th title="A descriptive name" scope="row">Name</th>
+        <td>
+          <input type="text" name="name" value="<%= formvals['name'] %>"/>
+        </td>
+      </tr>
+      <tr> 
+        <th scope="row">CD/DVD image (optional)</th>
+        <td>
+          <input type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" value="<%= formvals['cdrom'] %>"/>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          Hard Disk Image
+          <div class="optinfo">Choose existing</div>
+        </th>
+        <td>
+          <input type="text" name="disk" id="disk" onclick="javascript:popup_filechooser(this);" value="<%= formvals['disk'] %>"/> 
+        </td>  
+      </tr>
+      <tr>
+        <th scope="row">
+          <div class="optinfo">
+            Or create a new one 
+            <span style="vertical-align:middle; margin: 0 0 0 2em">
+              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]" id="qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls()"/>
+            </span>
+          </div>        
+        </th> 
+        <td>
+          &nbsp;Size <input type="text" name="qemu-img[size][G]" id="qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
+          &nbsp;Format <select name="qemu-img[fmt]" id="qemu-img_create_fmt" disabled>
+            <option value="qcow2">QCOW2 (recommended)</option>
+            <option value="raw">Raw</option>
+            <!-- exclude "alien" image formats for now... -->
+          </select>   
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row" class="optinfo">Disk Caching</th>
+        <td>
+          <fieldset>
+            <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
+              <input name="cache" <%= 'checked' if c == formvals['cache'] %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 12ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
+            <% end %>
+          </fieldset>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">RAM</th>
+        <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
+      </tr>
+      <tr>
+        <th scope="row">Remote Display</th>
+        <td>
+          VNC Display
+          <select name="vnc">
+            <% 1.upto(vnc_max) do |n| %>
+              <% 
+                selected = ''
+                disabled = ''
+                if ":#{n}" == formvals['vnc']
+                  selected = 'selected'
+                elsif not vnc_available.include? n 
+                  disabled = 'disabled'
+                end
+              %>
+              <option <%= selected %> <%= disabled %> value=":<%= n %>">:<%= n %></option>
+            <% end %>
+          </select>
+          &nbsp;&nbsp; <!-- horrible -->
+          SPICE port
+          <select name="spice[port]">
+            <% spice_min.upto(spice_max) do |n| %>
+              <% 
+                selected = ''
+                disabled = ''
+                if n == formvals['spice']['port']
+                  selected = 'selected'
+                elsif not spice_available.include? n 
+                  disabled = 'disabled'
+                end
+              %>
+              <option <%= selected %> <%= disabled %> value="<%= n %>"><%= n %></option>
+            <% end %>
+          </select>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          Keyboard layout
+          <div class="optinfo">For VNC, etc.</div>
+        </th>
+        <td>
+          <select name="k">
+            <option value=""></option>
+            <% OnBoard::V12n::QEMU::Config::KEYBOARD_LAYOUTS.each do |k| %>
+              <option <%= 'selected' if formvals['k'] == k %> value="<%= k %>"><%= k %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Network Interfaces</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>VLAN</th>
+        <th>Type</th>
+        <th>
+          Name (visible in the host)
+          <div class="optinfo">
+            <p>For TAP interfaces only.</p>
+            <p>Choose something descriptive, if possible.</p>
+          </div>
+        </th>
+        <th>
+          Bridge to
+          <div class="optinfo">
+            <p>For TAP interfaces only.</p>
+            <p>You can manage bridges <a href="/network/bridges.html">here</a>.</p>
+          </div>
+        </th>
+        <th>Hardware</th>
+        <th style="width:13em;">
+          MAC Address
+          <div class="optinfo">
+            By default, MAC addresses are randomly generated in an address range which will avoid conflicts. You can change them if you wish, but be careful to avoid duplicates!
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% nn = 5 %>
+      <% 0.upto nn do |n| %>
+        <tr>
+          <td>
+            <select id="net[<%= n %>][vlan]" name="net[][vlan]">
+              <% 0.upto nn do |vlan| %>
+                <option <%= 'selected' if formvals['net'][n]['vlan'] == vlan.to_s %> value="<%= vlan %>"><%= vlan %></option> 
+              <% end %>
+            </select>
+          </td>
+          <td>
+            <select onclick="javascript:qemuNetIfControls();" id="net[<%= n %>][type]" name="net[][type]">
+              <option <%= 'selected' if formvals['net'][n]['type'] == 'none' %> value="none">(none)</option>
+              <option <%= 'selected' if formvals['net'][n]['type'] == 'user' %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
+              <option <%= 'selected' if formvals['net'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="<%= formvals['net'][n]['ifname'] %>"/>
+          </td>
+          <td>
+            <select id="net[<%= n %>][bridge]" name="net[][bridge]"> 
+              <option value="">(none)</option>
+              <% all_bridges.each do |br| %>
+                <option <%= 'selected' if br.name == formvals['net'][n]['bridge'] %> value="<%= br.name %>"><%= br.name %></option>
+              <% end %>
+            </select>
+          </td>
+          <td>
+            <select id="net[<%= n %>][model]" name="net[][model]">
+              <option value="">(default)</option>
+              <% OnBoard::V12n::QEMU::Network::NIC.models.sort.each do |model| %>
+                <option <%= 'selected' if model == formvals['net'][n]['model'] %> value="<%= model %>"><%= model %></option> 
+              <% end %>
+            </select>
+          </td>
+          <td><input type="text" id="net[<%= n %>][macaddr]" name="net[][macaddr]" value="<%= formvals['net'][n]['macaddr'] %>"/></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+

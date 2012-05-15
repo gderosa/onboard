@@ -21,7 +21,7 @@
           http_errors = true if status.to_s =~ /300|4..|5../ 
           http_explicit_20x = true if 
               status.to_s =~ /20[^0]/ or
-              (status == 200 and request.env['REQUEST_METHOD'] != 'GET') 
+              (status == 200 and @real_request.request_method != 'GET') 
         %>
         <% if http_errors %>
           <span class="error"><%= Rack::Utils::HTTP_STATUS_CODES[status] %></span>
