@@ -86,8 +86,12 @@ div#main {
   margin: 1em 1px;
 }
 
-h2{
+h2  {
   font-size: 135%;
+}
+
+h3 {
+  font-size: 125%;
 }
 
 form {
@@ -157,6 +161,10 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
   font-weight:  normal;
   font-style:   italic;
   font-size: smaller;
+}
+
+.optional em, .optinfo em {
+  font-style: normal;
 }
 
 .optinfo kbd, .optinfo code {
@@ -244,6 +252,8 @@ span.hmenu-root, div.hmenu-root {
   border: none;
 }
 
+
+
 a.img, a.img:hover, a img  {
   border: none;
   background: transparent;
@@ -260,6 +270,7 @@ a.img, a.img:hover, a img  {
 
 table {
   font-size: 90%;
+  border-spacing: 0;
 }
 
 table caption {
@@ -272,25 +283,27 @@ table tr th {
   padding: 0 1em;
 }
 
-table tr td, table tr th, fieldset {
-  background: <%= lightbg %>; 
-  /*
-  background: url("/backgrounds/kollermedia.at/pattern4u/funky/18original.gif");
-  background-attachment: fixed;
-  */
+table tr td, table tr th, table thead tr th, table tbody tr td {
+  border: 1px white solid;
 }
 
-.term {
-  text-decoration: none;
-  border-bottom: 1px #444 dashed;
+table tr td, table tr th, fieldset { 
+  /* background: url("/backgrounds/kollermedia.at/pattern4u/dirty/10yellow.jpg"); */
+  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png"); 
+  background-attachment: fixed;
 }
 
 table tr td fieldset {
   background: transparent;
 }
 
+table table td, table table th {
+  background: transparent;
+}
+
+
 table tr th, fieldset, .term {
-  font-size: 80%;
+  font-size: 88%;
   font-weight: bold;
 }
 
@@ -305,14 +318,6 @@ table tr th .optinfo ul {
   padding-left: 0;
 }
 
-em.term {
-  font-style: normal;
-}
-
-fieldset {
-  border: none;
-  display: inline;
-}
 
 table tr th small {
   font-weight: normal;
@@ -353,9 +358,6 @@ table tr td ul, table tr th ul {
   padding: 0 0 0 1.15em;
 }
 
-button[type="submit"] {
-  margin: 1ex 0;
-}
 
 table tr td button {
   padding: 1px;
@@ -370,6 +372,24 @@ table tr td div {
   margin: 0.3em 0;
 }
 
+.term, .em-special {
+  text-decoration: none;
+  border-bottom: 1px #444 dashed;
+}
+
+em.term {
+  font-style: normal;
+}
+
+fieldset {
+  border: none;
+  display: inline;
+}
+
+button[type="submit"] {
+  margin: 1ex 0;
+}
+
 button[disabled] {
   background: transparent;
   border: 1px <%= superlowlight %> solid;
@@ -378,6 +398,11 @@ button[disabled] {
 button[disabled] img { /* CSS3 */ 
   opacity: 0.4; /* Firefox */
   filter: alpha(opacity=40); /* MSIE */
+}
+
+input[disabled] {
+  color: <%= lowlight %>;
+  background: <%= lightbg %>;
 }
 
 ul li ul li .hmenu-content  {
@@ -417,3 +442,6 @@ sup {
 .paginator {
   margin-top: 0.5em;
 }
+
+
+

@@ -11,8 +11,9 @@ class OnBoard
     
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
-        h[:formats] ||= %w{html json yaml}
-        h[:formats] |= %w{rb} if settings.environment == :development
+        #h[:formats] ||= %w{html json yaml}
+        #h[:formats] |= %w{rb} if settings.environment == :development
+        h[:formats] = @@formats
 
         # try to guess if not provided
         h[:format]                                ||= 
@@ -47,9 +48,9 @@ class OnBoard
           end
 
           # "Sinatra::Templates#erubis is deprecated and will be removed, 
-	  # use #erb instead. If you have Erubis installed, it will be used 
-	  # automatically"
-	  return erb(
+          # use #erb instead. If you have Erubis installed, it will be used 
+          # automatically"
+          return erb(
             erubis_template,
             :layout   => layout,
             :locals   => {

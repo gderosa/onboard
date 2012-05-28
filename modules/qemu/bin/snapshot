@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+__dir__         = File.dirname __FILE__
+__qemu_lib__    = File.realpath File.join __dir__, '../lib'
+__onboard_lib__ = File.realpath File.join __dir__, '../../../lib'
+
+$LOAD_PATH.unshift __onboard_lib__
+$LOAD_PATH.unshift __qemu_lib__
+
+# require 'pp' # DEBUG
+require 'fileutils'
+
+require 'chronic_duration'
+
+require 'onboard/virtualization/qemu'
+
+class OnBoard
+  module Virtualization
+    module QEMU
+      CONFDIR ||= (
+        ENV['ONBOARD_QEMU_CONFDIR']                               or
+        "#{ENV['HOME']}/.onboard/etc/config/virtualization/qemu"
+      )
+    end
+  end
+end
+
+include OnBoard::Virtualization
+
+VARRUN ||= '/var/run/onboard'
+
+# Usage:
+_action_, _vmid_, _snap_name_, _comma_separated_drive_names_ = ARGV
+
+vm = QEMU.find :vmid => _vmid_
+
+unless vm 
+  STDERR.puts "  Couldn't find VM: #{_vmid_}"
+  exit 1
+end
+
+if _comma_separated_drive_names_.respond_to? :split
+  _drive_names_ = _comma_separated_drive_names_.split ','
+else
+  _drive_names_ = []
+end
+
+if _drive_names_.any?
+  drive_names = _drive_names_
+  drives = vm.drives.select{|name, drive| drive_names.include? name}
+else
+  drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
+  drive_names = [drive_name]
+  drives = {drive_name => drive} 
+end
+
+Process.daemon
+
+STDOUT.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.out"
+STDERR.reopen "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.err"
+STDOUT.sync = true
+STDERR.sync = true
+
+File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
+  f.write Process.pid
+end
+cmdline_file = "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.cmdline"
+FileUtils.rm cmdline_file if File.exists? cmdline_file
+FileUtils.cp "/proc/#{Process.pid}/cmdline", cmdline_file    
+
+# useful if running under cron
+waiting_file = "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.waiting"
+File.open(waiting_file, 'w') {|f| } # FileUtils.touch ?
+while QEMU::Snapshot.running? :except_waiting => true, :except_pid => Process.pid
+  sleep 30
+end
+FileUtils.rm waiting_file
+
+if vm.running?
+  vm.delvm_all( 
+    :name => /^scheduled_/, 
+    :older_than => ENV['DELETE_SCHEDULED_OLDER_THAN']
+  ) if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /\d/
+  case _action_
+  when 'take'
+    vm.savevm _snap_name_
+  when 'apply'
+    vm.loadvm _snap_name_
+  when 'delete'
+    vm.delvm  _snap_name_
+  end
+else
+  drives.each_pair do |drive_name, drive|
+    if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /\d/
+      drive['snapshots'].each do |snap|    
+        next unless snap.disk_only?
+        age = Time.now - snap.time
+        if \
+            age > ChronicDuration.parse(ENV['DELETE_SCHEDULED_OLDER_THAN']) and
+            snap.name =~ /^scheduled_/
+          system 'qemu-img', 'snapshot', '-d', snap.name, drive['config']['file']
+        end
+      end 
+    end
+    case _action_
+    when 'take'
+      ## 'take' is a create-or-update operation
+      if drive['snapshots'].any?{|snap| snap.name == _snap_name_}
+         system 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file'] 
+      end
+      system 'qemu-img', 'snapshot', '-c', _snap_name_, drive['config']['file'] 
+    when 'apply'
+      system 'qemu-img', 'snapshot', '-a', _snap_name_, drive['config']['file']
+    when 'delete'
+      system 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file']
+    end
+  end
+end
+

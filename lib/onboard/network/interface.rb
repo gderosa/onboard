@@ -71,6 +71,7 @@ class OnBoard
           end
           return @@all = ary
         end
+        alias get_all getAll # A bit of Ruby style... :-P
         
         def getAll_layer3
           return all_layer3(getAll_layer2()) 

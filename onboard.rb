@@ -9,6 +9,7 @@ require 'etc'
 
 require 'onboard/exceptions'
 require 'onboard/extensions/object'
+require 'onboard/extensions/logger'
 require 'onboard/menu/node'
 require 'onboard/system/command'
 require 'onboard/platform/debian'
@@ -24,7 +25,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2012.01.02'
+  VERSION           = '2012.05'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -42,6 +43,8 @@ class OnBoard
   DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
   LOGFILE_BASENAME    = 'onboard.log'
   LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
+
+  VARRUN              ||= '/var/run/onboard'
  
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
   # NOTE: we are re-defining a constant!
@@ -88,6 +91,9 @@ class OnBoard
   end
 
   def self.prepare
+    system "sudo mkdir -p #{VARRUN}"
+    system "sudo chown onboard #{VARRUN}"
+
     if web?
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
@@ -124,6 +130,32 @@ class OnBoard
       end
       restore_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
       restore_scripts.each do |script|
+        print "loading: #{script}... "
+        STDOUT.flush
+        begin
+          load script and puts "OK"
+        rescue Exception
+          exception = $!
+
+          puts exception.inspect
+
+          LOGGER.error "loading #{script}: #{exception.inspect}"
+          backtrace_str = "Exception backtrace follows:"
+          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          LOGGER.error backtrace_str
+        end
+      end
+    end
+    # TODO: DRY DRY DRY
+    if ARGV.include? '--shutdown' 
+      shutdown_scripts = 
+          Dir.glob(ROOTDIR + '/etc/shutdown/[0-9][0-9]*.rb')           
+      Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
+        next if File.exists? "#{module_dir}/.disable"
+        shutdown_scripts += Dir.glob("#{module_dir}/etc/shutdown/[0-9][0-9]*.rb")
+      end
+      shutdown_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
+      shutdown_scripts.each do |script|
         print "loading: #{script}... "
         STDOUT.flush
         begin
