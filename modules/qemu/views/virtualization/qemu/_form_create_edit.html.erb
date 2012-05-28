@@ -31,6 +31,11 @@
         OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
     formvals['cache']  = hd_drive['cache']
 
+    if vm.config['-smp'] and vm.config['-smp']['n'] and vm.config['-smp']['n'].to_i > 0
+      formvals['smp'] ||= {}
+      formvals['smp']['n'] = vm.config['-smp']['n'].to_i
+    end
+
     # Now, the -net machinery: there are two (or more???) -net Hashes for
     # each row in the form: -net nic,... -net tap,... , or 
     # -net nic,... -net user,... and so...
@@ -76,6 +81,8 @@
     fv['ifname']  ||= '[auto]'
     fv['macaddr'] ||= '[auto]'
   end
+  formvals['smp']       ||= {}
+  formvals['smp']['n']  ||= 1
 %>
   <table>
     <thead>
@@ -133,6 +140,10 @@
       <tr>
         <th scope="row">RAM</th>
         <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
+      </tr>
+      <tr>
+        <th scope="row">Number of CPUs / cores</th>
+        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
       </tr>
       <tr>
         <th scope="row">Remote Display</th>
