@@ -27,7 +27,6 @@
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
 
     hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
-    pp vm.config['-drive']
 
     if hd_drive
       formvals['disk']   = 
