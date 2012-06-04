@@ -27,9 +27,13 @@
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
 
     hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
-    formvals['disk']   = 
-        OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
-    formvals['cache']  = hd_drive['cache']
+    pp vm.config['-drive']
+
+    if hd_drive
+      formvals['disk']   = 
+          OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
+      formvals['cache']  = hd_drive['cache']
+    end
 
     if vm.config['-smp'] and vm.config['-smp']['n'] and vm.config['-smp']['n'].to_i > 0
       formvals['smp'] ||= {}
