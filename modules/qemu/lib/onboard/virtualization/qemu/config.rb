@@ -55,6 +55,7 @@ class OnBoard
                 '-uuid'       => @uuid,
                 '-name'       => h[:http_params]['name'],
                 '-m'          => h[:http_params]['m'].to_i,
+                '-smp'        => h[:http_params]['smp'], 
                 '-vnc'        => h[:http_params]['vnc'],
                 '-spice'      => {
                   'port'        => (
