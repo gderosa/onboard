@@ -30,7 +30,7 @@ class OnBoard
               FileUtils.mkdir_p File.join ROOTDIR, name
               filepath = "#{ROOTDIR}/#{name}/#{name}.#{fmt}"
               if File.exists? filepath
-                FileUtils.mv_f filepath, "#{filepath}.old"
+                FileUtils.mv filepath, "#{filepath}.old"
               end
               System::Command.run(
                   "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :raise_BadRequest) 

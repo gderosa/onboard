@@ -29,10 +29,21 @@ class OnBoard
 
         # Edit static configuration
         if params['name'] 
+        
+          # Possibly create a new image (the old one will be renamed in .old, see
+          # Img.create implementation in 
+          # /modules/qemu/lib/onboard/virtualization/qemu/img.rb ) 
+          created_disk_image =
+              OnBoard::Virtualization::QEMU::Img.create(:http_params => params)
+          if created_disk_image
+            params['disk'] = created_disk_image
+          end
+
           vm_new = OnBoard::Virtualization::QEMU::Config.new(
             :http_params  =>  params,
             :uuid         =>  vm_old.uuid
           )
+
           vm_new.save # replace configuration file
         end
 
