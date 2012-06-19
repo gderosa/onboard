@@ -82,7 +82,7 @@ class OnBoard
                 opts[o] and opts[o].to_s =~ /\S/  
           end
           if opts['-spice'].respond_to? :[]
-            if opts['-spice']['port']
+            if opts['-spice']['port'] and opts['-spice']['port'].to_i != 0
               cmdline << "-spice port=#{opts['-spice']['port']},disable-ticketing "
               # TODO: make ticketing based on config 
             end

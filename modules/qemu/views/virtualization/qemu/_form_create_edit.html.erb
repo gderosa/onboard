@@ -22,6 +22,9 @@
     %w{name m vnc k}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
+    formvals['spice'] ||= {}
+    formvals['spice']['port'] = vm.config['-spice']['port'] if 
+        vm.config['-spice'] and vm.config['-spice']['port'] 
     optical_drive      = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
     formvals['cdrom']  = 
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
@@ -169,6 +172,7 @@
           &nbsp;&nbsp; <!-- horrible -->
           SPICE port
           <select name="spice[port]">
+            <option <%= 'selected' if formvals['spice']['port'] == 0 %> value="0">(disable)</option>
             <% spice_min.upto(spice_max) do |n| %>
               <% 
                 selected = ''

@@ -14,7 +14,7 @@
       "vnc://#{request.host}#{vm.config['-vnc']}" if vm.config['-vnc'] =~ /\d/ )
   spice_uri           = ( 
       "spice://#{request.host}:#{vm.config['-spice']['port']}" if 
-          vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'] ) 
+          vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'].to_i > 0 ) 
 
 %>
 
