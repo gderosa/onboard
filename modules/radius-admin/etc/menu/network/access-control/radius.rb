@@ -15,6 +15,14 @@
 
 class OnBoard
 
+  MENU_ROOT.add_path('/network/access-control', {
+    #:href => '/services/radius', # nil
+    :name => 'Access Control',
+    #:desc => 'Authentication, Authorization and Accounting',
+    #:children => %r{/services/radius/.+$},
+    :n    => 0
+  })
+
   MENU_ROOT.add_path('/network/access-control/radius', {
     #:href => '/services/radius', # nil
     :name => 'RADIUS server',
