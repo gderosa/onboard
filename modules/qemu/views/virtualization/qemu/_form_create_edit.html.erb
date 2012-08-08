@@ -22,14 +22,25 @@
     %w{name m vnc k}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
+    formvals['spice'] ||= {}
+    formvals['spice']['port'] = vm.config['-spice']['port'] if 
+        vm.config['-spice'] and vm.config['-spice']['port'] 
     optical_drive      = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
     formvals['cdrom']  = 
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
 
     hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
-    formvals['disk']   = 
-        OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
-    formvals['cache']  = hd_drive['cache']
+
+    if hd_drive
+      formvals['disk']   = 
+          OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
+      formvals['cache']  = hd_drive['cache']
+    end
+
+    if vm.config['-smp'] and vm.config['-smp']['n'] and vm.config['-smp']['n'].to_i > 0
+      formvals['smp'] ||= {}
+      formvals['smp']['n'] = vm.config['-smp']['n'].to_i
+    end
 
     # Now, the -net machinery: there are two (or more???) -net Hashes for
     # each row in the form: -net nic,... -net tap,... , or 
@@ -76,6 +87,8 @@
     fv['ifname']  ||= '[auto]'
     fv['macaddr'] ||= '[auto]'
   end
+  formvals['smp']       ||= {}
+  formvals['smp']['n']  ||= 1
 %>
   <table>
     <thead>
@@ -135,6 +148,10 @@
         <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
       </tr>
       <tr>
+        <th scope="row">Number of CPUs / cores</th>
+        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
+      </tr>
+      <tr>
         <th scope="row">Remote Display</th>
         <td>
           VNC Display
@@ -155,6 +172,7 @@
           &nbsp;&nbsp; <!-- horrible -->
           SPICE port
           <select name="spice[port]">
+            <option <%= 'selected' if formvals['spice']['port'] == 0 %> value="0">(disable)</option>
             <% spice_min.upto(spice_max) do |n| %>
               <% 
                 selected = ''

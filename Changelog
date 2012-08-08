@@ -1,3 +1,11 @@
+2012.05.01
+
+* QEMU improvements
+	* -smp
+	* SPICE may be disabled 
+	* edit vm, replace disk image with a new one
+	* allow diskless vm (avoid NoMethodError)
+
 2012.05
 
 * QEMU/KVM virtualization module

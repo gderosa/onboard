@@ -1,0 +1,12 @@
+To allow RADIUS clients other then localhost add something like this to 
+/etc/freeradius/clients.conf :
+
+	client 192.168.0.0/16 {
+		secret          = testing123
+		require_message_authenticator = no	# older clients
+		ipaddr          = 192.168.0.0
+		netmask         = 16
+		nastype         = other			# necessary?
+	}
+
+
