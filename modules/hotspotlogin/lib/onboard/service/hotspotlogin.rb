@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'yaml'
-require 'hotspotlogin' # http://rubygems.org/gems/hotspotlogin
+require 'hotspotlogin/config' # http://rubygems.org/gems/hotspotlogin
 
 
 require 'onboard/system/command'
