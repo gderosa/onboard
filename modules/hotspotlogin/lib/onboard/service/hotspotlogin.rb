@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'yaml'
-require 'hotspotlogin' # http://rubygems.org/gems/hotspotlogin
+require 'hotspotlogin/config' # http://rubygems.org/gems/hotspotlogin
 
 
 require 'onboard/system/command'
@@ -14,7 +14,8 @@ class OnBoard
       DEFAULT_CONFFILE = File.join(
       ROOTDIR, '/etc/defaults/hotspotlogin.conf.yaml')
 
-      VARRUN    = '/var/run' # take advantage of tmpfs (strongly suggested)
+      #VARRUN    = '/var/run/onboard' # take advantage of tmpfs (strongly suggested)
+      # fall back to ::OnBoard::VARRUN
       VARLOG    = OnBoard::LOGDIR # do we need a subdirectory?
       PIDFILE   = File.join VARRUN, 'onboard-hotspotlogin.pid'
       LOGFILE   = File.join VARLOG, 'hotspotlogin.log'
