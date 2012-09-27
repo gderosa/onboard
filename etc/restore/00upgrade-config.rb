@@ -12,6 +12,7 @@ rescue Errno::ENOENT
 end
 
 if 
+    Dir.exists? OnBoard::CONFDIR              and # No config? Do not upgrade ;)
     saved_configuration_version <   [2010, 8] and 
     current_version             >=  [2010, 8]
 
