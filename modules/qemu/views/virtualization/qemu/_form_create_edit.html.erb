@@ -68,19 +68,24 @@
   formvals['spice']['port'] ||= spice_available.first
   formvals['cache']         ||= cache_default
 
+  random_macs               = []
+  0.upto(5) do |i|
+    random_macs << OnBoard::V12n::QEMU::Network::NIC::MAC.random
+  end
+  random_macs.sort!
   formvals['net']           ||= []
   formvals['net'][0]        ||= {
     'type'    => 'user',
     'vlan'    => '0',
     'ifname'  => '[auto]',
-    'macaddr' => OnBoard::V12n::QEMU::Network::NIC::MAC.random.to_s.upcase
+    'macaddr' => random_macs.first.to_s.upcase
   }
   1.upto(5) do |i|
     formvals['net'][i] ||= {
       'type'    => 'none',
       'vlan'    => i.to_s,
       'ifname'  => '[auto]',
-      'macaddr' => OnBoard::V12n::QEMU::Network::NIC::MAC.random.to_s.upcase
+      'macaddr' => random_macs[i].to_s.upcase
     } 
   end
   formvals['net'].each do |fv|
