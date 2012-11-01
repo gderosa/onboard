@@ -1,8 +1,13 @@
 # So autoload works well with gems
 require 'rubygems'
-gem 'uuid'
-gem 'escape'
-gem 'erubis'
+
+%w{uuid escape erubis}.each do |g|
+  begin
+    gem g
+  rescue Gem::LoadError
+    # Library could have been made available not as a gem
+  end
+end
 
 autoload :TCPSocket,  'socket'
 autoload :Time,       'time'
