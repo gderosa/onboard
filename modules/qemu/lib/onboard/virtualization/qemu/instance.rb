@@ -3,7 +3,11 @@ require 'pp' # DEBUG
 require 'json'
 require 'socket'
 
-gem 'rmagick'
+begin
+  gem 'rmagick' # To make autoload work
+rescue Gem::LoadError
+  # May be available in vendor_ruby and not as a gem
+end
 autoload :Magick, 'RMagick'
 
 require 'onboard/extensions/process'
