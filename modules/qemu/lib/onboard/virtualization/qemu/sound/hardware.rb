@@ -28,13 +28,13 @@ class OnBoard
               # -soundhw all will enable all of the above
               # ============================================
               
-              models = []
-              `#{exe} -net nic,model=? 2>&1`.each_line do |l|
+              models_ = []
+              `#{exe} -soundhw ? 2>&1`.each_line do |l|
                 if l =~ /(\S+)\s{2,}/
-                  models << $1
+                  models_ << $1
                 end
               end
-              models 
+              return models_
             end
 
           end

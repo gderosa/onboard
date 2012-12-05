@@ -62,7 +62,8 @@ class OnBoard
 h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to_i
                   ),
                 },
-                '-k'          => h[:http_params]['k'], 
+                '-k'          => h[:http_params]['k'],
+                '-soundhw'    => h[:http_params]['soundhw'],
                 #'-drive'     => [
                 #  {
                 #    'file'     => h[:http_params]['disk'], 

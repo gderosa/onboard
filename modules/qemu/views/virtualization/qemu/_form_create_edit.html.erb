@@ -19,7 +19,7 @@
   # On a single-vm page, grab data from the vm object:
   if vm
 
-    %w{name m vnc k}.each do |k|
+    %w{name m vnc k soundhw}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
     formvals['spice'] ||= {}
@@ -204,6 +204,17 @@
             <option value=""></option>
             <% OnBoard::V12n::QEMU::Config::KEYBOARD_LAYOUTS.each do |k| %>
               <option <%= 'selected' if formvals['k'] == k %> value="<%= k %>"><%= k %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Sound card</th>
+        <td>
+          <select id="soundhw" name="soundhw">
+            <option value="">(none/default)</option>
+            <% OnBoard::V12n::QEMU::Sound::Hardware.models.each do |model| %>
+              <option <%= 'selected' if model == formvals['soundhw'] %> value="<%= model %>"><%= model %></option> 
             <% end %>
           </select>
         </td>
