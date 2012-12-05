@@ -80,6 +80,7 @@ class OnBoard
             -loadvm
             -vnc
             -k
+            -soundhw
             -pidfile
           }.each do |o|
             cmdline << %Q{#{o} "#{opts[o]}" }     if 
