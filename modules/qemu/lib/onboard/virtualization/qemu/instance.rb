@@ -80,6 +80,7 @@ class OnBoard
             -loadvm
             -vnc
             -k
+            -soundhw
             -pidfile
           }.each do |o|
             cmdline << %Q{#{o} "#{opts[o]}" }     if 
@@ -199,8 +200,11 @@ class OnBoard
           cmdline = format_cmdline
           cmdline << ' -S' if opts.include? :paused
           cmdline << " -runas #{ENV['USER']}"
-          msg = System::Command.run cmdline, :sudo, :raise_Conflict
-          fix_permissions
+          begin
+            msg = System::Command.run cmdline, :sudo, :raise_Conflict
+          ensure
+            fix_permissions
+          end
           setup_networking
           return msg
         end

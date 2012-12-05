@@ -23,6 +23,7 @@ class OnBoard
       autoload :Snapshot, 'onboard/virtualization/qemu/snapshot' 
       autoload :VNC,      'onboard/virtualization/qemu/vnc'
       autoload :SPICE,    'onboard/virtualization/qemu/spice'
+      autoload :Sound,    'onboard/virtualization/qemu/sound'
 
       class << self
 
