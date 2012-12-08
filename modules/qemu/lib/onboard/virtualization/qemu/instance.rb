@@ -88,20 +88,11 @@ class OnBoard
           end
           if opts['-spice'].respond_to? :[]
             if opts['-spice']['port'] and opts['-spice']['port'].to_i != 0
-              cmdline << "-spice port=#{opts['-spice']['port']},disable-ticketing"
-              # TODO: make ticketing based on config 
-              
-              # TODO: add zlib-glz-wan-compression=always by default?
-              %w{
-                  image-compression 
-                  jpeg-wan-compression 
-                  zlib-glz-wan-compression 
-                  playback-compression
-              }.each do |k|
-                if opts['-spice'][k] =~ /\S/
-                  cmdline << ",#{k}=#{opts['-spice'][k]}"  
-                end
-              end
+              cmdline << "-spice port=#{opts['-spice']['port']},disable-ticketing,zlib-glz-wan-compression=always"
+              #image-compression 
+              #jpeg-wan-compression 
+              #zlib-glz-wan-compression 
+              #playback-compression
             end
             cmdline << ' '
           end
