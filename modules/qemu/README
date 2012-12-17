@@ -9,6 +9,10 @@ You should grant rw access on /dev/kvm to the OnBoard user!
 OnBoard user needs read/WRITE access even on DVD/CDROM ISO images,
 if you want to change them at runtime: maybe a bug in QEMU Monitor...
 
+Copy [this directory]/doc/sysadm/examples/etc/modprobe.d/kvm-intel-nested.conf 
+into your host's /etc/modprobe.d/ to enable Nested VMX. More info at
+https://github.com/torvalds/linux/blob/master/Documentation/virtual/kvm/nested-vmx.txt
+
 === Other programs
 
 'tunctl': on Debian, it's provided by uml-utilities package 
