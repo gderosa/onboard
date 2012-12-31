@@ -10,7 +10,7 @@ class OnBoard
 
       ROOTDIR ||= File.realpath File.join File.dirname(__FILE__), '..'
       # TODO: do not hardcode so badly 
-      FILESDIR = '/home/onboard/files'
+      FILESDIR = "#{ENV['HOME']}/files"
       BINDIR = ROOTDIR + '/bin'
 
       DEFAULT_SNAPSHOT = '_last'
