@@ -80,6 +80,13 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 '-pidfile'    => "#{VARRUN}/qemu-#{uuid_short}.pid"
               }
             }
+            if h[:http_params]['usbdisk'] =~ /\S/
+              @cmd['opts']['-usbdevice'] ||= []
+              @cmd['opts']['-usbdevice'] << {
+                'type'  => 'disk',
+                'file'  => self.class.absolute_path(h[:http_params]['usbdisk']),
+              }
+            end
             if h[:http_params]['disk'] =~ /\S/
               @cmd['opts']['-drive'] ||= []
               @cmd['opts']['-drive'] << {

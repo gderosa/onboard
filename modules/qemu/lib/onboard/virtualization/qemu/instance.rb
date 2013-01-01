@@ -88,9 +88,13 @@ class OnBoard
           end
           if opts['-spice'].respond_to? :[]
             if opts['-spice']['port'] and opts['-spice']['port'].to_i != 0
-              cmdline << "-spice port=#{opts['-spice']['port']},disable-ticketing "
-              # TODO: make ticketing based on config 
+              cmdline << "-spice port=#{opts['-spice']['port']},disable-ticketing,zlib-glz-wan-compression=always"
+              #image-compression 
+              #jpeg-wan-compression 
+              #zlib-glz-wan-compression 
+              #playback-compression
             end
+            cmdline << ' '
           end
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
@@ -113,6 +117,13 @@ class OnBoard
             end
             if args.any?
               cmdline << '-smp ' << args.join(',') << ' ' 
+            end
+          end
+          if opts['-usbdevice'].respond_to? :each
+            opts['-usbdevice'].each do |device|
+              if device['type'] == 'disk'
+                cmdline << "-usbdevice disk:#{device['file']}" << ' '
+              end
             end
           end
           if opts['-drive'].respond_to? :each

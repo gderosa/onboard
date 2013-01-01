@@ -30,11 +30,18 @@
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
 
     hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
+    usb_disk           = (
+        vm.config['-usbdevice']                               and 
+        vm.config['-usbdevice'].find{|d| d['type'] == 'disk'} 
+    )     
 
     if hd_drive
       formvals['disk']   = 
           OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
       formvals['cache']  = hd_drive['cache']
+    end
+    if usb_disk
+      formvals['usbdisk'] = OnBoard::V12n::QEMU::Config.relative_path usb_disk['file']
     end
 
     if vm.config['-smp'] and vm.config['-smp']['n'] and vm.config['-smp']['n'].to_i > 0
@@ -108,7 +115,13 @@
       <tr> 
         <th scope="row">CD/DVD image (optional)</th>
         <td>
-          <input type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" value="<%= formvals['cdrom'] %>"/>
+          <input class="vimagepath" type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" value="<%= formvals['cdrom'] %>"/>
+        </td>
+      </tr>
+      <tr> 
+        <th scope="row">External USB disk/pendrive image (optional)</th>
+        <td>
+          <input class="vimagepath" type="text" name="usbdisk" id="usbdisk" onclick="javascript:popup_filechooser(this);" value="<%= formvals['usbdisk'] %>"/>
         </td>
       </tr>
       <tr>
@@ -117,9 +130,10 @@
           <div class="optinfo">Choose existing</div>
         </th>
         <td>
-          <input type="text" name="disk" id="disk" onclick="javascript:popup_filechooser(this);" value="<%= formvals['disk'] %>"/> 
+          <input class="vimagepath" type="text" name="disk" id="disk" onclick="javascript:popup_filechooser(this);" value="<%= formvals['disk'] %>"/> 
         </td>  
       </tr>
+
       <tr>
         <th scope="row">
           <div class="optinfo">
