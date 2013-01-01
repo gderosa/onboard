@@ -119,6 +119,13 @@ class OnBoard
               cmdline << '-smp ' << args.join(',') << ' ' 
             end
           end
+          if opts['-usbdevice'].respond_to? :each
+            opts['-usbdevice'].each do |device|
+              if device['type'] == 'disk'
+                cmdline << "-usbdevice disk:#{device['file']}" << ' '
+              end
+            end
+          end
           if opts['-drive'].respond_to? :each
             opts['-drive'].each do |d|
               drive_args = []
