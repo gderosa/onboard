@@ -1,3 +1,16 @@
+2013.01
+
+* QEMU improvements
+	* USB disk/pendrive support
+	* sound support and some (attempted) SPICE multimedia optimizations
+	* socket file permission fixes
+
+* RADIUS/HotSpotLogin fixes
+
+* Gem/library/dependency fixes
+
+* Doc fixes
+
 2012.05.01
 
 * QEMU improvements
