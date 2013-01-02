@@ -89,11 +89,12 @@ class OnBoard
           if opts['-spice'].respond_to? :[]
             if opts['-spice']['port'] and opts['-spice']['port'].to_i != 0
               cmdline << 
-"-spice port=#{opts['-spice']['port']},disable-ticketing,zlib-glz-wan-compression=always "
-              #image-compression 
-              #jpeg-wan-compression 
-              #zlib-glz-wan-compression 
-              #playback-compression
+"-spice port=#{opts['-spice']['port']},disable-ticketing "
+              #,image-compression=[auto_glz|auto_lz|quic|glz|lz|off] 
+              #,jpeg-wan-compression=[auto|never|always] 
+              #,zlib-glz-wan-compression=[auto|never|always] 
+              #,playback-compression=[on|off]
+              #,streaming-video=[off|all|filter]
             end
           end
           cmdline << '-vga qxl '
