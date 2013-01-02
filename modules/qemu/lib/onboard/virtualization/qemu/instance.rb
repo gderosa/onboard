@@ -88,14 +88,15 @@ class OnBoard
           end
           if opts['-spice'].respond_to? :[]
             if opts['-spice']['port'] and opts['-spice']['port'].to_i != 0
-              cmdline << "-spice port=#{opts['-spice']['port']},disable-ticketing,zlib-glz-wan-compression=always"
+              cmdline << 
+"-spice port=#{opts['-spice']['port']},disable-ticketing,zlib-glz-wan-compression=always "
               #image-compression 
               #jpeg-wan-compression 
               #zlib-glz-wan-compression 
               #playback-compression
             end
-            cmdline << ' '
           end
+          cmdline << '-vga qxl '
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
             if opts['-monitor']['unix']
@@ -106,6 +107,8 @@ class OnBoard
               cmdline << '-monitor ' << unix_args.join(',') << ' '
             end 
           end
+          #cmdline << "-D /tmp/qemu-#{uuid_short}.log "
+          #cmdline << "-debugcon file:/tmp/qemu-#{uuid_short}.dbg "
           if opts['-smp']
             args = []
             args << opts['-smp']['n'].to_s if opts['-smp']['n'].to_i > 0
