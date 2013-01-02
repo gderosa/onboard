@@ -188,6 +188,16 @@ class OnBoard
       end
     end
 
+    # for Voyage-Linux embedded Debian flavour http://linux.voyage.hk
+    voyage_sync = '/etc/init.d/voyage-sync'
+    if File.file? voyage_sync and File.executable? voyage_sync
+      # TODO: move this to a specific file/module/method...
+      rootfsmode = `(sudo touch /.rw 2> /dev/null) && echo 'rw' || echo 'ro'`.strip.to_sym
+      System::Command.run "remountrw",            :sudo if rootfsmode == :ro
+      System::Command.run "#{voyage_sync} sync",  :sudo
+      System::Command.run "remountro",            :sudo if rootfsmode == :ro
+    end
+
     System::Command.run 'sync'
   end
 

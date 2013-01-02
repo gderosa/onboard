@@ -41,15 +41,20 @@ jqueyFileTree
 gem install uuid rmagick cronedit chronic_duration
 
 
-== VNC/SPICE clients
+== VNC/SPICE clients and video performance
 
 To avoid mouse pointer mismatches, a client with capture/release is
 strongly suggested, such as Vinagre on Unix or [see below] on Windows.
 
-Alternetively, you can use SPICE, which is a more advanced protocol.
-There are clients for Unix and Windows, with capture/release and which also 
-support VNC:
+Alternetively, you can use SPICE (by RedHat Inc.), which is a more 
+advanced protocol. There are clients for Unix and Windows, with 
+capture/release (they also support VNC):
 
 http://spice-space.org/download.html .
 
+By default, guests get a QXL paravirtual Video card: it's VGA and VESA 
+compatible but if you install guest drivers (from the link above, for
+example) you'll get optimal performance especially via SPICE.
+
+Among other things, SPICE transports audio, while VNC does not.
 
