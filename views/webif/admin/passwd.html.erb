@@ -1,5 +1,8 @@
 <%
+  require 'onboard/system/user'
 
+  current_user  = OnBoard::System::User.current
+  root_user     = OnBoard::System::User.new 'root'
 %>
 
 <h2>Users and Passwords</h2>
@@ -45,8 +48,15 @@
     </tr>
   </table>
   <input type="checkbox" name="system" checked/> Also change Unix login passwords 
-  (<code>onboard</code> and <code>root</code> users, if not locked).
+  (<code><%= current_user.name %></code> and <code>root</code> users, if not locked).
   <br/>
 
   <button type="submit">Save!</button>
+
+  <pre>
+
+    Root passwowd locked = <%= root_user.passwd.locked? %>
+    <%= current_user.name %> password locked = <%= current_user.passwd.locked? %>
+
+  </pre>
 </form>
