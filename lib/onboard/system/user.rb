@@ -10,6 +10,9 @@ class OnBoard
         def current
           new(Etc.getpwuid(Process.uid)) 
         end
+        def root
+          new('root') 
+        end
       end
 
       attr_reader :passwd

@@ -1,4 +1,6 @@
 require 'digest/md5'
+
+require 'onboard/exceptions'
 require 'onboard/extensions/string' # patched String#== is important here!
 
 class OnBoard
@@ -12,11 +14,12 @@ class OnBoard
 
     def self.change_from_HTTP_request(params)
       unless self.check_pass(params['oldpasswd'])
-        return {
-          :ok => false,
-          :err => 'Wrong password!',
-          :status_http => 401 # Unauthorized
-        }
+        #return {
+        #  :ok => false,
+        #  :err => 'Wrong password!',
+        #  :status_http => 401 # Unauthorized
+        #}
+        raise OnBoard::BadRequest, 'Wrong Password!'
       end
       unless params['newpasswd'] == params['newpasswd2']
         return {

@@ -26,6 +26,9 @@ class OnBoard
           @status.fields[1] == 'L'
         end
 
+        def change_from_HTTP_request(params)
+        end
+
       end
     end
   end
