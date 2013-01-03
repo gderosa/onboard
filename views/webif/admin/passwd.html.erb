@@ -1,3 +1,7 @@
+<%
+
+%>
+
 <h2>Users and Passwords</h2>
 <h3>Administrator’s password</h3>
 <%= 
@@ -40,5 +44,9 @@
       <th scope="row">New password (confirm)</th>
     </tr>
   </table>
+  <input type="checkbox" name="system" checked/> Also change Unix login passwords 
+  (<code>onboard</code> and <code>root</code> users, if not locked).
+  <br/>
+
   <button type="submit">Save!</button>
 </form>
