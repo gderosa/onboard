@@ -3,6 +3,7 @@
 
   current_user  = OnBoard::System::User.current
   root_user     = OnBoard::System::User.new 'root'
+  root_passwd   = root_user.passwd
 %>
 
 <h2>Users and Passwords</h2>
@@ -48,15 +49,13 @@
     </tr>
   </table>
   <input type="checkbox" name="system" checked/> Also change Unix login passwords 
-  (<code><%= current_user.name %></code> and <code>root</code> users, if not locked).
+  <% if root_passwd.locked? %>
+    (<code><%= current_user.name %></code>  user).
+  <% else %>
+    (<code><%= current_user.name %></code> and <code>root</code> users).
+  <% end %>
   <br/>
 
   <button type="submit">Save!</button>
 
-  <pre>
-
-    Root passwowd locked = <%= root_user.passwd.locked? %>
-    <%= current_user.name %> password locked = <%= current_user.passwd.locked? %>
-
-  </pre>
 </form>

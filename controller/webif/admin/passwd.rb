@@ -1,7 +1,9 @@
-require 'onboard/passwd'
-
 
 class OnBoard
+
+  autoload :Passwd, 'onboard/passwd'
+  autoload :System, 'onboard/system'
+
   class Controller
 
     title = 'Users and passwords'
@@ -16,7 +18,15 @@ class OnBoard
     end
 
     put '/webif/admin/passwd.:format' do
-      msg = OnBoard::Passwd.change_from_HTTP_request(params)
+      msg = handle_errors do 
+        OnBoard::Passwd.change_from_HTTP_request(params)
+        if params[:system] == 'on'
+          root_user     = OnBoard::System::User.root
+          current_user  = OnBoard::System::User.current
+          root_user.passwd.change_from_HTTP_request(params) unless root_user.passwd.locked?
+          current_user.passwd.change_from_HTTP_request(params)
+        end
+      end
       status msg[:status_http] if msg[:status_http]
       format(
         :path => '/webif/admin/passwd',
