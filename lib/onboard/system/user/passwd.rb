@@ -1,15 +1,17 @@
 require 'etc'
+require 'open3'
+
+require 'onboard/exceptions'
+require 'onboard/system/user/passwd/status'
 
 class OnBoard
   module System
     class User 
       class Passwd
 
-        autoload :Status, 'onboard/system/user/passwd/status'
-
         attr_reader :entry, :status
 
-        def initialize(x)
+        def initialize(x=Process.uid)
           @entry = case x
           when Integer
             Etc.getpwuid x
@@ -27,7 +29,22 @@ class OnBoard
         end
 
         def change_from_HTTP_request(params)
-          newpasswd = params['newpasswd']
+          # TODO: move all common logic to System::Command
+          message, status = Open3.capture2e(
+            'sudo chpasswd',  
+            :stdin_data => "#{name}:#{params['newpasswd']}"
+          )
+          if status.success?
+            LOGGER.debug "Command succes: chpasswd"
+          else
+            LOGGER.error "Command failed: chpasswd"
+            LOGGER.error message
+            raise OnBoard::ServerError, message
+          end
+        end
+
+        def method_missing(id, *args, &blk)
+          @entry.send id, *args, &blk
         end
 
       end
