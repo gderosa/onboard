@@ -8,7 +8,7 @@ class OnBoard
       
       class << self
         def current
-          new(Etc.getpwuid(Process.uid)) 
+          new(Etc.getpwuid(::Process.uid)) 
         end
         def root
           new('root') 
