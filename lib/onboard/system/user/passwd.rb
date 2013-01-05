@@ -23,10 +23,11 @@ class OnBoard
 
         def locked?
           # p @status.fields
-          @status.fields[1] == 'L'
+          @status.fields[1] == 'L' # man 1 passwd ## @ --status
         end
 
         def change_from_HTTP_request(params)
+          newpasswd = params['newpasswd']
         end
 
       end
