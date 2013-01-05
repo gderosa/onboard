@@ -4,9 +4,10 @@ require 'onboard/exceptions'
 require 'onboard/extensions/string' # patched String#== is important here!
 
 class OnBoard
+  # This refers to the Web UI password(s?).
+  # For Unix login passwords look at the OnBoard::System::User namespace. 
   module Passwd
     # Currently, just one user: admin .
-
     PASSWD_DIR = OnBoard::CONFDIR + '/self/passwd'
     ADMIN_PASSWD_FILE = PASSWD_DIR + '/admin.md5.dat'
     DEFAULT_ADMIN_USERNAME = 'admin'
@@ -14,19 +15,10 @@ class OnBoard
 
     def self.change_from_HTTP_request(params)
       unless self.check_pass(params['oldpasswd'])
-        #return {
-        #  :ok => false,
-        #  :err => 'Wrong password!',
-        #  :status_http => 401 # Unauthorized
-        #}
         raise OnBoard::BadRequest, 'Wrong Password!'
       end
       unless params['newpasswd'] == params['newpasswd2']
-        return {
-          :ok => false,
-          :err => 'Passwords do not match!',
-          :status_http => 400
-        }
+        raise OnBoard::BadRequest, 'Passwords do not match!'
       end
       FileUtils.mkdir_p PASSWD_DIR unless Dir.exists? PASSWD_DIR
       File.open ADMIN_PASSWD_FILE, 'w' do |f|
