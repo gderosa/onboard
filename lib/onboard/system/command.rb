@@ -129,11 +129,11 @@ class OnBoard
         stdout.strip!
         stderr.strip!
         if status.success?
-          LOGGER.debug  "Command succes: chpasswd"
+          LOGGER.debug  "Command succes: #{cmd}"
           LOGGER.debug  stdout unless stdout.empty?
           LOGGER.info   stderr unless stderr.empty?
         else
-          LOGGER.error  "Command failed: chpasswd"
+          LOGGER.error  "Command failed: #{cmd}"
           LOGGER.error  stderr unless stderr.empty?
           LOGGER.info   stdout unless stdout.empty?
           raise (opt_h[:raise] || RuntimeError), stderr

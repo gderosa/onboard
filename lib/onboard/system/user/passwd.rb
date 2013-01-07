@@ -3,6 +3,7 @@ require 'open3'
 
 require 'onboard/exceptions'
 require 'onboard/system/user/passwd/status'
+require 'onboard/system/fs'
 
 class OnBoard
   module System
@@ -28,13 +29,21 @@ class OnBoard
           @status.fields[1] == 'L' # man 1 passwd ## @ --status
         end
 
+        # TODO: change_from_HTTP_request() is horrible, turn this into
+        # change(newpasswd) and extract from HTTP params within the 
+        # Sinatra Controller. This should be done for many modules and classes
+        # throughout the OnBoard source tree...
+        #
         def change_from_HTTP_request(params)
+          was_readonly = System::FS.root.readonly? 
+          System::FS.root.remount 'rw' if was_readonly
           System::Command.send_command(
             'chpasswd', 
             :sudo,
             :stdin => "#{name}:#{params['newpasswd']}",
             :raise => ServerError
           )
+          System::FS.root.remount 'ro' if was_readonly
         end
 
         def method_missing(id, *args, &blk)

@@ -14,6 +14,14 @@ class OnBoard
           system "sudo touch #{@mount_point} > /dev/null 2>&1"
         end  
 
+        def readonly?
+          not writable?
+        end
+
+        def must_be_writable!
+          raise Errno::EROFS unless writable?
+        end
+
         def remount!(*opts) 
           optstr = ( %w{remount} + opts.map{|x| x.to_s} ).join(',') 
           Command.send_command "mount #{@mount_point} -o #{optstr}", :sudo
