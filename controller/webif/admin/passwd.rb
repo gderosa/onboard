@@ -27,7 +27,8 @@ class OnBoard
           current_user.passwd.change_from_HTTP_request(params)
         end
       end
-      status msg[:status_http] if msg[:status_http]
+      status msg[:status_http] if msg[:status_http] 
+          # TODO: move this into handle_errors itself
       format(
         :path => '/webif/admin/passwd',
         :format => params[:format],
