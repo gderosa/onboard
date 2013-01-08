@@ -11,6 +11,9 @@ class OnBoard
     
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
+
+        h[:msg] ||= msg
+
         #h[:formats] ||= %w{html json yaml}
         #h[:formats] |= %w{rb} if settings.environment == :development
         h[:formats] = @@formats
@@ -111,7 +114,8 @@ class OnBoard
         )
       end
 
-      def message_partial(msg={:ok=>true}) 
+      def message_partial() 
+        @msg ||= {:ok=>true}
         partial(
           :path => '_messages', 
           :locals => {

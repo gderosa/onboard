@@ -2,6 +2,7 @@
 
 class OnBoard
   class Controller < ::Sinatra::Base
+
     helpers do
     
       def handle_external_errors(e, req)
@@ -25,25 +26,25 @@ class OnBoard
       end
 
       def handle_errors(&blk)
-        msg = {}
+        @msg = {}
         begin
           blk.call
         rescue OnBoard::Error
           e = $!.clone
           status e.http_status_code
-          msg[:err] = e # will be converted to message string as needed
+          @msg[:err] = e # will be converted to message string as needed
         rescue OnBoard::Warning
-          msg[:warn] = $!
+          @msg[:warn] = $!
         rescue StandardError
           if h = handle_external_errors($!, request) 
             status h[:status]
-            msg = h[:msg]
+            @msg = h[:msg]
           else
             raise # unhandled
           end
         end
-        msg[:ok] = true unless msg[:err]
-        return msg
+        @msg[:ok] = true unless @msg[:err]
+        return @msg
       end
 
     end
