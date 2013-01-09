@@ -11,11 +11,12 @@ class OnBoard
   class Warning       < ::Exception;    end  # TODO: use catch and throw
   
   # an useful alias
-  RuntimeError         = Error
+  RuntimeError        = Error
 
   class ServerError   < Error;          end
   class BadRequest    < Error;          end
   class Conflict      < Error;          end 
+  class Unauthorized  < Error;          end
 
   InternalServerError = ServerError
 
@@ -24,6 +25,8 @@ class OnBoard
       case self # plays well with inheritance
       when BadRequest
         return 400
+      when Unauthorized
+        return 401
       when Conflict
         return 409
       when ServerError
