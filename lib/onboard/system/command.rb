@@ -112,6 +112,34 @@ class OnBoard
         return msg
       end
 
+      # Only use exception, not message passing
+      def self.send_command(cmd, *opts)
+        opt_h = opts.find{|opt| opt.is_a? Hash} || {}
+        if opt_h[:sudo] or opts.include? :sudo
+          if opt_h[:keepenv] or opts.include? :keepenv
+            cmd = 'sudo -E '  + cmd
+          else
+            cmd = 'sudo '     + cmd
+          end
+        end
+        stdout, stderr, status = Open3.capture3(
+          cmd,
+          :stdin_data => opt_h[:stdin]
+        )
+        stdout.strip!
+        stderr.strip!
+        if status.success?
+          LOGGER.debug  "Command success: #{cmd}"
+          LOGGER.debug  stdout unless stdout.empty?
+          LOGGER.info   stderr unless stderr.empty?
+        else
+          LOGGER.error  "Command failed: #{cmd}"
+          LOGGER.error  stderr unless stderr.empty?
+          LOGGER.info   stdout unless stdout.empty?
+          raise (opt_h[:raise] || RuntimeError), stderr
+        end
+      end
+
       # TODO? backtick equivalent still unimplemented, maybe we won't need it?
 
     end
