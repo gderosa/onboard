@@ -1,3 +1,7 @@
+2013.02.01
+
+* fix a serious ArgumentError which breaks QEMU view
+
 2013.02
 
 * Unix system/login password
