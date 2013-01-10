@@ -1,3 +1,18 @@
+2013.02
+
+* Unix system/login password
+	* may be changed via the web interface (onboard and root)
+	* handle ro/rw filesystem (via System::FS new module)
+	* do not touch locked root login (sudo-only setups)
+
+* Some error handling cleanup
+
+* System::Command.send_command (improves System::Command.run)
+
+* Better behavior on Voyage Linux (embedded Debian with ro filesystem)
+
+* QEMU/KVM: slight VNC/SPICE/video improvements (code and documentation)
+
 2013.01
 
 * QEMU improvements
