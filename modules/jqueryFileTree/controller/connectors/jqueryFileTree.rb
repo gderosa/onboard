@@ -12,7 +12,7 @@ class OnBoard
     # Also, a "protocol specification" is at
     # http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/#custom_connectors
     #
-    get '/connectors/jqueryFileTree/:root_id.html' do
+    post '/connectors/jqueryFileTree/:root_id.html' do
       root = nil
       out = ''
       if params['root_id'] == 'files' # for future extension
@@ -66,9 +66,9 @@ class OnBoard
 
     # POST is actually required by jqueryFileTree: a GET route is just 
     # there to naively debug with a browser :-P
-    post '/connectors/jqueryFileTree/:root_id.html' do
-      same_as_GET
-    end
+    #post '/connectors/jqueryFileTree/:root_id.html' do
+    #  same_as_GET ## DANGEROUS: leads to infinite loops :-o
+    #end
 
   end
 
