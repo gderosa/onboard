@@ -7,7 +7,7 @@ class OnBoard
           def initialize(passwd_entry)
             @username = passwd_entry.name
             cmd = "passwd --status #{@username}" 
-            cmd = "sudo #{cmd}" unless Process.uid == passwd_entry.uid
+            cmd = "sudo #{cmd}" unless ::Process.uid == passwd_entry.uid
             @fields = `#{cmd}`.split
           end
         end
