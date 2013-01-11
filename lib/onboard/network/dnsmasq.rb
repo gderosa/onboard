@@ -18,9 +18,6 @@ class OnBoard
         end
       end
 
-      # "#{CONFDIR}"            # saved configuration
-      # "#{CONFDIR_CURRENT}"        # current configuration
-      # "#{DEFAULTS_CONFDIR}"   # "factory" defaults
       def self.restore
         OnBoard::System::Command.run "mkdir -p #{CONFDIR_CURRENT}"
         Dir.glob "#{DEFAULTS_CONFDIR}/#{CONFFILES_GLOB}" do |path|
@@ -30,10 +27,8 @@ class OnBoard
           end
           FileUtils.copy "#{CONFDIR}/#{basename}", CONFDIR_CURRENT
         end
-        # 'new' subdirectory is always the current config dir
-        # do not copy new/*.conf to parent directory if you don't want
-        # persistence        
-        OnBoard::PLATFORM::restart_dnsmasq("#{CONFDIR_CURRENT}")
+        OnBoard::System::Hostname.be_resolved( :no_restart )
+        self.restart
       end
 
       def self.init_conf

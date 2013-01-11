@@ -18,7 +18,7 @@ class OnBoard
           name ? set(name) : get
         end
 
-        def be_resolved
+        def be_resolved(*opts)
           dnsmasq = Network::Dnsmasq.new
           addresses = Network::Interface.get_all.map{|i| i.ip.first.addr}
           records = []
@@ -30,7 +30,7 @@ class OnBoard
           end
           # dnsmasq.write_addn_hosts :data => hosts_h, :table => :hosts_self
           dnsmasq.write_host_records :records => records, :table => :self
-          dnsmasq.restart
+          dnsmasq.restart unless opts.include? :no_restart
         end
 
         def save
