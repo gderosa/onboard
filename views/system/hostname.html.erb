@@ -1,0 +1,13 @@
+<% hostname = objects %>
+
+<h2>This machine&rsquo;s host name</h2>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <input type="text" name="hostname" value="<%= hostname %>"/> <br/>
+  <button type="submit">Change!</button>  
+</form>
+
+
+
+
