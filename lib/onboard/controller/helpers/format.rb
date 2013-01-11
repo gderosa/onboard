@@ -114,12 +114,13 @@ class OnBoard
         )
       end
 
-      def message_partial() 
-        @msg ||= {:ok=>true}
+      def message_partial(h={})
+        @msg ||= {}
+        @msg.merge! (h or {:ok => true}) 
         partial(
           :path => '_messages', 
           :locals => {
-            :msg => msg,
+            :msg => @msg,
             :status => status
           }
         )
