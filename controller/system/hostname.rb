@@ -13,6 +13,7 @@ class OnBoard
 
     put "/system/hostname.:format" do
       System::Hostname.set params[:hostname]
+      System::Hostname.be_resolved 
       redirect request.path_info 
     end
 
