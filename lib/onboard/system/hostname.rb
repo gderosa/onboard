@@ -28,7 +28,7 @@ class OnBoard
           else
             hostname_, domainname_ = arg[:hostname], arg[:doainname] 
           end
-          Command.send_command "hostname #{name.strip}", :sudo          if hostname_
+          Command.send_command "hostname #{hostname_.strip}", :sudo     if hostname_
           File.open( CONFFILE_DOMAIN, 'w' ){ |f| f.write domainname_ }  if domainname_
         end
 
