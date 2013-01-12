@@ -11,7 +11,10 @@ class OnBoard
     end
 
     put "/system/hostname.:format" do
-      System::Hostname.set params[:hostname]
+      System::Hostname.set(
+        :hostname   => params[:hostname], 
+        :domainname => params[:domainname]
+      )
       System::Hostname.be_resolved
       format(
         :path     => 'system/hostname',
