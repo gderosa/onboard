@@ -96,13 +96,15 @@ class OnBoard
           dnsmasq.restart unless opts.include? :no_restart
         end
 
+        alias be_resolvable be_resolved
+
         def save
           # domain name file is already "saved"
           File.open(CONFFILE_HOST, 'w') {|f| f.write hostname}
         end
 
         def restore
-          # settingthedomain name is a matter of network administration (dns),
+          # setting thedomain name is a matter of network administration (dns),
           # not local system administration...
           hostname File.read CONFFILE_HOST
         end
