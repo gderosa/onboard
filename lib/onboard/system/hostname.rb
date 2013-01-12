@@ -28,7 +28,17 @@ class OnBoard
             end
             records << {:addr => addr, :name => hostname}
           end
+
+          # This leads to permission issues: --addn-hosts file is read *after*
+          # dnsmasq has lost root privileges
           # dnsmasq.write_addn_hosts :data => hosts_h, :table => :hosts_self
+          #
+          # An approach based on --interface-name is problematic as well, 
+          # 'cause --localise-queries behavior doesn't apply.
+          #
+          # So an approach based on --host-record is chosen. Limitation: 
+          # if ip addresses change, Dnsmasq#write_host_records need to be called
+          # again (and dnsmasq daemon restarted again...) 
           dnsmasq.write_host_records :records => records, :table => :self
           dnsmasq.restart unless opts.include? :no_restart
         end
