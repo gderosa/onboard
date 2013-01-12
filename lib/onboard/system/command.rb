@@ -136,7 +136,7 @@ class OnBoard
           LOGGER.error  "Command failed: #{cmd}"
           LOGGER.error  stderr unless stderr.empty?
           LOGGER.info   stdout unless stdout.empty?
-          raise (opt_h[:raise] || RuntimeError), stderr
+          raise opt_h[:raise], stderr if opt_h[:raise]
         end
       end
 
