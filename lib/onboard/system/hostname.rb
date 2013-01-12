@@ -2,20 +2,50 @@ class OnBoard
   module System
     class Hostname # module? shall we have Hostname instances?
 
-      CONFFILE = File.join OnBoard::CONFDIR, 'hostname'
-      
+      CONFFILE_HOST   = File.join OnBoard::CONFDIR, 'hostname'
+      CONFFILE_DOMAIN = File.join OnBoard::CONFDIR, 'domainname'
+
       class << self
 
-        def get
-          `hostname`.strip
+        def get(arg=nil)
+          case arg
+          when :hostname
+            `hostname`.strip
+          when :domainname
+            begin
+              File.read(CONFFILE_DOMAIN).strip
+            rescue Errno::ENOENT
+              return nil
+            end
+          else
+            get :hostname
+          end
         end
 
-        def set(name)
-          Command.send_command "hostname #{name.strip}", :sudo
+        def set(arg)
+          if arg.respond_to? :strip
+            hostname_ = arg
+          else
+            hostname_, domainname_ = arg[:hostname], arg[:doainname] 
+          end
+          Command.send_command "hostname #{name.strip}", :sudo          if hostname_
+          File.open( CONFFILE_DOMAIN, 'w' ){ |f| f.write domainname_ }  if domainname_
         end
 
         def hostname(name=nil)
           name ? set(name) : get
+        end
+
+        def domainname(name=nil)
+          name ? set(:domainname => name) : get(:domainname)
+        end
+
+        def hostname=(n);   set :hostname => n;   end
+        
+        def domainname=(n); set :domainname => n; end
+        
+        def to_s
+          hostname
         end
 
         def be_resolved(*opts)
