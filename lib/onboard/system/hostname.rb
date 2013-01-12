@@ -12,10 +12,12 @@ class OnBoard
           when :hostname
             `hostname`.strip
           when :domainname
+            # return nil if file does not exist, is empty or contains just
+            # spaces or newlines
             begin
-              File.read(CONFFILE_DOMAIN).strip
+              domainname_ = File.read(CONFFILE_DOMAIN).strip
+              domainname_ if domainname_.length > 0
             rescue Errno::ENOENT
-              return nil
             end
           else
             get :hostname
@@ -32,6 +34,7 @@ class OnBoard
           File.open( CONFFILE_DOMAIN, 'w' ){ |f| f.write domainname_ }  if domainname_
         end
 
+        # Act like the hostname Unix command 
         def hostname(name=nil)
           name ? set(name) : get
         end
@@ -54,19 +57,25 @@ class OnBoard
           records = []
           addresses.each do |addr|
             if addr === '127.0.0.1' and hostname != 'localhost'
-              records << {:addr => addr, :name => 'localhost'}  
+              records <<  {
+                :addr       => addr, 
+                :name       => 'localhost', 
+                :add_domain => domainname
+              }
             end
-            records << {:addr => addr, :name => hostname}
+            records << {
+              :addr       => addr, 
+              :name       => hostname,    
+              :add_domain => domainname
+            }
           end
-
-          # This leads to permission issues: --addn-hosts file is read *after*
-          # dnsmasq has lost root privileges
-          # dnsmasq.write_addn_hosts :data => hosts_h, :table => :hosts_self
+          # Relying on --addn-hosts leads to permission issues: 
+          # --addn-hosts file is read *after* dnsmasq has lost root privileges
           #
           # An approach based on --interface-name is problematic as well, 
           # 'cause --localise-queries behavior doesn't apply.
           #
-          # So an approach based on --host-record is chosen. Limitation: 
+          # So: an approach based on --host-record is chosen. Limitation: 
           # if ip addresses change, Dnsmasq#write_host_records need to be called
           # again (and dnsmasq daemon restarted again...) 
           dnsmasq.write_host_records :records => records, :table => :self
@@ -74,11 +83,14 @@ class OnBoard
         end
 
         def save
-          File.open(CONFFILE, 'w') {|f| f.write hostname}
+          # domain name file is already "saved"
+          File.open(CONFFILE_HOST, 'w') {|f| f.write hostname}
         end
 
         def restore
-          hostname File.read CONFFILE
+          # settingthedomain name is a matter of network administration (dns),
+          # not local system administration...
+          hostname File.read CONFFILE_HOST
         end
 
       end

@@ -361,7 +361,11 @@ class OnBoard
         File.open file, 'w' do |f|
           f.puts banner
           h[:records].each do |r|
-            f.puts "host-record=#{r[:name]},#{r[:addr]}" 
+            if r[:add_domain]
+              f.puts "host-record=#{r[:name]},#{r[:name]}.#{r[:add_domain]},#{r[:addr]}"
+            else
+              f.puts "host-record=#{r[:name]},#{r[:addr]}" 
+            end
           end
         end
       end
