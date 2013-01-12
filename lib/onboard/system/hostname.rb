@@ -10,7 +10,9 @@ class OnBoard
         def get(arg=nil)
           case arg
           when :hostname
-            `hostname`.strip
+            # return nil if hostname command gives no output
+            hostname_ = `hostname`.strip
+            hostname_ if hostname_.length > 0
           when :domainname
             # return nil if file does not exist, is empty or contains just
             # spaces or newlines
@@ -46,6 +48,12 @@ class OnBoard
         def hostname=(n);   set :hostname => n;   end
         
         def domainname=(n); set :domainname => n; end
+
+        def fqdn
+          raise NoDomainName  unless domainname
+          raise NoHostName    unless hostname
+          "#{hostname}.#{domainname}" 
+        end
         
         def to_s
           hostname
@@ -59,15 +67,21 @@ class OnBoard
             if addr === '127.0.0.1' and hostname != 'localhost'
               records <<  {
                 :addr       => addr, 
-                :name       => 'localhost', 
-                :add_domain => domainname
+                :name       => 'localhost' 
               }
+              records <<  {
+                :addr       => addr,
+                :name       => "localhost.#{domainname}" 
+              } if domainname
             end
             records << {
               :addr       => addr, 
-              :name       => hostname,    
-              :add_domain => domainname
-            }
+              :name       => fqdn   
+            } if hostname and domainname
+            records << {
+              :addr       => addr,
+              :name       => hostname
+            } if hostname
           end
           # Relying on --addn-hosts leads to permission issues: 
           # --addn-hosts file is read *after* dnsmasq has lost root privileges
