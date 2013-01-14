@@ -93,6 +93,7 @@ class OnBoard
           # if ip addresses change, Dnsmasq#write_host_records need to be called
           # again (and dnsmasq daemon restarted again...) 
           dnsmasq.write_host_records :records => records, :table => :self
+          dnsmasq.write_local_domain domainname
           dnsmasq.restart unless opts.include? :no_restart
         end
 

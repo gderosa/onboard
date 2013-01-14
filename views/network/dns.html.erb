@@ -1,5 +1,6 @@
 <% 
-  # require 'onboard/extensions/array' 
+  hostname    = OnBoard::System::Hostname.hostname
+  domainname  = OnBoard::System::Hostname.domainname
 %>
 
 <h2 style="margin-bottom:0;">DNS</h2>
@@ -19,18 +20,9 @@
     )
   %>
 
-<!--
-  <pre>
-    <%= 
-      # html_escape objects.pretty_inspect 
-    %>
-  </pre>
-  <pre>
-    <%= 
-      # html_escape params.pretty_inspect 
-    %>
-  </pre>
-  -->
+<h3>Hostname and domain name</h3>
+<span style="font-weight:bold"><%= hostname || '(none)' %>.<%= domainname || '(none)' %>.</span> (<a target="_blank" href="../system/hostname.html">change</a>)
+  
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <h3>Name servers</h3>

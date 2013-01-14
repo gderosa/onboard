@@ -273,6 +273,7 @@ class OnBoard
         return {:ok => true} 
       end
 
+
       def write_dns_conf_from_HTTP_request(params={})
         str = banner + "\n"
         str_domains_self = str.clone
@@ -295,6 +296,8 @@ class OnBoard
           end
         end
 
+        # TODO: DRY: move some of this to write_local_domain(domain)
+        
         params['searchdomain'] = System::Hostname.domainname \
             unless params['searchdomain'] =~ /\S/
         params['searchdomain'].strip!
@@ -313,7 +316,7 @@ class OnBoard
           FileUtils.mkdir_p CONFDIR + '/new'
         end
         
-        {
+        { # TODO: DRY: move some of this to write_local_domain(domain)
           'dns.conf' => str, 
           'domains.self.conf' => str_domains_self
         }.each_pair do |filename, content|
@@ -325,6 +328,16 @@ class OnBoard
           end 
         end
         return {:ok => true} 
+      end
+
+      def write_local_domain(domain)
+        filepath = CONFDIR + '/new/domains.self.conf' 
+        FileUtils.copy filepath, filepath + '~' if File.exists? filepath
+        File.open(filepath, 'w') do |f|
+          f.puts banner
+          f.puts "domain=#{domain}"
+          f.puts "local=/#{domain}/"
+        end
       end
 
       def write_domains_conf_from_HTTP_request(params)
