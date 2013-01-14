@@ -59,6 +59,17 @@ class OnBoard
           hostname
         end
 
+        def to_h
+          {
+            'host' => hostname,
+            'domain' => domainname
+          }
+        end
+
+        def to_json(*a)
+          to_h.to_json(*a)
+        end
+
         def be_resolved(*opts)
           dnsmasq = Network::Dnsmasq.new
           addresses = Network::Interface.get_all.map{|i| i.ip.first.addr}
