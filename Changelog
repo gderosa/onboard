@@ -1,3 +1,13 @@
+2013.03
+
+* System shutdown / reboot
+
+* System hostname / domain name
+	* DNSmasq hooks/triggers
+	* Simplify local domain user interface
+
+* Fix a jqueryFIleTree infinite loop
+
 2013.02.01
 
 * fix a serious ArgumentError which breaks QEMU view
