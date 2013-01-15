@@ -228,7 +228,11 @@ class OnBoard
       def parse_dns_cmdline
         # NOTE: it's assumed only one dnsmasq instance at a time
         # NOTE: the only option parsed is -r
-        if File.read("/proc/#{`pidof dnsmasq`.strip}/cmdline") =~ /-r\0([^\0]+)/
+        #
+        # WORKAROUND: in case of multiple instances, consider the first
+        # one
+        pid = `pidof dnsmasq`.split.first.to_i
+        if File.read("/proc/#{pid}/cmdline") =~ /-r\0([^\0]+)/
           @data['resolvconf']['file'] = $1
         end         
         File.open @data['resolvconf']['file'] do |file|
