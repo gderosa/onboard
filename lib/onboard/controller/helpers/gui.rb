@@ -93,6 +93,17 @@ class OnBoard
         '<span style="font-weight:bold; color:red">*</span>'
       end
 
+      # tag('<span class="wonderful"', %Q{
+      #   your stuff here...
+      # }, :if => my_variable == expected_value) 
+      def tag(tag_spec='span class="none"', inner_html='', opts={:if=>true})
+        tag =   tag_spec.split.first
+        str =   ''
+        str <<  "<#{tag_spec}>" if opts[:if] 
+        str <<  inner_html
+        str <<  "</#{tag}>"     if opts[:if]
+      end
+
     end
   end
 end
