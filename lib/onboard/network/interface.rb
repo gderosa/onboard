@@ -381,6 +381,10 @@ class OnBoard
         end
       end
 
+      def to_s
+        name
+      end
+
       def is_bridge?
         bridgedir = "/sys/class/net/#{@name}/bridge"
         if Dir.exists? bridgedir

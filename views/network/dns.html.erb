@@ -1,5 +1,6 @@
 <% 
-  # require 'onboard/extensions/array' 
+  hostname    = OnBoard::System::Hostname.hostname
+  domainname  = OnBoard::System::Hostname.domainname
 %>
 
 <h2 style="margin-bottom:0;">DNS</h2>
@@ -19,18 +20,15 @@
     )
   %>
 
-<!--
-  <pre>
-    <%= 
-      # html_escape objects.pretty_inspect 
-    %>
-  </pre>
-  <pre>
-    <%= 
-      # html_escape params.pretty_inspect 
-    %>
-  </pre>
-  -->
+<h3>Hostname and domain name</h3>
+<span style="font-weight:bold; margin-right:1ex">
+  <% tag_none = 'span class="lowlight"' %>
+  <%= hostname    || tag(tag_none, '(none)', :if => !hostname)    %><%#
+%>.<%#
+%><%= domainname  || tag(tag_none, '(none)', :if => !domainname)  %>
+</span> 
+[<a target="_blank" href="../system/hostname.html">change</a>]
+  
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <h3>Name servers</h3>
@@ -72,7 +70,7 @@
       <% end %> 
     </tbody>
   </table>
-
+<!--
   <h3>Local domain</h3>
   <em>Machines served by DHCP will register their name in this domain</em><br/>
   <input type="text" class="rwtext" name="localdomain" value="<%= objects.data['conf']['dns']['localdomain'] %>"/>
@@ -80,7 +78,6 @@
   <h3>Search domain</h3>
   <em>Usually the same as Local domain</em><br/>
   <input type="text" class="rwtext" name="searchdomain" value="<%= objects.data['conf']['dns']['searchdomain'] %>"/>
-
-  <h3> &nbsp; <!-- Commit changes --></h3>
-  <button type="submit">Change</button>
+  -->
+  <button style="margin-top:0.9em;" type="submit">Change</button>
 </form>
