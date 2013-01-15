@@ -17,12 +17,39 @@ class OnBoard
             # return nil if file does not exist, is empty or contains just
             # spaces or newlines
             begin
-              domainname_ = File.read(CONFFILE_DOMAIN).strip
-              domainname_ if domainname_.length > 0
+              domainname_ =   File.read(CONFFILE_DOMAIN).strip
+              domainname_ =   nil unless domainname_.length > 0
             rescue Errno::ENOENT
+            ensure
+              domainname_ ||= guess :domainname, :via => :all_fqdns
+              return domainname_
             end
           else
             get :hostname
+          end
+        end
+
+        def guess(what=:hostname, opts={:via=>:all_fqdns})
+          fqdn_h = {:hostname => nil, :domainname => nil}
+          
+          case opts[:via]
+          when :all_fqdns
+            `hostname --all-fqdns`.split.each do |fqdn|
+              fqdn.strip!
+              if /^([^\.]+)\.([^\.]+.*)$/ =~ fqdn
+                fqdn_h = {:hostname => $1, :domainname => $2}
+                break
+              elsif !fqdn_h[:hostname]
+                fqdn_h[:hostname] = fqdn
+              end
+            end
+          end
+          
+          case what
+          when :fqdn
+            fqdn_h[:hostname] + '.' + fqdn_h[:domainname]
+          else
+            fqdn_h[what]
           end
         end
 
