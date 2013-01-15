@@ -131,7 +131,7 @@ class OnBoard
         if status.success?
           LOGGER.debug  "Command success: #{cmd}"
           LOGGER.debug  stdout unless stdout.empty?
-          LOGGER.info   stderr unless stderr.empty?
+          LOGGER.warn   stderr unless stderr.empty?
         else
           LOGGER.error  "Command failed: #{cmd}"
           LOGGER.error  stderr unless stderr.empty?
