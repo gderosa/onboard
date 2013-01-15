@@ -1,0 +1,18 @@
+<style type="text/css">
+  form {
+    display: inline;
+    margin-right: 0.7ex;
+  }
+</style>
+
+<h2><%= title %></h2>
+
+<form method="POST" action="shutdown/halt.html">
+  <button type="submit">Shutdown!</button>
+</form>
+<form method="POST" action="shutdown/reboot.html">
+  <button type="submit">Reboot!</button>
+</form>
+<form method="GET">
+  <button type="submit">Cancel</button>
+</form>
