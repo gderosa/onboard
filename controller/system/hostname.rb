@@ -6,7 +6,8 @@ class OnBoard
     get "/system/hostname.:format" do
       format(
         :path     => 'system/hostname',
-        :objects  => System::Hostname
+        :objects  => System::Hostname,
+        :title    => 'Hostname'
       )
     end
 
@@ -18,7 +19,8 @@ class OnBoard
       System::Hostname.be_resolved
       format(
         :path     => 'system/hostname',
-        :objects  => System::Hostname
+        :objects  => System::Hostname,
+        :title    => 'Hostname'
       )
     end
 
