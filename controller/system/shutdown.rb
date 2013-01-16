@@ -11,6 +11,10 @@ class OnBoard
     end
 
     post "/system/shutdown/:action.:format" do
+      unless params['confirm']
+        status 304 # Not Modified
+        halt
+      end
       begin
         System::Shutdown.send params[:action]
       rescue NoMethodError

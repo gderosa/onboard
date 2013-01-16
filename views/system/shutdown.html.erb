@@ -1,18 +1,25 @@
 <style type="text/css">
   form {
-    display: inline;
-    margin-right: 0.7ex;
+    /* display: inline; 
+    margin-right: 0.7ex; */
   }
+  form button {
+    width: 12ex;
+  }
+  form input[type=checkbox] {
+    vertical-align: middle;
+  } 
 </style>
 
 <h2><%= title %></h2>
 
-<form method="POST" action="shutdown/halt.html">
-  <button type="submit">Shutdown!</button>
-</form>
 <form method="POST" action="shutdown/reboot.html">
   <button type="submit">Reboot!</button>
+  <input type="checkbox" name="confirm"/>
+  Yes, I want to reboot the system
 </form>
-<form method="GET">
-  <button type="submit">Cancel</button>
+<form method="POST" action="shutdown/halt.html">
+  <button type="submit">Shutdown!</button>
+  <input type="checkbox" name="confirm"/>
+  Yes, I comfirm I want to halt the system
 </form>
