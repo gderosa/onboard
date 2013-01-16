@@ -8,14 +8,17 @@
   }
   form input[type=checkbox] {
     vertical-align: middle;
+    float: right;
+    margin-right: 0;
   }
   div.confirm {
-    border-bottom: 1px yellow solid;
     width: 40ex;
+    padding: 0.2ex;
+    border-top: none;
+    border-left: none;
+    border-right: none;
   }  
   div.confirm span.confirm-msg { 
-    width: 34ex;
-    display: inline-block;
   }
 </style>
 
@@ -23,7 +26,7 @@
 
 <form method="POST" action="shutdown/reboot.html">
   <button type="submit">Reboot!</button>
-  <div class="confirm">
+  <div class="confirm warn-like">
     <span class="confirm-msg">Yes, I want to reboot the system</span>
     <input type="checkbox" name="confirm"/>
   </div>
@@ -31,7 +34,7 @@
 
 <form method="POST" action="shutdown/halt.html">
   <button type="submit">Shutdown!</button>
-  <div class="confirm">
+  <div class="confirm warn-like">
     <span class="confirm-msg">Yes, I comfirm I want to halt the system</span>
     <input type="checkbox" name="confirm"/>
   </div>
