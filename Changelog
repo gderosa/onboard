@@ -1,3 +1,12 @@
+2013.03.01
+
+* Shutdown fixes
+	* Confirm checkbox, noop response
+
+* Fix logs management
+
+* Selective activation of "public layout" configuration interface
+
 2013.03
 
 * System shutdown / reboot
