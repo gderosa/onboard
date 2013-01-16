@@ -10,7 +10,11 @@ class OnBoard
       )
     end
 
-    post "/system/shutdown/:action.:format" do
+    post "/system/shutdown.:format" do
+      unless params['confirm']
+        status 204 # No Content
+        halt
+      end
       begin
         System::Shutdown.send params[:action]
       rescue NoMethodError
