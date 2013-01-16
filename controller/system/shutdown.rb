@@ -10,9 +10,9 @@ class OnBoard
       )
     end
 
-    post "/system/shutdown/:action.:format" do
+    post "/system/shutdown.:format" do
       unless params['confirm']
-        status 304 # Not Modified
+        status 204 # No Content
         halt
       end
       begin
