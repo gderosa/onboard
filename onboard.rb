@@ -94,14 +94,6 @@ class OnBoard
     system "sudo mkdir -p #{VARRUN}"
     system "sudo chown onboard #{VARRUN}"
 
-    if web?
-      # modular menu
-      find_n_load ROOTDIR + '/etc/menu/'
-      
-      require 'onboard/controller/helpers'
-      require 'onboard/controller'
-    end
-
     # modules
     Dir.foreach(ROOTDIR + '/modules') do |dir|
       dir_fullpath = ROOTDIR + '/modules/' + dir
@@ -117,6 +109,17 @@ class OnBoard
           STDERR.puts "Warning: Couldn't load modules/#{dir}/load.rb: Skipped!"
         end
       end 
+    end
+
+    # After the modules, 'cause we want to know, among other things,
+    # whether to activate public pages layout configuration page
+    # (and relative menu item).
+    if web?
+      require 'onboard/controller/helpers'
+      require 'onboard/controller'
+      
+      # modular menu
+      find_n_load ROOTDIR + '/etc/menu/'
     end
 
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
