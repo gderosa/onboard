@@ -305,7 +305,7 @@ EOF
           System::Log.register({
             'path'      => logfile,
             'category'  => 'openvpn',
-            'hidden'    => true
+            'hidden'    => false
           })
           return msg
         end
@@ -487,7 +487,10 @@ EOF
             logfile = @data_internal['log'] || @data_internal['log-append']
             if logfile and File.exists? logfile
               System::Command.run "rm #{logfile}", :sudo
-              System::Log.all.delete_if { |h| h['path'] == logfile }
+              #pp System::Log.all # DEBUG
+              #pp logfile
+              System::Log.delete_if { |h| h['path'] == logfile }
+              #pp System::Log.all
             end
           end
           FileUtils.rm_rf config_dir if 

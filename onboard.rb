@@ -45,6 +45,8 @@ class OnBoard
   LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
 
   VARRUN              ||= '/var/run/onboard'
+
+  VARLIB              ||= File.join RWDIR, 'var/lib'
  
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
   # NOTE: we are re-defining a constant!
