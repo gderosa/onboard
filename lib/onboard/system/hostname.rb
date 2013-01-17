@@ -63,12 +63,14 @@ class OnBoard
         # # TODO: timeout, cache ...
         def all_fqdns
           `hostname --all-fqdns`.split.uniq.sort do |a, b|
+            # first, the "configured" fqdn
             if    a == fqdn and b != fqdn
               -1
             elsif a != fqdn and b == fqdn
               +1
             else
-              0
+              # order alphanumerically but group by domains and subdomains
+              a.split('.').reverse <=> b.split('.').reverse
             end
           end
         end
