@@ -49,6 +49,15 @@
   <button type="submit">Change!</button>  
 </form>
 
-
+<% if hostname.all_fqdns.any? and not hostname.fqdn.match_dns? %>
+  <div class="warn">
+    A DNS reverse query on network interface IP adresses gives:
+    <ul>
+      <% hostname.all_fqdns.each do |fqdn_| %>
+        <li><%= fqdn_ %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
 
 

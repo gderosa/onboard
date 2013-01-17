@@ -232,6 +232,7 @@ class OnBoard
         # WORKAROUND: in case of multiple instances, consider the first
         # one
         pid = `pidof dnsmasq`.split.first.to_i
+        return unless pid and pid > 0
         if File.read("/proc/#{pid}/cmdline") =~ /-r\0([^\0]+)/
           @data['resolvconf']['file'] = $1
         end         
