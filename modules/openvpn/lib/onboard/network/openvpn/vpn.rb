@@ -40,6 +40,10 @@ class OnBoard
 
       UPSCRIPT ||= OpenVPN::ROOTDIR + '/etc/scripts/up'
 
+      DEFAULT_METRIC ||= 5000 
+          # An HIGH value; e.g. maximum for Win XP is 9999
+          # for Linux? unlimited?
+
       class VPN
         CONFDIR = OnBoard::CONFDIR + '/network/openvpn/vpn'
 
@@ -433,7 +437,7 @@ EOF
               text << line unless 
                   line =~ /^\s*route\s+(\S+)\s+(\S)/ or
                   line =~ /^\s*client-to-client\s*(#.*)?$/ or
-                  line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
+                  line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
             end
             # add new one
             @data['explicitly_configured_routes'].each do |route_h|
@@ -672,7 +676,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   @data['explicitly_configured_routes'].include? h
             end
             # TODO: DRY with parse_client_config code: How?
-            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
+            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
               @data['push'] ||= {}
               @data['push']['routes'] ||= []
               @data['push']['routes'] << {'net' => $1, 'mask' => $2}
@@ -813,7 +817,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   @data['client-config'][cn]['routes'] <<
                       {'net' => $1, 'mask' => $2}
                   next
-                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)\s*"/
+                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
                   @data['client-config'][cn]['push']['routes'] <<
                       {'net' => $1, 'mask' => $2}
                 end

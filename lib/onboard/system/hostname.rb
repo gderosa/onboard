@@ -5,6 +5,9 @@ class OnBoard
       CONFFILE_HOST   = File.join OnBoard::CONFDIR, 'hostname'
       CONFFILE_DOMAIN = File.join OnBoard::CONFDIR, 'domainname'
 
+      class NoDomainName  < RuntimeError; end
+      class NoHostName    < RuntimeError; end
+
       class << self
 
         def get(arg=nil)
@@ -21,14 +24,15 @@ class OnBoard
               domainname_ =   nil unless domainname_.length > 0
             rescue Errno::ENOENT
             ensure
-              domainname_ ||= guess :domainname, :via => :all_fqdns
-              return domainname_
+              # domainname_ ||= guess :domainname, :via => :all_fqdns
+              return domainname_ ||= nil
             end
           else
             get :hostname
           end
         end
 
+=begin
         def guess(what=:hostname, opts={:via=>:all_fqdns})
           fqdn_h = {:hostname => nil, :domainname => nil}
           
@@ -50,6 +54,31 @@ class OnBoard
             fqdn_h[:hostname] + '.' + fqdn_h[:domainname]
           else
             fqdn_h[what]
+          end
+        end
+=end
+
+        # Make a dns reverse query on machine network interface primary 
+        # addresses
+        # # TODO: timeout, cache ...
+        def all_fqdns
+          `hostname --all-fqdns`.split.uniq.sort do |a, b|
+            # first, the "configured" fqdn
+            if    a == fqdn and b != fqdn
+              -1
+            elsif a != fqdn and b == fqdn
+              +1
+            else
+              # order alphanumerically but group by domains and subdomains
+              a.split('.').reverse <=> b.split('.').reverse
+            end
+          end
+        end
+
+        def fqdn_match_dns?
+          begin
+            all_fqdns.size == 1 and all_fqdns.first == fqdn
+          rescue NoHostName, NoDomainName
           end
         end
 
@@ -76,10 +105,18 @@ class OnBoard
         
         def domainname=(n); set :domainname => n; end
 
-        def fqdn
-          raise NoDomainName  unless domainname
-          raise NoHostName    unless hostname
-          "#{hostname}.#{domainname}" 
+        def fqdn(*opts)
+          if opts.include? :raise
+            raise NoDomainName  unless domainname
+            raise NoHostName    unless hostname
+          end
+          answer = "#{hostname}.#{domainname}" 
+          class << answer
+            def match_dns?
+              Hostname.fqdn_match_dns?
+            end
+          end
+          answer
         end
         
         def to_s
@@ -89,7 +126,8 @@ class OnBoard
         def to_h
           {
             'host' => hostname,
-            'domain' => domainname
+            'domain' => domainname,
+            'all_fqdns' => all_fqdns
           }
         end
 
@@ -99,7 +137,8 @@ class OnBoard
 
         def be_resolved(*opts)
           dnsmasq = Network::Dnsmasq.new
-          addresses = Network::Interface.get_all.map{|i| i.ip.first.addr}
+          addresses = Network::Interface.get_all.\
+map{|iface| iface.ip}.flatten.map{|ip| ip.addr}.select{|addr| addr.private_ip?}
           records = []
           addresses.each do |addr|
             if addr === '127.0.0.1' and hostname != 'localhost'

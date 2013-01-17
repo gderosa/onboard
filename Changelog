@@ -1,3 +1,15 @@
+2013.03.02
+
+* openvpn: push a deliberately high route metric 
+  * you can push-route your entire office LAN with no conflicts when you are
+    at the office itself
+
+* Hostname:
+  * Hostname.be_resolved ("autoresolve"): avoid messing with public IPs
+  * "warn" when configured FQDN does not match a reverse DNS query for machine
+    configured IPs
+  * minor fixes
+
 2013.03.01
 
 * Shutdown fixes
