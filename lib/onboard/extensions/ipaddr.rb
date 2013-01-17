@@ -167,5 +167,23 @@ class IPAddr
       raise RuntimeError, "IPAddr object @family is neither Socket::AF_INET nor Socket::AF_INET6 so I can't say wheter it's a link-local or not"
     end
   end
+  def rfc1918?
+    case self
+    when IPAddr.new('10.0.0.0/8')
+      true
+    when IPAddr.new('172.16.0.0/12')
+      true
+    when IPAddr.new('192.168.0.0/16')
+      true
+    else
+      false
+    end
+  end
+  def private_ip?
+    rfc1918? or link_local? or loopback?
+  end
+  def public_ip?
+    not private_ip?
+  end
 
 end

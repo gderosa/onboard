@@ -62,7 +62,15 @@ class OnBoard
         # addresses
         # # TODO: timeout, cache ...
         def all_fqdns
-          `hostname --all-fqdns`.split.uniq
+          `hostname --all-fqdns`.split.uniq.sort do |a, b|
+            if    a == fqdn and b != fqdn
+              -1
+            elsif a != fqdn and b == fqdn
+              +1
+            else
+              0
+            end
+          end
         end
 
         def fqdn_match_dns?
@@ -127,7 +135,8 @@ class OnBoard
 
         def be_resolved(*opts)
           dnsmasq = Network::Dnsmasq.new
-          addresses = Network::Interface.get_all.map{|i| i.ip.first.addr}
+          addresses = Network::Interface.get_all.\
+map{|iface| iface.ip}.flatten.map{|ip| ip.addr}.select{|addr| addr.private_ip?}
           records = []
           addresses.each do |addr|
             if addr === '127.0.0.1' and hostname != 'localhost'
