@@ -17,7 +17,7 @@ class OnBoard
             rescue ArgumentError
               next
             end
-            out << %Q{push "route #{ip} #{ip.netmask}"}
+            out << %Q{push "route #{ip} #{ip.netmask} vpn_gateway #{DEFAULT_METRIC}"}
             out << "\n"
           end
           return out
