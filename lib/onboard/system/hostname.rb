@@ -137,8 +137,9 @@ class OnBoard
 
         def be_resolved(*opts)
           dnsmasq = Network::Dnsmasq.new
+          # TODO: NOTE: this is HORRIBLE!
           addresses = Network::Interface.get_all.\
-map{|iface| iface.ip}.flatten.map{|ip| ip.addr}.select{|addr| addr.private_ip?}
+map{|iface| iface.ip}.flatten.compact.map{|ip| ip.addr}.select{|addr| addr.private_ip?}
           records = []
           addresses.each do |addr|
             if addr === '127.0.0.1' and hostname != 'localhost'
@@ -184,7 +185,7 @@ map{|iface| iface.ip}.flatten.map{|ip| ip.addr}.select{|addr| addr.private_ip?}
         def restore
           # setting thedomain name is a matter of network administration (dns),
           # not local system administration...
-          hostname File.read CONFFILE_HOST
+          hostname File.read CONFFILE_HOST if File.exists? CONFFILE_HOST
         end
 
       end
