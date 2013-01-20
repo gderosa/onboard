@@ -305,16 +305,21 @@ class OnBoard
         
         params['searchdomain'] = System::Hostname.domainname \
             unless params['searchdomain'] =~ /\S/
-        params['searchdomain'].strip!
-        if params['searchdomain'] =~ /^[a-z0-9\.\-]+$/i
-          str_domains_self << "domain=#{params['searchdomain']}\n" 
+
+        if params['searchdomain'].respond_to? :strip!
+          params['searchdomain'].strip!
+          if params['searchdomain'] =~ /^[a-z0-9\.\-]+$/i
+            str_domains_self << "domain=#{params['searchdomain']}\n" 
+          end
         end
 
         params['localdomain'] = System::Hostname.domainname \
             unless params['localdomain']  =~ /\S/
-        params['localdomain'].strip!
-        if params['localdomain'] =~ /^[a-z0-9\.\-]+$/i
-          str_domains_self << "local=/#{params['localdomain']}/\n"
+        if params['localdomain'].respond_to? :strip!
+          params['localdomain'].strip!
+          if params['localdomain'] =~ /^[a-z0-9\.\-]+$/i
+            str_domains_self << "local=/#{params['localdomain']}/\n"
+          end
         end
 
         unless File.exists? CONFDIR + '/new'
