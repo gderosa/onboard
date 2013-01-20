@@ -242,7 +242,7 @@ class OnBoard
         end
 
         def paused?
-          status =~ /paused/
+          status =~ /paused/i
         end
 
         def status
@@ -260,7 +260,7 @@ class OnBoard
               str = 'Running, Snapshotting' 
             end
           end
-          @cache['status'] = str.sub(/^VM status(: )?/, '').capitalize
+          @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
         end
 
         # TODO: move to QEMU::Snapshot::Runtime or something
