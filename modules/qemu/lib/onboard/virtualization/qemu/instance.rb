@@ -97,7 +97,8 @@ class OnBoard
               #,streaming-video=[off|all|filter]
             end
           end
-          cmdline << '-vga qxl '
+          # cmdline << '-vga qxl '
+              # TODO: do not hardcode: remove in the meanwhile
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
             if opts['-monitor']['unix']
