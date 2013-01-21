@@ -16,7 +16,7 @@ class OnBoard
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
       CONFFILES_GLOB = '*.conf'
       REQUIRED_VERSION = {
-        :host_record => Version.new('2.64')
+        :host_record => Version.new('2.61')
       }
 
       def self.save
