@@ -16,6 +16,7 @@ class OnBoard
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
       CONFFILES_GLOB = '*.conf'
 
+      # Search for "--host-record" in
       # http://www.thekelleys.org.uk/dnsmasq/CHANGELOG
       REQUIRED_VERSION = {
         :host_record => Version.new('2.61')
