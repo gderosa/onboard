@@ -1,6 +1,7 @@
 class OnBoard
   module Util
     class Version < Array # Inherit or encapsulate?
+      include Comparable
       def initialize(arg)
         begin
           super arg
@@ -16,23 +17,20 @@ class OnBoard
         if other.is_a? self.class
           super(other)
         else
-          super(self.class.new(other))
+          self.<=>(self.class.new(other))
         end
       end
     end
   end
 end
 
-module Comparable
+class String
   alias __compare_orig <=>
   def <=>(other)
-    if self.is_a? OnBoard::Util::Version
-      __compare_orig other
-    elsif other.is_a? OnBoard::Util::Version
+    if other.is_a? OnBoard::Util::Version
       -(other <=> self)
     else
       __compare_orig other
     end
   end
 end
-
