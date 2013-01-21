@@ -15,8 +15,13 @@ class OnBoard
       CONFDIR_CURRENT = "#{CONFDIR}/new"
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
       CONFFILES_GLOB = '*.conf'
+
+      # http://www.thekelleys.org.uk/dnsmasq/CHANGELOG
       REQUIRED_VERSION = {
         :host_record => Version.new('2.61')
+      }
+      BAD_VERSION = {
+        :host_record => Version.new('2.63')
       }
 
       def self.save
@@ -406,7 +411,9 @@ class OnBoard
         file = "#{CONFDIR_CURRENT}/host_records.#{h[:table]}.conf"
         File.open file, 'w' do |f|
           f.puts banner
-          if Dnsmasq.version and Dnsmasq.version >= Dnsmasq::REQUIRED_VERSION[:host_record]
+          if  Dnsmasq.version                                             and 
+              Dnsmasq.version >= Dnsmasq::REQUIRED_VERSION[:host_record]  and
+              Dnsmasq.version != Dnsmasq::BAD_VERSION[:host_record]
             h[:records].each do |r|
               f.puts "host-record=#{r[:name]},#{r[:addr]}" # may be fqdn
             end
