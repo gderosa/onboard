@@ -1,4 +1,4 @@
-<% if objects.class == Class %>
+<% if objects.is_a? Class %>
   <h2>Logs</h2>
   <% logs = objects %>
   <% logs.categories.each_pair do |k, v| %>
@@ -15,7 +15,7 @@
     <% end %>
   <% end %>
 
-<% elsif objects.class == OnBoard::System::Log %>
+<% elsif objects.is_a? OnBoard::System::Log %>
   <% log = objects %>
   <h2>Log: <%= log.data['meta']['path'] %></h2>
   <%= 
