@@ -49,7 +49,7 @@ class OnBoard
           list = []
           if @file and File.exists? @file
             `qemu-img snapshot -l "#{@file}"`.each_line do |line|
-              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d+[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
+              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
                 list << Snapshot.new(
                   :id       =>                                $1.to_i,
                   :tag      =>                                $2,

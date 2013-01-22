@@ -39,10 +39,10 @@ for module-specific, additional requirements):
 * pciutils (lspci command)
 * dhcpcd 
   * Also, resolvconf is recommended
-* dnsmasq >= 2.64
+* dnsmasq >= 2.61, != 2.63
   * removed ISC-style leasefile format, which is assumed when no
     dhcp-range is provided -- and leads to troubles
-  * --host-record (bugfixed)
+  * --host-record (bugfree ;)
 * locales 
   ## and generate (UTF8) locales for languages/countries you want to support
 * ifrename (optional) 

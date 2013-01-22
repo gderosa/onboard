@@ -1,5 +1,6 @@
 require 'fileutils'
 
+require 'onboard/util'
 require 'onboard/platform/debian'
 require 'onboard/system/hostname'
 require 'onboard/network/interface/ip'
@@ -7,11 +8,22 @@ require 'onboard/network/interface/ip'
 class OnBoard
   module Network
     class Dnsmasq
+
+      include OnBoard::Util
+
       CONFDIR = OnBoard::CONFDIR + '/network/dnsmasq'
       CONFDIR_CURRENT = "#{CONFDIR}/new"
       DEFAULTS_CONFDIR = OnBoard::ROOTDIR + '/etc/defaults/network/dnsmasq'
-      # CONFFILES = %w{dnsmasq.conf dhcp.conf dns.conf domains.conf}
       CONFFILES_GLOB = '*.conf'
+
+      # Search for "--host-record" in
+      # http://www.thekelleys.org.uk/dnsmasq/CHANGELOG
+      REQUIRED_VERSION = {
+        :host_record => Version.new('2.61')
+      }
+      BAD_VERSION = {
+        :host_record => Version.new('2.63')
+      }
 
       def self.save
         Dir.glob "#{CONFDIR_CURRENT}/#{CONFFILES_GLOB}" do |path|
@@ -30,6 +42,11 @@ class OnBoard
         end
         OnBoard::System::Hostname.be_resolved( :no_restart )
         self.restart
+      end
+
+      def self.version
+        `sudo dnsmasq -v | head -n 1` =~ /dnsmasq version ([\d\.]+)/i and
+            Version.new $1
       end
 
       def self.init_conf
@@ -305,16 +322,21 @@ class OnBoard
         
         params['searchdomain'] = System::Hostname.domainname \
             unless params['searchdomain'] =~ /\S/
-        params['searchdomain'].strip!
-        if params['searchdomain'] =~ /^[a-z0-9\.\-]+$/i
-          str_domains_self << "domain=#{params['searchdomain']}\n" 
+
+        if params['searchdomain'].respond_to? :strip!
+          params['searchdomain'].strip!
+          if params['searchdomain'] =~ /^[a-z0-9\.\-]+$/i
+            str_domains_self << "domain=#{params['searchdomain']}\n" 
+          end
         end
 
         params['localdomain'] = System::Hostname.domainname \
             unless params['localdomain']  =~ /\S/
-        params['localdomain'].strip!
-        if params['localdomain'] =~ /^[a-z0-9\.\-]+$/i
-          str_domains_self << "local=/#{params['localdomain']}/\n"
+        if params['localdomain'].respond_to? :strip!
+          params['localdomain'].strip!
+          if params['localdomain'] =~ /^[a-z0-9\.\-]+$/i
+            str_domains_self << "local=/#{params['localdomain']}/\n"
+          end
         end
 
         unless File.exists? CONFDIR + '/new'
@@ -336,6 +358,7 @@ class OnBoard
       end
 
       def write_local_domain(domain)
+        return if not domain
         filepath = CONFDIR + '/new/domains.self.conf' 
         FileUtils.copy filepath, filepath + '~' if File.exists? filepath
         File.open(filepath, 'w') do |f|
@@ -389,12 +412,15 @@ class OnBoard
         file = "#{CONFDIR_CURRENT}/host_records.#{h[:table]}.conf"
         File.open file, 'w' do |f|
           f.puts banner
-          h[:records].each do |r|
-            #if r[:add_domain]
-            #  f.puts "host-record=#{r[:name]}.#{r[:add_domain]},#{r[:name]},#{r[:addr]}"
-            #else
+          if  Dnsmasq.version                                             and 
+              Dnsmasq.version >= Dnsmasq::REQUIRED_VERSION[:host_record]  and
+              Dnsmasq.version != Dnsmasq::BAD_VERSION[:host_record]
+            h[:records].each do |r|
               f.puts "host-record=#{r[:name]},#{r[:addr]}" # may be fqdn
-            #end
+            end
+          else
+            f.puts '#'
+            f.puts "# Dnsmasq version #{Dnsmasq.version} (< #{Dnsmasq::REQUIRED_VERSION[:host_record]}) does not [properly] support --host-record"
           end
         end
       end

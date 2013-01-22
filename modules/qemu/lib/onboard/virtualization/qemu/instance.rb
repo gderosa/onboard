@@ -97,7 +97,8 @@ class OnBoard
               #,streaming-video=[off|all|filter]
             end
           end
-          cmdline << '-vga qxl '
+          # cmdline << '-vga qxl '
+              # TODO: do not hardcode: remove in the meanwhile
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
             if opts['-monitor']['unix']
@@ -241,7 +242,7 @@ class OnBoard
         end
 
         def paused?
-          status =~ /paused/
+          status =~ /paused/i
         end
 
         def status
@@ -259,7 +260,7 @@ class OnBoard
               str = 'Running, Snapshotting' 
             end
           end
-          @cache['status'] = str.sub(/^VM status(: )?/, '').capitalize
+          @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
         end
 
         # TODO: move to QEMU::Snapshot::Runtime or something
