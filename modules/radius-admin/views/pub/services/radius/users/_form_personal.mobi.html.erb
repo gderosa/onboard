@@ -1,0 +1,216 @@
+<%
+  require 'facets/string'
+
+  template_params               ||= {}
+
+  conf                          ||= {}
+  conf['mandatory']             ||= {}
+  conf['mandatory']['personal'] ||= {}
+  
+  m                             = conf['mandatory']['personal']
+
+  user                          ||= nil
+
+  personal                      ||= nil
+  unless personal
+    if user
+      personal = (user.personal || {})
+    else
+      personal = template_params['personal'] || {}
+    end
+  end
+
+  accepted_terms ||= nil
+  unless accepted_terms
+    if user and user.respond_to? :accepted_terms and user.accepted_terms
+      accepted_terms = user.accepted_terms
+    end
+  end
+%>
+
+<table class="raduserform">
+  <tr>
+    <th scope="row"><%= i18n.personal.name.full.capitalize %><%= mandatory_mark if m['Name'] %></th>
+    <td>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[First-Name]"
+            value="<%= personal['First-Name'] %>"/><br/><%= i18n.personal.name.first.capitalize %>
+      </div>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Last-Name]"
+            value="<%= personal['Last-Name'] %>"/><br/>
+            <%= i18n.personal.name.last.capitalize %>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Email<%= mandatory_mark if m['Email'] %></th>
+    <td>
+      <div class="input-container">
+        <input type="text" name="personal[Email]" value="<%= personal['Email'] %>"/>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">
+      <%= i18n.personal.birth.all_data.capitalize %><%= mandatory_mark if m['Birth'] %>
+    </th>
+    <td>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Birth-Date]"
+            value="<%= i18n.l personal['Birth-Date'] %>"><br/>
+        <%= i18n.personal.date.capitalize %> 
+        <% unless personal['Birth-Date'].is_a? Date %> 
+          (<%= i18n.eg %> <%= i18n.l Date.parse('1980-01-30') %>) 
+        <% end %>
+      </div>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Birth-City]"
+            value="<%= personal['Birth-City'] %>"><br/><%= i18n.personal.city.capitalize %>
+      </div>
+      <div class="input-container">
+        (<input 
+            type="text"
+            size="2"
+            name="personal[Birth-State]"
+            style="width:2em;" 
+            value="<%= personal['Birth-State'] %>">)<br/>
+        <%= i18n.personal.state.capitalize %>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row"><%= i18n.personal.address.capitalize %><%= mandatory_mark if m['Full-Address'] %></th>
+    <td>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Address]" 
+            
+            value="<%= personal['Address'] %>"/><br/>
+            <%= i18n.personal.street_address.capitalize %>    
+      </div>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[City]" 
+            
+            value="<%= personal['City'] %>"/><br/><%= i18n.personal.city.capitalize %>
+      </div>
+      <div class="input-container">
+        (<input 
+            type="text" 
+            size="2"
+            name="personal[State]" 
+            style="width:2em;"
+            value="<%= personal['State'] %>"/>)<br/>
+        <%= i18n.personal.state.capitalize %>
+      </div>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Postal-Code]" 
+            
+            value="<%= personal['Postal-Code'] %>"/><br/><%= i18n.personal.postcode %>
+      </div>   
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">
+      <%= i18n.personal.phone.phone.capitalize %><%= mandatory_mark if m['Phone'] %>
+      <div class="optinfo"><%= i18n.personal.phone.at_least_one.capitalize if m['Phone'] %></div>
+    </th>
+    <td>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Work-Phone]"
+            value="<%= personal['Work-Phone'] %>"><br/><%= i18n.personal.phone.work.capitalize %>
+      </div> 
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Home-Phone]"
+            value="<%= personal['Home-Phone'] %>"><br/><%= i18n.personal.phone.home.capitalize %>
+      </div>
+      <div class="input-container">
+        <input 
+            type="text" 
+            name="personal[Mobile-Phone]"
+            value="<%= personal['Mobile-Phone'] %>"><br/><%= i18n.personal.phone.mobile.capitalize %>
+      </div>
+    </td>
+  </tr>
+  <tr id="personal-attachments" style="display:none">
+    <th scope="row"><%= i18n.attachment(3).capitalize %></th> 
+    <td>
+      <% if user and personal['Attachments'].respond_to? :each and personal['Attachments'].any? %>
+        <table>
+          <% personal['Attachments'].each do |attachment_basename| %>
+            <tr>
+              <th scope="row">
+                <%= attachment_basename %>
+              </th>
+              <td>
+                <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>">
+                  <%= i18n.view.you %></a>
+                |
+                <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>?disposition=attachment">
+                  <%= i18n.download.you %></a>
+                |
+                <span><%= i18n.delete_.you %></span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
+              </td>
+            </tr>  
+          <% end %>
+        </table>
+      <% end %>
+      <% 3.times do %>
+        <input type="file" name="personal[Attachments][]" /><br/>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">
+      <%= i18n.personal.id_code.id_code.titlecase %><%= mandatory_mark if m['ID-Code'] %>
+    </th>
+    <td>
+      <div class="input-container">
+        <input type="text" name="personal[ID-Code]" value="<%= personal['ID-Code'] %>"/>
+      </div>
+    </td>
+  </tr>
+  <% if accepted_terms and accepted_terms.any? %>
+    <tr>
+      <th scope="row">
+        <%= i18n.terms.accepted.capitalize %>:
+        <div class="optinfo"><%= mandatory_mark %> = <%= i18n.terms.mandatory %></div>
+      </th>
+      <td>
+        <ul>
+          <% accepted_terms.each do |document| %>
+            <li>
+              <!-- relative links which work either in public and admin interface -->
+              <a target="_blank" href="../terms/<%= document[:id] %>.html"><%= document[:name] %></a> <%= mandatory_mark if document[:required] %>
+            </li>
+          <% end %>           
+        </ul>
+      </td>      
+    </tr>
+  <% end %>
+  <tr>
+    <th scope="row"><%= i18n.notes.capitalize %></th>
+    <td>
+      <div class="input-container">
+        <textarea  name="personal[Notes]"><%= personal['Notes'] %></textarea>
+      </div>
+    </td>
+  </tr>
+</table>

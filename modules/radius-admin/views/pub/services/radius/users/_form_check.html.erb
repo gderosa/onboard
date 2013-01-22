@@ -1,0 +1,20 @@
+<%# -*- coding: UTF-8 -*-%>
+
+<%
+  user ||= nil
+%>
+
+  <table class="raduserform">
+    <tbody>
+      <tr>
+        <th scope="row">Password</th>
+        <td>
+          <div class="input-container"> 
+            <input type="password" name="check[User-Password]"/><br/>
+            <input type="password" name="confirm[check][User-Password]"/><br/>
+            <span class="optinfo">(<%= i18n.password.type_twice.you %>)</span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>

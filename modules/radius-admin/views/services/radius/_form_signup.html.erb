@@ -1,0 +1,74 @@
+<%
+  signup_path = '/pub/services/radius/signup.html'
+  signup_url = "#{request.url.sub request.fullpath, ''}#{signup_path}" # unused
+  login_path = '/pub/services/radius/login.html'
+  my_path = '/pub/services/radius/users/[__USERNAME__].html'
+%>
+
+
+<form class="raduserform" method="POST" enctype="multipart/form-data">
+  <h3></h3>
+  <div class="info">
+    You may want to add some of these links to your captive portal page:  
+    <ul style="margin-bottom:0.45em;">
+      <li>
+        Signup:
+        <ul>
+          <li>Create new account: <code><a href="<%= signup_path %>"><%= signup_path %></a></code></li>
+        </ul>
+      </li>
+      <li>
+        Selfcare:
+        <ul>
+          <li>Login: <code><a href="<%= login_path %>"><%= login_path %></a></code></li>
+          <li>“My Account”: <code><%= my_path %></code></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="info" style="margin-top:1ex; margin-bottom:3ex;">
+    For a basic cutomization of public pages layout go <a href="/webif/pub/layout.html">here</a>.
+  </div>
+ 
+  <input type="hidden" name="_method" value="put"/>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_signup_enable',
+      :locals => {:configuration => configuration}
+    )
+  %>
+
+  <h3>Mandatory fields</h3>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_signup_mandatory',
+      :locals => {:configuration => configuration}
+    )
+  %>
+
+  
+  <h3>Default attributes for new users</h3>
+  <h4>Check Attributes</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_signup_check',
+      :locals => {
+        :passwd_types     => OnBoard::Service::RADIUS::Passwd::TYPES,
+        :best_passwd_type => 'SSHA1-Password',
+        :configuration    => configuration
+      }
+    )
+  %>
+  <h4>Reply Attributes</h4>
+  <%=
+    partial(
+      :module => 'radius-admin',
+      :path   => 'services/radius/_form_signup_reply',
+      :locals => { :configuration => configuration } 
+    )
+  %>
+  <button type="submit" style="margin-top:2em;">Change!</button>
+</form>

@@ -15,6 +15,8 @@ class OnBoard
       autoload :User,         'onboard/service/radius/user'
       autoload :Group,        'onboard/service/radius/group'
       autoload :Name,         'onboard/service/radius/name'
+      autoload :Signup,       'onboard/service/radius/signup'
+      autoload :Terms,        'onboard/service/radius/terms'
 
       CONFFILE = File.join CONFDIR, 'current/radius.conf.yaml'
 
@@ -63,7 +65,8 @@ class OnBoard
         def db_connect
           @@db = Sequel.connect( "mysql://#{conf['dbhost']}/#{conf['dbname']}",
             :user     => conf['dbuser'],
-            :password => conf['dbpass']
+            :password => conf['dbpass'],
+            :encoding => 'utf8'
           ) 
         end
 

@@ -1,0 +1,238 @@
+<% 
+  require 'uuid'
+  
+  hslogin         = objects 
+  running         = hslogin['running']
+  userpassword    = hslogin['conf']['userpassword']
+  port            = hslogin['conf']['port']
+  interval        = hslogin['conf']['interval'] 
+  uamsecret       = hslogin['conf']['uamsecret']
+  logo            = hslogin['conf']['logo']
+  logo_link       = hslogin['conf']['logo-link']
+  signup_url      = hslogin['conf']['signup-url']
+  my_url          = hslogin['conf']['my-url']
+  custom_headline = hslogin['conf']['custom-headline'] 
+  custom_text     = hslogin['conf']['custom-text']
+  custom_footer   = hslogin['conf']['custom-footer']
+
+  defaults        = hslogin['defaults']
+
+  interval        = hslogin['defaults']['interval'] if 
+      (!interval or interval =~ /^\s*$/)
+    
+  # sugar/name-consistency: not a file    
+  custom_headline_content = custom_headline 
+      
+  custom_text_content     = nil
+  custom_text_content     = File.read custom_text   if 
+      custom_text and File.readable? custom_text
+
+  custom_footer_content   = nil
+  custom_footer_content   = File.read custom_footer if 
+      custom_footer and File.readable? custom_footer
+
+  textrows = 5
+  textcols = 40
+
+%>
+
+<style type="text/css">
+  table tr th, table tr th[scope="row"] {
+    font-size: 90%;
+  }
+</style>
+
+<h2>HotSpot Login page</h2>
+
+<%=
+  erubis(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg => msg,
+        :status => status
+      }
+    }
+  )
+%>
+
+<p>Based on <a href="http://rubygems.org/gems/hotspotlogin"><em>hotspotlogin.rb</em></a></p>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+<h3>Current status</h3>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">Running?</th>
+      <td><%= yes_no_icon running, :print_no %></td>
+      <td><%= action_button(running ? :stop : :start) %></td>
+      <td><%= action_button :restart, {:disabled => !running} %></td>
+    </tr>
+  </tbody>
+</table>
+<h4>Please note:</h4>
+<p>
+  It&rsquo;s strongly advised to put this daemon behind an HTTPS reverse 
+  proxy, so it could be reached at something like 
+  <code style="margin-left:0.5ex">
+    https://<%= request.host %>/hotspotlogin</code> .
+</p>
+</form>
+
+<form method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="_method" value="put"/>
+<h3>Configuration</h3>
+<h4>General</h4>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        TCP port
+        <div class="optinfo">
+          You&rsquo;re suggested to keep the default value of
+          <code><%= defaults['port'] %></code>
+        </div>
+      </th>
+      <td><input class="rwtext" type="text" name="port" value="<%= port %>" size="4"/></td>
+    </tr>
+    <% if uamsecret and uamsecret.length > 0 %>
+      <tr>
+        <th scope="row">&ldquo;UAM secret&rdquo; (old password)<div class="optinfo">password shared with <a href="/network/access-control/chilli.html">Chilli server</a></div></th>
+        <td><input class="rwtext" type="password" name="uamsecret_old" size="12"/></td>
+      </tr>
+    <% end %>
+    <tr title="Leave empty to not use a shared secret">
+      <th scope="row">&ldquo;UAM secret&rdquo; (new password)<% unless uamsecret and uamsecret.length > 0 %><div class="optinfo">password shared with <a href="/network/access-control/chilli.html">Chilli server</a> (if any)</div><% end %></th>
+      <td><input class="rwtext" type="password" name="uamsecret" size="12"/></td>
+    </tr>
+    <tr title="Leave empty to not use a shared secret">
+      <th scope="row">&ldquo;UAM secret&rdquo; (type again)</th>
+      <td><input class="rwtext" type="password" name="uamsecret_verify" size="12"/></td>
+    </tr>
+   
+    <tr>
+      <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. don't use <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (you <strong>must</strong> set a UAM shared secret in this case)</div></th>
+    <td><input type="checkbox" name="userpassword" <% if userpassword %>checked<% end %>/></td>
+    </tr>
+  </tbody>
+</table>
+<h4>End user interface</h4>
+<table>
+  <thead>
+    <tr>
+      <th colspan="2" style="background:transparent;"></th>
+      <th style="width: <%= textcols %>ex;">Preview</th>
+      <th>Delete?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Autorefresh interval (seconds)</th>
+      <td><input type="text" class="rwtext" name="interval" value="<%= interval %>"></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th scope="row">Logo and Organization link</th>
+      <td>
+        <input type="file" name="logo"/> <br/>
+        <input type="text" size="<%= textcols %>" name="logo_link" value="<%= logo_link %>" class="rwtext"/>
+      </td>
+      <td style="text-align: center;">
+        <% if logo and File.exists? logo %>
+          <% if logo_link and logo_link =~ /\S/ %><a style="border:none;" href="<%= logo_link %>" target="_blank"><% end %>
+              <img style="border:none;" src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+          <% if logo_link and logo_link =~ /\S/ %></a><% end %>
+        <% end %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[logo]"/>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        Signup Link 
+        <div class="optinfo">Leave blank to not display</div>
+      </th>
+      <td>
+        <input type="text" size="<%= textcols %>" class="rwtext" name="signup_url" value="<%= signup_url %>"/> 
+      </td>
+      <td style="text-align: center;">
+      <% if signup_url and signup_url =~ /\S/ %><a title="Displayed text may vary according to localization" target="_blank" href="<%= signup_url %>">Signup</a><% end %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[signup_url]"/>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        “My Account” Link
+        <div class="optinfo">
+          <code>-USER-</code> will be replaced by the actual username, as in<br/> 
+          <code>/pub/services/radius/users/-USER-.html</code>
+        </div>
+      </th>
+      <td>
+        <input type="text" size="<%= textcols %>" class="rwtext" name="my_url" value="<%= my_url %>"/> 
+      </td>
+      <td style="text-align: center;">
+      <% if my_url and my_url =~ /\S/ %><a title="Link cannot work since an actual end user should be specified or logged in" target="_blank" href="">My Account</a><% end %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[my_url]"/>
+      </td>
+    </tr>
+   
+    <tr>
+      <th scope="row">
+        Custom headline
+        <div class="optinfo">e.g. Your Organization Name</div>
+      </th>
+      <td>
+        <input type="text" size="<%= textcols %>" class="rwtext" name="custom_headline" value="<%= custom_headline_content %>"/> 
+      </td>
+      <td style="text-align: center;">
+        <h4><%= custom_headline_content %></h4>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[custom_headline]"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Custom text</th>
+      <td>
+        <textarea name="custom_text" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_text_content %></textarea>
+      </td>
+      <td>
+        <%= custom_text_content %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[custom_text]"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Custom footer</th>
+      <td>
+        <textarea name="custom_footer" rows="<%= textrows %>" cols="<%= textcols %>" style="width:<%= textcols %>ex;"><%= custom_footer_content %></textarea>
+      </td>
+      <td style="text-align: center;">
+        <%= custom_footer_content %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[custom_footer]"/>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<button 
+  style="margin-top:2ex;" 
+  type="submit" 
+  name="change" 
+  value="change">Change</button>
+</form>
+
+

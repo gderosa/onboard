@@ -1,0 +1,447 @@
+<% 
+  superhighlight  = "#080"
+  highlight       = "#44b" 
+  almostblack     = "#222"
+  lowlight        = "#666" 
+  superlowlight   = "#bbb" 
+  hover           = "color: white; background: #{highlight};" 
+  lightbg         = "#dfdfdf" 
+  lightbg_off     = "#eedddd"
+  lightbg_high    = "#ddeedd"
+  serif           = %q{"Times New Roman", Times, Georgia, serif}
+  sans_serif      = %q{Helvetica, Arial, sans-serif}
+  monospace       = %q{monospace}
+%>
+
+body {
+  overflow: auto;
+  font-size: 10pt;
+  font-family: <%= sans_serif %>;
+}
+
+.highlight{
+  color: <%= highlight %>
+}
+
+.superhighlight{
+  color: <%= superhighlight %>
+}
+
+.lowlight{
+  color: <%= lowlight %>
+}
+
+div#sidebar {
+	border-right: 1px gray solid;
+	float:left;
+  width: 17%;
+  height: 80%;
+  margin: 1em 1em 0 0;
+  padding-right: 0.5em;
+  font-size: 82%;
+  overflow: auto;
+  color: #444;
+}
+
+div#sidebar ul {
+  padding: 2px 0 2px 0.5em;
+  margin: 0.2em 0;
+}
+
+div#onboard-menu {
+  padding-top: 2px;
+}
+
+div#navbar, div#altbar {
+  font-size: 93%;
+}
+
+div#navbar {
+  font-style: italic;
+  margin-top: 0.3em;
+}
+
+div#altbar {
+  text-align: right;
+  float: right;
+}
+
+div#altbar a {
+  font-weight: normal;
+}
+
+a.altformat {
+  font-variant: small-caps;
+}
+
+a.created, a.new {
+  text-decoration: underline;
+}
+
+div#main {
+  border: 0;
+  float: right;
+  width: 80%;	
+  padding: 2px;
+  margin: 1em 1px;
+}
+
+h2  {
+  font-size: 135%;
+}
+
+h3 {
+  font-size: 125%;
+}
+
+form {
+  padding: 0;
+  margin: 0;
+}
+
+input[type="password"], input[type="text"], textarea {
+  padding: 2px;
+  background: white;
+  font-family: <%= monospace %>;
+  font-size: inherit;
+}
+
+input[type="text"], textarea {
+  color: <%= highlight %>;
+}
+
+input[type="text"][readonly] {
+  background: transparent;
+  color: <%= lowlight %>;
+}
+
+input[type="text"].humantext {
+  font-family: inherit;
+  /* color: inherit; */
+  color: <%= almostblack %>;
+}
+
+textarea {
+  font-family: <%= monospace %>;
+  overflow: auto;
+}
+
+input[type="radio"] {
+  vertical-align: middle; 
+}
+
+.product-name, em {
+  font-style: italic;
+  margin-right: 0.3ex;
+}
+
+div#main div.error, div#main div.warn, div#main div.info, div#main pre.error, div#main pre.warn, div#main pre.info div#main p.error, div#main p.warn, div#main p.info { 
+  color: black;
+  padding: 0.3em 0.3em;
+  margin-bottom: 1em;
+  margin-top: 2em;
+}
+
+div#main .error pre, div#main .warn pre, div#main .info pre {
+  color: black;
+  margin-bottom: 0;
+}
+
+div#navbar .error, div#navbar .warn, div#navbar .info {
+  margin-right: 0.15em;
+  padding: 0 3px;
+}
+
+.error, .error-like {border: 1px red dashed;}
+.warn,  .warn-like  {border: 1px yellow solid; font-style: italic; font-size:105%;}
+.info,  .info-like  {border: 1px #4b0 dotted;} 
+
+.optional, .optinfo {
+  text-align:   left;
+  font-weight:  normal;
+  font-style:   italic;
+  font-size: smaller;
+}
+
+.optional em, .optinfo em {
+  font-style: normal;
+}
+
+.optinfo kbd, .optinfo code {
+  font-style: normal;
+}
+
+strong {
+  font-size: 107%;
+}
+
+div#main p {
+	margin-top: 0.3em;
+}
+
+div#main pre {
+  /* font-size: 11pt; */
+  color: <%= highlight %>;
+}
+
+div#main td pre {
+  color: <%= almostblack %>;
+}
+
+div#main pre.framed {
+  border: 1px <%= highlight %> solid;
+}
+
+pre.log {
+  margin: 2em 0;
+  width: 95%;
+  height: 17em; 
+  border: 2px <%= lightbg %> solid;
+}
+
+pre {
+  overflow: auto;
+}
+
+a, .hmenu-bullet {
+  color: <%= highlight %>;
+  text-decoration: none;
+}
+
+a {
+  font-weight: bold;
+}
+
+a:hover   {
+  color: white; 
+  background: <%= highlight %>; 
+} 
+
+.hmenu-bullet:hover  {
+  color: <%= superhighlight %>;
+}
+
+li .hmenu-content {
+  padding: 0;
+  margin: 0 0 0 2px; /* Y A alignment hack ? */
+}
+
+li span.hmenu-selected, li div.hmenu-selected {
+  font-weight: bold;
+  color: <%= superhighlight %>; 
+  padding: 0;
+  margin: 0 0 0 2px; /* Y A alignment hack ? */
+}
+
+li.hmenu-selected > .hmenu-bullet, 
+li.hmenu-selected > .hmenu-bullet-nochildren {
+  color: <%= superhighlight %>;
+}
+
+/* border-aligment hack... */
+ul.hmenu li.hmenu-selected, ul.hmenu-submenu li.hmenu-selected {
+  border-left: 1px <%= superhighlight %> dashed; 
+  padding-left: 4px;  /* 4px + 1px = 5px */
+}
+ul.hmenu li, ul.hmenu-submenu li {
+  padding: 0 5px;     /* 4px + 1px = 5px */
+}
+
+span.hmenu-root, div.hmenu-root {
+  font-weight: bold;
+  border: none;
+}
+
+
+
+a.img, a.img:hover, a img  {
+  border: none;
+  background: transparent;
+}
+
+.superhighlight a {
+  color: <%= superhighlight %>;
+}
+
+.superhighlight a:hover {
+  color: white;
+  background: <%= superhighlight %>;
+}
+
+table {
+  font-size: 90%;
+  border-spacing: 0;
+}
+
+table caption {
+  font-weight: bold;
+}
+
+table tr th {
+  border:0; 
+  text-align: center;
+  padding: 0 1em;
+}
+
+table tr td, table tr th, table thead tr th, table tbody tr td {
+  border: 1px white solid;
+}
+
+table tr td, table tr th, fieldset, .table-cell-bg { 
+  /* background: url("/backgrounds/kollermedia.at/pattern4u/dirty/10yellow.jpg"); */
+  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png"); 
+  background-attachment: fixed;
+}
+
+table tr td fieldset {
+  background: transparent;
+}
+
+table table td, table table th {
+  background: transparent;
+}
+
+
+table tr th, fieldset, .term {
+  font-size: 88%;
+  font-weight: bold;
+}
+
+table tr th .optinfo .term {
+  font-style: normal;
+  font-size: 95%;
+}
+
+table tr th .optinfo ul {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+
+table tr th small {
+  font-weight: normal;
+  margin-left: 0.6em;
+  padding: 0;
+}
+
+table tr th .optinfo {
+  font-size: 8pt; /* avoid becoming too small... */
+}
+
+table tr th[scope="row"], table tr th[scope="rowgroup"] {
+  text-align: left;
+  font-size: 90%;
+}
+
+table tr td {
+  border: 0;
+  padding: 0 0.4em;
+}
+
+tr.bg_off td, tr.bg_off th {
+  background: <%= lightbg_off %>;
+}
+
+tr.bg_high td, tr.bg_high th {
+  background: <%= lightbg_high %>;
+}
+
+table tr td.separator {
+  background: transparent;
+  border: 0;
+  height: 0.3em;
+}
+
+table tr td ul, table tr th ul {
+  margin: 0.3em 0 0 0;
+  padding: 0 0 0 1.15em;
+}
+
+
+table tr td button {
+  padding: 1px;
+}
+
+table tr td button img {
+  vertical-align: middle;
+  margin: 0;
+}
+
+table tr td div {
+  margin: 0.3em 0;
+}
+
+.term, .em-special {
+  text-decoration: none;
+  border-bottom: 1px #444 dashed;
+}
+
+em.term {
+  font-style: normal;
+}
+
+fieldset {
+  border: none;
+  display: inline;
+}
+
+button[type="submit"] {
+  margin: 1ex 0;
+}
+
+button[disabled] {
+  background: transparent;
+  border: 1px <%= superlowlight %> solid;
+}
+
+button[disabled] img { /* CSS3 */ 
+  opacity: 0.4; /* Firefox */
+  filter: alpha(opacity=40); /* MSIE */
+}
+
+input[disabled] {
+  color: <%= lowlight %>;
+  background: <%= lightbg %>;
+}
+
+ul li ul li .hmenu-content  {
+  font-size: 97%;
+} 
+
+div#sidebar ul {
+  font-weight: bold;
+}
+
+li {
+  margin: 0.2em 0;
+} 
+
+li.hmenu-item, li.hmenu-submenu {
+  margin-top: 0.5em;
+}
+
+select.tt, select option.tt {
+  font-family: <%= monospace %>;
+}
+
+span.input-container {
+  margin: 0 1em 0 0;
+}
+
+.trademark {
+  margin-left: 0.2em;
+}
+
+sup {
+  vertical-align:+0.3em;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.paginator {
+  margin-top: 0.5em;
+}
+
+
+

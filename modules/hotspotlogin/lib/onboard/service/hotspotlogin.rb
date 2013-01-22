@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'yaml'
-require 'hotspotlogin' # http://rubygems.org/gems/hotspotlogin
+require 'hotspotlogin/config' # http://rubygems.org/gems/hotspotlogin
 
 
 require 'onboard/system/command'
@@ -14,7 +14,8 @@ class OnBoard
       DEFAULT_CONFFILE = File.join(
       ROOTDIR, '/etc/defaults/hotspotlogin.conf.yaml')
 
-      VARRUN    = '/var/run' # take advantage of tmpfs (strongly suggested)
+      #VARRUN    = '/var/run/onboard' # take advantage of tmpfs (strongly suggested)
+      # fall back to ::OnBoard::VARRUN
       VARLOG    = OnBoard::LOGDIR # do we need a subdirectory?
       PIDFILE   = File.join VARRUN, 'onboard-hotspotlogin.pid'
       LOGFILE   = File.join VARLOG, 'hotspotlogin.log'
@@ -44,7 +45,7 @@ class OnBoard
             FileUtils.mkdir_p File.dirname SAVEFILE
           end
           File.open SAVEFILE, 'w' do |f|
-            f.write data.to_yaml
+            f.write YAML.dump data
           end
           FileUtils.chmod 0640, SAVEFILE
         end
@@ -95,7 +96,11 @@ end
         end
 
         def stop!
-          Process.kill 'TERM', File.read(PIDFILE).to_i
+          pid = File.read(PIDFILE).to_i
+          Process.kill 'TERM', pid
+          while (running?) do
+            sleep 0.1
+          end
         end
 
         def restart!
@@ -153,10 +158,29 @@ end
           # TODO: delete stale files or manage a collection/library of logos?
           if params['delete'] and params['delete']['logo'] == 'on'
             conf_h['logo'] = nil
+            conf_h['logo-link'] = nil
           elsif params['logo'] 
             logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
             FileUtils.mv(params['logo'][:tempfile], logo_path) 
             conf_h['logo'] = logo_path
+          end
+          if params['logo_link'] and params['logo_link'] =~ /\S/
+            conf_h['logo-link'] = params['logo_link']
+          end
+
+
+          # signup_url
+          if params['delete'] and params['delete']['signup_url']
+            conf_h['signup-url'] = nil
+          elsif params['signup_url'] and params['signup_url'] =~ /\S/
+            conf_h['signup-url'] = params['signup_url']
+          end
+         
+          # my_url # "My Account" link
+          if params['delete'] and params['delete']['my_url']
+            conf_h['my-url'] = nil
+          elsif params['my_url'] and params['my_url'] =~ /\S/
+            conf_h['my-url'] = params['my_url']
           end
 
           # custom headline
@@ -195,7 +219,7 @@ end
           end
          
           File.open CONFFILE, 'w' do |f|
-            f.write conf_h.to_yaml
+            f.write YAML.dump conf_h
           end
           FileUtils.chmod 0640, CONFFILE
         end

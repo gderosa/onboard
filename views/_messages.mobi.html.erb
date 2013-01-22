@@ -1,0 +1,38 @@
+<%# -*- coding: UTF-8 -*- %>
+<% if msg and msg.kind_of? Hash %>
+  <% if status == 202 and msg[:ok] and not (msg[:info] =~ /\S/) %>
+    <div class="info">
+      Your request has been queued. You may check <a href="">this</a> 
+      or other pages later
+      to get updated informations. A look at the 
+      <a href="/system/logs.html">system logs</a> may be helpful too. 
+    </div>
+  <% end %>
+  <% if msg[:ok] and msg[:info] =~ /\S/ %>
+    <div class="info">
+      <%= msg[:info] %>
+    </div>
+  <% end %>
+  <% if not msg[:ok] %>
+    <% if msg[:stderr] =~ /\S/ %>
+      <div class="error">
+        <em>Command &ldquo;<code><%= msg[:cmd] %></code>&rdquo;  reported errors (status code = <code><%= msg[:status] %></code>).</em>
+        <code><%= msg[:stderr].strip %><code>
+      </div>
+    <% elsif msg[:log] %>
+      <div class="error">
+        Something went wrong. 
+<a href="/system/logs/<%= Rack::Utils.escape msg[:log] %>.html">Check the log</a> 
+        for more details.
+      </div>
+    <% elsif msg[:err_html] =~ /\S/ %>
+      <div class="error"><%= msg[:err_html] %></div>
+    <% elsif msg[:err].to_s =~ /\S/ %>
+      <div class="error"><code><%= msg[:err].to_s %></code></div>
+    <% end %>
+  <% end %>
+  <% if msg[:warn].to_s =~ /\S/ %>
+    <div class="warn"><%= msg[:warn] %></div>
+  <% end %>
+<% end %>
+

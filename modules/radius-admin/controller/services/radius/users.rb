@@ -34,6 +34,7 @@ class OnBoard
         Service::RADIUS::Check.insert(params)
         user.update_reply_attributes(params) 
         user.update_personal_data(params)
+        user.upload_attachments(params) 
       end
       if msg[:ok] and not msg[:err] 
         status 201 # Created
@@ -54,13 +55,15 @@ class OnBoard
       )
     end
 
-    get '/services/radius/users/:userid.:format' do
+    get '/services/radius/users/:userid.:format' do # :userid is actually a username
       user = Service::RADIUS::User.new(params[:userid])
       msg = {}
       msg = handle_errors do
         user.retrieve_attributes_from_db
         user.retrieve_group_membership_from_db
         user.retrieve_personal_info_from_db
+        user.get_personal_attachment_info
+        user.retrieve_accepted_terms_from_db
         not_found unless user.found?
       end
       format(
@@ -85,6 +88,7 @@ class OnBoard
         user.retrieve_attributes_from_db
         user.retrieve_group_membership_from_db
         user.retrieve_personal_info_from_db
+        user.get_personal_attachment_info
       end
       if !user.found? and !msg[:err] 
         msg[:warn] = "User has no longer any attribute!"
@@ -99,6 +103,16 @@ class OnBoard
           'user'    => user
         }
       )
+    end
+
+    get '/services/radius/users/:userid/attachments/personal/:basename' do
+      attachment(params[:basename]) if params['disposition'] == 'attachment'
+      send_file( File.join(
+          OnBoard::Service::RADIUS::User::UPLOADS,
+          params[:userid],
+          'personal',
+          params[:basename]
+      ) )
     end
 
   end

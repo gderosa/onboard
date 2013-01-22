@@ -39,9 +39,10 @@ for module-specific, additional requirements):
 * pciutils (lspci command)
 * dhcpcd 
   * Also, resolvconf is recommended
-* dnsmasq >= 2.46 
-  ## removed ISC-style leasefile format, which is assumed when no
-  ## dhcp-range is provided -- and leads to troubles
+* dnsmasq >= 2.61, != 2.63
+  * removed ISC-style leasefile format, which is assumed when no
+    dhcp-range is provided -- and leads to troubles
+  * --host-record (bugfree ;)
 * locales 
   ## and generate (UTF8) locales for languages/countries you want to support
 * ifrename (optional) 
@@ -52,7 +53,7 @@ Gems:
 C/C++ build environment; and, if you installed a pre-packaged ruby, you
 will need header files from a package named ruby-dev or something alike)
 
-gem install erubis rack rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets hierarchical_menu --no-ri --no-rdoc
+gem install erubis rack rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets hierarchical_menu uuid --no-ri --no-rdoc
 
 Gem version specific requirements:
 
@@ -63,16 +64,6 @@ Gem version specific requirements:
 
 Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append 
 the configuration to the Linux machine /etc/sysctl.conf file.
-
---
-
-Optional add-ons:
-
-You can take advantage of Ya2YAML by Akira FUNAI to get native 
-UTF-8 YAML ouptut (i.e. no need to treat Unicode Strings as binary data
-and encode them in base64). 
-
-gem install ya2yaml
 
 ---
 

@@ -1,0 +1,60 @@
+== System requirements
+
+=== QEMU
+
+QEMU with KVM support (and kernel and hardware accordingly).
+
+You should grant rw access on /dev/kvm to the OnBoard user!
+
+OnBoard user needs read/WRITE access even on DVD/CDROM ISO images, if
+you want to eject/replace them at runtime: maybe a bug in QEMU Monitor...
+
+Copy [this directory]/doc/sysadm/examples/etc/modprobe.d/kvm-intel-nested.conf
+into your host's /etc/modprobe.d/ to enable Nested VMX. More info at
+https://github.com/torvalds/linux/blob/master/Documentation/virtual/kvm/nested-vmx.txt
+
+Now, USB disk/pendrive support is enabled. If you want to *boot* from
+such a device:
+
+  * you need a recent qemu-kvm release (and related/included BIOSes): 
+    * fine: qemu-kvm-1.2.0 compiled from source;
+    * bad:  qemu-kvm-1.0   from Ubuntu package;
+  * you must use the boot menu (press F12) and choose the USB device; 
+  * you might have to *wait* a bit, after bootloader screen (for example
+    with a Debian installer image).
+
+
+=== Other programs
+
+'tunctl': on Debian, it's provided by uml-utilities package (currently
+it's not actually used: TAPs are created on demand by qemu-kvm itself,
+but may be useful nonethless).
+
+
+== OnBoard module dependencies:
+
+jqueyFileTree
+
+
+== Gem dependencies:
+
+gem install uuid rmagick cronedit chronic_duration
+
+
+== VNC/SPICE clients and video performance
+
+To avoid mouse pointer mismatches, a client with capture/release is
+strongly suggested, such as Vinagre on Unix or [see below] on Windows.
+
+Alternetively, you can use SPICE (by RedHat Inc.), which is a more 
+advanced protocol. There are clients for Unix and Windows, with 
+capture/release (they also support VNC):
+
+http://spice-space.org/download.html .
+
+By default, guests get a QXL paravirtual Video card: it's VGA and VESA 
+compatible but if you install guest drivers (from the link above, for
+example) you'll get optimal performance especially via SPICE.
+
+Among other things, SPICE transports audio, while VNC does not.
+

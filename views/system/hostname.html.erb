@@ -1,0 +1,64 @@
+<style type="text/css">
+  table#hostdomainname tr th, table#hostdomainname tr td {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  table#hostdomainname tr td input[name=hostname] {
+    text-align: right;
+    width: 30ex;
+  }
+  table#hostdomainname tr td input[name=domainname] {
+    text-align: left;
+    width: 40ex;
+  }
+  table#hostdomainname thead tr th#hostname_h {
+    width: 30.1ex;
+  }
+  table#hostdomainname thead tr th#domainname_h {
+    width: 40.1ex;
+  }
+</style>
+
+
+
+<% hostname = objects %>
+
+<h2>This machine&rsquo;s host name (and domain name)</h2>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table id="hostdomainname"> 
+    <thead>
+      <tr>
+        <th colspan="2" id="hostname_h">Host</th>
+        <th colspan="2" id="domainname_h">Domain</th> 
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <input type="text" name="hostname" value="<%= hostname %>"/> <br/>
+        </td>
+        <td class="highlight" style="text-align:center;font-weight:bold;width:1ex;" colspan="2">.</td>
+        <td>
+          <input type="text" name="domainname" value="<%= hostname.domainname %>"/> <br/>
+        </td>
+      </tbody>
+    </table>
+  <button type="submit">Change!</button>  
+</form>
+
+<% if hostname.all_fqdns.any? and not hostname.fqdn.match_dns? %>
+  <div class="warn">
+    A DNS reverse query for the IP addresses configured on 
+    <a href="../network/interfaces.html">network interfaces</a> gives:
+    <ul>
+      <% hostname.all_fqdns.each do |fqdn_| %>
+        <li><%= fqdn_ %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+

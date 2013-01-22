@@ -1,0 +1,68 @@
+<%# -*- coding: UTF-8 -*-%>
+<%
+  c = configuration
+%>
+
+  <table class="radsignupform">
+    <tbody>
+      <tr>
+        <th scope="row">
+          Password type
+          <div class="optinfo">
+            Don’t change if unsure
+          </div>
+        </th>
+        <td style="vertical-align: middle;">
+          <select name="check[Password-Type]">
+            <%
+              if c['check']['Password-Type'] =~ /\S/ 
+                selected = c['check']['Password-Type'] 
+              else 
+                selected = best_passwd_type
+              end
+            %>
+            <option value="">(no password)</option>
+            <% passwd_types.each do |passwd_type| %>
+              <option 
+                  <%= 'selected' if passwd_type == selected %> 
+                  value="<%= passwd_type %>">
+                <%= passwd_type %>
+              </option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <th scope="row" style="font-style:italic;">
+          User is
+          <div class="optinfo">
+            If you choose <span class="term">Disabled</span>, you will be able to review
+            all new subscriptions prior to actually enable them 
+            (at <a href="users.html">this page</a>).
+          </div>
+        </th>
+        <td>
+          <fieldset>
+            <% 
+              human_friendly = {
+                ''        => 'Enabled',
+                'Reject'  => 'Disabled',
+                # 'Accept'  => 'Always accepted (guest user)'
+              }
+            %>
+            <% human_friendly.keys.each do |auth_type| %>
+              <input 
+                  type="radio" 
+                  name="check[Auth-Type]" 
+                  value="<%= auth_type %>"
+                  <%= 'checked' if auth_type == c['check']['Auth-Type'] %>
+              />
+              <span style="vertical-align:middle;"><%= human_friendly[auth_type] %></span>
+              <br/>
+            <% end %>
+          </fieldset>
+        </td>
+      </tr>
+    </tbody>
+  </table>

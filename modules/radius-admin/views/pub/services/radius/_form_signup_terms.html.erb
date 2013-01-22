@@ -1,0 +1,24 @@
+<%# -*- coding: UTF-8 -*-%>
+<% 
+  require 'facets/string'
+
+  # pp template_params # DEBUG
+%>
+
+  <table class="raduserform">
+    <thead>
+      <tr>
+        <th><%= i18n.terms.name.titlecase %></th>
+        <th><%= i18n.terms.accept.i.capitalize %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% terms.each do |document| %>
+        <tr>
+          <td><a href="terms/<%= document[:id] %>.html" target="_blank"><%= document[:name] %></a> <%= mandatory_mark if document[:required] %></td> 
+        <td style="text-align:center"><input type="checkbox" name="terms[accept][<%= document[:id] %>]" <% if template_params['terms']['accept'][document[:id].to_s] %>checked<% end %> /></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+

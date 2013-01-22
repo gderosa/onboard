@@ -1,0 +1,102 @@
+<%
+  vpns = objects[:vpns] || objects['vpns'] # be robust
+
+  windoze = %q{<span class="product-name">Microsoft<sup class="trademark">&reg;</sup> Windows<sup class="trademark">&reg;</sup></span>}
+%>
+
+<h2><%= title %></h2>
+
+<p>
+  If you have configured one or more <span class="product-name">OpenVPN</span> 
+  server instances, this page will help you to configure the related clients,
+  including <%= windoze %> clients.
+</p>
+
+<form 
+  method="GET" 
+  action="/network/openvpn/client-side-configuration/howto.html">
+
+  <h3>Choose the (server) VPN</h3>
+
+  <table>
+    <thead>
+      <%=
+        format(
+          :module   => 'openvpn',
+          :partial  => true,
+          :path     => 'network/openvpn/_vpninfo_thead',
+          :locals   => {
+            :show_actions_column => 'Choose',
+          }
+        )
+      %>
+    </thead>
+    <tbody>
+      <% checked = true %>
+      <% vpns.each_with_index do |vpn, vpn_i| %>
+        <%=
+          format(
+            :module   => 'openvpn',
+            :partial  => true,
+            :path     => 'network/openvpn/_vpninfo_tr',
+            :locals   => {
+              :show_actions_column  => 
+%Q{<input #{'checked' if checked} type="radio" name="vpn_uuid" value="#{vpn.data['uuid']}"/>}, 
+              :vpn                  => vpn,
+              :vpn_i                => vpn_i
+            }
+          )
+        %>
+        <% checked = false %> <%# auto-check the first vpn %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h3>Choose the address this server will be reached at</h3>
+  <%
+    address = 'IP address / hostname'
+    port    = 'UDP / TCP port'
+  %>
+  <p>
+  <em class="term"><%= address %></em> is typically the 
+    public IP of this machine. It may be one of your 
+    <a href="/network/interfaces.html">network interfaces</a> addresses, 
+    unless
+    this machine is behind another Internet connection router which performs
+    <a href="http://en.wikipedia.org/wiki/Port_forwarding">
+      DNAT/Port Forwarding</a>. 
+  </p>
+  <p>
+    <em class="term"><%= port %></em>: leave blank if unsure; by default, 
+    it will get the same value listed above, under 
+    <em class="term">Local Port</em>, for the VPN you choose. 
+  </p>
+  <p><table>
+    <thead>
+      <tr>
+        <th><%= address  %></th>
+        <th><%= port     %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:0.3em;"><input type="text" name="address" value="<%= request.host %>"/></td>
+        <td style="padding:0.3em; text-align:center;"><input type="text" name="port" size="5"/></td>
+      </tr>
+    </tbody>
+  </table></p>
+  <h3>Choose Client Operating system</h3>
+  <fieldset>
+    <span>
+      <input type="radio" name="os" value="windows" checked />
+      <span style="vertical-align: middle;"><%= windoze %></span>
+    </span>
+    <span title="GNU/Linux, BSD variants etc.">
+      <input type="radio" name="os" value="unix"/>
+      <span style="vertical-align: middle;">Unix-like</span> 
+    </span>
+  </fieldset>
+
+  <h3>Submit</h3>
+  <button type="submit"/>&raquo; Next!</button>
+</form>

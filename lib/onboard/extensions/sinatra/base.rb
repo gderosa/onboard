@@ -1,6 +1,11 @@
 module Sinatra
   class Base
 
+    unless method_defined? :options
+      warn 'OnBoard: Sinatra::Base#options has been removed, aliasing to #settings'
+      alias options settings
+    end
+
     def routed?(path, verb="GET")
       if verb == :any
         %w{GET POST PUT DELETE}.each do |verb_|
@@ -34,9 +39,14 @@ module Sinatra
     # for multiple-path static file lookup.
     alias static_orig! static!
     def static!
-      return if settings.public.nil?      
-      if settings.public.respond_to? :each
-        settings.public.each do |dir|
+      begin
+        settings_public_folder = settings.public
+      rescue NoMethodError # Sinatra 1.3
+        settings_public_folder = settings.public_folder
+      end
+      return if settings_public_folder.nil?      
+      if settings_public_folder.respond_to? :each
+        settings_public_folder.each do |dir|
           public_dir = File.expand_path(dir)
           
           path = File.expand_path(public_dir + unescape(request.path_info))

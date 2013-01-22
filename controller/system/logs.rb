@@ -4,6 +4,11 @@ require 'onboard/system/log'
 
 class OnBoard::Controller
 
+  get %r{^/system/logs} do
+    OnBoard::System::Log.load
+    pass
+  end
+
   get "/system/logs.:format" do
     format(
       :path     => 'system/logs',
@@ -29,7 +34,7 @@ class OnBoard::Controller
   # by id
   get "/system/logs/:logid.:format" do
     hash = OnBoard::System::Log.getAll.detect {|h| h['id'] == params['logid']}
-    not_found if not hash
+    pass if not hash
     log = OnBoard::System::Log.new(hash)
     format(
       :path     => 'system/logs',
@@ -43,6 +48,7 @@ class OnBoard::Controller
   # example: /system/logs/%2Fvar%2Flog%2Fmessages.html
   get %r{^/system/logs/(.*)\.([\w\d]+)$} do
     path, fmt = params[:captures]
+    # p path # DEBUG
     hash = OnBoard::System::Log.getAll.detect {|h| h['path'] == path}
     not_found if not hash
     log = OnBoard::System::Log.new(hash)

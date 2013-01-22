@@ -9,8 +9,13 @@ class Array
     end
     return true
   end
+
+  def include_any_of?(list)
+    (self & list).length > 0
+  end
   
-  alias include_many? include_ary?
+  alias include_many?   include_ary? 
+  alias include_all_of? include_ary?
   
   def sum
     inject {|sum, n| sum + n } 
