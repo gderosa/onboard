@@ -10,40 +10,44 @@ class OnBoard
       
       class << self
 
-        # TODO: do not hardcode
-        @logs = [
-          {
-            'path'    => OnBoard::LOGFILE_PATH, 
-            'id'      => OnBoard::LOGFILE_BASENAME,
-            'desc'    => "Main log",
-            'category'=> 'main'
-          },
-          {
-            'path'    => "/var/log/messages",
-            'id'      => "messages",
-            'desc'    => "OS \"messages\"",
-            'htmldesc'=> "OS &ldquo;messages&rdquo;",
-            'category'=> 'os'
-          },
-          {
-            'path'    => "/var/log/syslog",
-            'id'      => "syslog",
-            'desc'    => "Main system log",
-            'category'=> 'os'
-          },  
-          {
-            'path'    => "/var/log/daemon.log",
-            'id'      => "daemon.log",
-            'desc'    => "\"daemon\" log",
-            'htmldesc'=> "&ldquo;daemon&rdquo; log",
-            'category'=> 'os'
-          }
-        ] unless instance_variable_defined? :@logs
+        def set_defaults!
+        
+          # TODO: do not hardcode
+          @logs ||= [
+            {
+              'path'    => OnBoard::LOGFILE_PATH, 
+              'id'      => OnBoard::LOGFILE_BASENAME,
+              'desc'    => "Main log",
+              'category'=> 'main'
+            },
+            {
+              'path'    => "/var/log/messages",
+              'id'      => "messages",
+              'desc'    => "OS \"messages\"",
+              'htmldesc'=> "OS &ldquo;messages&rdquo;",
+              'category'=> 'os'
+            },
+            {
+              'path'    => "/var/log/syslog",
+              'id'      => "syslog",
+              'desc'    => "Main system log",
+              'category'=> 'os'
+            },  
+            {
+              'path'    => "/var/log/daemon.log",
+              'id'      => "daemon.log",
+              'desc'    => "\"daemon\" log",
+              'htmldesc'=> "&ldquo;daemon&rdquo; log",
+              'category'=> 'os'
+            }
+          ] 
 
-        @categories = {
-          'main'      => "Main logs",
-          'os'        => "OS logs"
-        } unless instance_variable_defined? :@categories
+          @categories ||= {
+            'main'      => "Main logs",
+            'os'        => "OS logs"
+          } 
+
+        end
   
         def sanitize!
           file_needs_update = false
@@ -162,3 +166,6 @@ class OnBoard
     end
   end
 end
+
+OnBoard::System::Log.set_defaults! # horrible
+
