@@ -1,0 +1,362 @@
+<%
+  require 'onboard/network/interface'
+  require 'onboard/network/bridge'
+
+  require 'onboard/virtualization/qemu'
+
+  vm                  = objects[:vm] 
+
+  all_netifs          = OnBoard::Network::Interface.get_all
+  all_bridges         = all_netifs.select     { |i| i.bridge? }  
+  all_running_ifnames = all_netifs.map        { |i| i.name    }        
+
+  vnc_uri             = ( 
+      "vnc://#{request.host}#{vm.config['-vnc']}" if vm.config['-vnc'] =~ /\d/ )
+  spice_uri           = ( 
+      "spice://#{request.host}:#{vm.config['-spice']['port']}" if 
+          vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'].to_i > 0 ) 
+
+%>
+
+<%= 
+  partial(
+    :module => 'qemu',
+    :path   => 'virtualization/qemu/_style'
+  )
+%>
+
+<%= 
+  partial(
+    :module => 'qemu',
+    :path   => 'virtualization/qemu/_js',
+  )
+%>
+
+<%= message_partial(msg) %>
+
+<h2>QEMU Virtual Machine: &ldquo;<%= vm.config['-name'] %>&rdquo;</h2>
+
+<% if vm.running? %>
+  <% screenshot_path = "#{vm.uuid_short}/screen.png" %>
+  <a title="Click for full-size screenshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:30em;margin-bottom:0"/></a>
+  <div style="margin:0 0 1.5em 0; font-style:italic;">
+    <% if vnc_uri %>
+      <br/>VNC available at <a href="<%= vnc_uri %>"><%= vnc_uri %></a>
+    <% end %>
+    <% if spice_uri %>
+      <br/>SPICE available at <a href="<%= spice_uri %>"><%= spice_uri %></a>
+    <% end %>
+  </div>
+<% end %>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+    <%= 
+      partial(
+        :module => 'qemu',
+        :path   => 'virtualization/qemu/vm/_run',
+        :locals => {:vm => vm} 
+      )
+    %>
+</form>
+
+<h3>Snapshots</h3>
+
+<h4>Status</h4>
+
+<p>
+  <% if vm.snapshotting? %>
+    <% if vm.snapshot_waiting? %>
+      Waiting for other processes to complete. 
+    <% else %>
+      Taking / Applying a snapshot.
+    <% end %>
+  <% else %>
+    <% if OnBoard::V12n::QEMU::Snapshot.running? %>
+      Other VMs are currently under snapshotting (taking and/or applying).
+    <% else %>
+      No snanpshot operations running.
+    <% end %>
+  <% end %>
+
+<% if vm.snapshot_cmdline %>
+  <p><%= vm.snapshotting? ? 'Running: ' : 'Last snapshot process: ' %><code class="highlight" style="margin-left:0.2em;"> <%= vm.snapshot_cmdline.join(' ').sub(
+    %r{(^.*)bin/snapshot(.*)$}, 'snapshot\2'
+  )  
+  %></code>
+<% end %>
+
+<% snapshot_stdout, snapshot_stderr = vm.snapshot_stdout, vm.snapshot_stderr %>
+<% if snapshot_stdout =~ /\S/m %>
+  <pre class="warn" style="margin-top:0.3em;"><%== snapshot_stdout %></pre>
+<% end %>
+<% if snapshot_stderr =~ /\S/m %>
+ <pre class="error" style="margin-top:0.3em;"><%== snapshot_stderr %></pre>
+<% end %>
+
+<h4>Saved Snapshots</h4>
+
+<p class="info" style="margin-top:0;">
+  <span class="term">Disk Only</span> snapshots are taken and applied at 
+  machine turned off. Full <span class="term">VM</span> snapshots also include 
+  CPU and memory state, and are taken and applied on a <em>running</em> machine 
+  (which is temporarily paused during the process). 
+  <span class="term">size</span> is the size of non-disk data in such case.
+</p>
+
+<% if vm.quick_snapshots? %>
+  <p class="info" style="margin-top:1ex; margin-bottom:2.75ex;">
+    A snapshot named <code class="term">_last</code> will be applyed by default
+    at next VM startup if possible.
+  </p>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Drive</th>
+      <th>Snapshot ID</th>
+      <th>Tag / Name</th>
+      <th>Type</th>
+      <th>Date / Time</th>
+      <th>Take</th>
+      <th>Apply</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% 
+      drives_w_snapshots = vm.drives.select do |k,v| 
+        v['snapshots'] and v['snapshots'].any?
+      end
+      drives_w_snapshots.each_pair do |drive_name, drive| 
+    %>
+      <% drive['snapshots'].each do |snapshot| %>
+        <tr>
+          <form method="POST">
+            <input type="hidden" name="_method" value="put"/>
+            <input type="hidden" name="snapshot_drive" value="<%= drive_name %>"/>
+            <td><%= drive_name %></td>
+            <td style="text-align:right;"><%= snapshot.id %></td>
+            <td><%= snapshot.tag %></td>
+            <td>
+              <%= 
+                if snapshot.vmsize == '0'
+                  'Disk Only'
+                else
+                  "VM, size=#{snapshot.vmsize}"
+                end
+              %>
+            </td>
+            <td><%= snapshot.time %></td>
+            <% 
+              disabled = (
+                  OnBoard::V12n::QEMU::Snapshot.running?      or
+                  ( vm.running?     and snapshot.disk_only? ) or
+                  ( not vm.running? and snapshot.full_vm?   )           
+              )
+            %>
+            <td>
+              <%= action_button :save, :name=>"snapshot_take[name]", :value=>snapshot.name, :title=>'Take Snapshot / Save VM!', :disabled=>disabled %>
+            </td>
+            <td>
+              <%= action_button :redo, :name=>"snapshot_apply[name]", :value=>snapshot.name, :title=>'Apply Snapshot / Load VM!', :disabled=>disabled %>
+            </td>
+            <td>
+              <%= action_button :delete, :name=>"snapshot_delete[name]", :value=>snapshot.name, :title=>'Delete Snapshot!', :disabled=>disabled %>
+            </td>             
+          </form>
+        </tr>
+      <% end %>
+    <% end %>
+    <tr>
+      <form method="POST">
+        <input type="hidden" name="_method" value="put"/>
+        <td>
+          <select name="snapshot_drive" <%= 'disabled' if vm.running? %>>
+            <% drives_w_snapshots.keys.each do |drive_name| %>
+              <option value="<%= drive_name %>"><%= drive_name %></option>
+            <% end %>
+          </select>
+        </td>
+        <td style="text-align:right;"></td>
+        <td><input type="text" name="snapshot_take[name]" title="Add New"/></td>
+        <td>
+          <%= 
+            if vm.running?
+              'VM'
+            else
+              'Disk Only'
+            end
+          %>
+        </td>
+        <td><!-- snapshot time -->(Add New)</td>
+        <td>
+          <%= action_button :save, :title=>'Take New Snapshot / Save VM!', :disabled=>(OnBoard::V12n::QEMU::Snapshot.running?) %>
+        </td>
+        <td>
+          <%= action_button :redo, :name=>"snapshot_apply[name]", :title=>'Apply Snapshot / Load VM!', :disabled=>true %>
+        </td>
+        <td>
+          <%= action_button :delete, :name=>"snapshot_delete[name]", :title=>'Delete Snapshot!', :disabled=>true %>
+        </td>             
+      </form>
+    </tr>
+
+  </tbody>
+</table>
+
+<h4>Schedule Snapshot</h4>
+<% 
+  snapshot_cron_entry     = vm.snapshot_cron_entry # CronEdit::CronEntry
+
+  snapshot_cron_defaults  = {
+    'enable'                  => snapshot_cron_entry,
+    'delete_older_than_days'  => '7'
+  }
+
+  # CronEdit::CronEntry[:minute] (for example) gives "0,1,2,3...59"
+  # instead of "*"; so we guess that, whenever a comma is present, the
+  # whole string has to be interpreted as '*'
+  if snapshot_cron_entry
+    snapshot_cron_defaults.update( {
+      'H'       => snapshot_cron_entry[:hour    ].sub(/^.*,.*$/, '*'),
+      'M'       => snapshot_cron_entry[:minute  ].sub(/^.*,.*$/, '*'),
+      'w'       => snapshot_cron_entry[:weekday ].sub(/^.*,.*$/, '*'),
+      'd'       => snapshot_cron_entry[:day     ].sub(/^.*,.*$/, '*')
+    } ) 
+  else
+    snapshot_cron_defaults.update( {
+      'H'       => '3',
+      'M'       => '20',
+      'w'       => '*',
+      'd'       => '*'
+    } ) 
+  end
+  if 
+      snapshot_cron_entry and 
+      snapshot_cron_entry[:command] =~ /DELETE_SCHEDULED_OLDER_THAN=\s*([\d\.]+)d/
+    snapshot_cron_defaults.update({
+      'delete_older_than_days' => $1
+    }) 
+  end
+  vals = snapshot_cron_defaults # shorten
+%>
+<form method="POST">
+  <table>
+    <thead>
+      <tr>
+        <th>Enable</th>
+        <th>
+          Disks
+          <div class="optinfo">
+            Ignored for full VM / running machine
+          </div>
+        </th>
+        <th>At <span class="optinfo">(hh:mm)</span></th>
+        <th>Day of Week</th>
+        <th>Day of Month</th>
+        <th>Delete older than</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:center">
+          <input type="checkbox" name="snapshot_schedule[enable]" <%= 'checked' if vals['enable'] %>/> 
+        </td>
+        <td style="text-align:right;">
+          <% drives_w_snapshots.keys.each do |drive_name| %>
+            <% 
+              checked = true 
+              if snapshot_cron_entry
+                unless snapshot_cron_entry[:command].include? drive_name # naive!!
+                  checked = false
+                end
+              end
+            %>
+            <%= drive_name %> <input 
+              type="checkbox" 
+              name="snapshot_schedule[drives][<%= drive_name %>]"
+              <%= 'checked' if checked %>
+              style="vertical-align:middle; margin-left:1ex;"
+            > 
+          <% end %>
+        </td>
+        <td>
+          <!-- try to follow strftime(3) conventions --> 
+          <select name="snapshot_schedule[H]">
+            <option value="*">*</option>
+            <% 0.upto(23) do |_H| %>
+              <option value="<%= _H %>" <%= 'selected' if _H == vals['H'].to_i %>><%= _H %></option>
+            <% end %>
+          </select>
+          :
+          <select name="snapshot_schedule[M]">
+            <option value="*">*</option>
+            <% 0.upto(59) do |_M| %>
+              <option value="<%= _M %>" <%= 'selected' if _M == vals['M'].to_i %>><%= sprintf('%02d',_M) %></option>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <select name="snapshot_schedule[w]">
+            <option value="*">*</option>
+            <option value="0" <%= 'selected' if vals['w'] == '0' %>>Sunday</option>
+            <option value="1" <%= 'selected' if vals['w'] == '1' %>>Monday</option>
+            <option value="2" <%= 'selected' if vals['w'] == '2' %>>Tuesday</option>
+            <option value="3" <%= 'selected' if vals['w'] == '3' %>>Wednesday</option>
+            <option value="4" <%= 'selected' if vals['w'] == '4' %>>Thursday</option>
+            <option value="5" <%= 'selected' if vals['w'] == '5' %>>Friday</option>
+            <option value="6" <%= 'selected' if vals['w'] == '6' %>>Saturday</option>
+          </select> 
+        </td>
+        <td>
+          <select name="snapshot_schedule[d]">
+            <option value="*">*</option>
+            <% 1.upto(31) do |d| %>
+              <% 
+                dstr = sprintf('%02d', d) 
+                    # not really necessary, but follow strftime(3) ...
+              %> 
+              <option value="<%= dstr %>" <%= 'selected' if d == vals['d'].to_i %>><%= dstr %></option>
+            <% end %>
+          </select>
+        </td>
+        <td>
+          <input 
+            type="text" size="2" name="snapshot_schedule[delete_older_than_days]"
+            value="<%= vals['delete_older_than_days'] %>"
+          /> days
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="submit">Set!</button>
+
+<h3>Configuration</h3>
+
+<div class="warn" style="margin-bottom:4.3ex; margin-top: 0;">
+  Changes will take effect the next time you start the VM.
+</div>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <%= 
+    partial(
+      :module => 'qemu',
+      :path   => 'virtualization/qemu/_form_create_edit',
+      :locals => {
+        :all_bridges        => all_bridges,
+        :vm                 => vm
+      }
+    )
+  %>
+
+  <button style="margin-top:3.3ex;" type="submit">Change!</button>
+</form>
+
+<script type="text/javascript">
+  <%# js functions implemented in qemu/_js.html.erb %>
+  qemuSaveRestoreControls('<%= vm.uuid %>');
+  qemuNetIfControls();
+</script>

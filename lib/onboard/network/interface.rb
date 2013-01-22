@@ -71,6 +71,7 @@ class OnBoard
           end
           return @@all = ary
         end
+        alias get_all getAll # A bit of Ruby style... :-P
         
         def getAll_layer3
           return all_layer3(getAll_layer2()) 
@@ -82,7 +83,11 @@ class OnBoard
           netif_h = nil
 
           `ip addr show`.each_line do |line|
-            if line =~ /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+) state ([^: ]+)/
+            # TODO: take advantage of /master ([^: ]+)/          HERE--> vv   ???
+            if line =~ /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+).*state ([^: ]+)/
+            # It might useful to know earlier which bridge the interface 
+            # belongs to (if it's part of a bridge, of course :).
+
               if netif_h                    # from the previous "parsing cycle"
                 ary << self.new(netif_h)
                 netif_h = nil
@@ -95,6 +100,7 @@ class OnBoard
                 :qdisc      => $5,
                 :state      => $6 
               }
+              #puts netif_h[:name] # DEBUG
               if netif_h[:state] == "UNKNOWN" 
                 if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
@@ -134,6 +140,8 @@ class OnBoard
               else 
                 netif_h[:active] = false
               end
+            else
+              # puts line # DEBUG
             end
             if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})?/ 
               netif_h[:type]  = $1
@@ -223,7 +231,7 @@ class OnBoard
                 # NOTE: assumption: no more than ONE bridged iface has a dhcp (etc.)
                 # client running.
                 member = all_layer2.detect {|i| i.name == member_name} 
-                if member.ipassign[:method] != :static
+                if member and member.ipassign[:method] != :static
                   br.ipassign = member.ipassign
                   break 
                 end
@@ -371,6 +379,10 @@ class OnBoard
             File.exists? "/sys/class/net/#{@name}/wireless")
           @type = 'wi-fi'
         end
+      end
+
+      def to_s
+        name
       end
 
       def is_bridge?

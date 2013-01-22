@@ -1,10 +1,15 @@
 require 'onboard/system/command'
+require 'onboard/network/interface'
 
 class OnBoard::Network::Bridge < OnBoard::Network::Interface
 
   class << self
 
     include OnBoard::System
+
+    def get_all
+      OnBoard::Network::Interface.get_all.select{|x| x.type == 'bridge'}
+    end
 
     def brctl(h)
       msg = {}

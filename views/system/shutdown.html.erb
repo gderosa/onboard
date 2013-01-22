@@ -1,0 +1,43 @@
+<style type="text/css">
+  form {
+    margin-bottom: 1.5em;
+    margin-top: 1.5em;
+  }
+  form button {
+    width: 12ex;
+  }
+  form input[type=checkbox] {
+    vertical-align: middle;
+    float: right;
+    margin-right: 0;
+  }
+  div.confirm {
+    width: 38.2ex;
+    padding: 0.2ex;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }  
+  div.confirm span.confirm-msg { 
+  }
+</style>
+
+<h2><%= title %></h2>
+
+<form method="POST">
+  <input type="hidden" name="action" value="reboot"/>
+  <button type="submit">Reboot!</button>
+  <div class="confirm warn-like">
+    <span class="confirm-msg">Yes, I want to reboot the system</span>
+    <input type="checkbox" name="confirm"/>
+  </div>
+</form>
+
+<form method="POST">
+  <input type="hidden" name="action" value="halt"/>
+  <button type="submit">Shutdown!</button>
+  <div class="confirm warn-like">
+    <span class="confirm-msg">Yes, I comfirm I want to halt the system</span>
+    <input type="checkbox" name="confirm"/>
+  </div>
+</form>

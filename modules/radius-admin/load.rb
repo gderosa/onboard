@@ -1,6 +1,9 @@
 require 'fileutils'
 
+require 'onboard/controller/auth'
+
 class OnBoard
+  use_public_pages!
   module Service
     module RADIUS
       ROOTDIR = File.dirname(__FILE__)

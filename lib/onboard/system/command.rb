@@ -79,10 +79,10 @@ class OnBoard
           # if we know how to safely handle an error, treat errors as 
           # something smaller
           error_as = :error
-          errmsg = "Command failed: \"#{cmd_do}\" (#{wait_thr.value})"
+          errmsg = "Command failed: #{cmd_do} # (#{wait_thr.value})"
           if opts.include? :try
             error_as  = DEFAULT_LOG_LEVEL
-            errmsg = "Attempt failed: \"#{cmd_do}\" (#{wait_thr.value})"
+            errmsg = "Attempt failed: #{cmd_do} # (#{wait_thr.value})"
           end
           LOGGER.method(error_as).call(errmsg)
           msg[:err] = errmsg unless opts.include?(:try)
@@ -95,15 +95,49 @@ class OnBoard
             LOGGER.info line if line =~ /\S/
           end
         else
-          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: \"#{cmd_do}\""  
+          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: #{cmd_do}"  
         end
         stdin.close
         stdout.close
         stderr.close
-        if !msg[:ok] and !opts.include?(:try) and opts.include?(:raise_exception)
-          raise RuntimeError, msg[:err]
+        if !msg[:ok] and !opts.include?(:try) 
+          if opts.include?(:raise_exception)
+            raise RuntimeError, msg[:err]
+          elsif opts.include?(:raise_Conflict) 
+            raise Conflict, msg[:err] + "\n" + msg[:stderr]
+          elsif opts.include?(:raise_BadRequest)
+            raise BadRequest, msg[:err] + "\n" + msg[:stderr] 
+          end
         end
         return msg
+      end
+
+      # Only use exception, not message passing
+      def self.send_command(cmd, *opts)
+        opt_h = opts.find{|opt| opt.is_a? Hash} || {}
+        if opt_h[:sudo] or opts.include? :sudo
+          if opt_h[:keepenv] or opts.include? :keepenv
+            cmd = 'sudo -E '  + cmd
+          else
+            cmd = 'sudo '     + cmd
+          end
+        end
+        stdout, stderr, status = Open3.capture3(
+          cmd,
+          :stdin_data => opt_h[:stdin]
+        )
+        stdout.strip!
+        stderr.strip!
+        if status.success?
+          LOGGER.debug  "Command success: #{cmd}"
+          LOGGER.debug  stdout unless stdout.empty?
+          LOGGER.warn   stderr unless stderr.empty?
+        else
+          LOGGER.error  "Command failed: #{cmd}"
+          LOGGER.error  stderr unless stderr.empty?
+          LOGGER.info   stdout unless stdout.empty?
+          raise opt_h[:raise], stderr if opt_h[:raise]
+        end
       end
 
       # TODO? backtick equivalent still unimplemented, maybe we won't need it?

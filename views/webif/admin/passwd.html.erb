@@ -1,0 +1,61 @@
+<%
+  require 'onboard/system/user'
+
+  current_user  = OnBoard::System::User.current
+  root_user     = OnBoard::System::User.new 'root'
+  root_passwd   = root_user.passwd
+%>
+
+<h2>Users and Passwords</h2>
+<h3>Administrator’s password</h3>
+<%= 
+  erubis(
+    :"/_messages.html",
+    {
+      :layout => false,
+      :locals => {
+        :msg => msg,
+        :status => status
+      }
+    }
+  )
+%>
+<% if request.env['REQUEST_METHOD'] == 'GET' %>
+  <div class="warn">
+    After a successful password change, you will be authenticated again for the 
+    new credentials.
+  </div>
+<% end %>
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+  <table>
+    <tr>
+      <td><input type="text" readonly value="admin"/></td>
+      <th scope="row">Username</th>
+    </tr>
+    <% unless params['mode'] =~ /^init/ %>
+      <tr>
+        <td><input type="password" name="oldpasswd"/></td>
+        <th scope="row">Old password</th>
+      </tr>
+    <% end %>
+    <tr>
+      <td><input type="password" name="newpasswd"/></td>
+      <th scope="row">New password</th>
+    </tr>
+    <tr>
+      <td><input type="password" name="newpasswd2"/></td>
+      <th scope="row">New password (confirm)</th>
+    </tr>
+  </table>
+  <input type="checkbox" name="system" checked/> Also change Unix login passwords 
+  <% if root_passwd.locked? %>
+    (<code><%= current_user.name %></code>  user).
+  <% else %>
+    (<code><%= current_user.name %></code> and <code>root</code> users).
+  <% end %>
+  <br/>
+
+  <button type="submit">Save!</button>
+
+</form>

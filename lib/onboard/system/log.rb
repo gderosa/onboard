@@ -2,6 +2,7 @@ class OnBoard
   module System
     class Log
       Tail_n = 25 # show the last Tail_n number of lines in HTML, JSON, YAML
+      DATAFILE = File.join VARLIB, 'system/logs/registered.yaml'
 
       # badly designed class, too much hashes...
       # 'id' is not really an id, just a shortcut. We're moving to
@@ -42,12 +43,32 @@ class OnBoard
         'os'        => "OS logs"
       } unless class_variable_defined? :@@categories
 
-      def self.getAll
-        @@logs
+      def self.sanitize!
+        file_needs_update = false
+        new = []
+        @@logs.each do |h|
+          if File.exists? h['path']
+            new << h
+          else
+            file_needs_update = true
+          end
+        end
+        @@logs = new
+        self.save if file_needs_update
       end
 
       def self.all
+        self.sanitize!
         @@logs
+      end
+
+      def self.getAll
+        self.all
+      end
+
+      def self.delete_if(&blk)
+        @@logs.delete_if &blk
+        self.save
       end
 
       def self.categories
@@ -67,15 +88,34 @@ class OnBoard
           end
         end
         @@logs << new_h
+        self.save
       end
 
       def self.register_category(name, description)
         @@categories[name] = description
+        self.save
       end
 
-      def self.to_json(*a); @@logs.to_json(*a); end
+      def self.to_json(*a); data.to_json(*a); end
 
-      def self.to_yaml(*a); @@logs.to_yaml(*a); end
+      def self.to_yaml(*a); data.to_yaml(*a); end
+
+      def self.save
+        FileUtils.mkdir_p File.dirname DATAFILE
+        File.open DATAFILE, 'w' do |f|
+          f.write YAML.dump data
+        end
+      end
+
+      def self.load
+        if File.exists? DATAFILE
+          h = YAML.load File.read DATAFILE
+          @@categories  ||=   []
+          @@categories  |=    h['categories']
+          @@logs        ||=   [] 
+          @@logs        |=    h['logs']
+        end
+      end
 
       attr_reader :meta
 

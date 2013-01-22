@@ -77,6 +77,7 @@ class OnBoard
           raise Crypto::SSL::ArgumentError,
               'Cannot find subject\'s Common Name' if not cn
           cn_escaped = cn.gsub('/', Crypto::SSL::SLASH_FILENAME_ESCAPE)
+          FileUtils.mkdir_p Crypto::SSL::CERTDIR
           target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crt"
           if File.readable? target # already exists
             begin # check if it's valid
@@ -106,6 +107,7 @@ class OnBoard
         end
         if params['private_key'].respond_to? :[]
           # priv. key verification is not done here...
+          FileUtils.mkdir_p Crypto::SSL::KEYDIR
           File.open("#{Crypto::SSL::KEYDIR}/#{cn}.key", 'w') do |f|
             f.write File.read params['private_key'][:tempfile]
           end

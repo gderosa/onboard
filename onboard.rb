@@ -9,6 +9,7 @@ require 'etc'
 
 require 'onboard/exceptions'
 require 'onboard/extensions/object'
+require 'onboard/extensions/logger'
 require 'onboard/menu/node'
 require 'onboard/system/command'
 require 'onboard/platform/debian'
@@ -24,7 +25,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2011.09.01'
+  VERSION           = '2013.03.02'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -42,6 +43,10 @@ class OnBoard
   DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
   LOGFILE_BASENAME    = 'onboard.log'
   LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
+
+  VARRUN              ||= '/var/run/onboard'
+
+  VARLIB              ||= File.join RWDIR, 'var/lib'
  
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
   # NOTE: we are re-defining a constant!
@@ -88,13 +93,8 @@ class OnBoard
   end
 
   def self.prepare
-    if web?
-      # modular menu
-      find_n_load ROOTDIR + '/etc/menu/'
-      
-      require 'onboard/controller/helpers'
-      require 'onboard/controller'
-    end
+    system "sudo mkdir -p #{VARRUN}"
+    system "sudo chown onboard #{VARRUN}"
 
     # modules
     Dir.foreach(ROOTDIR + '/modules') do |dir|
@@ -113,6 +113,17 @@ class OnBoard
       end 
     end
 
+    # After the modules, 'cause we want to know, among other things,
+    # whether to activate public pages layout configuration page
+    # (and relative menu item).
+    if web?
+      require 'onboard/controller/helpers'
+      require 'onboard/controller'
+      
+      # modular menu
+      find_n_load ROOTDIR + '/etc/menu/'
+    end
+
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
     if ARGV.include? '--restore' 
       restore_scripts = 
@@ -124,6 +135,32 @@ class OnBoard
       end
       restore_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
       restore_scripts.each do |script|
+        print "loading: #{script}... "
+        STDOUT.flush
+        begin
+          load script and puts "OK"
+        rescue Exception
+          exception = $!
+
+          puts exception.inspect
+
+          LOGGER.error "loading #{script}: #{exception.inspect}"
+          backtrace_str = "Exception backtrace follows:"
+          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          LOGGER.error backtrace_str
+        end
+      end
+    end
+    # TODO: DRY DRY DRY
+    if ARGV.include? '--shutdown' 
+      shutdown_scripts = 
+          Dir.glob(ROOTDIR + '/etc/shutdown/[0-9][0-9]*.rb')           
+      Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
+        next if File.exists? "#{module_dir}/.disable"
+        shutdown_scripts += Dir.glob("#{module_dir}/etc/shutdown/[0-9][0-9]*.rb")
+      end
+      shutdown_scripts.sort!{|x,y| File.basename(x) <=> File.basename(y)}
+      shutdown_scripts.each do |script|
         print "loading: #{script}... "
         STDOUT.flush
         begin
@@ -154,6 +191,16 @@ class OnBoard
         print "loading: #{script}... " and STDOUT.flush
         load script and puts ' OK'
       end
+    end
+
+    # for Voyage-Linux embedded Debian flavour http://linux.voyage.hk
+    voyage_sync = '/etc/init.d/voyage-sync'
+    if File.file? voyage_sync and File.executable? voyage_sync
+      # TODO: move this to a specific file/module/method...
+      rootfsmode = `(sudo touch /.rw 2> /dev/null) && echo 'rw' || echo 'ro'`.strip.to_sym
+      System::Command.run "remountrw",            :sudo if rootfsmode == :ro
+      System::Command.run "#{voyage_sync} sync",  :sudo
+      System::Command.run "remountro",            :sudo if rootfsmode == :ro
     end
 
     System::Command.run 'sync'

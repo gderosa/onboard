@@ -6,6 +6,7 @@
 #
 
 Defaults	env_reset
+Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 # Host alias specification
 
@@ -16,10 +17,9 @@ Defaults	env_reset
 # User privilege specification
 root	ALL=(ALL) ALL
 
-# Uncomment to allow members of group sudo to not need a password
+# Allow onboard user to execute any command with no password!
 # (Note that later entries override this, so you might need to move
 # it further down)
+onboard ALL=(ALL) NOPASSWD: ALL
 #
-# NOTE: add user 'onboard' to the sudo group
-#
-%sudo ALL=NOPASSWD: ALL
+#includedir /etc/sudoers.d

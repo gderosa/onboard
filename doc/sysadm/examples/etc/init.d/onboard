@@ -81,7 +81,7 @@ do_stop()
 	# Many daemons don't delete their pidfiles when they exit.
 	#rm -f $PIDFILE
 	#return "$RETVAL"
-	(su $USERNAME -c "cd $DIR && ./stop.sh") && return 0
+	(su $USERNAME -c "cd $DIR && ./stop.sh && ./shutdown.sh") && return 0
 	return 2
 }
 
