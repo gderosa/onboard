@@ -146,6 +146,7 @@ start start_paused pause resume powerdown delete
         end
 
         def save
+          FileUtils.mkdir_p "#{CONFDIR}/common"
           File.open "#{CONFDIR}/common/instances.yml", 'w' do |f|
             f.write YAML.dump get_all
           end
