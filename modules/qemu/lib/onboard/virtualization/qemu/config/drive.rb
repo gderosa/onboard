@@ -18,16 +18,26 @@ class OnBoard
 
           # Corresponding name in 'info block' output from QEMU Monitor
           def to_runtime_name
-            name = "#{@config['if'] or 'ide'}#{@config['bus']}-"
-            case @config['media']
-            when 'disk'
-              name << 'hd'
-            when 'cdrom'
-              name << 'cd'
+            name = "#{@config['if']}"
+            case @config['if']
+            when 'virtio'
+              raise RuntimeError, "I cannot manage this: #{@config.inspect}" unless 
+                  @config['index'] # Assumption to make the machinery work :-p
+              name << @config['index'].to_s
+              return name
             else
-              raise RuntimeError, "I cannot manage this: #{@config.inspect}"
+              name << @config['bus'].to_s
+              case @config['media']
+              when 'disk'
+                name << '-hd'
+              when 'cdrom'
+                name << '-cd'
+              else
+                raise RuntimeError, "I cannot manage this: #{@config.inspect}"
+              end
+              name << @config['unit'].to_s
+              return name
             end
-            name << @config['unit'].to_s
           end
 
           def [](k) 
