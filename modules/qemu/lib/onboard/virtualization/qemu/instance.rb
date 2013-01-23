@@ -59,7 +59,9 @@ class OnBoard
               'cmdline'       => snapshot_cmdline,
               'stdout'        => snapshot_stdout,
               'stderr'        => snapshot_stderr,
-              'schedule'      => snapshot_cron_entry.to_hash
+              'schedule'      => snapshot_cron_entry  ? 
+                  snapshot_cron_entry.to_hash         :
+                  {},
             }
           }
         end
