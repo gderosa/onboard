@@ -177,7 +177,7 @@
         <td>
           <fieldset>
             <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
-              <input name="disk[<%= idx %>][cache]" <%= 'checked' if c == hd['cache'] %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 12ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
+              <input name="disk[<%= idx %>][cache]" <%= 'checked' if c == hd['cache'] %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 13ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
             <% end %>
           </fieldset>
         </td>
