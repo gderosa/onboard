@@ -87,8 +87,8 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 'file'  => self.class.absolute_path(h[:http_params]['usbdisk']),
               }
             end
-            if h[:http_params]['disk'] =~ /\S/
-              @cmd['opts']['-drive'] ||= []
+            @cmd['opts']['-drive'] ||= []
+            if h[:http_params]['disk'] =~ /\S/ # and is a String...
               @cmd['opts']['-drive'] << {
                 'serial'=> generate_drive_serial,
                 'file'  => self.class.absolute_path(h[:http_params]['disk']),
@@ -98,6 +98,19 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 'unit'  => 0,       # Master
                 'cache' => h[:http_params]['cache']
               }
+            elsif h[:http_params]['disk'].respond_to? :each_with_index
+              h[:http_params]['disk'].each_with_index do |hd, idx|
+                @cmd['opts']['-drive'] << {
+                  'serial'=> generate_drive_serial,
+                  'file'  => hd['file'],
+                  'media' => 'disk',
+                  'if'    => 'ide',   # IDE (default)
+                  'bus'   => 0,       # Primary
+                  'unit'  => idx,     # heuristic... :-p
+                  # 'index' => idx    # alternative way?
+                  'cache' => hd['cache'],
+                }
+              end
             end
             @cmd['opts']['-drive'] ||= []
             @cmd['opts']['-drive'] << {

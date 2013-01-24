@@ -60,9 +60,13 @@ class OnBoard
             :http_params  =>  params,
             :uuid         =>  vm_old.uuid
           )
-          # puts 'vm_new =============================='
-          # pp vm_new
-          # vm_new.save # replace configuration file # NOP, DEV
+          # DEBUG
+          puts
+          puts 'params =============================='
+          pp params
+          #puts 'vm_new =============================='
+          #pp vm_new
+          vm_new.save # replace configuration file # NOP, DEV
         end
 
         # Action buttons / runtime
