@@ -56,7 +56,12 @@ class OnBoard
             end
 
             # If image file comes from form text input / browsing (not creation)
-            params['disk'][idx]['file'] ||= OnBoard::Virtualization::QEMU::Img.absolute_path hd['path']
+            if hd['path'] =~ /\S/
+              params['disk'][idx]['file'] ||= 
+                  OnBoard::Virtualization::QEMU::Img.absolute_path hd['path']
+            else
+              params['disk'][idx]['file'] = nil # explicit is better than implicit :-)
+            end
 
           end
 
