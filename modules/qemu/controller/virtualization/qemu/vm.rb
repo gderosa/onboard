@@ -28,23 +28,41 @@ class OnBoard
       msg = handle_errors do
 
         # Edit static configuration
+        #puts
+        #puts 'params =============================='
+        #pp params # DEBUG
         if params['name'] 
         
-          # Possibly create a new image (the old one will be renamed in .old, see
-          # Img.create implementation in 
-          # /modules/qemu/lib/onboard/virtualization/qemu/img.rb ) 
-          created_disk_image =
-              OnBoard::Virtualization::QEMU::Img.create(:http_params => params)
-          if created_disk_image
-            params['disk'] = created_disk_image
+          params['disk'] ||= []
+
+          # normalize
+          if params['disk'].respond_to? :each_pair
+            ary = []
+            params['disk'].each_pair do |k,v|
+              ary[k.to_i] = v
+            end
+            params['disk'] = ary
+          end
+
+          params['disk'].each_with_index do |hd, idx|
+            if hd['qemu-img'] and hd['qemu-img']['create']
+              hd.update( {
+                'idx'     => idx,
+                'vmname'  => params['name'],
+              } )
+              created_disk_image = 
+                  OnBoard::Virtualization::QEMU::Img.create(hd)
+              params['disk'][idx]['file'] = created_disk_image
+            end
           end
 
           vm_new = OnBoard::Virtualization::QEMU::Config.new(
             :http_params  =>  params,
             :uuid         =>  vm_old.uuid
           )
-
-          vm_new.save # replace configuration file
+          # puts 'vm_new =============================='
+          # pp vm_new
+          # vm_new.save # replace configuration file # NOP, DEV
         end
 
         # Action buttons / runtime
