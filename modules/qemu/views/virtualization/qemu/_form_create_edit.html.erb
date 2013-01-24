@@ -1,4 +1,6 @@
 <% 
+  sect_sep_height = '0.8ex'
+
   vm ||= nil
 
   vnc_available   = OnBoard::V12n::QEMU::VNC::Display.available
@@ -114,6 +116,15 @@
           <input type="text" name="name" value="<%= formvals['name'] %>"/>
         </td>
       </tr>
+      <tr>
+        <th scope="row">RAM</th>
+        <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
+      </tr>
+      <tr>
+        <th scope="row">Number of CPUs / cores</th>
+        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
+      </tr>
+
       <tr> 
         <th scope="row">CD/DVD image (optional)</th>
         <td>
@@ -127,11 +138,11 @@
         </td>
       </tr>
 
-      <tr style="height:1ex"> </tr> <!-- BEGIN HARD DISK IMAGES -->
+      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- BEGIN HARD DISK IMAGES -->
 
     <% formvals['disks'].each_with_index do |hd, idx| %>
       <% unless idx == 0%>
-        <tr style="height:1ex"> </tr>
+        <tr style="height:<%= sect_sep_height %>"> </tr>
       <% end %>
       <tr>
         <th scope="row">
@@ -172,16 +183,8 @@
       </tr>
     <% end %>
 
-    <tr style="height:1ex"> </tr> <!-- END HARD DISK IMAGES -->
+      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- END HARD DISK IMAGES -->
 
-      <tr>
-        <th scope="row">RAM</th>
-        <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
-      </tr>
-      <tr>
-        <th scope="row">Number of CPUs / cores</th>
-        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
-      </tr>
       <tr>
         <th scope="row">Remote Display</th>
         <td>
