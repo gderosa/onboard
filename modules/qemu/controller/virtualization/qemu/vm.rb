@@ -54,18 +54,24 @@ class OnBoard
                   OnBoard::Virtualization::QEMU::Img.create(hd)
               params['disk'][idx]['file'] = created_disk_image
             end
+
+            # If image file comes from form text input / browsing (not creation)
+            params['disk'][idx]['file'] ||= OnBoard::Virtualization::QEMU::Img.absolute_path hd['path']
+
           end
 
           vm_new = OnBoard::Virtualization::QEMU::Config.new(
             :http_params  =>  params,
             :uuid         =>  vm_old.uuid
           )
+          
           # DEBUG
-          puts
-          puts 'params =============================='
-          pp params
+          #puts
+          #puts 'params =============================='
+          #pp params
           #puts 'vm_new =============================='
           #pp vm_new
+
           vm_new.save # replace configuration file # NOP, DEV
         end
 
