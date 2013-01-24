@@ -53,6 +53,8 @@ class OnBoard
               created_disk_image = 
                   OnBoard::Virtualization::QEMU::Img.create(hd)
               params['disk'][idx]['file'] = created_disk_image
+              params['disk'][idx]['path'] = \
+                  OnBoard::Virtualization::QEMU::Img.relative_path created_disk_image
             end
 
             # If image file comes from form text input / browsing (not creation)

@@ -43,7 +43,7 @@
       hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['file'] if hd['file']
       formvals['disks'] << hd
     end
-    formvals['disks'] << {'cache' => cache_default} # Allow creation of a new one
+    formvals['disks'] << {'cache' => cache_default} if formvals['disks'].length < 2
 
     if usb_disk
       formvals['usbdisk'] = OnBoard::V12n::QEMU::Config.relative_path usb_disk['file']

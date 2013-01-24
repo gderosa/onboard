@@ -104,10 +104,10 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   'serial'=> generate_drive_serial,
                   'file'  => hd['file'],
                   'media' => 'disk',
-                  'if'    => 'ide',     # IDE (default)
-                  #'bus'   => 0,        # Primary
-                  #'unit'  => idx,      # heuristic... :-p
-                  'index' => idx,       # alternative way?
+                  'if'    => 'ide',     
+                  'bus'   => 0,       # TODO...
+                  'unit'  => idx,     # TODO..
+                  #'index' => idx,    
                   'cache' => hd['cache'],
                 } if hd['file'] # do not put what comes from an empty form input
               end
