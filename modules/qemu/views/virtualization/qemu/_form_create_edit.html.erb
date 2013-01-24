@@ -37,10 +37,11 @@
         vm.config['-usbdevice'].find{|d| d['type'] == 'disk'} 
     )     
 
+    # pp hd_drives # DEBUG
     hd_drives = [{}] if not hd_drives.any?
     formvals['disks'] = []
     hd_drives.each do |hd|
-      hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['path'] if hd['path']
+      hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['file'] if hd['file']
       formvals['disks'] << hd
     end
 
