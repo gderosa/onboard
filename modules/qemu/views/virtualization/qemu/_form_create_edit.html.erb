@@ -150,7 +150,7 @@
           <div class="optinfo">Choose existing</div>
         </th>
         <td>
-          <input class="vimagepath" type="text" name="disk[][path]" id="disk_<% idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
+          <input class="vimagepath" type="text" name="disk[][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
         </td>  
       </tr>
       <tr>
@@ -158,13 +158,13 @@
           <div class="optinfo">
             Or create a new one 
             <span style="vertical-align:middle; margin: 0 0 0 2em">
-              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="disk[][qemu-img][create]" id="disk_<% idx %>_qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls(<%= idx %>)"/>
+              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="disk[][qemu-img][create]" id="disk_<%= idx %>_qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls(<%= idx %>)"/>
             </span>
           </div>        
         </th> 
         <td>
-          &nbsp;Size <input type="text" name="disk[][qemu-img][size][G]" id="disk_<% idx %>_qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
-          &nbsp;Format <select name="disk[][qemu-img][fmt]" id="disk_<% idx %>_qemu-img_create_fmt" disabled>
+          &nbsp;Size <input type="text" name="disk[][qemu-img][size][G]" id="disk_<%= idx %>_qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
+          &nbsp;Format <select name="disk[][qemu-img][fmt]" id="disk_<%= idx %>_qemu-img_create_fmt" disabled>
             <option value="qcow2">QCOW2 (recommended)</option>
             <option value="raw">Raw</option>
             <!-- exclude "alien" image formats for now... -->
