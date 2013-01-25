@@ -15,6 +15,24 @@ class OnBoard
             'virtio'  => 'VirtIO',
           }
 
+          class << self
+            def disk_slots(opts={})
+              defaults  = {
+                :scsi     =>  {
+                  :buses    =>    2,
+                  :units    =>    2,
+                },
+                :virtio   =>  {
+                  :indexes  =>    4,
+                } 
+              }
+              opts = defaults.update(opts)
+              slots = %w{ide0-hd0 ide0-hd1 ide1-hd1}
+              0.upto(opts[:scsi][:buses] - 1) do |bus|
+              end
+            end
+          end          
+
           attr_reader :config
 
           def initialize(config)
