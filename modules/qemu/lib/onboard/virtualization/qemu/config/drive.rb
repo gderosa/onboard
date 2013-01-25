@@ -8,6 +8,13 @@ class OnBoard
           # NOTE: directsync available on recent versions only 
           CACHE = %w{unsafe writeback writethrough directsync none}
 
+          IF = %w{ide scsi sd mtd floppy pflash virtio} # from man page
+          SUPPORTED_IFS = {
+            'ide'     => 'ATA',
+            'scsi'    => 'SCSI',
+            'virtio'  => 'VirtIO',
+          }
+
           attr_reader :config
 
           def initialize(config)
