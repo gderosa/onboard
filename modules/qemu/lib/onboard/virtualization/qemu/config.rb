@@ -100,16 +100,26 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               }
             elsif h[:http_params]['disk'].respond_to? :each_with_index
               h[:http_params]['disk'].each_with_index do |hd, idx|
-                @cmd['opts']['-drive'] << {
-                  'serial'=> generate_drive_serial,
-                  'file'  => hd['file'],
-                  'media' => 'disk',
-                  'if'    => 'ide',     
-                  'bus'   => 0,       # TODO...
-                  'unit'  => idx,     # TODO..
-                  #'index' => idx,    
-                  'cache' => hd['cache'],
-                } if hd['file'] # do not put what comes from an empty form input
+                if hd['file']
+                  newhd = {
+                    'serial'=> generate_drive_serial,
+                    'file'  => hd['file'],
+                    'media' => 'disk',
+                  }
+                  newhd.update(
+                    case idx
+                    when 0
+                      {
+                        'if' => 'ide', 'bus' => 0, 'unit' => 0,
+                      }
+                    else
+                      {
+                        'if' => 'virtio', 'index' => idx-1
+                      }
+                    end
+                  )
+                  @cmd['opts']['-drive'] << newhd
+                end
               end
             end
             @cmd['opts']['-drive'] ||= []
