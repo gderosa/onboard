@@ -105,6 +105,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                     'serial'=> generate_drive_serial,
                     'file'  => hd['file'],
                     'media' => 'disk',
+                    'cache' => hd['cache'],
                   }
                   newhd.update(
                     case idx
