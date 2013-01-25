@@ -1,3 +1,5 @@
+require 'facets/hash'
+
 class OnBoard
   module Virtualization
     module QEMU
@@ -7,14 +9,14 @@ class OnBoard
 
           # NOTE: directsync available on recent versions only 
           CACHE = %w{unsafe writeback writethrough directsync none}
-
+=begin
           IF = %w{ide scsi sd mtd floppy pflash virtio} # from man page
           SUPPORTED_IFS = {
             'ide'     => 'ATA',
             'scsi'    => 'SCSI',
             'virtio'  => 'VirtIO',
           }
-
+=end
           class << self
             def disk_slots(opts={})
               defaults  = {
@@ -26,10 +28,17 @@ class OnBoard
                   :indexes  =>    4,
                 } 
               }
-              opts = defaults.update(opts)
+              opts = defaults.deep_merge(opts)
               slots = %w{ide0-hd0 ide0-hd1 ide1-hd1}
               0.upto(opts[:scsi][:buses] - 1) do |bus|
+                0.upto(opts[:scsi][:units] - 1) do |unit|
+                  slots << %Q{scsi#{bus}-hd#{unit}}
+                end
               end
+              0.upto(opts[:virtio][:indexes]) do |index|
+                slots <<%Q{virtio#{index}} 
+              end
+              slots
             end
           end          
 
@@ -64,9 +73,14 @@ class OnBoard
               return name
             end
           end
+          alias runtime_name to_runtime_name
 
           def [](k) 
             @config[k]
+          end
+
+          def []=(k, val) 
+            @config[k] = val
           end
 
           def to_json(*a)

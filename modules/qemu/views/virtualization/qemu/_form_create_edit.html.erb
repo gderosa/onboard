@@ -31,7 +31,8 @@
     formvals['cdrom']   = 
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
 
-    hd_drives           = vm.config['-drive'].select{|d| d['media'] == 'disk' }
+    hd_drives_h           = vm.config['-drive'].select{|d| d['media'] == 'disk' }
+    hd_drives             = hd_drives_h.map{|h| OnBoard::V12n::QEMU::Config::Drive.new h}
     usb_disk            = (
         vm.config['-usbdevice']                               and 
         vm.config['-usbdevice'].find{|d| d['type'] == 'disk'} 
@@ -43,7 +44,7 @@
       hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['file'] if hd['file']
       formvals['disks'] << hd
     end
-    formvals['disks'] << {'cache' => cache_default} # if formvals['disks'].length < 2
+    formvals['disks'] << OnBoard::V12n::QEMU::Config::Drive.new({'cache' => cache_default})
 
     if usb_disk
       formvals['usbdisk'] = OnBoard::V12n::QEMU::Config.relative_path usb_disk['file']
@@ -153,14 +154,20 @@
         </th>
         <td>
           <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
-          <select name="disk[<%= idx %>][if]" id="disk_<%= idx %>_if">
-            <% OnBoard::V12n::QEMU::Config::Drive::SUPPORTED_IFS.each_pair do |type, longname| %>
-              <option value="<%= type %>"><%= longname %></option>
+          @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
+            <% ([''] + OnBoard::V12n::QEMU::Config::Drive.disk_slots).each do |slot| %>
+              <%
+                runtime_name = begin 
+                                 hd.runtime_name
+                               rescue Exception
+                                 nil
+                               end              
+              %>
+              <option value="<%= slot %>" <%= 'selected' if slot == runtime_name %>>
+                <%= slot %>
+              </option>
             <% end %>
           </select>
-          Bus<input type="text" name="disk[<%= idx %>][bus]" id="disk_<%= idx %>_bus" size="1"/>
-          Unit<input type="text" name="disk[<%= idx %>][unit]" id="disk_<%= idx %>_unit" size="1"/>
-          Index<input type="text" name="disk[<%= idx %>][index]" id="disk_<%= idx %>_index" size="1"/>        
         </td>  
       </tr>
       <tr>
