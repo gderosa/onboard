@@ -1,6 +1,6 @@
-gem 'uuid'
+require 'uuid'
 
-autoload :UUID, 'uuid'
+require 'facets/hash'
 
 class OnBoard
   module Virtualization
@@ -88,39 +88,14 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               }
             end
             @cmd['opts']['-drive'] ||= []
-            if h[:http_params]['disk'] =~ /\S/ # and is a String...
-              @cmd['opts']['-drive'] << {
-                'serial'=> generate_drive_serial,
-                'file'  => self.class.absolute_path(h[:http_params]['disk']),
-                'media' => 'disk',
-                'if'    => 'ide',   # IDE (default)
-                'bus'   => 0,       # Primary
-                'unit'  => 0,       # Master
-                'cache' => h[:http_params]['cache']
-              }
-            elsif h[:http_params]['disk'].respond_to? :each_with_index
-              h[:http_params]['disk'].each_with_index do |hd, idx|
-                if hd['file']
-                  newhd = {
-                    'serial'=> generate_drive_serial,
-                    'file'  => hd['file'],
-                    'media' => 'disk',
-                    'cache' => hd['cache'],
-                  }
-                  newhd.update(
-                    case idx
-                    when 0
-                      {
-                        'if' => 'ide', 'bus' => 0, 'unit' => 0,
-                      }
-                    else
-                      {
-                        'if' => 'virtio', 'index' => idx-1
-                      }
-                    end
-                  )
-                  @cmd['opts']['-drive'] << newhd
-                end
+            h[:http_params]['disk'].each_with_index do |hd, idx|
+              if hd['file']
+                default = {
+                  'serial'  => generate_drive_serial,
+                  'media'   => 'disk',
+                }
+                newhd = hd | default | (Drive.slot2data(hd['slot']) || {}) 
+                @cmd['opts']['-drive'] << newhd
               end
             end
             @cmd['opts']['-drive'] ||= []

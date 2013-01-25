@@ -9,15 +9,28 @@ class OnBoard
 
           # NOTE: directsync available on recent versions only 
           CACHE = %w{unsafe writeback writethrough directsync none}
-=begin
-          IF = %w{ide scsi sd mtd floppy pflash virtio} # from man page
-          SUPPORTED_IFS = {
-            'ide'     => 'ATA',
-            'scsi'    => 'SCSI',
-            'virtio'  => 'VirtIO',
-          }
-=end
+          
           class << self
+            
+            def slot2h(slot)
+              media = {'hd' => 'disk', 'cd' => 'cdrom'}
+              case slot
+              when /(ide|scsi)(\d+)-(hd|cd)(\d+)/
+                {
+                  'media' => media[$3],
+                  'if'    => $1,
+                  'bus'   => $2.to_i,
+                  'unit'  => $4.to_i,
+                }
+              when /(virtio)(\d+)/
+                {
+                  'if'    => $1,
+                  'index' => $2.to_i,
+                }
+              end
+            end
+            alias slot2data slot2h
+
             def disk_slots(opts={})
               defaults  = {
                 :scsi     =>  {
@@ -35,11 +48,12 @@ class OnBoard
                   slots << %Q{scsi#{bus}-hd#{unit}}
                 end
               end
-              0.upto(opts[:virtio][:indexes]) do |index|
+              0.upto(opts[:virtio][:indexes] - 1) do |index|
                 slots <<%Q{virtio#{index}} 
               end
               slots
             end
+
           end          
 
           attr_reader :config
