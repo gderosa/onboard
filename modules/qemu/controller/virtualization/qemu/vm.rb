@@ -27,10 +27,6 @@ class OnBoard
       
       msg = handle_errors do
 
-        # Edit static configuration
-        #puts
-        #puts 'params =============================='
-        #pp params # DEBUG
         if params['name'] 
         
           params['disk'] ||= []
@@ -72,13 +68,6 @@ class OnBoard
             :uuid         =>  vm_old.uuid
           )
           
-          # DEBUG
-          #puts
-          #puts 'params =============================='
-          #pp params
-          #puts 'vm_new =============================='
-          #pp vm_new
-
           vm_new.save # replace configuration file # NOP, DEV
         end
 
