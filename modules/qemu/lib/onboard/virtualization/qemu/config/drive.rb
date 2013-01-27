@@ -92,6 +92,11 @@ class OnBoard
           end
           alias runtime_name to_runtime_name
 
+          def img_info
+            img = QEMU::Img.new :drive_config => @config
+            img.info
+          end
+
           def [](k) 
             @config[k]
           end
