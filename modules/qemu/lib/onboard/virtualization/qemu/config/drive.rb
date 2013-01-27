@@ -1,4 +1,5 @@
 require 'facets/hash'
+require 'onboard/extensions/kernel'
 
 class OnBoard
   module Virtualization
@@ -35,10 +36,10 @@ class OnBoard
               defaults  = {
                 :scsi     =>  {
                   :buses    =>    2,
-                  :units    =>    2,
+                  :units    =>    4,
                 },
                 :virtio   =>  {
-                  :indexes  =>    4,
+                  :indexes  =>    8,
                 } 
               }
               opts = defaults.deep_merge(opts)
@@ -66,12 +67,14 @@ class OnBoard
 
           # Corresponding name in 'info block' output from QEMU Monitor
           def to_runtime_name
+            cannot_guess_from = "Cannot guess runtime/Monitor name from these Drive data"
+            return unless @config['if']
             name = "#{@config['if']}"
             case @config['if']
             when 'virtio'
-              raise RuntimeError, "I cannot manage this: #{@config.inspect}" unless 
-                  @config['index'] # Assumption to make the machinery work :-p
-              name << @config['index'].to_s
+              warn "#{cannot_guess_from}: #{@config.inspect}" unless 
+                  xor( @config['index'], @config['unit'] )
+              name << (@config['index'] || @config['unit']).to_s
               return name
             else
               name << @config['bus'].to_s
@@ -81,7 +84,7 @@ class OnBoard
               when 'cdrom'
                 name << '-cd'
               else
-                raise RuntimeError, "I cannot manage this: #{@config.inspect}"
+                warn "#{cannot_guess_from}: #{@config.inspect}"
               end
               name << @config['unit'].to_s
               return name
