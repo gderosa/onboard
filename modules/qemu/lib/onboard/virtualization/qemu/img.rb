@@ -28,7 +28,7 @@ class OnBoard
               size_str = h['qemu-img']['size']['G'] + 'G'
               fmt = h['qemu-img']['fmt']
               FileUtils.mkdir_p File.join ROOTDIR, name
-              filepath = "#{ROOTDIR}/#{name}/#{h['idx']}.#{fmt}"
+              filepath = "#{ROOTDIR}/#{name}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
                 FileUtils.mv filepath, "#{filepath}.old"
               end
