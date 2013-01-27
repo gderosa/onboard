@@ -344,7 +344,34 @@ class OnBoard
             drives_h[runtime_name] ||= {}
             drives_h[runtime_name]['config'] = d
             img = QEMU::Img.new :drive_config => d
-            drives_h[runtime_name]['snapshots'] = img.snapshots
+
+            drives_h[runtime_name]['img']               =   img.info
+            drives_h[runtime_name]['img']               ||= {}
+            drives_h[runtime_name]['img']['snapshots']  =   img.snapshots
+            #drives_h[runtime_name]['img']['virtual_size'] = img.info['virtual_size'] if img.info
+            
+            # Compatibility code (don't want this to go into JSON etc.)
+            class << drives_h[runtime_name]
+              alias __square_brackets__orig []
+              def [](k)
+                case k
+                when 'snapshots', 'virtual_size'
+                  self['img'][k]
+                else
+                  __square_brackets__orig k
+                end
+              end
+              alias __square_brackets_assign__orig []=
+              def []=(k,v)
+                case k
+                when 'snapshots', 'virtual_size'
+                  self['img'][k] = v
+                else
+                  __square_brackets_assign__orig k, v
+                end
+              end
+            end
+
           end
           drives_h
         end
