@@ -83,11 +83,11 @@ if vm.running?
   ) if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /\d/
   case _action_
   when 'take'
-    vm.savevm _snap_name_
+    puts vm.savevm _snap_name_
   when 'apply'
-    vm.loadvm _snap_name_
+    puts vm.loadvm _snap_name_
   when 'delete'
-    vm.delvm  _snap_name_
+    puts vm.delvm  _snap_name_
   end
 else
   drives.each_pair do |drive_name, drive|

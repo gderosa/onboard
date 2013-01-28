@@ -18,17 +18,17 @@ class OnBoard
             QEMU::Config.relative_path *a
           end
 
-          # for example an image is created at: ~/files/QEMU/Win7/Win7.qcow2
-          # or ~/files/QEMU/Debian/Debian.raw
+          # for example an image is created at: ~/files/QEMU/Win7/{idx}.qcow2
+          # or ~/files/QEMU/Debian/#{idx}.raw
           def create(h)
             raise OnBoard::BadRequest, 'Virtual machine must have a name' unless
-                h[:http_params]['name'] and h[:http_params]['name'] =~ /\S/
-            name = h[:http_params]['name']
-            if h[:http_params]['qemu-img'] and h[:http_params]['qemu-img']['create'] == 'on'
-              size_str = h[:http_params]['qemu-img']['size']['G'] + 'G'
-              fmt = h[:http_params]['qemu-img']['fmt']
+                h['vmname'] and h['vmname'] =~ /\S/
+            name = h['vmname']
+            if h['qemu-img'] and h['qemu-img']['create']
+              size_str = h['qemu-img']['size']['G'] + 'G'
+              fmt = h['qemu-img']['fmt']
               FileUtils.mkdir_p File.join ROOTDIR, name
-              filepath = "#{ROOTDIR}/#{name}/#{name}.#{fmt}"
+              filepath = "#{ROOTDIR}/#{name}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
                 FileUtils.mv filepath, "#{filepath}.old"
               end

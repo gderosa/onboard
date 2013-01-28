@@ -59,7 +59,9 @@ class OnBoard
               'cmdline'       => snapshot_cmdline,
               'stdout'        => snapshot_stdout,
               'stderr'        => snapshot_stderr,
-              'schedule'      => snapshot_cron_entry.to_hash
+              'schedule'      => snapshot_cron_entry  ? 
+                  snapshot_cron_entry.to_hash         :
+                  {},
             }
           }
         end
@@ -391,10 +393,10 @@ class OnBoard
         end
 
         def savevm(name, *opts)
-          @monitor.sendrecv "savevm #{name}", :timeout => SAVEVM_TIMEOUT
           if opts.include? :loadvm_on_next_boot
             loadvm_on_next_boot name
           end
+          @monitor.sendrecv "savevm #{name}", :timeout => SAVEVM_TIMEOUT
         end
 
         def loadvm(name, *opts)
