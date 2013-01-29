@@ -13,7 +13,19 @@ class OnBoard
       end
       def authorized?
         @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-        if @auth.provided? && @auth.basic? && @auth.credentials 
+        
+        #begin # DEBUG
+        #  pp @auth.credentials
+        #  pp @auth.provided?
+        #  pp @auth.basic?
+        #rescue NoMethodError
+        #  puts "No credentials"
+        #end
+        
+        # Rack::Auth::Basic::Request#basic? turns false when OnBoard runs
+        # daemonized (via rackup file). So we don't check it.
+        #
+        if @auth.provided? && @auth.credentials 
           if File.exists? OnBoard::Passwd::ADMIN_PASSWD_FILE
             return ( 
               @auth.credentials[0] == 'admin' && 
