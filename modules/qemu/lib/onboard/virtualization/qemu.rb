@@ -33,7 +33,7 @@ class OnBoard
             begin
               config = Config.new(:config => YAML.load(File.read file)) 
               ary << Instance.new(config)
-            rescue TypeError
+            rescue TypeError, NoMethodError
               LOGGER.error "qemu: Found an invalid config file: #{file}"
             end
           end
@@ -42,7 +42,11 @@ class OnBoard
 
         def find(h)
           Dir.glob "#{CONFDIR}/*.yml" do |file|
-            config = Config.new(:config => YAML.load(File.read file))
+            begin
+              config = Config.new(:config => YAML.load(File.read file))
+            rescue NoMethodError
+              next
+            end
             if config.uuid =~ /^#{h[:vmid]}/ # may be uuid or a shortened uuid
               return Instance.new(config)
             end
