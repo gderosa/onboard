@@ -75,5 +75,11 @@
       }
     }
   }
+  function qemuRefreshScreenshot(id, basepath) {
+    var screenshot = document.getElementById(id);
+    if (screenshot) {
+      screenshot.src = basepath;
+    }
+  }
 </script>
 
