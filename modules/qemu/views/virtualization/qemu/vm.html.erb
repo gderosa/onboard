@@ -359,5 +359,8 @@
   <%# js functions implemented in qemu/_js.html.erb %>
   qemuSaveRestoreControls('<%= vm.uuid %>');
   qemuNetIfControls();
-  setInterval(function(){qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>')}, 2000) ;
+  window.setInterval(
+      function(){
+        qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>')
+      }, 2000) ;
 </script>

@@ -78,7 +78,7 @@
   function qemuRefreshScreenshot(id, basepath) {
     var screenshot = document.getElementById(id);
     if (screenshot) {
-      screenshot.src = basepath + '?nocache=' + '<%= request.object_id %>';
+      screenshot.src = basepath + '?nocache=' + new Date();
     }
   }
 </script>
