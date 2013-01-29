@@ -168,6 +168,17 @@
               </option>
             <% end %>
           </select>
+          <!-- -->
+          <% begin %>
+            <% if hd.img_info %>  
+              <span class="lowlight" style="margin-left:1em">(<%= hd.img_info['virtual_size'].split.first %>)</span>
+            <% end %>
+          <% rescue NoMethodError %>
+            <% # turn the Hash into an object with proper methods %> 
+            <% hd = OnBoard::V12n::QEMU::Config::Drive.new hd %>
+            <% retry %>
+          <% end %>
+          <!-- -->
         </td>  
       </tr>
       <tr>

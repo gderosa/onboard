@@ -63,6 +63,21 @@ class OnBoard
           return list
         end
 
+        def info
+          h = {}
+          if @file and File.exists? @file
+            `qemu-img info "#{@file}"`.each_line do |line|
+              break if line =~ /^\s*Snapshot list:/
+              if line =~ /([^:]+):([^:]+)/ 
+                k = $1
+                v = $2
+                h[k.strip.gsub(' ', '_')] = v.strip if h and v
+              end
+            end
+            return h
+          end
+        end
+
       end
     end
   end
