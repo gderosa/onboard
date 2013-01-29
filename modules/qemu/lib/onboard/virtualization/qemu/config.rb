@@ -94,7 +94,15 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   'serial'  => generate_drive_serial,
                   'media'   => 'disk',
                 }
-                newhd = hd | default | (Drive.slot2data(hd['slot']) || {}) 
+                
+                # NOTE: you can't use this Facets thing if you have already required Sequel.
+                # The '|' operation between two Hashes produces a Sequel boolean expression object.
+                # So there's a conflict between the two gems, which should be reported/fixed.
+                #
+                # newhd = hd | default | (Drive.slot2data(hd['slot']) || {}) 
+                #
+                newhd = default.merge(hd).merge( Drive.slot2data(hd['slot']) || {}  ) 
+                
                 @cmd['opts']['-drive'] << newhd
               end
             end
