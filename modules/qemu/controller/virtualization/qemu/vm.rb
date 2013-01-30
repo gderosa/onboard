@@ -106,24 +106,16 @@ class OnBoard
     end
 
     get '/virtualization/qemu/vm/:vmid/screen.:format' do
-
       vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
-
       if 
           vm.respond_to? :screendump                  and 
           vm.running?                                 and 
           screendump = vm.screendump(params[:format])
-
         send_file screendump 
-
       else
-
         not_found
-
       end
-
     end
 
   end
-
 end

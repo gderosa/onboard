@@ -78,7 +78,9 @@
   function qemuRefreshScreenshot(id, basepath) {
     var screenshot = document.getElementById(id);
     if (screenshot) {
-      screenshot.src = basepath + '?nocache=' + new Date();
+      var src = basepath + '#cachebust-' + new Date().getTime();
+      // document.getElementById('jsdebug').innerHTML = src; // DEBUG
+      screenshot.src = src;
     }
   }
 </script>
