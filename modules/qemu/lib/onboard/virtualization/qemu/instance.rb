@@ -256,13 +256,18 @@ class OnBoard
         end
 
         def get_status(opts={})
-          str = @monitor.sendrecv 'info status', opts
-          if str =~ /error/i
-            if snapshotting?
-              str = 'Running, Snapshotting' 
+          begin
+            str = @monitor.sendrecv 'info status', opts
+            if str =~ /error/i
+              if snapshotting?
+                str = 'Running, Snapshotting' 
+              end
             end
+            @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
+          rescue Errno::EACCES
+            fix_permissions
+            retry
           end
-          @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
         end
 
         # TODO: move to QEMU::Snapshot::Runtime or something
