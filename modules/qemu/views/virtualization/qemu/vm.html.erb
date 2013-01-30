@@ -361,6 +361,7 @@
   qemuNetIfControls();
   window.setInterval(
       function(){
-        qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>')
+        qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
+        qemuRefreshHTML('status[<%= vm.uuid %>]', 'http://localhost:4567/virtualization/qemu/vm/<%= vm.uuid_short %>/bits/status');
       }, 1600) ;
 </script>

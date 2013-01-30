@@ -83,5 +83,18 @@
       screenshot.src = src;
     }
   }
+  function qemuRefreshHTML(id, basepath) {
+    var elem = document.getElementById(id);
+    if (elem) {
+      var fetch_from = basepath + '?cachebust=' + new Date().getTime();
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET", fetch_from, false);
+      xmlhttp.send();
+      if (xmlhttp.status === 200) {
+        var snippet = xmlhttp.responseText;
+        elem.innerHTML = snippet;
+      }
+    }
+  }
 </script>
 

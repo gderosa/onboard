@@ -247,16 +247,16 @@ class OnBoard
           status =~ /paused/i
         end
 
-        def status
+        def status(opts={})
           return "Not Running#{', Snapshotting' if snapshotting?}" unless running?
           unless @cache['status'] =~ /\S/
-            get_status
+            get_status(opts)
           end
           return @cache['status']
         end
 
-        def get_status
-          str = @monitor.sendrecv 'info status'
+        def get_status(opts={})
+          str = @monitor.sendrecv 'info status', opts
           if str =~ /error/i
             if snapshotting?
               str = 'Running, Snapshotting' 

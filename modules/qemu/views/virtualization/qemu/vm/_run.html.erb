@@ -17,7 +17,7 @@
                             ''
                           end
           %>
-          <td rowspan="2" class="vminfo <%= extra_class %>"><%= vm.status %></td>
+          <td id="status[<%= vm.uuid %>]" rowspan="2" class="vminfo <%= extra_class %>"><%= vm.status %></td>
 
           <% show_saverestore = ( 
               vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
