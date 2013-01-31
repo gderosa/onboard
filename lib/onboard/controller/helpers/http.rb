@@ -8,6 +8,13 @@ class OnBoard
         "#{File.dirname(request.path_info)}.#{params[:format]}"
       end
 
+      def absolute_url(h)
+        url_noqs = request.url.sub "?#{request.query_string}", ''
+        res = url_noqs.sub(%r{/[^/]+$}, '') + '/' + h[:relative_path] 
+        p res
+        res
+      end
+
       def query_string_merge(h)
         # Rack::Request#GET doesn't play well when :method_ovverride
         # is enabled in Sinatra. 

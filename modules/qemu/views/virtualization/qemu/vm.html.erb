@@ -1,7 +1,7 @@
 <%
+  require 'onboard/extensions/string'
   require 'onboard/network/interface'
   require 'onboard/network/bridge'
-
   require 'onboard/virtualization/qemu'
 
   vm                  = objects[:vm] 
@@ -357,6 +357,10 @@
   <button style="margin-top:3.3ex;" type="submit">Change!</button>
 </form>
 
+<%
+  http_dir = (request.url - request.query_string - '?')
+%>
+
 <script type="text/javascript">
   <%# js functions implemented in qemu/_js.html.erb %>
   qemuSaveRestoreControls('<%= vm.uuid %>');
@@ -364,6 +368,9 @@
   window.setInterval(
       function(){
         qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
-        qemuRefreshHTML('status[<%= vm.uuid %>]', 'http://localhost:4567/virtualization/qemu/vm/<%= vm.uuid_short %>/bits/status');
-      }, 1600) ;
+        qemuRefreshHTML('status[<%= vm.uuid %>]', '<%= absolute_url :relative_path => "#{vm.uuid_short}/bits/status" %>';
+        // 'http://localhost:4567/virtualization/qemu/vm/<%= vm.uuid_short %>/bits/status');
+      }, 
+      1600
+  ) ;
 </script>
