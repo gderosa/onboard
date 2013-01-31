@@ -51,13 +51,15 @@
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
-    <%= 
-      partial(
-        :module => 'qemu',
-        :path   => 'virtualization/qemu/vm/_run',
-        :locals => {:vm => vm} 
-      )
-    %>
+    <div id="runPanel" style="margin:0;padding:0;border:none">
+      <%= 
+        partial(
+          :module => 'qemu',
+          :path   => 'virtualization/qemu/vm/_run',
+          :locals => {:vm => vm} 
+        )
+      %>
+    </div>
 </form>
 
 <h3>Snapshots</h3>
