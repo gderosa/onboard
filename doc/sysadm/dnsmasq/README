@@ -1,5 +1,8 @@
 Providing DHCP an DNS services to the local network.
 
+* REQUIRED VERSIONS: 2.61 or 2.62 or 2.64 and higher.
+  * Need --host-record to work properly. See Dnsmasq CHANGELOG.
+
 * Do not use BIND or other nameservers installed locally
 
 * use dnsmasq for serving DHCP and forward DNS queries to external 
@@ -7,7 +10,8 @@ Providing DHCP an DNS services to the local network.
   a dhcp client on some interface and dhcp server on other) or setup 
   manually
 
-* at least on Debian systems you MUST install the 'resolvconf' package
+* at least on Debian systems you SHOULD (MUST?) install the 'resolvconf' 
+  package
   * for example, dhcpcd is wrapped and cannot update /etc/resolv.conf without
     calling resolvconf
 
@@ -16,8 +20,8 @@ Providing DHCP an DNS services to the local network.
    /etc/dnsmasq.conf will be read anyway, so we need to avoid 
    conficts/duplicates  
 
-* Debian lenny uses an old version of Dnsmasq: compile from sources the latest,
-  but keep the /etc/init.d/dnsmasq script provided by the deb, just changing 
+* If you compile Dnsmasq from sources you may need to change, in
+  /etc/init.d/dnsmasq 
 
 DAEMON=/usr/sbin/dnsmasq
 

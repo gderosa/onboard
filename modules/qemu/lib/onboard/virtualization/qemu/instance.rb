@@ -59,7 +59,9 @@ class OnBoard
               'cmdline'       => snapshot_cmdline,
               'stdout'        => snapshot_stdout,
               'stderr'        => snapshot_stderr,
-              'schedule'      => snapshot_cron_entry.to_hash
+              'schedule'      => snapshot_cron_entry  ? 
+                  snapshot_cron_entry.to_hash         :
+                  {},
             }
           }
         end
@@ -97,7 +99,8 @@ class OnBoard
               #,streaming-video=[off|all|filter]
             end
           end
-          cmdline << '-vga qxl '
+          # cmdline << '-vga qxl '
+              # TODO: do not hardcode: remove in the meanwhile
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
             if opts['-monitor']['unix']
@@ -241,7 +244,7 @@ class OnBoard
         end
 
         def paused?
-          status =~ /paused/
+          status =~ /paused/i
         end
 
         def status
@@ -259,7 +262,7 @@ class OnBoard
               str = 'Running, Snapshotting' 
             end
           end
-          @cache['status'] = str.sub(/^VM status(: )?/, '').capitalize
+          @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
         end
 
         # TODO: move to QEMU::Snapshot::Runtime or something
@@ -341,7 +344,34 @@ class OnBoard
             drives_h[runtime_name] ||= {}
             drives_h[runtime_name]['config'] = d
             img = QEMU::Img.new :drive_config => d
-            drives_h[runtime_name]['snapshots'] = img.snapshots
+
+            drives_h[runtime_name]['img']               =   img.info
+            drives_h[runtime_name]['img']               ||= {}
+            drives_h[runtime_name]['img']['snapshots']  =   img.snapshots
+            #drives_h[runtime_name]['img']['virtual_size'] = img.info['virtual_size'] if img.info
+            
+            # Compatibility code (don't want this to go into JSON etc.)
+            class << drives_h[runtime_name]
+              alias __square_brackets__orig []
+              def [](k)
+                case k
+                when 'snapshots', 'virtual_size'
+                  self['img'][k]
+                else
+                  __square_brackets__orig k
+                end
+              end
+              alias __square_brackets_assign__orig []=
+              def []=(k,v)
+                case k
+                when 'snapshots', 'virtual_size'
+                  self['img'][k] = v
+                else
+                  __square_brackets_assign__orig k, v
+                end
+              end
+            end
+
           end
           drives_h
         end
@@ -390,10 +420,10 @@ class OnBoard
         end
 
         def savevm(name, *opts)
-          @monitor.sendrecv "savevm #{name}", :timeout => SAVEVM_TIMEOUT
           if opts.include? :loadvm_on_next_boot
             loadvm_on_next_boot name
           end
+          @monitor.sendrecv "savevm #{name}", :timeout => SAVEVM_TIMEOUT
         end
 
         def loadvm(name, *opts)

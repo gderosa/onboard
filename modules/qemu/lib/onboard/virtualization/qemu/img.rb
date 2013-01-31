@@ -18,17 +18,17 @@ class OnBoard
             QEMU::Config.relative_path *a
           end
 
-          # for example an image is created at: ~/files/QEMU/Win7/Win7.qcow2
-          # or ~/files/QEMU/Debian/Debian.raw
+          # for example an image is created at: ~/files/QEMU/Win7/{idx}.qcow2
+          # or ~/files/QEMU/Debian/#{idx}.raw
           def create(h)
             raise OnBoard::BadRequest, 'Virtual machine must have a name' unless
-                h[:http_params]['name'] and h[:http_params]['name'] =~ /\S/
-            name = h[:http_params]['name']
-            if h[:http_params]['qemu-img'] and h[:http_params]['qemu-img']['create'] == 'on'
-              size_str = h[:http_params]['qemu-img']['size']['G'] + 'G'
-              fmt = h[:http_params]['qemu-img']['fmt']
+                h['vmname'] and h['vmname'] =~ /\S/
+            name = h['vmname']
+            if h['qemu-img'] and h['qemu-img']['create']
+              size_str = h['qemu-img']['size']['G'] + 'G'
+              fmt = h['qemu-img']['fmt']
               FileUtils.mkdir_p File.join ROOTDIR, name
-              filepath = "#{ROOTDIR}/#{name}/#{name}.#{fmt}"
+              filepath = "#{ROOTDIR}/#{name}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
                 FileUtils.mv filepath, "#{filepath}.old"
               end
@@ -49,7 +49,7 @@ class OnBoard
           list = []
           if @file and File.exists? @file
             `qemu-img snapshot -l "#{@file}"`.each_line do |line|
-              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d+[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
+              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
                 list << Snapshot.new(
                   :id       =>                                $1.to_i,
                   :tag      =>                                $2,
@@ -61,6 +61,21 @@ class OnBoard
             end
           end
           return list
+        end
+
+        def info
+          h = {}
+          if @file and File.exists? @file
+            `qemu-img info "#{@file}"`.each_line do |line|
+              break if line =~ /^\s*Snapshot list:/
+              if line =~ /([^:]+):([^:]+)/ 
+                k = $1
+                v = $2
+                h[k.strip.gsub(' ', '_')] = v.strip if h and v
+              end
+            end
+            return h
+          end
         end
 
       end

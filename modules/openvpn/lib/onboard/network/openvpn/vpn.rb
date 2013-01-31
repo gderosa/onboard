@@ -1060,7 +1060,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           key     = h[:key]
           port    = h[:port] 
           tmpl = Erubis::Eruby.new File.read(  
-              File.join ROOTDIR, 'templates/client.conf.erubis')
+              File.join ROOTDIR, 'templates/client.conf.erb')
           tmpl.result(binding) 
         end
 

@@ -1,6 +1,6 @@
-gem 'uuid'
+require 'uuid'
 
-autoload :UUID, 'uuid'
+require 'facets/hash'
 
 class OnBoard
   module Virtualization
@@ -87,17 +87,24 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 'file'  => self.class.absolute_path(h[:http_params]['usbdisk']),
               }
             end
-            if h[:http_params]['disk'] =~ /\S/
-              @cmd['opts']['-drive'] ||= []
-              @cmd['opts']['-drive'] << {
-                'serial'=> generate_drive_serial,
-                'file'  => self.class.absolute_path(h[:http_params]['disk']),
-                'media' => 'disk',
-                'if'    => 'ide',   # IDE (default)
-                'bus'   => 0,       # Primary
-                'unit'  => 0,       # Master
-                'cache' => h[:http_params]['cache']
-              }
+            @cmd['opts']['-drive'] ||= []
+            h[:http_params]['disk'].each_with_index do |hd, idx|
+              if hd['file']
+                default = {
+                  'serial'  => generate_drive_serial,
+                  'media'   => 'disk',
+                }
+                
+                # NOTE: you can't use this Facets thing if you have already required Sequel.
+                # The '|' operation between two Hashes produces a Sequel boolean expression object.
+                # So there's a conflict between the two gems, which should be reported/fixed.
+                #
+                # newhd = hd | default | (Drive.slot2data(hd['slot']) || {}) 
+                #
+                newhd = default.merge(hd).merge( Drive.slot2data(hd['slot']) || {}  ) 
+                
+                @cmd['opts']['-drive'] << newhd
+              end
             end
             @cmd['opts']['-drive'] ||= []
             @cmd['opts']['-drive'] << {

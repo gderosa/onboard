@@ -7,119 +7,127 @@ class OnBoard
       # badly designed class, too much hashes...
       # 'id' is not really an id, just a shortcut. We're moving to
       # a path-based identification, and now h['id'] may also be nil 
-
-      # TODO: do not hardcode
-      @@logs = [
-        {
-          'path'    => OnBoard::LOGFILE_PATH, 
-          'id'      => OnBoard::LOGFILE_BASENAME,
-          'desc'    => "Main log",
-          'category'=> 'main'
-        },
-        {
-          'path'    => "/var/log/messages",
-          'id'      => "messages",
-          'desc'    => "OS \"messages\"",
-          'htmldesc'=> "OS &ldquo;messages&rdquo;",
-          'category'=> 'os'
-        },
-        {
-          'path'    => "/var/log/syslog",
-          'id'      => "syslog",
-          'desc'    => "Main system log",
-          'category'=> 'os'
-        },
-        {
-          'path'    => "/var/log/daemon.log",
-          'id'      => "daemon.log",
-          'desc'    => "\"daemon\" log",
-          'htmldesc'=> "&ldquo;daemon&rdquo; log",
-          'category'=> 'os'
-        }
-      ] unless class_variable_defined? :@@logs
-
-      @@categories = {
-        'main'      => "Main logs",
-        'os'        => "OS logs"
-      } unless class_variable_defined? :@@categories
-
-      def self.sanitize!
-        file_needs_update = false
-        new = []
-        @@logs.each do |h|
-          if File.exists? h['path']
-            new << h
-          else
-            file_needs_update = true
-          end
-        end
-        @@logs = new
-        self.save if file_needs_update
-      end
-
-      def self.all
-        self.sanitize!
-        @@logs
-      end
-
-      def self.getAll
-        self.all
-      end
-
-      def self.delete_if(&blk)
-        @@logs.delete_if &blk
-        self.save
-      end
-
-      def self.categories
-        @@categories
-      end
       
-      def self.data
-        {'logs' => @@logs, 'categories' => @@categories} 
-      end
+      class << self
 
-      def self.register(new_h)
-        # "create or replace"
-        @@logs.each_with_index do |old_h, i| 
-          if old_h['path'] == new_h['path']
-            @@logs[i] = new_h
-            return
+        def set_defaults!
+        
+          # TODO: do not hardcode
+          @logs ||= [
+            {
+              'path'    => OnBoard::LOGFILE_PATH, 
+              'id'      => OnBoard::LOGFILE_BASENAME,
+              'desc'    => "Main log",
+              'category'=> 'main'
+            },
+            {
+              'path'    => "/var/log/messages",
+              'id'      => "messages",
+              'desc'    => "OS \"messages\"",
+              'htmldesc'=> "OS &ldquo;messages&rdquo;",
+              'category'=> 'os'
+            },
+            {
+              'path'    => "/var/log/syslog",
+              'id'      => "syslog",
+              'desc'    => "Main system log",
+              'category'=> 'os'
+            },  
+            {
+              'path'    => "/var/log/daemon.log",
+              'id'      => "daemon.log",
+              'desc'    => "\"daemon\" log",
+              'htmldesc'=> "&ldquo;daemon&rdquo; log",
+              'category'=> 'os'
+            }
+          ] 
+
+          @categories ||= {
+            'main'      => "Main logs",
+            'os'        => "OS logs"
+          } 
+
+        end
+  
+        def sanitize!
+          file_needs_update = false
+          new = []
+          @logs.each do |h|
+            if File.exists? h['path']
+              new << h
+            else
+              file_needs_update = true
+            end
+          end
+          @logs = new
+          save if file_needs_update
+        end
+
+        def all
+          sanitize!
+          @logs
+        end
+
+        def getAll
+          all
+        end
+
+        def delete_if(&blk)
+          @logs.delete_if &blk
+          save
+        end
+
+        def categories
+          @categories
+        end
+      
+        def data
+          {'logs' => @logs, 'categories' => @categories} 
+        end
+
+        def register(new_h)
+          # "create or replace"
+          @logs.each_with_index do |old_h, i| 
+            if old_h['path'] == new_h['path']
+              @logs[i] = new_h
+              return
+            end
+          end
+          @logs << new_h
+          save
+        end
+
+        def register_category(name, description)
+          @categories[name] = description
+          save
+        end
+
+        def to_json(*a); data.to_json(*a); end
+
+        def to_yaml(*a); data.to_yaml(*a); end
+
+        def save
+          FileUtils.mkdir_p File.dirname DATAFILE
+          File.open DATAFILE, 'w' do |f|
+            f.write YAML.dump data
           end
         end
-        @@logs << new_h
-        self.save
-      end
 
-      def self.register_category(name, description)
-        @@categories[name] = description
-        self.save
-      end
-
-      def self.to_json(*a); data.to_json(*a); end
-
-      def self.to_yaml(*a); data.to_yaml(*a); end
-
-      def self.save
-        FileUtils.mkdir_p File.dirname DATAFILE
-        File.open DATAFILE, 'w' do |f|
-          f.write YAML.dump data
+        def load
+          if File.exists? DATAFILE
+            h = YAML.load File.read DATAFILE
+            @categories         ||= {}
+            @categories.update      h['categories']
+            @logs               ||= [] 
+            @logs               |=  h['logs']
+          end
         end
-      end
 
-      def self.load
-        if File.exists? DATAFILE
-          h = YAML.load File.read DATAFILE
-          @@categories  ||=   []
-          @@categories  |=    h['categories']
-          @@logs        ||=   [] 
-          @@logs        |=    h['logs']
-        end
       end
 
       attr_reader :meta
 
-      def initialize(h) # keeps one of the elements of @@logs
+      def initialize(h) # keeps one of the elements of @logs
         @meta = h
       end
 
@@ -158,3 +166,6 @@ class OnBoard
     end
   end
 end
+
+OnBoard::System::Log.set_defaults! # horrible
+

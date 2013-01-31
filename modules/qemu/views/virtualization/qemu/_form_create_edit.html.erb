@@ -1,4 +1,6 @@
 <% 
+  sect_sep_height = '0.8ex'
+
   vm ||= nil
 
   vnc_available   = OnBoard::V12n::QEMU::VNC::Display.available
@@ -25,21 +27,25 @@
     formvals['spice'] ||= {}
     formvals['spice']['port'] = vm.config['-spice']['port'] if 
         vm.config['-spice'] and vm.config['-spice']['port'] 
-    optical_drive      = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
-    formvals['cdrom']  = 
+    optical_drive       = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
+    formvals['cdrom']   = 
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
 
-    hd_drive           = vm.config['-drive'].find{|d| d['media'] == 'disk' }
-    usb_disk           = (
+    hd_drives_h           = vm.config['-drive'].select{|d| d['media'] == 'disk' }
+    hd_drives             = hd_drives_h.map{|h| OnBoard::V12n::QEMU::Config::Drive.new h}
+    usb_disk            = (
         vm.config['-usbdevice']                               and 
         vm.config['-usbdevice'].find{|d| d['type'] == 'disk'} 
     )     
 
-    if hd_drive
-      formvals['disk']   = 
-          OnBoard::V12n::QEMU::Config.relative_path hd_drive['file']
-      formvals['cache']  = hd_drive['cache']
+    hd_drives ||= [] 
+    formvals['disks'] = []
+    hd_drives.each do |hd|
+      hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['file'] if hd['file']
+      formvals['disks'] << hd
     end
+    formvals['disks'] << OnBoard::V12n::QEMU::Config::Drive.new({'cache' => cache_default})
+
     if usb_disk
       formvals['usbdisk'] = OnBoard::V12n::QEMU::Config.relative_path usb_disk['file']
     end
@@ -73,7 +79,8 @@
   formvals['vnc']           ||= ":#{vnc_available.first}"
   formvals['spice']         ||= {}
   formvals['spice']['port'] ||= spice_available.first
-  formvals['cache']         ||= cache_default
+  # formvals['cache']         ||= cache_default # unused, we have an Array if disks...
+  formvals['disks']         ||= [{'cache' => cache_default}]  
 
   random_macs               = []
   0.upto(5) do |i|
@@ -112,6 +119,15 @@
           <input type="text" name="name" value="<%= formvals['name'] %>"/>
         </td>
       </tr>
+      <tr>
+        <th scope="row">RAM</th>
+        <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
+      </tr>
+      <tr>
+        <th scope="row">Number of CPUs / cores</th>
+        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
+      </tr>
+
       <tr> 
         <th scope="row">CD/DVD image (optional)</th>
         <td>
@@ -124,28 +140,59 @@
           <input class="vimagepath" type="text" name="usbdisk" id="usbdisk" onclick="javascript:popup_filechooser(this);" value="<%= formvals['usbdisk'] %>"/>
         </td>
       </tr>
+
+      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- BEGIN HARD DISK IMAGES -->
+
+    <% formvals['disks'].each_with_index do |hd, idx| %>
+      <% unless idx == 0%>
+        <tr style="height:<%= sect_sep_height %>"> </tr>
+      <% end %>
       <tr>
         <th scope="row">
-          Hard Disk Image
+          Hard Disk Image <span style="font-weight:normal;">(@ <em style="font-size:110%">slot</em>)</span>
           <div class="optinfo">Choose existing</div>
         </th>
         <td>
-          <input class="vimagepath" type="text" name="disk" id="disk" onclick="javascript:popup_filechooser(this);" value="<%= formvals['disk'] %>"/> 
+          <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
+          @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
+            <% ([''] + OnBoard::V12n::QEMU::Config::Drive.disk_slots).each do |slot| %>
+              <%
+                runtime_name = begin 
+                                 hd.runtime_name
+                               rescue Exception
+                                 nil
+                               end              
+              %>
+              <option value="<%= slot %>" <%= 'selected' if slot == runtime_name %>>
+                <%= slot %>
+              </option>
+            <% end %>
+          </select>
+          <!-- -->
+          <% begin %>
+            <% if hd.img_info %>  
+              <span class="lowlight" style="margin-left:1em">(<%= hd.img_info['virtual_size'].split.first %>)</span>
+            <% end %>
+          <% rescue NoMethodError %>
+            <% # turn the Hash into an object with proper methods %> 
+            <% hd = OnBoard::V12n::QEMU::Config::Drive.new hd %>
+            <% retry %>
+          <% end %>
+          <!-- -->
         </td>  
       </tr>
-
       <tr>
         <th scope="row">
           <div class="optinfo">
             Or create a new one 
             <span style="vertical-align:middle; margin: 0 0 0 2em">
-              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="qemu-img[create]" id="qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls()"/>
+              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="disk[<%= idx %>][qemu-img][create]" id="disk_<%= idx %>_qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls(<%= idx %>)"/>
             </span>
           </div>        
         </th> 
         <td>
-          &nbsp;Size <input type="text" name="qemu-img[size][G]" id="qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
-          &nbsp;Format <select name="qemu-img[fmt]" id="qemu-img_create_fmt" disabled>
+          &nbsp;Size <input type="text" name="disk[<%= idx %>][qemu-img][size][G]" id="disk_<%= idx %>_qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
+          &nbsp;Format <select name="disk[<%= idx %>][qemu-img][fmt]" id="disk_<%= idx %>_qemu-img_create_fmt" disabled>
             <option value="qcow2">QCOW2 (recommended)</option>
             <option value="raw">Raw</option>
             <!-- exclude "alien" image formats for now... -->
@@ -157,19 +204,15 @@
         <td>
           <fieldset>
             <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
-              <input name="cache" <%= 'checked' if c == formvals['cache'] %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 12ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
+              <input name="disk[<%= idx %>][cache]" <%= 'checked' if c == hd['cache'] %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 13ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
             <% end %>
           </fieldset>
         </td>
       </tr>
-      <tr>
-        <th scope="row">RAM</th>
-        <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
-      </tr>
-      <tr>
-        <th scope="row">Number of CPUs / cores</th>
-        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
-      </tr>
+    <% end %>
+
+      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- END HARD DISK IMAGES -->
+
       <tr>
         <th scope="row">Remote Display</th>
         <td>
