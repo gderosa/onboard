@@ -234,7 +234,12 @@ class OnBoard
         def pid
           pidfile = @config['-pidfile']
           if pidfile and File.exists? pidfile
-            return File.read(pidfile).to_i
+            begin
+              return File.read(pidfile).to_i
+            rescue Errno::EACCES
+              fix_permissions
+              retry
+            end
           end
         end
 
