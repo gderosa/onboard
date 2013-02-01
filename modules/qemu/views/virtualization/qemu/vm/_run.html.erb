@@ -28,7 +28,7 @@
           <% show_saverestore = ( 
               vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
           <% action_button_rowspan = 1 %>
-          <td class="button button_left" rowspan="<%= action_button_rowspan %> "id="button_power[<%= vm.uuid %>]" >
+          <td class="button button_left" rowspan="<%= action_button_rowspan %> "id="button_power_wrapper[<%= vm.uuid %>]" >
             <%= 
               partial(
                 :module => 'qemu',
@@ -39,7 +39,7 @@
               )
             %>
           </td>
-          <td class="button" rowspan="<%= action_button_rowspan %>" id="button_resumepause[<%= vm.uuid %>]">
+          <td class="button" rowspan="<%= action_button_rowspan %>" id="button_resumepause_wrapper[<%= vm.uuid %>]">
             <%= 
               if vm.running?
                 if vm.paused?
@@ -71,7 +71,7 @@
               end 
             %>
           </td>
-          <td class="button" rowspan="<%= action_button_rowspan %>" id="button_quit[<%= vm.uuid %>]">
+          <td class="button" rowspan="<%= action_button_rowspan %>" id="button_quit_wrapper[<%= vm.uuid %>]">
             <%=
               action_button(
                 :stop,
@@ -86,7 +86,7 @@
               ) 
             %>
           </td>
-          <td class="button button_right" rowspan="<%= action_button_rowspan %>" id="button_delete[<%= vm.uuid %>]">
+          <td class="button button_right" rowspan="<%= action_button_rowspan %>" id="button_delete_wrapper[<%= vm.uuid %>]">
             <%=
               action_button(
                 :delete,
