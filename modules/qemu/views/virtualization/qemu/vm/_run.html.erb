@@ -28,7 +28,7 @@
           <% show_saverestore = ( 
               vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
           <% action_button_rowspan = 1 %>
-          <td class="button button_left" rowspan="<%= action_button_rowspan %>">
+          <td class="button button_left" rowspan="<%= action_button_rowspan %> "id="button_power" >
             <%=
               if vm.running?
                 action_button(
@@ -50,7 +50,7 @@
               end
             %>
           </td>
-          <td class="button" rowspan="<%= action_button_rowspan %>">
+          <td class="button" rowspan="<%= action_button_rowspan %>" id="button_resumepause[<%= vm.uuid %>]">
             <%= 
               if vm.running?
                 if vm.paused?
@@ -82,7 +82,7 @@
               end 
             %>
           </td>
-          <td class="button" rowspan="<%= action_button_rowspan %>">
+          <td class="button" rowspan="<%= action_button_rowspan %>" id="button_quit[<%= vm.uuid %>]">
             <%=
               action_button(
                 :stop,
@@ -97,7 +97,7 @@
               ) 
             %>
           </td>
-          <td class="button button_right" rowspan="<%= action_button_rowspan %>">
+          <td class="button button_right" rowspan="<%= action_button_rowspan %>" id="button_delete[<%= vm.uuid %>]">
             <%=
               action_button(
                 :delete,
