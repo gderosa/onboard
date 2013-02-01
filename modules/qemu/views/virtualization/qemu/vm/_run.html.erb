@@ -1,3 +1,7 @@
+<%
+  vmstatus_opts ||= {}
+  vmstatus = vm.status(vmstatus_opts)
+%>
     <table id="vmlist">
       <thead>
         <tr>
@@ -8,7 +12,7 @@
       <tbody>
         <tr>
           <%
-            extra_class = case vm.status
+            extra_class = case vmstatus
                           when /error/i
                             'error'
                           when /snapshot/i
@@ -17,7 +21,9 @@
                             ''
                           end
           %>
-          <td id="status[<%= vm.uuid %>]" rowspan="2" class="vminfo <%= extra_class %>"><%= vm.status %></td>
+          <td id="status[<%= vm.uuid %>]" rowspan="2" class="vminfo <%= extra_class %>">
+            <%= vmstatus %>
+          </td>
 
           <% show_saverestore = ( 
               vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 

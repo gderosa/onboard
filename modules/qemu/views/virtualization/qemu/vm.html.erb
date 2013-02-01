@@ -361,12 +361,14 @@
   <%# js functions implemented in qemu/_js.html.erb %>
   qemuSaveRestoreControls('<%= vm.uuid %>');
   qemuNetIfControls();
-  window.setInterval(
+  <% if vm.running? and not params['quit'] %>
+    window.setInterval(
       function(){
-        qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
-        // qemuRefreshHTML('status[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/status" %>');
         qemuRefreshRunPanel('runPanel', '<%= "#{vm.uuid_short}/bits/run.html" %>');
+        qemuSaveRestoreControls('<%= vm.uuid %>');
+        qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
       }, 
       1600
-  ) ;
+    );
+  <% end %>
 </script>

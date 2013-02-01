@@ -9,13 +9,18 @@ class OnBoard
     get '/virtualization/qemu/vm/:vmid/bits/run.html' do
       vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
       if vm
-        partial(
-          :module => 'qemu',
-          :path   => 'virtualization/qemu/vm/_run',
-          :locals => {
-            :vm     => vm,
-          },
-        )
+        begin
+          partial(
+            :module => 'qemu',
+            :path   => 'virtualization/qemu/vm/_run',
+            :locals => {
+              :vm             => vm,
+              :vmstatus_opts  => {:raise => true}
+            },
+          )
+        rescue
+          halt 500 
+        end
       else
         not_found
       end
