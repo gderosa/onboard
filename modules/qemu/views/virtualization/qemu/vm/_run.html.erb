@@ -28,26 +28,15 @@
           <% show_saverestore = ( 
               vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
           <% action_button_rowspan = 1 %>
-          <td class="button button_left" rowspan="<%= action_button_rowspan %> "id="button_power" >
-            <%=
-              if vm.running?
-                action_button(
-                  :shutdown,
-                  :name     => 'powerdown[uuid]',
-                  :title    =>
-'ACPI Shutdown (may require some time to cleanly power off)',
-                  :value    => vm.uuid,
-                  :disabled => vm.snapshotting?
-                )
-              else
-                action_button(
-                  :start,                 
-                  :name     => 'start[uuid]',
-                  :title    => 'Start',
-                  :value    => vm.uuid,
-                  :disabled => vm.snapshotting?
-                ) 
-              end
+          <td class="button button_left" rowspan="<%= action_button_rowspan %> "id="button_power[<%= vm.uuid %>]" >
+            <%= 
+              partial(
+                :module => 'qemu',
+                :path   => 'virtualization/qemu/vm/buttons/_power',
+                :locals => {
+                  :vm     => vm,
+                }
+              )
             %>
           </td>
           <td class="button" rowspan="<%= action_button_rowspan %>" id="button_resumepause[<%= vm.uuid %>]">
