@@ -53,27 +53,23 @@
           </td>
           <td class="button" rowspan="<%= action_button_rowspan %>" id="button_quit_wrapper[<%= vm.uuid %>]">
             <%=
-              action_button(
-                :stop,
-                :name     => 'quit[uuid]',
-                :id       => "quit[#{vm.uuid}]",
-                :imgid    => "quit_button_img[#{vm.uuid}]",
-                :alt      => '',
-                :title    => 
-                    "Quit Virtualization (beware: if you don&rsquo;t or can&rsquo;t save state, you may corrupt data!)",
-                :value    => vm.uuid,
-                :disabled => (!vm.running? or vm.snapshotting?)
-              ) 
+               partial(
+                :module => 'qemu',
+                :path   => 'virtualization/qemu/vm/buttons/_quit',
+                :locals => {
+                  :vm     => vm,
+                }
+              )
             %>
           </td>
           <td class="button button_right" rowspan="<%= action_button_rowspan %>" id="button_delete_wrapper[<%= vm.uuid %>]">
             <%=
-              action_button(
-                :delete,
-                :name     => 'delete[uuid]',
-                :title    => 'Delete!',
-                :value    => vm.uuid,
-                :disabled => (vm.running? or vm.snapshotting?)
+               partial(
+                :module => 'qemu',
+                :path   => 'virtualization/qemu/vm/buttons/_delete',
+                :locals => {
+                  :vm     => vm,
+                }
               )
             %>
           </td>

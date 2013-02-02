@@ -1,0 +1,11 @@
+            <%=
+              action_button(
+                :delete,
+                :name     => 'delete[uuid]',
+                :title    => 'Delete!',
+                :value    => vm.uuid,
+                :disabled => (vm.running? or vm.snapshotting?)
+              )
+            %>
+
+

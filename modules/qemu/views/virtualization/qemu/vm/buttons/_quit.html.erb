@@ -1,0 +1,14 @@
+            <%=
+              action_button(
+                :stop,
+                :name     => 'quit[uuid]',
+                :id       => "quit[#{vm.uuid}]",
+                :imgid    => "quit_button_img[#{vm.uuid}]",
+                :alt      => '',
+                :title    => 
+                    "Quit Virtualization (beware: if you don&rsquo;t or can&rsquo;t save state, you may corrupt data!)",
+                :value    => vm.uuid,
+                :disabled => (!vm.running? or vm.snapshotting?)
+              ) 
+            %>
+
