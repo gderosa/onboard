@@ -368,6 +368,7 @@
         //qemuSaveRestoreControls('<%= vm.uuid %>');
         qemuRefreshHTML('status[<%= vm.uuid %>]',               '<%= "#{vm.uuid_short}/bits/status" %>');
         qemuRefreshHTML('button_power_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/power.html" %>');
+        qemuRefreshHTML('button_resumepause_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/resumepause.html" %>');
         qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
       }, 
       1600

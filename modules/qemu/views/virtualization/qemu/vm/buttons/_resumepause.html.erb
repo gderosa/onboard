@@ -1,0 +1,31 @@
+            <%= 
+              if vm.running?
+                if vm.paused?
+                  action_button(
+                    :start, 
+                    :name     => 'resume[uuid]', 
+                    :title    => 'Resume from Pause',
+                    :value    => vm.uuid,
+                    :disabled => vm.snapshotting?
+                  )
+                else
+                  action_button(
+                    :pause, 
+                    :name     => 'pause[uuid]', 
+                    :title    => 'Pause',
+                    :value    => vm.uuid,
+                    :disabled => vm.snapshotting?
+                  ) 
+                end
+              else
+                action_button(
+                  :start_paused, 
+                  :name     => 'start_paused[uuid]', 
+                  :title    => 
+'Start paused (so you have time to open a VNC client etc.)',
+                  :value    => vm.uuid,
+                  :disabled => vm.snapshotting?
+                ) 
+              end 
+            %>
+
