@@ -371,6 +371,7 @@
         qemuRefreshHTML('button_power_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/power.html" %>');
         qemuRefreshHTML('button_resumepause_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/resumepause.html" %>');
         qemuRefreshHTML('button_quit_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/quit.html" %>');
+        qemuSaveRestoreControls('<%= vm.uuid %>');   
         qemuRefreshHTML('button_delete_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/delete.html" %>');
  
         qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
