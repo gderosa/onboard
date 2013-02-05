@@ -1,3 +1,16 @@
+2013.03.03
+
+* QEMU/KVM: 
+	* (ui) JS autorefresh (single VM page only)
+		* actually use the JSON API from JS refresh code (only :vmid/running.json)
+		* load HTML snippets elsewhere (no iframes) 
+	* (ui, minor) slightly enlarge screenshot
+	* (system) further socket permission fixes
+
+* OpenVPN:
+	* (client side wizard) fix template path
+
+
 2013.03.02
 
 * openvpn: push a deliberately high route metric 
