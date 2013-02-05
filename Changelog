@@ -1,14 +1,40 @@
+2013.03.03
+
+* QEMU/KVM: 
+	* (ui) JS autorefresh (single VM page only)
+		* actually use the JSON API from JS refresh code (only :vmid/running.json)
+		* load HTML snippets elsewhere (no iframes) 
+	* (ui, minor) slightly enlarge screenshot
+	* (system) further socket permission fixes
+	* (config) more robustness on invalid .yml files
+	* (disk) multiple disk and choose among VirtIO, ATA and SCSI "slots"
+	* (disk) show img virtual size
+
+* OpenVPN:
+	* (client side wizard) fix template path
+
+* cross-module fixes:
+	* work-around conflict (Facets vs Sequel on Hash#|) 
+		* involves radius-admin and qemu
+
+* core:
+	* Rack auth fix / workaround (never authenticated HTTP basic when daemonized)
+	* system/log fixes (OpenVPN logs were Not Found)
+	* (snat) handle corner cases (no chains)
+	* (dnsmasq) don't enable tftp (on a non-existent dir :-p)
+	* (dnsmasq) skip --host-record on buggy/lacking Dnsmasq versions
+
 2013.03.02
 
 * openvpn: push a deliberately high route metric 
-  * you can push-route your entire office LAN with no conflicts when you are
-    at the office itself
+	* you can push-route your entire office LAN with no conflicts when you are
+	  at the office itself
 
 * Hostname:
-  * Hostname.be_resolved ("autoresolve"): avoid messing with public IPs
-  * "warn" when configured FQDN does not match a reverse DNS query for machine
-    configured IPs
-  * minor fixes
+	* Hostname.be_resolved ("autoresolve"): avoid messing with public IPs
+	* "warn" when configured FQDN does not match a reverse DNS query for machine
+	  configured IPs
+	* minor fixes
 
 2013.03.01
 

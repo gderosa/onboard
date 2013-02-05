@@ -234,7 +234,12 @@ class OnBoard
         def pid
           pidfile = @config['-pidfile']
           if pidfile and File.exists? pidfile
-            return File.read(pidfile).to_i
+            begin
+              return File.read(pidfile).to_i
+            rescue Errno::EACCES
+              fix_permissions
+              retry
+            end
           end
         end
 
@@ -247,22 +252,27 @@ class OnBoard
           status =~ /paused/i
         end
 
-        def status
+        def status(opts={})
           return "Not Running#{', Snapshotting' if snapshotting?}" unless running?
           unless @cache['status'] =~ /\S/
-            get_status
+            get_status(opts)
           end
           return @cache['status']
         end
 
-        def get_status
-          str = @monitor.sendrecv 'info status'
-          if str =~ /error/i
-            if snapshotting?
-              str = 'Running, Snapshotting' 
+        def get_status(opts={})
+          begin
+            str = @monitor.sendrecv 'info status', opts
+            if str =~ /error/i
+              if snapshotting?
+                str = 'Running, Snapshotting' 
+              end
             end
+            @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
+          rescue Errno::EACCES
+            fix_permissions
+            retry
           end
-          @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
         end
 
         # TODO: move to QEMU::Snapshot::Runtime or something
