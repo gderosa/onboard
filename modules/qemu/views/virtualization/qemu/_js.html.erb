@@ -84,6 +84,7 @@
       request.send();
       if (request.status === 200) {
         screenshot.src = src;
+        screenshot.style.display = '';
       } else {
         screenshot.style.display = 'none';
       }
