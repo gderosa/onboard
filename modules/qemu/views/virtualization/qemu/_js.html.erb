@@ -103,5 +103,18 @@
       }
     }
   }
+  function qemuIsRunning(vmid, basepath) {
+    if (typeof basepath === 'undefined') 
+      basepath = '';
+    var fetch_from = basepath + vmid + '/running.json';
+    var request = new XMLHttpRequest();
+    var isRunning = null;
+    request.open("GET", fetch_from, false);
+    request.send();
+    if (request.status === 200) {
+      var isRunning = JSON.parse(request.responseText).running;
+    }
+    return isRunning;
+  }
 </script>
 

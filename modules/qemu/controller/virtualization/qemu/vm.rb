@@ -22,6 +22,12 @@ class OnBoard
       )
     end
 
+    get '/virtualization/qemu/vm/:vmid/running.json' do
+      vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
+      not_found unless vm
+      JSON.generate({:running => (vm.running?)})
+    end
+
     put '/virtualization/qemu/vm/:vmid.:format' do
       vm_old = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
       
