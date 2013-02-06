@@ -15,11 +15,16 @@ END
 
 describe LSUSB, '.parse' do
   it %q{should give two objects} do
-    LSUSB.parse(sample_output).length.should be = 2
+    LSUSB.parse(sample_output).to_a.length.should be == 2
+  end
+  it %q{should give LSUSB objects} do
+    LSUSB.parse(sample_output).each do |device|
+      device.should be_an_instance_of LSUSB 
+    end
   end
 end
 
-devices = LSUSB.parse(sample_output)
+devices = LSUSB.parse(sample_output).to_a
 kingst, exthub = devices
 
 describe LSUSB, '#bus_id' do
@@ -49,4 +54,13 @@ describe LSUSB, '#product_id' do
     exthub.product_id.should be == '0101'
   end
 end
+
+describe LSUSB, '#description' do
+  it %q{should get description} do
+    kingst.description.should be == 'Kingston Technology DT101 G2'
+    exthub.description.should be == 'Terminus Technology Inc. 4-Port HUB'
+  end
+end
+
+
  
