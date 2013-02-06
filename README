@@ -37,6 +37,7 @@ for module-specific, additional requirements):
 * iptables (with proper kernel support)
 * bridge-utils (brctl)
 * pciutils (lspci command)
+* usbutils (lsusb command)
 * dhcpcd 
   * Also, resolvconf is recommended
 * dnsmasq >= 2.61, != 2.63
