@@ -15,7 +15,7 @@ END
 
 describe LSUSB, '.parse' do
   it %q{should give two objects} do
-    LSUSB.parse(sample_output).to_a.length.should be == 2
+    LSUSB.parse(sample_output).length.should be == 2
   end
   it %q{should give LSUSB objects} do
     LSUSB.parse(sample_output).each do |device|
@@ -24,7 +24,7 @@ describe LSUSB, '.parse' do
   end
 end
 
-devices = LSUSB.parse(sample_output).to_a
+devices = LSUSB.parse(sample_output)
 kingst, exthub = devices
 
 describe LSUSB, '#bus_id' do
