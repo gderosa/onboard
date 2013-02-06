@@ -1,14 +1,15 @@
 class OnBoard
   module Hardware
     class LSUSB
+
+      class Enumerator < ::Enumerator
+        # Lazily convert into Array
+        def method_missing(id, *args, &blk)
+          to_a.send id, *args, &blk
+        end
+      end
       
       class << self
-
-        include Enumerable
-
-        def all
-          each.to_a
-        end
 
         def each
           output_text = `lsusb | grep -v 'Device 001' | grep -v '0000:0000' # exclude hubs`
@@ -18,6 +19,7 @@ class OnBoard
             end
           end
         end
+        alias all each
 
         def parse(text)
           Enumerator.new do |yielder|
@@ -36,6 +38,7 @@ class OnBoard
               end
             end
           end
+
         end
 
       end
