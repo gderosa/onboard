@@ -11,15 +11,10 @@ class OnBoard
       
       class << self
 
-        def each
+        def all
           output_text = `lsusb | grep -v 'Device 001' | grep -v '0000:0000' # exclude hubs`
-          Enumerator.new do |yielder|
-            parse output_text do |device|
-              yielder.yield device
-            end
-          end
+          parse output_text 
         end
-        alias all each
 
         def parse(text)
           Enumerator.new do |yielder|
@@ -39,7 +34,6 @@ class OnBoard
               end
             end
           end
-
         end
 
       end
