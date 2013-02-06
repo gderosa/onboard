@@ -5,7 +5,7 @@ $LOAD_PATH.unshift File.join File.dirname(__FILE__), '../..'
 
 require 'onboard/hardware/lsusb' 
 
-include OnBoard::Hardware::LSUSB
+include OnBoard::Hardware
 
 # lsusb | grep -v 'Device 001' | grep -v '0000:0000' # exclude root hubs
 sample_output = <<END

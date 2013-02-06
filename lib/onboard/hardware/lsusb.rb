@@ -2,7 +2,7 @@ class OnBoard
   module Hardware
     class LSUSB
       
-      class < self
+      class << self
         def all
           `lsusb | grep -v 'Device 001' # exclude hubs`.each_line do |line|
             p line
