@@ -62,5 +62,11 @@ describe LSUSB, '#description' do
   end
 end
 
+describe LSUSB, '#full_line' do
+  it %q{should get the full stdout line from lsusb} do
+    kingst.full_line.should be == 'Bus 001 Device 008: ID 0951:1642 Kingston Technology DT101 G2'
+    exthub.full_line.should be == 'Bus 001 Device 009: ID 1a40:0101 Terminus Technology Inc. 4-Port HUB'
+  end
+end
 
  

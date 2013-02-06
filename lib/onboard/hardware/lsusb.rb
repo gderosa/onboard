@@ -28,11 +28,12 @@ class OnBoard
               #   Bus 001 Device 008: ID 0951:1642 Kingston Technology DT101 G2
               if line =~ /Bus (\d\d\d) Device (\d\d\d): ID ([A-Fa-f\d]{4}):([A-Fa-f\d]{4}) (.*)/
                 h = {
-                  :bus_id     => $1,
-                  :device_id  => $2,
-                  :vendor_id  => $3,
-                  :product_id => $4,
-                  :description => $5
+                  :bus_id       => $1,
+                  :device_id    => $2,
+                  :vendor_id    => $3,
+                  :product_id   => $4,
+                  :description  => $5,
+                  :full_line    => line.strip,
                 }
                 yielder.yield self.new(h) 
               end
