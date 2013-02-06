@@ -128,8 +128,14 @@ class OnBoard
           end
           if opts['-usbdevice'].respond_to? :each
             opts['-usbdevice'].each do |device|
-              if device['type'] == 'disk'
+              if    device['type'] == 'disk'
                 cmdline << "-usbdevice disk:#{device['file']}" << ' '
+              elsif device['type'] == 'host'
+                if    device['bus']       and device['addr']
+                  cmdline << "-usbdevice host:#{device['bus']}.#{device['addr']}"             << ' '
+                elsif device['vendor_id'] and device['product_id']
+                  cmdline << "-usbdevice host:#{device['vendor_id']}:#{device['product_id']}" << ' '
+                end
               end
             end
           end
