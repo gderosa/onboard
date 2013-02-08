@@ -69,4 +69,42 @@ describe LSUSB, '#full_line' do
   end
 end
 
- 
+warn "No devices!" unless LSUSB.any?
+
+LSUSB.each do |device|
+  describe LSUSB, '#bus_id' do
+    it %q{should get Bus ID, three digits} do
+      device.bus_id.should =~ /^[\da-f]{3}$/i
+    end
+  end
+
+  describe LSUSB, '#device_id' do
+    it %q{should get Device ID, three digits} do
+      device.device_id.should =~ /^[\da-f]{3}$/i
+    end
+  end
+
+  describe LSUSB, '#vendor_id' do
+    it %q{should get Vendor ID, 4 digits} do
+      device.vendor_id.should =~ /^[\da-f]{4}$/i
+    end
+  end
+
+  describe LSUSB, '#product_id' do
+    it %q{should get Product ID, 4 digits} do
+      device.product_id.should  =~ /^[\da-f]{4}$/
+    end
+  end
+
+  describe LSUSB, '#description' do
+    it %q{should get description} do
+      device.description.should =~ /\w/
+    end
+  end
+
+  describe LSUSB, '#full_line' do
+    it %q{should get the full stdout line from lsusb} do
+      device.full_line.should =~ LSUSB::LINE_REGEX
+    end
+  end
+end 
