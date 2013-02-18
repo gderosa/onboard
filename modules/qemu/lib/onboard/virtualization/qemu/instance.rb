@@ -192,6 +192,8 @@ class OnBoard
 
           cmdline << '-enable-kvm' << ' ' 
 
+          cmdline << opts['append'] if opts['append'] 
+
           return cmdline
         end
 

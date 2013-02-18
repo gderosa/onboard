@@ -143,6 +143,9 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 }
               end 
             end
+	    if h[:http_params]['cmdline_append'] =~ /\S/
+              @cmd['opts']['append'] = h[:http_params]['cmdline_append']
+	    end
           else
             @uuid = h[:config]['uuid']
             @cmd  = h[:config]['cmd']

@@ -24,6 +24,7 @@
     %w{name m vnc k soundhw}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
+    formvals['cmdline_append'] = vm.config.opts['append']
     formvals['spice'] ||= {}
     formvals['spice']['port'] = vm.config['-spice']['port'] if 
         vm.config['-spice'] and vm.config['-spice']['port'] 
@@ -351,4 +352,8 @@
       <% end %>
     </tbody>
   </table>
+
+  <h2>Extra command-line arguments (experts)</h3>
+  <input type="text" name="cmdline_append" value="<%= formvals['cmdline_append'] %>" size="120" style="margin-bottom:1em">
+  <br/>
 
