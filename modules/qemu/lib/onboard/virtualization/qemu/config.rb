@@ -31,7 +31,7 @@ class OnBoard
 
         end
 
-        attr_reader :uuid, :cmd
+        attr_reader :uuid, :cmd, :drop_privileges
 
         def [](k)
           @cmd['opts'][k] 
@@ -41,12 +41,16 @@ class OnBoard
           @cmd['opts'][k] = val
         end 
 
+        alias drop_privileges? drop_privileges
+
         def name
           self['-name'] 
         end
 
         def initialize(h)
+          @drop_privileges = true
           if h[:http_params]
+            @drop_privileges = false if h[:http_params]['run_as_root'] == 'on'
             @uuid = h[:uuid] || h[:http_params][:uuid] || UUID.generate 
             @cmd  = {
               #'exe'   => 'kvm',
@@ -143,12 +147,14 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 }
               end 
             end
-	    if h[:http_params]['cmdline_append'] =~ /\S/
+            if h[:http_params]['cmdline_append'] =~ /\S/
               @cmd['opts']['append'] = h[:http_params]['cmdline_append']
-	    end
+            end
           else
-            @uuid = h[:config]['uuid']
-            @cmd  = h[:config]['cmd']
+            @uuid             = h[:config]['uuid']
+            @cmd              = h[:config]['cmd']
+            @drop_privileges  = h[:config]['drop_privileges'] if
+                h[:config].keys.include? 'drop_privileges' # avoid assigning non true as default
           end
         end
 
@@ -195,8 +201,9 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
 
         def to_h
           {
-            'uuid'  => @uuid,
-            'cmd'   => @cmd 
+            'uuid'            => @uuid,
+            'cmd'             => @cmd,
+            'drop_privileges' => @drop_privileges,
           }
         end
 

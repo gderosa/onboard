@@ -353,7 +353,10 @@
     </tbody>
   </table>
 
-  <h2>Extra command-line arguments (experts)</h3>
+  <h3>Experts</h3>
+  <h4>Extra command lne arguments</h4>
   <input type="text" name="cmdline_append" value="<%= formvals['cmdline_append'] %>" size="120" style="margin-bottom:1em">
+  <h4>Run as root</h4>
+  <input type="checkbox" name="run_as_root" <%= 'checked' if vm and not vm.config.drop_privileges? %>/>
   <br/>
 

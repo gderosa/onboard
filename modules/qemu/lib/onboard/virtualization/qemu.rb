@@ -67,7 +67,11 @@ start start_paused pause resume powerdown delete
                 vm = all.find{|x| x.uuid == uuid}  
                 vm.loadvm_on_next_boot false unless 
                     params['saverestore'] and params['saverestore'][uuid] == 'on'
-                vm.send cmd
+                if cmd == 'start' and params['run_as_root'] == 'on' 
+                  vm.send :start, :run_as_root
+                else
+                  vm.send cmd
+                end
               end
             end
             if params['quit'] and params['quit']['uuid']

@@ -225,13 +225,14 @@ class OnBoard
         def start(*opts)
           cmdline = format_cmdline
           cmdline << ' -S' if opts.include? :paused
-          cmdline << " -runas #{ENV['USER']}"
+          cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
           begin
             msg = System::Command.run cmdline, :sudo, :raise_Conflict
+            setup_networking
           ensure
             fix_permissions
           end
-          setup_networking
+          # setup_networking
           return msg
         end
 
