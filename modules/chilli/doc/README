@@ -1,8 +1,8 @@
-NOTE: using CoovaChilli [1] version <= 1.0.14 : newer versions spawns 
-child processes and this OnBoard module is not (yet) capable to 
-manage chilli process groups.
+Compile coova-chilli[1] from source, DO NOT use debian/ directory
+under source tree to create a Debian Wheezy package: as per our
+tests it leds to issues with child processes.
 
-Other assumptions:
+Assumptions:
 
 * one instance per network interface
 
