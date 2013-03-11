@@ -146,7 +146,9 @@ class OnBoard
             end
 
             # raise InvalidData, "Invalid or missing: #{invalid.join ', '}" if invalid.any?
-            raise InvalidData, "#{i18n.invalid_or_missing_info.capitalize}: #{invalid.join ', '}" if invalid.any?
+            raise \
+              InvalidData,\
+              "#{i18n.invalid_or_missing_info(invalid.size).capitalize}: #{invalid.join ', '}" if invalid.any?
           end
 
           def delete_all_attachments

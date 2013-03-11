@@ -102,10 +102,15 @@ class OnBoard
           # Accept empty passwords only with Auth-Type == Reject or Accept.
           # Raise an exception otherwise.
           def validate_empty_password(params)
+            i18n = params[:i18n] # params mixes http/form and non-http/form 
             if  ['', nil].include? params['check']['User-Password'] and
                 ['', nil].include? params['check']['Auth-Type']     and not
                 ['', nil].include? params['check']['Password-Type']
-              raise EmptyPassword, 'Cannot accept an empty password if password authentication is enabled.'
+              if i18n
+                raise EmptyPassword, "#{i18n.invalid_or_missing_info(1).capitalize}: Password."
+              else
+                raise EmptyPassword, 'Cannot accept an empty password if password authentication is enabled.'
+              end
             end
           end
           

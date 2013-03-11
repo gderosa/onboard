@@ -46,4 +46,6 @@ form:
       1: campo obbligatorio
       n: campi obbligatori
 
-invalid_or_missing_info: informazioni mancanti o non valide
+invalid_or_missing_info: !!pl
+  1: informazione mancante o non valida
+  n: informazioni mancanti o non valide

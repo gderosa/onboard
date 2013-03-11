@@ -56,6 +56,7 @@ class OnBoard
       user  = Service::RADIUS::User.new(name) # blank slate
       msg = handle_errors do
         h = config.deep_merge(params)
+        h[:i18n] = i18n
 
         # Terms and Conditions acceptance
         terms = Service::RADIUS::Terms::Document.get_all(:asked => true)
