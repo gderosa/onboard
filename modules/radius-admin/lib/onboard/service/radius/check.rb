@@ -56,7 +56,7 @@ class OnBoard
             
             validate_empty_password(params) # raises exception if appropriate
 
-            Name.validate params['check']['User-Name'] 
+            Name.validate params['check']['User-Name'], :i18n => i18n
 
             # All is ok, proceed.
             #

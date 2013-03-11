@@ -50,3 +50,19 @@ form:
 invalid_or_missing_info: !!pl
   1: informazione mancante o non valida
   n: informazioni mancanti o non valide
+contains_invalid_chars: !!pl
+  1: contiene caratteri non validi
+  n: contengono caratteri non validi
+
+use_only:
+  all: usare solo
+do_not_use_accented_chars: non usare caratteri accentati
+
+name:
+  name: !!pl
+    1: nome
+    n: nomi
+  weak_article: !!pl # there are situations when you say "names" in English and "i nomi" in Italian
+    1: il nome
+    n: i nomi
+

@@ -48,3 +48,20 @@ form:
       n: mandatory fields
 
 invalid_or_missing_info: invalid or missing
+contains_invalid_chars: !!pl
+  1: contains invalid characters
+  n: contain invalid characters
+
+use_only:
+  all: use only
+do_not_use_accented_chars: do not use accented characters
+
+name:
+  name: !!pl
+    1: name
+    n: names
+  weak_article: !!pl # there are situations when you say "names" in English and "i nomi" in Italian
+    1: name
+    n: names
+
+
