@@ -107,7 +107,7 @@ class OnBoard
                 ['', nil].include? params['check']['Auth-Type']     and not
                 ['', nil].include? params['check']['Password-Type']
               if i18n
-                raise EmptyPassword, "#{i18n.invalid_or_missing_info(1).capitalize}: Password."
+                raise EmptyPassword, "#{i18n.invalid_or_missing_info(1).capitalize}: Password"
               else
                 raise EmptyPassword, 'Cannot accept an empty password if password authentication is enabled.'
               end
