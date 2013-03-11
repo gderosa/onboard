@@ -41,9 +41,13 @@ class OnBoard
         
           def insert(params)
             setup
-            if params['check']['User-Password'] != 
-                params['confirm']['check']['User-Password']
-              raise PasswordsDoNotMatch, 'Passwords do not match!'
+            i18n = params[:i18n]
+            if params['check']['User-Password'] != params['confirm']['check']['User-Password']
+              if i18n
+                raise PasswordsDoNotMatch, i18n.password.do_not_match.capitalize
+              else
+                raise PasswordsDoNotMatch, 'Passwords do not match!'
+              end
             end
             if RADIUS.db[@@table].where(
                 @@columns['User-Name'] => params['check']['User-Name'] ).any?

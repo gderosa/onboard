@@ -36,6 +36,7 @@ password:
   type_twice: 
     you: inserisci due volte
     any: inserire due volte
+  do_not_match: le password non coincidono
 
 date:
   format: formato data

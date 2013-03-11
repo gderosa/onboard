@@ -36,6 +36,7 @@ password:
   type_twice: 
     you: type twice
     any: type twice
+    do_not_match: passwords do not match
 
 date:
   format: date format
