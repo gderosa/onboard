@@ -109,6 +109,27 @@ class OnBoard
             }
           end
 
+          def params_key_to_i18n(key, i18n)
+            h = {
+              'Email' => 'e-mail'
+            }
+            if i18n
+              h.update( {
+                'First-Name'  => i18n.personal.name.first,
+                'Last-Name'   => i18n.personal.name.last,
+                'Birth-Date'  => i18n.personal.birth.date,
+                'Birth-City'  => i18n.personal.birth.place,
+                'Address'     => i18n.personal.address,
+                'City'        => i18n.personal.city,
+                'Phone'       => i18n.personal.phone.phone,
+                'ID-Code'     => i18n.personal.id_code.id_code,
+              } )
+              return h[key].capitalize
+            else
+              return key.split('-').map{|s| s.capitalize}.join(' ')
+            end
+          end
+
           def validate_personal_info(h)
             fields    = h[:fields]
             personal  = h[:params]['personal']
@@ -116,8 +137,9 @@ class OnBoard
             # pp i18n # DEBUG
             invalid   = []
             if fields.include? 'Name'
-              invalid << 'First Name' unless personal['First-Name'] =~ /\S/
-              invalid << 'Last Name'  unless personal['Last-Name']  =~ /\S/
+              %w{First-Name Last-Name}.each do |k|
+                invalid << params_key_to_i18n(k, i18n) unless personal[k] =~ /\S/
+              end
             end
             invalid << 'Email' if fields.include? 'Email' and 
                 not personal['Email'] =~ /\S@\S/
@@ -125,24 +147,25 @@ class OnBoard
               begin
                 Date.parse personal['Birth-Date']
               rescue ArgumentError
-                invalid << 'Birth Date'
+                invalid << params_key_to_i18n('Birth-Date', i18n)
               end
-              invalid << 'Birth City' unless personal['Birth-City'] =~ /\S/
+              invalid <<  params_key_to_i18n('Birth-City', i18n) unless personal['Birth-City'] =~ /\S/
               # TODO? Birth-State?
             end
             if fields.include? 'Full-Address'
-              invalid << 'Address'  unless personal['Address']  =~ /\S/
-              invalid << 'City'     unless personal['City']     =~ /\S/
+              %w{Address City}.each do |k|
+                invalid << params_key_to_i18n(k, i18n) unless personal[k]  =~ /\S/
+              end
               # slightly relaxed: do not demand postcode...
             end
             if fields.include? 'Phone'
-              invalid << 'Phone' unless
+              invalid <<  params_key_to_i18n('Phone', i18n) unless
                   personal['Work-Phone']    =~ /\d/ ||
                   personal['Home-phone']    =~ /\d/ ||
                   personal['Mobile-Phone']  =~ /\d/
             end
             if fields.include? 'ID-Code'
-              invalid << 'Tax or Social Security Code' unless personal['ID-Code'] =~ /\S/
+              invalid << params_key_to_i18n('ID-Code', i18n) unless personal['ID-Code'] =~ /\S/
             end
 
             # raise InvalidData, "Invalid or missing: #{invalid.join ', '}" if invalid.any?

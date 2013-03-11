@@ -33,6 +33,8 @@ personal:
     last: cognome
   birth: 
     short: nascita
+    date: data di nascita
+    place: luogo di nascita
     all_data: data e luogo di nascita
   city: comune
   state: provincia

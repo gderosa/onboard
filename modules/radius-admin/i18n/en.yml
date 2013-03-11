@@ -33,6 +33,8 @@ personal:
     last: last name
   birth: 
     short: birth
+    date: date of birth
+    place: place of birth
     all_data: birth
   city: city
   state: state
