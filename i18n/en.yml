@@ -45,3 +45,5 @@ form:
     mandatory: !!pl
       1: mandatory field
       n: mandatory fields
+
+invalid_or_missing_info: invalid or missing

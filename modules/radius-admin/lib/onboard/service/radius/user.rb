@@ -112,6 +112,8 @@ class OnBoard
           def validate_personal_info(h)
             fields    = h[:fields]
             personal  = h[:params]['personal']
+            i18n      = h[:i18n]
+            # pp i18n # DEBUG
             invalid   = []
             if fields.include? 'Name'
               invalid << 'First Name' unless personal['First-Name'] =~ /\S/
@@ -143,7 +145,8 @@ class OnBoard
               invalid << 'Tax or Social Security Code' unless personal['ID-Code'] =~ /\S/
             end
 
-            raise InvalidData, "Invalid or missing: #{invalid.join ', '}" if invalid.any?
+            # raise InvalidData, "Invalid or missing: #{invalid.join ', '}" if invalid.any?
+            raise InvalidData, "#{i18n.invalid_or_missing_info.capitalize}: #{invalid.join ', '}" if invalid.any?
           end
 
           def delete_all_attachments

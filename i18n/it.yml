@@ -45,3 +45,5 @@ form:
     mandatory: !!pl
       1: campo obbligatorio
       n: campi obbligatori
+
+invalid_or_missing_info: informazioni mancanti o non valide

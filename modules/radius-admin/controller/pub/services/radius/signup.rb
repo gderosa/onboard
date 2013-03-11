@@ -76,7 +76,8 @@ class OnBoard
 
         Service::RADIUS::User.validate_personal_info(
             :params => params, 
-            :fields => config['mandatory']['personal'].select{|k, v| v}.keys
+            :fields => config['mandatory']['personal'].select{|k, v| v}.keys,
+            :i18n   => i18n
         )
 
         Service::RADIUS::Check.insert(h)
