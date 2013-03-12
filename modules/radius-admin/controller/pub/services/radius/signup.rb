@@ -99,9 +99,9 @@ class OnBoard
         #headers :Location => "#{request.base_url}#{File.dirname request.path_info}/users/#{user.name}.html"
         msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
 
-        if params['redirect'] =~ /\S/
+        if params['redirect'] =~ /^https?:\/\/[a-z]+.*\.[a-z]+/
           headers(
-            "Refresh" => "3;url=#{params['redirect']}"
+            "Refresh" => "2;url=#{params['redirect']}"
           )
         end
 
