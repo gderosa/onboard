@@ -92,17 +92,17 @@ class OnBoard
         user.upload_attachments(h) 
       end
       if msg[:ok] and not msg[:err] 
-        status 201 # Created
+        #status 201 # Created
         #status 205 # Reset Content
         session[:raduser] = user.name
         session[:radpass] = params['check']['User-Password']
-        headers :Location => "#{request.base_url}#{File.dirname request.path_info}/users/#{user.name}.html"
+        #headers :Location => "#{request.base_url}#{File.dirname request.path_info}/users/#{user.name}.html"
         msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
 
         if params['redirect'] =~ /\S/
           headers(
-            "Refresh" => "Refresh: 4; #{params['redirect']}"
-        )
+            "Refresh" => "3;url=#{params['redirect']}"
+          )
         end
 
       else
