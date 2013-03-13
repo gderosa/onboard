@@ -97,11 +97,14 @@ class OnBoard
         session[:raduser] = user.name
         session[:radpass] = params['check']['User-Password']
         #headers :Location => "#{request.base_url}#{File.dirname request.path_info}/users/#{user.name}.html"
-        msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
+        #msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
+        msg[:info] = i18n.hotspot.signup_success(user.name)
 
-        if params['redirect'] =~ /^https?:\/\/[a-z]+.*\.[a-z]+/
+        if \
+                params['redirect'] =~ /^https?:\/\/[a-z]+.*\.[a-z]+/i and \
+            not params['redirect'] =~ /hotspot/i
           headers(
-            "Refresh" => "2;url=#{params['redirect']}"
+            "Refresh" => "4;url=#{params['redirect']}"
           )
         end
 

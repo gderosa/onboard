@@ -24,6 +24,7 @@ hotspot:
   signup_disabled: registrazione HotSpot disattivata
   account:
     management: "Hotspot: gestione account"
+  signup_success: "Benvenuto! Ti sei registrato con successo. Adesso inizia a navigare (inserici utente e password se ti saranno richiesti)."
 
 personal:
   info: informazioni personali
