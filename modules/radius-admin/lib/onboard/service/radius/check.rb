@@ -51,7 +51,11 @@ class OnBoard
             end
             if RADIUS.db[@@table].where(
                 @@columns['User-Name'] => params['check']['User-Name'] ).any?
-              raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
+              if i18n
+                raise UserAlreadyExists, "#{i18n.radius.user.registered.already.capitalize}: #{params['check']['User-Name']}."
+              else
+                raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
+              end
             end
             
             validate_empty_password(params) # raises exception if appropriate
