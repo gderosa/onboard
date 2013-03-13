@@ -90,7 +90,7 @@ class OnBoard
       end
 
       def mandatory_mark
-        '<span style="font-weight:bold; color:red">*</span>'
+        %Q{<img style="vertical-align:-25%; margin-left:1ex" alt="(*)" src="#{IconDir}/#{IconSize}/emblems/emblem-important.png"/>}
       end
 
       # tag('<span class="wonderful"', %Q{

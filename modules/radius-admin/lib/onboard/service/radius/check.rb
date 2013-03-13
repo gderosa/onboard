@@ -41,18 +41,26 @@ class OnBoard
         
           def insert(params)
             setup
-            if params['check']['User-Password'] != 
-                params['confirm']['check']['User-Password']
-              raise PasswordsDoNotMatch, 'Passwords do not match!'
+            i18n = params[:i18n]
+            if params['check']['User-Password'] != params['confirm']['check']['User-Password']
+              if i18n
+                raise PasswordsDoNotMatch, i18n.password.do_not_match.capitalize
+              else
+                raise PasswordsDoNotMatch, 'Passwords do not match!'
+              end
             end
             if RADIUS.db[@@table].where(
                 @@columns['User-Name'] => params['check']['User-Name'] ).any?
-              raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
+              if i18n
+                raise UserAlreadyExists, "#{i18n.radius.user.registered.already.capitalize}: #{params['check']['User-Name']}."
+              else
+                raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
+              end
             end
             
             validate_empty_password(params) # raises exception if appropriate
 
-            Name.validate params['check']['User-Name'] 
+            Name.validate params['check']['User-Name'], :i18n => i18n
 
             # All is ok, proceed.
             #
@@ -102,10 +110,15 @@ class OnBoard
           # Accept empty passwords only with Auth-Type == Reject or Accept.
           # Raise an exception otherwise.
           def validate_empty_password(params)
+            i18n = params[:i18n] # params mixes http/form and non-http/form 
             if  ['', nil].include? params['check']['User-Password'] and
                 ['', nil].include? params['check']['Auth-Type']     and not
                 ['', nil].include? params['check']['Password-Type']
-              raise EmptyPassword, 'Cannot accept an empty password if password authentication is enabled.'
+              if i18n
+                raise EmptyPassword, "#{i18n.invalid_or_missing_info(1).capitalize}: Password"
+              else
+                raise EmptyPassword, 'Cannot accept an empty password if password authentication is enabled.'
+              end
             end
           end
           

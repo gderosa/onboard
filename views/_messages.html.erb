@@ -1,6 +1,6 @@
 <%# -*- coding: UTF-8 -*- %>
 <% if msg and msg.kind_of? Hash %>
-  <% if status == 202 and msg[:ok] and not (msg[:info] =~ /\S/) %>
+  <% if status == 202 and msg[:ok] and not (msg[:info] =~ /\S/) %> <%# and not public_access? %>
     <div class="info">
       Your request has been queued. You may check <a href="">this</a> 
       or other pages later

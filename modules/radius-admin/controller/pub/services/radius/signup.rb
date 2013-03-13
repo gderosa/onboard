@@ -56,6 +56,7 @@ class OnBoard
       user  = Service::RADIUS::User.new(name) # blank slate
       msg = handle_errors do
         h = config.deep_merge(params)
+        h[:i18n] = i18n
 
         # Terms and Conditions acceptance
         terms = Service::RADIUS::Terms::Document.get_all(:asked => true)
@@ -76,7 +77,8 @@ class OnBoard
 
         Service::RADIUS::User.validate_personal_info(
             :params => params, 
-            :fields => config['mandatory']['personal'].select{|k, v| v}.keys
+            :fields => config['mandatory']['personal'].select{|k, v| v}.keys,
+            :i18n   => i18n
         )
 
         Service::RADIUS::Check.insert(h)
@@ -90,12 +92,22 @@ class OnBoard
         user.upload_attachments(h) 
       end
       if msg[:ok] and not msg[:err] 
-        status 201 # Created
+        #status 201 # Created
         #status 205 # Reset Content
         session[:raduser] = user.name
         session[:radpass] = params['check']['User-Password']
-        headers :Location => "#{request.base_url}#{File.dirname request.path_info}/users/#{user.name}.html"
-        msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
+        #headers :Location => "#{request.base_url}#{File.dirname request.path_info}/users/#{user.name}.html"
+        #msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
+        msg[:info] = i18n.hotspot.signup_success(user.name)
+
+        if \
+                params['redirect'] =~ /^https?:\/\/[a-z]+.*\.[a-z]+/i and \
+            not params['redirect'] =~ /hotspot/i
+          headers(
+            "Refresh" => "4;url=#{params['redirect']}"
+          )
+        end
+
       else
         template_params = params
       end
