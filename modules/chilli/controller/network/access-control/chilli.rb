@@ -11,7 +11,8 @@ class OnBoard
         :module => 'chilli',
         :path => '/network/access-control/chilli',
         :format => params[:format],
-        :objects  => CHILLI_CLASS.getAll()
+        :objects  => CHILLI_CLASS.getAll(),
+        :title => "Chilli Controller"
       )
     end
 
@@ -60,7 +61,8 @@ class OnBoard
         :path     => '/network/access-control/chilli',
         :format   => params[:format],
         :objects  => CHILLI_CLASS.getAll(),
-        :msg      => msg
+        :msg      => msg,
+        :title => "Chilli Controller"
       )
     end
 
@@ -88,7 +90,8 @@ class OnBoard
         :path => '/network/access-control/chilli',
         :format => params[:format],
         :objects  => CHILLI_CLASS.getAll(),
-        :msg => msg
+        :msg => msg,
+        :title => 'Chilli Controller'
       )
     end
 
@@ -100,7 +103,8 @@ class OnBoard
           :module => 'chilli',
           :path => '/network/access-control/chilli/ifconfig',
           :format => params[:format],
-          :objects  => chilli_object 
+          :objects  => chilli_object,
+          :title => "Chilli Controller: #{params[:ifname]}"
         )
       else
         not_found
@@ -158,7 +162,8 @@ class OnBoard
           :path => '/network/access-control/chilli/ifconfig',
           :format => params[:format],
           :objects  => chilli,
-          :msg => msg
+          :msg => msg,
+          :title => "Chilli Controller: #{params[:ifname]}"
         )
       else
         not_found

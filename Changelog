@@ -1,3 +1,9 @@
+2013.03.04
+
+* AAA/Hotspot/RADIUS
+	* redirect users after a successful registration (signup)
+	* localized error and welcome messages
+
 2013.03.03
 
 * QEMU/KVM: 
