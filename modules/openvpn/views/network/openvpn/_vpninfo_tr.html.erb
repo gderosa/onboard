@@ -53,6 +53,7 @@ locals automatically provided by format() helper:
               <button type="submit"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button> 
             </form>
           </td>
+
           <td rowspan="<%= rowspan %>">
             <% 
               if vpn.data['running']
@@ -61,11 +62,11 @@ locals automatically provided by format() helper:
                 str = 'Remove from the list'
               end
             %>
-            <% if vpn.data['portable_id'] and vpn.data['portable_id'] =~ /\S/ %>
-            <form action="openvpn/vpn/<%= vpn.data['portable_id'] %>.html" method="POST">
-            <% else %>
+            <%# if vpn.data['portable_id'] and vpn.data['portable_id'] =~ /\S/ %>
+            <!-- <form action="openvpn/vpn/<%= vpn.data['portable_id'] %>.html" method="POST"> -->
+            <%# else %>
             <form action="openvpn/vpn/<%= vpnid %>.html" method="POST">
-            <% end %>
+            <%# end %>
               <input type="hidden" name="_method" value="delete"/>
               <button type="submit" title="<%= str %>"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="Delete"/></button>
             </form>
