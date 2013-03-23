@@ -361,7 +361,7 @@
   <%# js functions implemented in qemu/_js.html.erb %>
   qemuSaveRestoreControls('<%= vm.uuid %>');
   qemuNetIfControls();
-  <% if vm.running? and not params['quit'] %>
+  <% if vm.running? and not params['quit'] and false # tmp disable %>
     window.setInterval(
       function(){
         //qemuRefreshRunPanel('runPanel', '<%= "#{vm.uuid_short}/bits/run.html" %>');
