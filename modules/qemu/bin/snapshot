@@ -98,7 +98,7 @@ else
         if \
             age > ChronicDuration.parse(ENV['DELETE_SCHEDULED_OLDER_THAN']) and
             snap.name =~ /^scheduled_/
-          system 'qemu-img', 'snapshot', '-d', snap.name, drive['config']['file']
+          system 'sudo qemu-img', 'snapshot', '-d', snap.name, drive['config']['file']
         end
       end 
     end
@@ -106,13 +106,13 @@ else
     when 'take'
       ## 'take' is a create-or-update operation
       if drive['snapshots'].any?{|snap| snap.name == _snap_name_}
-         system 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file'] 
+         system 'sudo', 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file'] 
       end
-      system 'qemu-img', 'snapshot', '-c', _snap_name_, drive['config']['file'] 
+      system 'sudo', 'qemu-img', 'snapshot', '-c', _snap_name_, drive['config']['file'] 
     when 'apply'
-      system 'qemu-img', 'snapshot', '-a', _snap_name_, drive['config']['file']
+      system 'sudo', 'qemu-img', 'snapshot', '-a', _snap_name_, drive['config']['file']
     when 'delete'
-      system 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file']
+      system 'sudo', 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file']
     end
   end
 end
