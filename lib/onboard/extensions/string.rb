@@ -171,4 +171,8 @@ class String
     gsub(/([^\\])\s+/, "\\1\0").split("\0").map{|x| x.gsub '\ ',  ' '} 
   end
 
+  def is_uri?
+    self =~ /^\w+:\//i
+  end
+
 end

@@ -2,6 +2,8 @@ require 'uuid'
 
 require 'facets/hash'
 
+require 'onboard/extensions/string'
+
 class OnBoard
   module Virtualization
     module QEMU
@@ -20,7 +22,7 @@ class OnBoard
         class << self
 
           def absolute_path(path)
-            return path if path =~ /^\//
+            return path if path =~ /^\// or path.is_uri?
             return File.join FILESDIR, path
           end
 
