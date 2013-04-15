@@ -67,8 +67,8 @@ class OnBoard
 
         def info
           h = {}
-          if @file and File.exists? @file
-            `qemu-img info "#{@file}"`.each_line do |line|
+          if @file # and File.exists? @file
+            `sudo qemu-img info "#{@file}"`.each_line do |line|
               break if line =~ /^\s*Snapshot list:/
               if line =~ /([^:]+):([^:]+)/ 
                 k = $1
