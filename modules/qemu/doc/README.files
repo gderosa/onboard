@@ -1,0 +1,46 @@
+*** /home/onboard/files *** directory layout.
+
+This directory should contain CD/DVD and VM images, and is the "root"
+browsed by jQueryFileTree popup window.
+
+/home/onboard/files/ISO
+
+/home/onboard/files/QEMU
+
+There's a special subdir:
+
+/home/onboard/files/[network] 
+
+which contains mount points for networked filesystems which might be later 
+"optimized" as in the following examples.
+
+Suppose you open/pick 
+
+[network]/gluster/localhost/gv0/QEMU/MyVM/disk0.qcow2 .
+
+Well, /home/onboard/files/[network]/gluster/localhost/gv0 is the mount point
+for a GlusterFS volume. The volume is mounted (via FUSE) just for the sake of 
+browsing, and to allow an easier access for qemu-img.
+
+Actually, QEMU is now able to bypass FUSE to improve performance [1].
+
+The idea, within our code,  is to automatically translate a file path under the 
+special directory '[network]' into a "direct" URI. So the above file path get 
+translated into:
+
+file=gluster://localhost/gv0/QEMU/MyVM/disk0.qcow2 
+
+in qemu-system-x86_64 -drive command line option.
+
+This should be true for other distributed storage systems - for possible 
+future developments.
+
+To have GlusterFS/QEMU integration you need QEMU >= 1.3 (compiled with Gluster suport) 
+and GlusterFS >= 3.4 (which provides libgfapi).
+
+--
+
+[1] http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/
+
+
+
