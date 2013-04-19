@@ -39,7 +39,7 @@ class OnBoard
                   # distributed file system.
               filepath = "#{dir}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
-                FileUtils.mv filepath, "#{filepath}.old"
+                System::Command.run "mv '#{filepath}' '#{filepath}.old'", :sudo
               end
               System::Command.run(
                   "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :sudo, :raise_BadRequest) 
