@@ -107,7 +107,14 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 #
                 # newhd = hd | default | (Drive.slot2data(hd['slot']) || {}) 
                 #
-                newhd = default.merge(hd).merge( Drive.slot2data(hd['slot']) || {}  ) 
+                newhd = default.merge(hd).merge( Drive.slot2data(hd['slot']) || {}  )
+
+                # TODO: do not hardcode '[network]'
+                if newhd['use_network_url'] and newhd['path'] =~ %r{\[network\]/([^/]+)/([^/]+)/([^/]+)/(.*)}
+                  protocol, host, volume, path_to_image = $1, $2, $3, $4
+                  newhd['file_url'] = "#{protocol}://#{host}/#{volume}/#{path_to_image}"
+                end
+                # pp newhd # DEBUG
                 
                 @cmd['opts']['-drive'] << newhd
               end
