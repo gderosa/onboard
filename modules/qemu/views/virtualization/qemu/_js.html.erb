@@ -11,13 +11,15 @@
   function qemuImgCreateControls(idx) {
     var checkbox = document.getElementById('disk_' + idx + '_qemu-img_create_checkbox');
     if ( checkbox.checked ) {
-      document.getElementById('disk_' + idx + '_path').disabled = true;
-      document.getElementById('disk_' + idx + '_qemu-img_create_size').disabled = false;
-      document.getElementById('disk_' + idx + '_qemu-img_create_fmt' ).disabled = false;
+      document.getElementById('disk_' + idx + '_path'                   ).disabled = true;
+      document.getElementById('disk_' + idx + '_qemu-img_create_size'   ).disabled = false;
+      document.getElementById('disk_' + idx + '_qemu-img_create_fmt'    ).disabled = false;
+      document.getElementById('disk_' + idx + '_qemu-img_create_subdir' ).disabled = false;
     } else {
-      document.getElementById('disk_' + idx + '_path').disabled = false;
-      document.getElementById('disk_' + idx + '_qemu-img_create_size').disabled = true;
-      document.getElementById('disk_' + idx + '_qemu-img_create_fmt' ).disabled = true;
+      document.getElementById('disk_' + idx + '_path'                   ).disabled = false;
+      document.getElementById('disk_' + idx + '_qemu-img_create_size'   ).disabled = true;
+      document.getElementById('disk_' + idx + '_qemu-img_create_fmt'    ).disabled = true;
+      document.getElementById('disk_' + idx + '_qemu-img_create_subdir' ).disabled = true;
     }
   }
   function qemuNetIfControls() {

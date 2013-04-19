@@ -198,7 +198,11 @@
             <option value="qcow2">QCOW2 (recommended)</option>
             <option value="raw">Raw</option>
             <!-- exclude "alien" image formats for now... -->
-          </select>   
+          </select>
+          On
+          <select name="disk[<%= idx %>][qemu-img][subdir]" id="disk_<%= idx %>_qemu-img_create_subdir" disabled>
+            <option value="QEMU">Local storage</option>
+          </select>
         </td>
       </tr> 
       <tr>
