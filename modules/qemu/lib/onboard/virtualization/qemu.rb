@@ -27,6 +27,15 @@ class OnBoard
 
       class << self
 
+        def net_storage_subdirs
+          ary = []
+          # TODO: do not hardcode '[network]'
+          Dir.glob("#{FILESDIR}/*network*/*/*/*").each do |abspath|
+            ary << Config.relative_path(abspath) 
+          end
+          ary
+        end
+
         def get_all
           ary = []
           Dir.glob "#{CONFDIR}/*.yml" do |file|

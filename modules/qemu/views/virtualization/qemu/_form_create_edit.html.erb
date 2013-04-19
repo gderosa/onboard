@@ -201,7 +201,10 @@
           </select>
           On
           <select name="disk[<%= idx %>][qemu-img][subdir]" id="disk_<%= idx %>_qemu-img_create_subdir" disabled>
-            <option value="QEMU">Local storage</option>
+            <option value="">Local storage</option>
+            <% OnBoard::V12n::QEMU.net_storage_subdirs.each do |subdir|  %>
+              <option value="<%= subdir %>"><%= subdir %></option>
+            <% end %>
           </select>
         </td>
       </tr> 
