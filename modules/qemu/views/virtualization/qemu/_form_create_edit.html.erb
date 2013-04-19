@@ -203,7 +203,15 @@
           <select name="disk[<%= idx %>][qemu-img][subdir]" id="disk_<%= idx %>_qemu-img_create_subdir" disabled>
             <option value="">Local storage</option>
             <% OnBoard::V12n::QEMU.net_storage_subdirs.each do |subdir|  %>
-              <option value="<%= subdir %>"><%= subdir %></option>
+              <%
+                subdir_show_as = subdir
+                # TODO: DRY: implement a library method 
+                if subdir =~ %r{^[^/]*net[^/]*/([^/]+)/([^/]+)/([^/]+)}
+                  proto, host, vol = $1, $2, $3
+                  subdir_show_as = "#{proto}://#{host}/#{vol}"
+                end
+              %>
+              <option value="<%= subdir %>"><%= subdir_show_as %></option>
             <% end %>
           </select>
         </td>
