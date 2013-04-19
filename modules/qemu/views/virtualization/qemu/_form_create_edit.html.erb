@@ -110,7 +110,7 @@
   formvals['smp']       ||= {}
   formvals['smp']['n']  ||= 1
 %>
-  <table>
+  <table id="vmcreateedit">
     <thead>
     </thead>
     <tbody>
@@ -201,6 +201,15 @@
           </select>   
         </td>
       </tr> 
+      <tr>
+        <th scope="row">
+          Optimize for networked / distributed storage
+          <% if idx == 0 %><div class="optinfo" style="width:46ex;">Bypass flesystem mount and use URL e.g. <code>gluster://localhost/gv0/path/vm.qcow2</code>. Not available for all QEMU versions and protocols. Disable if you encounter errors. Ignored for local storage. Some useful information <a href="http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/">here</a>.</span><% end %>
+        </th>
+        <td style="vertical-align:middle;">
+          <input type="checkbox" name="disk[<%= idx %>][use_network_url]"/>
+        </td>
+      </tr>
       <tr>
         <th scope="row" class="optinfo">Disk Caching</th>
         <td>
