@@ -143,8 +143,14 @@ class OnBoard
             opts['-drive'].each do |d|
               drive_args = []
               # Non empty nor space-only Strings
-              %w{serial if file media cache}.each do |par|  
+              %w{serial if media cache}.each do |par|  
                 drive_args << %Q{#{par}="#{d[par]}"} if d[par] =~ /\S/
+              end
+              # Disk image might be on distributed storage...
+              if d['file_url'] # e.g. gluster:// -- but qemu-img still use mount point
+                drive_args << %Q{file=#{d['file_url']}}
+              elsif d['file']
+                drive_args << %Q{file=#{d['file']}}
               end
               # Numeric or nil
               %w{index bus unit}.each do |par|
