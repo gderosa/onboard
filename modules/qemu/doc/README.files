@@ -14,6 +14,10 @@ There's a special subdir:
 which contains mount points for networked filesystems which might be later 
 "optimized" as in the following examples.
 
+IT IS YOUR CARE to ensure thet distributed / networked filesystems are actually
+mounted there, otherwise you will end up creating vm images on local storage. 
+(Until an OnBoard module is created to manage GlusterFS and such).
+
 Suppose you open/pick 
 
 [network]/gluster/localhost/gv0/QEMU/MyVM/disk0.qcow2 .
