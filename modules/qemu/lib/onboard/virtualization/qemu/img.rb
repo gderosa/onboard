@@ -27,13 +27,22 @@ class OnBoard
             if h['qemu-img'] and h['qemu-img']['create']
               size_str = h['qemu-img']['size']['G'] + 'G'
               fmt = h['qemu-img']['fmt']
-              FileUtils.mkdir_p File.join ROOTDIR, name
-              filepath = "#{ROOTDIR}/#{name}/disk#{h['idx']}.#{fmt}"
+              subdir = if h['qemu-img']['subdir'] =~ /^(.*)\/qemu\/?$/i
+                         h['qemu-img']['subdir']
+                       else
+                         h['qemu-img']['subdir'] + '/QEMU'
+                       end
+              dir = File.join QEMU::FILESDIR, subdir, name
+              System::Command.run "mkdir -p '#{dir}'", :sudo # sudo, otherwise 
+                  # we should ensure that the onboard user has the same UID 
+                  # across the cluster, in case directories are on a 
+                  # distributed file system.
+              filepath = "#{dir}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
                 FileUtils.mv filepath, "#{filepath}.old"
               end
               System::Command.run(
-                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :raise_BadRequest) 
+                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :sudo, :raise_BadRequest) 
               return filepath
             end
           end
