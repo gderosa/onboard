@@ -1,10 +1,17 @@
 require 'fileutils'
 require 'time'
 
+require 'onboard/extensions/string'
+
 class OnBoard
   module Virtualization
     module QEMU
       class Img
+
+        # Please don'use url like gluster:// with qemu-img, ecen when supported;
+        # it hangs for long time in case of a degraded cluster. Always prefer
+        # mount points (but of course you can use urls with qemu itself, if 
+        # available, to get performance boost).
 
         ROOTDIR = File.join ENV['HOME'], 'files/QEMU'
 
@@ -56,8 +63,9 @@ class OnBoard
 
         def snapshots
           list = []
-          if @file # and File.exists? @file
-            cmd = %Q{qemu-img snapshot -l "#{@file}"} 
+          if @file and (File.exists? @file or @file.is_uri?)
+            cmd = %Q{qemu-img snapshot -l "#{@file}"}
+            STDERR.puts "#{__FILE__}:#{__LINE__}" # DEBUG
             out = `sudo #{cmd}` # sudo to access gluster://
             out.each_line do |line|
               if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
@@ -76,7 +84,8 @@ class OnBoard
 
         def info
           h = {}
-          if @file # and File.exists? @file
+          if @file and (File.exists? @file or @file.is_uri?)
+            STDERR.puts "#{__FILE__}:#{__LINE__}" # DEBUG
             `sudo qemu-img info "#{@file}"`.each_line do |line|
               break if line =~ /^\s*Snapshot list:/
               if line =~ /([^:]+):([^:]+)/ 
