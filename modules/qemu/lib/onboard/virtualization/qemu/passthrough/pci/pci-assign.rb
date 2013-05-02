@@ -4,7 +4,7 @@ class OnBoard
   module Virtualization
     module QEMU
       module Passthrough
-        module PCI
+        class PCI
           module PCIAssign
 
             System::Command.run 'modprobe pci_stub', :sudo

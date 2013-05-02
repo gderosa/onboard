@@ -36,7 +36,8 @@ class OnBoard
                 # http://www.linux-kvm.org/page/How_to_assign_devices_with_VT-d_in_KVM
                 PCIAssign.prepare h['host']
               when /^vfio/ # vfio-pci
-                warn 'Not Implemented'
+                # https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/vfio.txt#n116
+                VFIOPCI.prepare h['host']
               else
                 raise ArgumentError, "Unknown PCI passthrough type ``#{type}''"
               end
