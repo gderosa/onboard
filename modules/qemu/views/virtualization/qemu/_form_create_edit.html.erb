@@ -308,7 +308,7 @@
   <h4>PCI passthrough</h4>
   <table>
     <% OnBoard::Hardware::LSPCI.by_id.each_pair do |id, h| %>
-      <% next if h[:desc] =~ /host bridge|pci bridge|isa bridge|ide interface|usb controller|smbus|communication controller/i %>
+      <% next if h[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
       <tr>
         <th scope="row"><%= id %></th>
         <td><%= h[:vendor] %></td>

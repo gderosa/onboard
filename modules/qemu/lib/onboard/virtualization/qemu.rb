@@ -15,15 +15,16 @@ class OnBoard
 
       DEFAULT_SNAPSHOT = '_last'
 
-      autoload :Config,   'onboard/virtualization/qemu/config'
-      autoload :Instance, 'onboard/virtualization/qemu/instance'
-      autoload :Img,      'onboard/virtualization/qemu/img'
-      autoload :Monitor,  'onboard/virtualization/qemu/monitor'
-      autoload :Network,  'onboard/virtualization/qemu/network'
-      autoload :Snapshot, 'onboard/virtualization/qemu/snapshot' 
-      autoload :VNC,      'onboard/virtualization/qemu/vnc'
-      autoload :SPICE,    'onboard/virtualization/qemu/spice'
-      autoload :Sound,    'onboard/virtualization/qemu/sound'
+      autoload :Config,       'onboard/virtualization/qemu/config'
+      autoload :Instance,     'onboard/virtualization/qemu/instance'
+      autoload :Img,          'onboard/virtualization/qemu/img'
+      autoload :Monitor,      'onboard/virtualization/qemu/monitor'
+      autoload :Network,      'onboard/virtualization/qemu/network'
+      autoload :Snapshot,     'onboard/virtualization/qemu/snapshot' 
+      autoload :VNC,          'onboard/virtualization/qemu/vnc'
+      autoload :SPICE,        'onboard/virtualization/qemu/spice'
+      autoload :Sound,        'onboard/virtualization/qemu/sound'
+      autoload :Passthrough,  'onboard/virtualization/qemu/passthrough'
 
       class << self
 
