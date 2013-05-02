@@ -312,23 +312,37 @@
       <% next if pci_device[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
       <%
         conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find{|h| h['host'] == pci_id }
-        passthrough = conf_h && conf_h['type']
+        passthrough_type = conf_h && conf_h['type']
       %>
-      <tr <%= %q{class="highlight" style="font-weight:bold"} if passthrough %>> 
+      <% 
+        available = true
+        using_vm = OnBoard::V12n::QEMU::Passthrough::PCI.new(pci_id).used_by
+        if using_vm  and (vm ? (vm.uuid != using_vm.uuid ) : true)
+          available = false
+        end
+        if available
+          if passthrough_type
+            tr_args = %q{class="highlight" style="font-weight:bold"}
+          end
+        else
+          tr_args = %q{class="lowlight"}
+        end
+      %>
+      <tr <%= tr_args %>> 
         <td><%= pci_id %></th>
         <td><%= pci_device[:vendor] %></td>
         <td><%= pci_device[:model] %></td>
         <td><%= pci_device[:desc] %></td>
         <td>
-          <% if OnBoard::V12n::QEMU::Passthrough::PCI.new(pci_id).used_by %>
-            already used!
+          <% if !available %>
+            <em>Already used by  &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;</em>
           <% else %>
             <select name="pci_passthrough[<%= pci_id %>]" style="width:20ex">
-              <option value="">(<%= passthrough ? 'detach' : 'not attached' %>)</option>
-              <option value="vfio-pci" <%=    'selected' if passthrough == 'vfio-pci'    %>>
+              <option value="">(<%= passthrough_type ? 'detach' : 'not attached' %>)</option>
+              <option value="vfio-pci" <%=    'selected' if passthrough_type == 'vfio-pci'    %>>
                 VFIO-PCI
               </option>
-              <option value="pci-assign" <%=  'selected' if passthrough == 'pci-assign'  %>> 
+              <option value="pci-assign" <%=  'selected' if passthrough_type == 'pci-assign'  %>> 
                 PCI Assignment
               </option>
             </select>
