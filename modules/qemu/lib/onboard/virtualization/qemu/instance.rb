@@ -70,8 +70,12 @@ class OnBoard
           to_h.to_json(*a)
         end
 
+        def opts
+          @config.cmd['opts']
+        end
+
         def format_cmdline
-          opts = @config.cmd['opts'] 
+          # opts = @config.cmd['opts'] 
           exe = Config::Common.get['exe'] 
           cmdline = ''
           cmdline << %Q{#{exe} } 
@@ -237,13 +241,24 @@ class OnBoard
           )
         end
 
+        def prepare_pci_passthrough
+          if opts['-device']
+            opts['-device'].each do |device|
+              if Passthrough::PCI::TYPES.include? device['type']
+                Passthrough::PCI.prepare device
+              end
+            end
+          end
+        end
+
         def start(*opts)
           cmdline = format_cmdline
           cmdline << ' -S' if opts.include? :paused
           cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
           begin
+            prepare_pci_passthrough
             msg = System::Command.run cmdline, :sudo, :raise_Conflict
-            setup_networking
+            setup_networking # bridge created TAP(s) 
           ensure
             fix_permissions
           end

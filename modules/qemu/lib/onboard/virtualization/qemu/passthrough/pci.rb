@@ -7,8 +7,10 @@ class OnBoard
           autoload :PCIAssign, 'onboard/virtualization/qemu/passthrough/pci/pci-assign'
           autoload :VFIOPCI,   'onboard/virtualization/qemu/passthrough/pci/vfio-pci'
 
-          EXCLUDE_DESCS = 
+          TYPES         = %w{pci-assign vfio-pci}
+          EXCLUDE_LSPCI_DESCS = 
               /host bridge|pci bridge|isa bridge|ide interface|usb controller|smbus|communication controller/i
+          EXCLUDE_DESCS = EXCLUDE_LSPCI_DESCS # Compat
 
           class << self
 
