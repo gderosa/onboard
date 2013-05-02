@@ -139,6 +139,15 @@ class OnBoard
               end
             end
           end
+          if opts['-device'].respond_to? :each
+            opts['-device'].each do |device|
+              cmdline << "-device " << device['type']
+              device.each_pair do |k, v|
+                cmdline << ",#{k}=#{v}" unless k == 'type'
+              end
+              cmdline << ' '
+            end
+          end
           if opts['-drive'].respond_to? :each
             opts['-drive'].each do |d|
               drive_args = []

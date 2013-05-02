@@ -310,7 +310,7 @@
     <% OnBoard::Hardware::LSPCI.by_id.each_pair do |pci_id, pci_device| %>
       <% next if pci_device[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
       <%
-        conf_h = vm.config.opts['-device'].find{|h| h['host'] == pci_id }
+        conf_h = vm.config.opts['-device'] && vm.config.opts['-device'].find{|h| h['host'] == pci_id }
         passthrough = conf_h && conf_h['type']
       %>
       <tr <%= %q{class="highlight" style="font-weight:bold"} if passthrough %>> 
