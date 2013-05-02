@@ -306,6 +306,7 @@
   </table>
 
   <h4>PCI passthrough</h4>
+  <div class="warn" style="margin-top:0;">Make real PCI hardware available to the VM. Your CPU and motherboard must have Intel VT-d or AMD/Vi working. Your Linux kernel must have all the necessary drivers. Use with caution as this disables PCI cards from the host!</div>
   <table>
     <% OnBoard::Hardware::LSPCI.by_id.each_pair do |pci_id, pci_device| %>
       <% next if pci_device[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
