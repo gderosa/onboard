@@ -305,7 +305,21 @@
     </tbody>
   </table>
 
-  <h4>Network Interfaces</h4>
+  <h4>PCI passthrough</h4>
+  <table>
+    <% OnBoard::Hardware::LSPCI.by_id.each_pair do |id, h| %>
+      <% next if h[:desc] =~ /host bridge|pci bridge|isa bridge|ide interface|usb controller|smbus|communication controller/i %>
+      <tr>
+        <th scope="row"><%= id %></th>
+        <td><%= h[:vendor] %></td>
+        <td><%= h[:model] %></td>
+        <td><%= h[:desc] %></td>
+      </tr>
+    <% end %>
+  </table>
+  <!-- END PCI PASSTHROUGH -->
+
+  <h4>Virtual Network Interfaces</h4>
   <table>
     <thead>
       <tr>
