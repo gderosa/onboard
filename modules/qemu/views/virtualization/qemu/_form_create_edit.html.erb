@@ -12,7 +12,7 @@
   cache_description   = {
     'unsafe'        => 'Allows snapshots on the fly, but it&rsquo;s also the most prone to data corruption',
     'writethrough'  => 'The slowest and most reliable',
-    'writeback'     => '<em>Recommended</em>, especially with QCOW2 images'
+    'writeback'     => 'Recommended, especially with QCOW2 images'
   }
   cache_default       = 'writeback'  
 
@@ -226,13 +226,13 @@
         </td>
       </tr>
       <tr>
-        <th scope="row" class="optinfo">Disk Caching</th>
+        <th scope="row">Disk Caching</th>
         <td>
-          <fieldset>
+          <select name="disk[<%= idx %>][cache]">
             <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
-              <input name="disk[<%= idx %>][cache]" <%= 'checked' if c == hd['cache'] %> type="radio" value="<%= c %>"/><span style="vertical-align:bottom;"><span style="display: inline-block; width: 13ex;"><%= c %></span><span class="optinfo" style="font-size:120%"> <%= cache_description[c] %></span></span><br/>
+              <option <%= 'selected' if c == hd['cache'] %> value="<%= c %>" title="<%= cache_description[c] %>"><%= c %></option>
             <% end %>
-          </fieldset>
+          </select>
         </td>
       </tr>
     <% end %>
