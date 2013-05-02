@@ -314,6 +314,14 @@
         <td><%= h[:vendor] %></td>
         <td><%= h[:model] %></td>
         <td><%= h[:desc] %></td>
+        <td>
+          <select name="pci_passthrough[<%= id %>]">
+            <option value="">(none)</option>
+            <!-- QEMU::Passthrough::PCI.passthough_methods ? -->
+            <option value="vfio-pci">VFIO-PCI</option>
+            <option value="pci-assign">PCI assignment</option>
+          </select>
+        </td>
       </tr>
     <% end %>
   </table>
