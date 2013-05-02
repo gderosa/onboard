@@ -86,6 +86,18 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 '-pidfile'    => "#{VARRUN}/qemu-#{uuid_short}.pid"
               }
             }
+            # PCI Passthrough
+            if h[:http_params]['pci_passthrough']
+              h[:http_params]['pci_passthrough'].each_pair do |id, type|
+                next if type == ''
+                @cmd['opts']['-device'] ||= []
+                @cmd['opts']['-device'] << {
+                  'type'  => type,
+                  'host'  => id
+                }
+              end
+            end
+            # End PCI Passthrough
             if h[:http_params]['usbdisk'] =~ /\S/
               @cmd['opts']['-usbdevice'] ||= []
               @cmd['opts']['-usbdevice'] << {
