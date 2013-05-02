@@ -320,16 +320,19 @@
         <td><%= pci_device[:model] %></td>
         <td><%= pci_device[:desc] %></td>
         <td>
-          <select name="pci_passthrough[<%= pci_id %>]" style="width:20ex">
-            <option value="">(<%= passthrough ? 'detach' : 'not attached' %>)</option>
-            <%# define QEMU::Passthrough::PCI::METHODS ? %>
-            <option value="vfio-pci" <%=    'selected' if passthrough == 'vfio-pci'    %>>
-              VFIO-PCI
-            </option>
-            <option value="pci-assign" <%=  'selected' if passthrough == 'pci-assign'  %>> 
-              PCI Assignment
-            </option>
-          </select>
+          <% if OnBoard::V12n::QEMU::Passthrough::PCI.new(pci_id).used_by %>
+            already used!
+          <% else %>
+            <select name="pci_passthrough[<%= pci_id %>]" style="width:20ex">
+              <option value="">(<%= passthrough ? 'detach' : 'not attached' %>)</option>
+              <option value="vfio-pci" <%=    'selected' if passthrough == 'vfio-pci'    %>>
+                VFIO-PCI
+              </option>
+              <option value="pci-assign" <%=  'selected' if passthrough == 'pci-assign'  %>> 
+                PCI Assignment
+              </option>
+            </select>
+          <% end %>
         </td>
       </tr>
     <% end %>
