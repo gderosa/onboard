@@ -257,8 +257,13 @@ class OnBoard
           cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
           begin
             prepare_pci_passthrough
-            msg = System::Command.run cmdline, :sudo, :raise_Conflict
-            setup_networking # bridge created TAP(s) 
+            msg = System::Command.run "sh -c 'ulimit -l unlimited ; #{cmdline}'", :sudo, :raise_Conflict
+              # ``ulimit -l unlimited'' to circumvent problems with VFIO and 
+              # limits on locking memory. The QEMU process must be child 
+              # of the process wich sets ulimit, so ulimit must me called 
+              # in the same shell which launches qemu. For that reason it 
+              # couldn't be moved to Instance#prepare_pci_passthrough .
+            setup_networking # bridge just-created TAP(s) 
           ensure
             fix_permissions
           end
