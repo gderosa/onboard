@@ -1,4 +1,10 @@
-<% 
+<%
+  # NOTE: There's no way for a JSON client to have hardware list...
+  # TODO: Provide/implement http://.../hardware/(pci|usb).json ?
+  # TODO: Include PCI/USB lists in "objects" passed by Controller ?
+  require 'onboard/hardware/lspci'
+  require 'onboard/hardware/lsusb'
+
   sect_sep_height = '0.8ex'
 
   vm ||= nil
@@ -360,12 +366,29 @@
       <th colspan="2">Host</th>
       <th colspan="2">ID</th>
       <th rowspan="2">Description</th>
+      <th rowspan="2">Pass-through to Guest</th>
     </tr>
     <tr>
       <th>Bus</th><th>Device</th>
       <th>Vendor</th><th>Product</th>
     </tr>
     <tbody>
+    <% OnBoard::Hardware::LSUSB.all.each do |dev| %>
+      <tr>
+        <td><%= dev.bus_id %></td>
+        <td><%= dev.device_id %></td>
+        <td><%= dev.vendor_id %></td>
+        <td><%= dev.product_id %></td>
+        <td><%= dev.description %></td>
+        <td>
+          <select name="usb_passthrough[][mode]">
+            <option value="">(none)</option>
+            <option value="FIXME">By Host Bus/Device</option> <!-- TODO: by host bus / *port*; lsusb -t ... -->
+            <option value="FIXME">By Vendor/Product</option> 
+          </select>
+        </td>
+      </tr>
+    <% end %>
   </table>
   <!-- END USB PASSTHROUGH -->
 
