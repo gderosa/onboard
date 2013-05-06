@@ -15,7 +15,15 @@ class OnBoard
               
               def prepare(id)
                 # See Documentation/vfio.txt from Linux kernel source
-                iommu_group = File.basename File.readlink "/sys/bus/pci/devices/0000:#{id}/iommu_group"
+                begin
+                  iommu_group_in_sysfs = "/sys/bus/pci/devices/0000:#{id}/iommu_group"
+                  iommu_group = File.basename File.readlink iommu_group_in_sysfs
+                rescue Errno::ENOENT
+                  raise Conflict, <<END # be consistent with other error msgs
+Looks like your System does not support VFIO (File #{iommu_group_in_sysfs} not found). 
+Could be a software problem or lack of hardware support. If you can't fix this, retry with no PCI passthrough.
+END
+                end
                 Dir.foreach "/sys/bus/pci/devices/0000:#{id}/iommu_group/devices" do |file|
                   if file =~ /(\h\h:\h\h\.\h)/
                     ingroup_id = $1
