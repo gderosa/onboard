@@ -2,8 +2,36 @@ class OnBoard
   module Hardware
     class LSUSB
 
+      class SysFSData
+
+        BASEDIR = '/sys/bus/usb/devices'
+
+        def initialize
+          @data = []
+          Dir.foreach BASEDIR do |subdir|
+            if subdir =~ /^(\d+)-(\d+(.\d+)?)$/
+              bus, port = $1, $2
+              dev = File.read("#{BASEDIR}/#{subdir}/devnum").strip
+              @data << {
+                :bus_id     => bus,
+                :device_id  => dev,
+                :port_id    => port,
+              }
+            end
+          end
+        end
+
+        def method_missing(id, *args, &blk)
+          @data.send id, *args, &blk
+        end
+
+      end
+
       LINE_REGEX  = /Bus (\d\d\d) Device (\d\d\d): ID ([A-Fa-f\d]{4}):([A-Fa-f\d]{4}) (.*)/
       HUB_REGEX   = /hub\s*$/i
+
+      # # NOTE/(TODO?): does all this sophisticated "laziness" make any sense?
+      # # We'll have to (eagerly) scan /sys/bus/usb to find physical ports...
 
       class Enumerator < ::Enumerator
         # Lazily convert into Array
@@ -19,12 +47,15 @@ class OnBoard
         end
 
         def all
+          @sysfs_data = SysFSData.new
           output_text = `lsusb`
           parse output_text 
         end
         alias devices all
 
         def parse(text, *opts)
+          opt_h = opts.find{|o| o.is_a? Hash}
+
           Enumerator.new do |yielder|
             text.each_line do |line|
               # ex.
@@ -41,6 +72,10 @@ class OnBoard
                   :description  => $5,
                   :full_line    => line.strip,
                 }
+                sysfs_entry = @sysfs_data.find do |entry| 
+                  entry[:bus_id].to_i == h[:bus_id].to_i and entry[:device_id].to_i == h[:device_id].to_i
+                end
+                h[:port_id] = sysfs_entry[:port_id] if sysfs_entry
                 yielder.yield self.new(h) 
               end
             end
