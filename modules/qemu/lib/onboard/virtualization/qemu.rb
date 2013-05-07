@@ -2,6 +2,7 @@ require 'yaml'
 require 'uuid'
 require 'fileutils'
 
+require 'onboard/constants'
 require 'onboard/extensions/process'
 
 class OnBoard
