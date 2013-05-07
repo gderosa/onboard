@@ -376,16 +376,27 @@
     <% OnBoard::Hardware::LSUSB.all.each do |dev| %>
       <tr>
         <td><%= dev.bus_id %></td>
+        <input type="hidden" name="usb_passthrough[][hostbus]"/>
+        
         <td><%= dev.port_id %></td>
+        <input type="hidden" name="usb_passthrough[][hostport]"/>
+
         <td><%= dev.device_id %></td>
+        <input type="hidden" name="usb_passthrough[][hostaddr]"/>
+
         <td><%= dev.vendor_id %></td>
+        <input type="hidden" name="usb_passthrough[][vendorid]"/>
+
         <td><%= dev.product_id %></td>
+        <input type="hidden" name="usb_passthrough[][productid]"/>
+
         <td><%= dev.description %></td>
         <td>
           <select name="usb_passthrough[][mode]">
             <option value="">(none)</option>
-            <option value="FIXME">By Host Bus/Device</option> <!-- TODO: by host bus / *port*; lsusb -t ... -->
-            <option value="FIXME">By Vendor/Product</option> 
+            <option value="hostbus,hostport">By Host Bus/Port</option>
+            <option value="hostbus,hostaddr">By Host Bus/Device</option>
+            <option value="vendorid,productid">By Vendor/Product</option> 
           </select>
         </td>
       </tr>
