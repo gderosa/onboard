@@ -374,29 +374,56 @@
     </tr>
     <tbody>
     <% OnBoard::Hardware::LSUSB.all.each do |dev| %>
+      <% 
+        conf_h = vm.config.opts['-device'].find do |cnf|
+          cnf['type'] == 'usb-host' and
+          (
+            (
+              cnf['hostbus'] and cnf['hostbus'] == dev.bus_id and
+              (
+                (cnf['hostaddr'] and cnf['hostaddr'] == dev.device_id) or
+                (cnf['hostport'] and cnf['hostport'] == dev.port_id)
+              )
+            ) or
+            (
+              cnf['vendorid'] =~ /(0x)?#{dev.vendor_id}/ and
+              cnf['productid'] =~ /(0x)?#{dev.product_id}/
+            )
+          )
+        end || {}
+      %>
       <tr>
-        <td><%= dev.bus_id %></td>
+        <td class="<%= 'highlight' if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
         <input type="hidden" name="usb_passthrough[][hostbus]" value="<%= dev.bus_id %>"/>
         
-        <td><%= dev.port_id %></td>
+        <td class="<%= 'highlight' if conf_h['hostport'] %>"><%= dev.port_id %></td>
         <input type="hidden" name="usb_passthrough[][hostport]" value="<%= dev.port_id %>"/>
 
-        <td><%= dev.device_id %></td>
+        <td class="<%= 'highlight' if conf_h['hostaddr'] %>"><%= dev.device_id %></td>
         <input type="hidden" name="usb_passthrough[][hostaddr]" value="<%= dev.device_id %>"/>
 
-        <td><%= dev.vendor_id %></td>
+        <td class="<%= 'highlight' if conf_h['vendorid'] %>"><%= dev.vendor_id %></td>
         <input type="hidden" name="usb_passthrough[][vendorid]" value="0x<%= dev.vendor_id %>"/>
 
-        <td><%= dev.product_id %></td>
+        <td class="<%= 'highlight' if conf_h['productid'] %>"><%= dev.product_id %></td>
         <input type="hidden" name="usb_passthrough[][productid]" value="0x<%= dev.product_id %>"/>
 
-        <td><%= dev.description %></td>
+        <td class="<%= 'highlight' if conf_h.any? %>"><%= dev.description %></td>
         <td>
           <select name="usb_passthrough[][mode]">
             <option value="">(none)</option>
-            <option value="hostbus,hostport">By Host Bus/Port</option>
-            <option value="hostbus,hostaddr">By Host Bus/Device</option>
-            <option value="vendorid,productid">By Vendor/Product</option> 
+            <option 
+                value="hostbus,hostport" 
+                <%= 'selected' if conf_h['hostbus'] and conf_h['hostport'] %>
+            >By Host Bus/Port</option>
+            <option 
+                value="hostbus,hostaddr"
+                <%= 'selected' if conf_h['hostbus'] and conf_h['hostaddr'] %>    
+            >By Host Bus/Device</option>
+            <option 
+                value="vendorid,productid"
+                <%= 'selected' if conf_h['vendorid'] and conf_h['productid'] %>    
+            >By Vendor/Product</option> 
           </select>
         </td>
       </tr>
