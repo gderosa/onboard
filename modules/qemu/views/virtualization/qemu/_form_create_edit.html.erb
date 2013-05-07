@@ -385,10 +385,10 @@
         <input type="hidden" name="usb_passthrough[][hostaddr]" value="<%= dev.device_id %>"/>
 
         <td><%= dev.vendor_id %></td>
-        <input type="hidden" name="usb_passthrough[][vendorid]" value="<%= dev.vendor_id %>"/>
+        <input type="hidden" name="usb_passthrough[][vendorid]" value="0x<%= dev.vendor_id %>"/>
 
         <td><%= dev.product_id %></td>
-        <input type="hidden" name="usb_passthrough[][productid]" value="<%= dev.product_id %>"/>
+        <input type="hidden" name="usb_passthrough[][productid]" value="0x<%= dev.product_id %>"/>
 
         <td><%= dev.description %></td>
         <td>
