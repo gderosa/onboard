@@ -86,18 +86,43 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 '-pidfile'    => "#{VARRUN}/qemu-#{uuid_short}.pid"
               }
             }
+
+            # Host Device Passthrough
+            @cmd['opts']['-device'] ||= []
             # PCI Passthrough
             if h[:http_params]['pci_passthrough']
               h[:http_params]['pci_passthrough'].each_pair do |id, type|
                 next if type == ''
-                @cmd['opts']['-device'] ||= []
                 @cmd['opts']['-device'] << {
                   'type'  => type,
                   'host'  => id
                 }
               end
             end
-            # End PCI Passthrough
+            # USB Passthrough
+            if h[:http_params]['usb_passthrough'].respond_to? :each
+              h[:http_params]['usb_passthrough'].each do |device_http_params|
+                if device_http_params.respond_to? :[]
+                  # device_http_params['mode'] is something like:
+                  # ""
+                  # "hostbus,hostport"
+                  # "hostbus,hostaddr"
+                  # "vendorid,productid"
+                  if device_http_params['mode'].respond_to? :split
+                    usb_param_list = device_http_params['mode'].split(',')
+                    if usb_param_list.any?
+                      device_conf_entry = {'type' => 'usb-host'}
+                      usb_param_list.each do |p|
+                        device_conf_entry[p] = device_http_params[p]
+                      end
+                      @cmd['opts']['-device'] << device_conf_entry
+                    end
+                  end
+                end
+              end
+            end
+            # END Host Device Passthrough
+
             if h[:http_params]['usbdisk'] =~ /\S/
               @cmd['opts']['-usbdevice'] ||= []
               @cmd['opts']['-usbdevice'] << {
