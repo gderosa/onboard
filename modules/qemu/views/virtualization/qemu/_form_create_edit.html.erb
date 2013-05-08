@@ -91,8 +91,11 @@
   # formvals['cache']         ||= cache_default # unused, we have an Array if disks...
   formvals['disks']         ||= [{'cache' => cache_default}]  
 
+  extra_nics = 2 # TODO: move on top
+  nics_max = formvals['net'].length + extra_nics
+  
   random_macs               = []
-  0.upto(5) do |i|
+  0.upto(nics_max-1) do |i|
     random_macs << OnBoard::V12n::QEMU::Network::NIC::MAC.random
   end
   random_macs.sort!
@@ -103,7 +106,7 @@
     'ifname'  => '[auto]',
     'macaddr' => random_macs.first.to_s.upcase
   }
-  1.upto(5) do |i|
+  1.upto(nics_max-1) do |i|
     formvals['net'][i] ||= {
       'type'    => 'none',
       'vlan'    => i.to_s,
@@ -449,8 +452,8 @@
   </table>
   <!-- END USB PASSTHROUGH -->
 
-  <h4>Virtual Network Interfaces</h4>
-  <table>
+  <h4>Emulated Network Interfaces</h4>
+  <table id="net">
     <thead>
       <tr>
         <th>VLAN</th>
@@ -479,7 +482,7 @@
       </tr>
     </thead>
     <tbody>
-      <% nn = 5 %>
+      <% nn = formvals['net'].length - 1 %>
       <% 0.upto nn do |n| %>
         <tr>
           <td>
@@ -496,8 +499,8 @@
               <option <%= 'selected' if formvals['net'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
             </select>
           </td>
-          <td>
-            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="<%= formvals['net'][n]['ifname'] %>"/>
+          <td style="text-align:center;">
+            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="<%= formvals['net'][n]['ifname'] %>" style="width:95%"/>
           </td>
           <td>
             <select id="net[<%= n %>][bridge]" name="net[][bridge]"> 
@@ -529,6 +532,5 @@
   <div style="display:none;">
   <h4>Run as root</h4>
   <input type="checkbox" name="run_as_root" <%= 'checked' if vm and not vm.config.drop_privileges? %>/>
-  <br/>
-  </div> 
+</div> <br/>
 
