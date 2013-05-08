@@ -20,7 +20,11 @@
   }
   table tr td.highlight, table tr.highlight td, table tr td.superhighlight, table tr.superhighlight td  {
     font-weight: bold;
-    background: #eec;
+  }
+  table tr.highlight        td:first-child,
+  table tr.superhighlight   td:first-child,
+  table tr.partialhighlight td:first-child {
+    border-left: 2px #bbf solid;
   }
 
   .vmdetails {

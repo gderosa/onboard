@@ -383,7 +383,7 @@
         end 
         conf_h ||= {}
       %>
-      <tr>
+      <tr class="<%= 'partialhighlight' if conf_h.any? %>">
         <td class="<%= passthrough_highlight if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
         <input type="hidden" name="usb_passthrough[][hostbus]" value="<%= dev.bus_id %>"/>
         
