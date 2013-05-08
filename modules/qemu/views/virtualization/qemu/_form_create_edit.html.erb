@@ -165,7 +165,7 @@
           Hard Disk Image <span style="font-weight:normal;">(@ <em style="font-size:110%">slot</em>)</span>
           <div class="optinfo">Choose existing</div>
         </th>
-        <td>
+        <td style="padding-right:1.5ex;">
           <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
           @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
             <% ([''] + OnBoard::V12n::QEMU::Config::Drive.disk_slots).each do |slot| %>
@@ -184,7 +184,7 @@
           <!-- -->
           <% begin %>
             <% if hd.img_info %>  
-              <span class="lowlight" style="margin-left:1em">(<%= hd.img_info['virtual_size'].split.first %>)</span>
+              <span class="lowlight" style="margin:0 1ex">(<%= hd.img_info['virtual_size'].split.first %>)</span>
             <% end %>
           <% rescue NoMethodError %>
             <% # turn the Hash into an object with proper methods %> 
