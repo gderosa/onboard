@@ -343,7 +343,7 @@
         <td><%= pci_device[:desc] %></td>
         <td>
           <% if !available %>
-            <em>Already used by  &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;</em>
+            Already used by  &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;
           <% else %>
             <select name="pci_passthrough[<%= pci_id %>]" style="width:20ex">
               <option value="">(<%= passthrough_type ? 'detach' : 'not attached' %>)</option>
@@ -385,12 +385,13 @@
       %>
       <% 
         available = true
+        using_vm = usb_passthrough.used_by
         if vm
-          if usb_passthrough.used_by and usb_passthrough.used_by.uuid != vm.uuid
+          if using_vm and using_vm.uuid != vm.uuid
             available = false
           end
         else
-          if usb_passthrough.used_by
+          if using_vm
             available = false 
           end
         end
@@ -422,21 +423,26 @@
 
         <td class="<%= passthrough_highlight if conf_h.any? %>"><%= dev.description %></td>
         <td>
-          <select name="usb_passthrough[][mode]">
-            <option value="">(none)</option>
-            <option 
-                value="hostbus,hostport" 
-                <%= 'selected' if conf_h['hostbus'] and conf_h['hostport'] %>
-            >By Host Bus/Port</option>
-            <option 
-                value="hostbus,hostaddr"
-                <%= 'selected' if conf_h['hostbus'] and conf_h['hostaddr'] %>    
-            >By Host Bus/Device</option>
-            <option 
-                value="vendorid,productid"
-                <%= 'selected' if conf_h['vendorid'] and conf_h['productid'] %>    
-            >By Vendor/Product</option> 
-          </select>
+          <% if available %>
+            <select name="usb_passthrough[][mode]"> 
+              <option value="">(none)</option>
+              <option 
+                  value="hostbus,hostport" 
+                  <%= 'selected' if conf_h['hostbus'] and conf_h['hostport'] %>
+              >By Host Bus/Port</option>
+              <option 
+                  value="hostbus,hostaddr"
+                  <%= 'selected' if conf_h['hostbus'] and conf_h['hostaddr'] %>    
+              >By Host Bus/Device</option>
+              <option 
+                  value="vendorid,productid"
+                  <%= 'selected' if conf_h['vendorid'] and conf_h['productid'] %>    
+              >By Vendor/Product</option> 
+            </select>
+          <% else %>
+            <input type="hidden" name="usb_passthrough[][mode]" value=""/>
+            Already used by  &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;
+          <% end %>
         </td>
       </tr>
     <% end %>
