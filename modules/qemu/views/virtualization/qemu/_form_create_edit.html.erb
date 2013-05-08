@@ -375,7 +375,7 @@
     <tbody>
     <% OnBoard::Hardware::LSUSB.all.each do |dev| %>
       <% 
-        conf_h = vm.config.opts['-device'].find do |cnf|
+        conf_h = vm && vm.config.opts['-device'].find do |cnf|
           cnf['type'] == 'usb-host' and
           (
             (
