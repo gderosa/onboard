@@ -130,6 +130,12 @@ class OnBoard
               cmdline << '-smp ' << args.join(',') << ' ' 
             end
           end
+
+          # Add default USB 2.0 and 3.0 controllers (apparently order 
+          # matters, so they must be added *before* actual USB devices).
+          cmdline << '-device usb-ehci,id=ehci -device nec-usb-xhci,id=xhci' << ' '         
+
+          # This SHOLUD NOT be used; use -device instead
           if opts['-usbdevice'].respond_to? :each
             opts['-usbdevice'].each do |device|
               if    device['type'] == 'disk'
@@ -143,6 +149,9 @@ class OnBoard
               end
             end
           end
+          # END This SHOULD NOT be used: use -device instead
+
+          # Add various kinds of devices, including USB and PCI passthrough
           if opts['-device'].respond_to? :each
             opts['-device'].each do |device|
               cmdline << "-device " << device['type']
@@ -152,6 +161,7 @@ class OnBoard
               cmdline << ' '
             end
           end
+
           if opts['-drive'].respond_to? :each
             opts['-drive'].each do |d|
               drive_args = []
