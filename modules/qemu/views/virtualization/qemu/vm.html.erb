@@ -312,8 +312,8 @@
             <option value="6" <%= 'selected' if vals['w'] == '6' %>>Saturday</option>
           </select> 
         </td>
-        <td>
-          <select name="snapshot_schedule[d]">
+        <td style="text-align:center">
+          <select name="snapshot_schedule[d]" style="width:95%">
             <option value="*">*</option>
             <% 1.upto(31) do |d| %>
               <% 
@@ -324,10 +324,11 @@
             <% end %>
           </select>
         </td>
-        <td>
+        <td style="text-align:center">
           <input 
-            type="text" size="2" name="snapshot_schedule[delete_older_than_days]"
+            type="text" name="snapshot_schedule[delete_older_than_days]"
             value="<%= vals['delete_older_than_days'] %>"
+            style="text-align:right; margin-right:1ex; width:3.5ex;"
           /> days
         </td>
       </tr>
