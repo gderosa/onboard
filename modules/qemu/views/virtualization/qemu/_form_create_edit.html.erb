@@ -377,22 +377,11 @@
     <tbody>
     <% OnBoard::Hardware::LSUSB.all.each do |dev| %>
       <% 
-        conf_h = vm && vm.config.opts['-device'].find do |cnf|
-          cnf['type'] == 'usb-host' and
-          (
-            (
-              cnf['hostbus'] and cnf['hostbus'] == dev.bus_id and
-              (
-                (cnf['hostaddr'] and cnf['hostaddr'] == dev.device_id) or
-                (cnf['hostport'] and cnf['hostport'] == dev.port_id)
-              )
-            ) or
-            (
-              cnf['vendorid'] =~ /(0x)?#{dev.vendor_id}/ and
-              cnf['productid'] =~ /(0x)?#{dev.product_id}/
-            )
-          )
-        end || {}
+        usb_passthrough = OnBoard::V12n::QEMU::Passthrough::USB.new(dev)
+        conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find do |cnf|
+          usb_passthrough.match_config? cnf
+        end 
+        conf_h ||= {}
       %>
       <tr>
         <td class="<%= passthrough_highlight if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
