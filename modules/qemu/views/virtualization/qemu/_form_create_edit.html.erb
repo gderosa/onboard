@@ -5,6 +5,8 @@
   require 'onboard/hardware/lspci'
   require 'onboard/hardware/lsusb'
 
+  passthrough_highlight = 'superhighlight'
+
   sect_sep_height = '0.8ex'
 
   vm ||= nil
@@ -328,7 +330,7 @@
         end
         if available
           if passthrough_type
-            tr_args = %q{class="highlight"}
+            tr_args = %Q{class="#{passthrough_highlight}"}
           end
         else
           tr_args = %q{class="lowlight"}
@@ -393,22 +395,22 @@
         end || {}
       %>
       <tr>
-        <td class="<%= 'highlight' if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
+        <td class="<%= passthrough_highlight if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
         <input type="hidden" name="usb_passthrough[][hostbus]" value="<%= dev.bus_id %>"/>
         
-        <td class="<%= 'highlight' if conf_h['hostport'] %>"><%= dev.port_id %></td>
+        <td class="<%= passthrough_highlight if conf_h['hostport'] %>"><%= dev.port_id %></td>
         <input type="hidden" name="usb_passthrough[][hostport]" value="<%= dev.port_id %>"/>
 
-        <td class="<%= 'highlight' if conf_h['hostaddr'] %>"><%= dev.device_id %></td>
+        <td class="<%= passthrough_highlight if conf_h['hostaddr'] %>"><%= dev.device_id %></td>
         <input type="hidden" name="usb_passthrough[][hostaddr]" value="<%= dev.device_id %>"/>
 
-        <td class="<%= 'highlight' if conf_h['vendorid'] %>"><%= dev.vendor_id %></td>
+        <td class="<%= passthrough_highlight if conf_h['vendorid'] %>"><%= dev.vendor_id %></td>
         <input type="hidden" name="usb_passthrough[][vendorid]" value="0x<%= dev.vendor_id %>"/>
 
-        <td class="<%= 'highlight' if conf_h['productid'] %>"><%= dev.product_id %></td>
+        <td class="<%= passthrough_highlight if conf_h['productid'] %>"><%= dev.product_id %></td>
         <input type="hidden" name="usb_passthrough[][productid]" value="0x<%= dev.product_id %>"/>
 
-        <td class="<%= 'highlight' if conf_h.any? %>"><%= dev.description %></td>
+        <td class="<%= passthrough_highlight if conf_h.any? %>"><%= dev.description %></td>
         <td>
           <select name="usb_passthrough[][mode]">
             <option value="">(none)</option>
