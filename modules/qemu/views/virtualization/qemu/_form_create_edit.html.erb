@@ -383,7 +383,28 @@
         end 
         conf_h ||= {}
       %>
-      <tr class="<%= 'partialhighlight' if conf_h.any? %>">
+      <% 
+        available = true
+        if vm
+          if usb_passthrough.used_by.uuid != vm.uuid
+            available = false
+          end
+        else
+          if usb_passthrough.used_by
+            available = false 
+          end
+        end
+      %>
+      <%
+        if conf_h.any?
+          tr_class = 'partialhighlight'
+        elsif available
+          tr_class = ''
+        else
+          tr_class = 'lowlight'
+        end
+      %>
+      <tr class="<%= tr_class %>">
         <td class="<%= passthrough_highlight if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
         <input type="hidden" name="usb_passthrough[][hostbus]" value="<%= dev.bus_id %>"/>
         

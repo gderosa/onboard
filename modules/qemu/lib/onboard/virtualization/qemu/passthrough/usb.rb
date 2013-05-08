@@ -16,26 +16,30 @@ class OnBoard
           # where vmconfig is an OnBoard::Virtualization::QEMU::Config object
           def match_config?(cnf)
             return false unless cnf['type'] == 'usb-host' 
-            (
-              cnf['hostbus'] and cnf['hostbus'] == dev.bus_id and
+            retval = (
               (
-                (cnf['hostaddr'] and cnf['hostaddr'] == dev.device_id) or
-                (cnf['hostport'] and cnf['hostport'] == dev.port_id)
+                cnf['hostbus'] and cnf['hostbus'] == dev.bus_id and
+                (
+                  (cnf['hostaddr'] and cnf['hostaddr'] == dev.device_id) or
+                  (cnf['hostport'] and cnf['hostport'] == dev.port_id)
+                )
+              ) or (
+                cnf['vendorid']   =~ /(0x)?#{dev.vendor_id}/  and
+                cnf['productid']  =~ /(0x)?#{dev.product_id}/
               )
-            ) or (
-              cnf['vendorid']   =~ /(0x)?#{dev.vendor_id}/  and
-              cnf['productid']  =~ /(0x)?#{dev.product_id}/
             )
+            pp cnf    # DEBUG
+            p retval  # DEBUG
+            return retval
           end
 
           def used_by
             @all_vm.each do |vm|
               next unless vm.config.opts['-device'].respond_to? :each
               vm.config.opts['-device'].find do |cnf|
-                self.match_config? cnf
+                match_config? cnf
               end
             end
-            nil
           end
 
         end 
