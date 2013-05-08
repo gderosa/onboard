@@ -386,7 +386,7 @@
       <% 
         available = true
         if vm
-          if usb_passthrough.used_by.uuid != vm.uuid
+          if usb_passthrough.used_by and usb_passthrough.used_by.uuid != vm.uuid
             available = false
           end
         else

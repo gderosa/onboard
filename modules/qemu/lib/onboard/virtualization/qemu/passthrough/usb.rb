@@ -28,18 +28,17 @@ class OnBoard
                 cnf['productid']  =~ /(0x)?#{dev.product_id}/
               )
             )
-            pp cnf    # DEBUG
-            p retval  # DEBUG
             return retval
           end
 
           def used_by
             @all_vm.each do |vm|
               next unless vm.config.opts['-device'].respond_to? :each
-              vm.config.opts['-device'].find do |cnf|
-                match_config? cnf
+              vm.config.opts['-device'].each do |cnf|
+                return vm if self.match_config? cnf
               end
             end
+            nil
           end
 
         end 
