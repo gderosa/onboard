@@ -448,13 +448,15 @@
             </select>
           <% else %>
             <input type="hidden" name="usb_passthrough[][mode]" value=""/>
-            Already used by  &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;
+            Already used by &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;
           <% end %>
         </td>
         <td>
           <select name="usb_passthrough[][bus]">
             <% OnBoard::V12n::QEMU::Config::USB::DEFAULT_CONTROLLERS.each do |bus| %>
-              <option value="<%= bus['id'] %>"><%= bus['_comment'] %></option>
+              <option value="<%= bus['id'] %>"<%= ' selected' if conf_h['bus'] =~ /#{bus['id']}(\.\d+)?$/ %>>
+                <%= bus['_comment'] %>
+              </option>
             <% end %>
           </select>
         </td> 
