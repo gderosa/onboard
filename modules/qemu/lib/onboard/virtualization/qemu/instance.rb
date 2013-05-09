@@ -212,14 +212,14 @@ class OnBoard
           # 
           # Guest CPU will have host CPU features ('flags') 
           cmdline << '-cpu' << ' ' << 'host' << ' '
-
+=begin
           cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
           # The above should fix some problems with VNC,
           # but you have problems anyway with -loadvm ...
           #
           # Solution: use a VNC client like Vinagre, supporting
           # capture/release.
-
+=end
           cmdline << '-enable-kvm' << ' ' 
 
           cmdline << opts['append'] if opts['append'] 
