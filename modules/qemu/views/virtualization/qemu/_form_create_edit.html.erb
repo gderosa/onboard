@@ -529,7 +529,7 @@
 
   <% if settings.environment == :development %>
   <h3>Experts/Development</h3>
-  <h4>Edit/Force QEMU command line <input style="vertical-align:-0.3ex" type="checkbox" name="edit_the_command_line"<%= ' checked' if vm.config.force_command_line %>></h4>
+  <h4>Edit/Force QEMU command line <input style="vertical-align:-0.3ex" type="checkbox" name="edit_the_command_line"<%= ' checked' if vm and vm.config.force_command_line %>></h4>
   <textarea name="command_line" style="width:100%; height:11em"><%
     %><%= vm.format_cmdline if vm %><%
   %></textarea>
