@@ -76,8 +76,8 @@ class OnBoard
                   # NOTE: String#to_i has been "smartly" overwritten
                   # in lib/extensions, so a String like "011" would be interpreted
                   # as octal :-/
-                  entry[:bus_id].to_i(10) == h[:bus_id].to_i(10) and 
-                  entry[:device_id].to_i(10) == h[:device_id].to_i(10)
+                  entry[:bus_id].to_i     == h[:bus_id].to_i    and 
+                  entry[:device_id].to_i  == h[:device_id].to_i
                 end
                 h[:port_id] = sysfs_entry[:port_id] if sysfs_entry
                 yielder.yield self.new(h) 
