@@ -142,28 +142,29 @@ class String
   alias to_i_orig to_i
 
   # A smarter to_i which automatically guess the base of 
-  # "0xff", "0o377", "0377", "0b11111111" and "255"
-  # if called to_i(:guess).
-  #
-  # If no argument is given, only autoguess 0x, 0o, 0b
-  # but treat the ambiguous case of "0377" as decimal.
+  # "0xff", "0377", "0b11111111"" and "255"
+  # if no argument is provided
   #
   def to_i(*args)
 
-    return to_i_orig(*args) if args.length > 0 and args[0].is_a? Integer
+    return to_i_orig(*args) if args.length > 0 and not args.include? :guess
 
     case self
-    when /^\s*0x(\h*)\s*$/      # hexadecimal 
+    when /^\s*0x(\h+)\s*$/      # hexadecimal 
       return $1.to_i_orig(16)
-    when /^\s*0o([0-7]*)\s*$/   # unambiguous octal
+    when /^\s*0o([0-7]+)\s*$/   # unambiguous octal
       return $1.to_i_orig(8)
-    when /^\s*0([0-7]*)\s*$/    # ambiguous octal
-      return $1.to_i_orig(8) if args.include? :guess
-    when /^\s*0b([01]*)\s*$/    # binary ("0" and "1")
+    when /^\s*0b([01]+)\s*$/    # binary ("0" and "1")
       return $1.to_i_orig(2)
     else
-      return to_i_orig(*args)
+      if args.include? :guess
+        if self =~ /^\s*0([0-7]+)\s*$/ # ambiguous octal
+          return $1.to_i_orig(8)
+        end
+      end
     end
+
+    return to_i_orig(*args)
 
   end
 
