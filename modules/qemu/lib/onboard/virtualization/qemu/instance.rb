@@ -74,8 +74,10 @@ class OnBoard
           @config.cmd['opts']
         end
 
-        def format_cmdline
-          # opts = @config.cmd['opts'] 
+        def format_cmdline          
+
+          return @config.force_command_line if @config.force_command_line
+
           exe = Config::Common.get['exe'] 
           cmdline = ''
           cmdline << %Q{#{exe} } 

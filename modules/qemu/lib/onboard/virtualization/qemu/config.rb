@@ -33,7 +33,7 @@ class OnBoard
 
         end
 
-        attr_reader :uuid, :cmd, :drop_privileges
+        attr_reader :uuid, :cmd, :drop_privileges, :force_command_line
 
         def [](k)
           @cmd['opts'][k] 
@@ -196,11 +196,17 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             if h[:http_params]['cmdline_append'] =~ /\S/
               @cmd['opts']['append'] = h[:http_params]['cmdline_append']
             end
+            if h[:http_params]['edit_the_command_line'] == 'on'
+              @force_command_line = h[:http_params]['command_line']
+            else
+              @force_command_line = false
+            end
           else
-            @uuid             = h[:config]['uuid']
-            @cmd              = h[:config]['cmd']
-            @drop_privileges  = h[:config]['drop_privileges'] if
+            @uuid               = h[:config]['uuid']
+            @cmd                = h[:config]['cmd']
+            @drop_privileges    = h[:config]['drop_privileges'] if
                 h[:config].keys.include? 'drop_privileges' # avoid assigning non true as default
+            @force_command_line = h[:config]['force_command_line']
           end
         end
 
@@ -247,9 +253,10 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
 
         def to_h
           {
-            'uuid'            => @uuid,
-            'cmd'             => @cmd,
-            'drop_privileges' => @drop_privileges,
+            'uuid'                => @uuid,
+            'cmd'                 => @cmd,
+            'drop_privileges'     => @drop_privileges,
+            'force_command_line'  => @force_command_line
           }
         end
 
