@@ -147,7 +147,7 @@ class String
   #
   def to_i(*args)
 
-    return to_i_orig(*args) if args.length > 0 and not args.include? :guess
+    return to_i_orig(*args) if args.length > 0 and not args.include? :guess_octal_always
 
     case self
     when /^\s*0x(\h+)\s*$/      # hexadecimal 
@@ -157,7 +157,7 @@ class String
     when /^\s*0b([01]+)\s*$/    # binary ("0" and "1")
       return $1.to_i_orig(2)
     else
-      if args.include? :guess
+      if args.include? :guess_octal_always
         if self =~ /^\s*0([0-7]+)\s*$/ # ambiguous octal
           return $1.to_i_orig(8)
         end
