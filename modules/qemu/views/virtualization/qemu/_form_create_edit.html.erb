@@ -91,8 +91,11 @@
   # formvals['cache']         ||= cache_default # unused, we have an Array if disks...
   formvals['disks']         ||= [{'cache' => cache_default}]  
 
-  extra_nics = 2 # TODO: move on top
-  nics_max = formvals['net'].length + extra_nics
+  extra_nics  = 1 # TODO: move on top
+  min_nics    = 3 # TODO: move on top
+
+  formvals['net'] ||= []
+  nics_max = [formvals['net'].length + extra_nics, min_nics].max
   
   random_macs               = []
   0.upto(nics_max-1) do |i|
@@ -525,8 +528,10 @@
   </table>
 
   <h3>Experts</h3>
-  <h4>Extra command lne arguments</h4>
-  <input type="text" name="cmdline_append" value="<%= formvals['cmdline_append'] %>" size="120" style="margin-bottom:1em">
+  <h4>Edit the command line <input style="vertical-align:-0.3ex" type="checkbox" name="edit_the_command_line"></h4>
+  <textarea name="command_line">
+    <%= vm.format_cmdline if vm %>
+  </textarea>
   
   <!-- not really necessary, using sudo qemu -runas onboard -->
   <div style="display:none;">
