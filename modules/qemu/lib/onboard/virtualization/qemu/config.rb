@@ -119,6 +119,9 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                       usb_param_list.each do |p|
                         device_conf_entry[p] = device_http_params[p]
                       end
+                      if device_http_params['bus'] =~ /\S/
+                        device_conf_entry['bus'] = device_http_params['bus'] + '.0'
+                      end
                       @cmd['opts']['-device'] << device_conf_entry
                     end
                   end
