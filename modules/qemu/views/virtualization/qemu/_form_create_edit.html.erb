@@ -449,7 +449,7 @@
           </td>
           <td>
             <select name="usb_passthrough[][bus]">
-              <option>(auto)</option>
+              <option value="">(auto)</option>
               <% OnBoard::V12n::QEMU::Config::USB::DEFAULT_CONTROLLERS.each do |bus| %>
                 <option value="<%= bus['id'] %>"<%= ' selected' if conf_h['bus'] =~ /#{bus['id']}(\.\d+)?$/ %>>
                   <%= bus['_comment'] %> (<%= bus['driver'] %>)
