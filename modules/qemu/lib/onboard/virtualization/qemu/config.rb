@@ -11,6 +11,7 @@ class OnBoard
 
         autoload :Common, 'onboard/virtualization/qemu/config/common'
         autoload :Drive,  'onboard/virtualization/qemu/config/drive'
+        autoload :USB,    'onboard/virtualization/qemu/config/usb'
 
         # paste from man page
         KEYBOARD_LAYOUTS = %w{ 
@@ -87,8 +88,11 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               }
             }
 
-            # Host Device Passthrough
             @cmd['opts']['-device'] ||= []
+            # Load default devices
+            @cmd['opts']['-device'] += USB::DEFAULT_CONTROLLERS
+
+            # Host Device Passthrough
             # PCI Passthrough
             if h[:http_params]['pci_passthrough']
               h[:http_params]['pci_passthrough'].each_pair do |id, type|
