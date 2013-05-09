@@ -374,7 +374,7 @@
       <th colspan="3">Host</th>
       <th colspan="2">ID</th>
       <th rowspan="2">Description</th>
-      <th rowspan="2">Pick from Host</th>
+      <th rowspan="2">Pass-Through from Host</th>
       <th rowspan="2">Attach to Guest Controller</th>
     </tr>
     <tr>
@@ -449,6 +449,7 @@
           </td>
           <td>
             <select name="usb_passthrough[][bus]">
+              <option>(auto)</option>
               <% OnBoard::V12n::QEMU::Config::USB::DEFAULT_CONTROLLERS.each do |bus| %>
                 <option value="<%= bus['id'] %>"<%= ' selected' if conf_h['bus'] =~ /#{bus['id']}(\.\d+)?$/ %>>
                   <%= bus['_comment'] %> (<%= bus['driver'] %>)
