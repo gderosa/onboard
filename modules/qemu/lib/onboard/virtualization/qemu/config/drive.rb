@@ -57,6 +57,10 @@ class OnBoard
               slots
             end
 
+            def next_slot(slots)
+              'virtio7' # stub
+            end
+
           end          
 
           attr_reader :config
@@ -69,6 +73,7 @@ class OnBoard
 
           # Corresponding name in 'info block' output from QEMU Monitor
           def to_runtime_name
+            return @config['slot'] if @config['slot'] =~ /\S/
             cannot_guess_from = "Cannot guess runtime/Monitor name from these Drive data"
             return unless @config['if']
             name = "#{@config['if']}"

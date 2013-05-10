@@ -53,7 +53,12 @@
       hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['file'] if hd['file']
       formvals['disks'] << hd
     end
-    formvals['disks'] << OnBoard::V12n::QEMU::Config::Drive.new({'cache' => cache_default})
+    next_suggested_slot = OnBoard::V12n::QEMU::Config::Drive.next_slot(hd_drives)
+    formvals['disks'] << 
+        OnBoard::V12n::QEMU::Config::Drive.new({
+          'cache' => cache_default,
+          'slot'  => next_suggested_slot
+        })
 
     #if usb_disk
     #  formvals['usbdisk'] = OnBoard::V12n::QEMU::Config.relative_path usb_disk['file']
@@ -160,6 +165,7 @@
       <tr style="height:<%= sect_sep_height %>"> </tr> <!-- BEGIN HARD DISK IMAGES -->
 
     <% formvals['disks'].each_with_index do |hd, idx| %>
+      <% # p hd # DEBUG %>
       <% unless idx == 0%>
         <tr style="height:<%= sect_sep_height %>"> </tr>
       <% end %>
