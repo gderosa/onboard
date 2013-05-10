@@ -450,6 +450,10 @@
           <td>
             <select name="usb_passthrough[][bus]">
               <option value="">(auto)</option>
+              <%
+                # Again, a JSON client still can't access this information: 
+                # TODO: move into ``objects'' or provide /virtualization/qemu/usb/default_controllers.json
+              %>
               <% OnBoard::V12n::QEMU::Config::USB::DEFAULT_CONTROLLERS.each do |bus| %>
                 <option value="<%= bus['id'] %>"<%= ' selected' if conf_h['bus'] =~ /#{bus['id']}(\.\d+)?$/ %>>
                   <%= bus['_comment'] %> (<%= bus['driver'] %>)

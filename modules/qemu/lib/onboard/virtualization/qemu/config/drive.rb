@@ -44,6 +44,8 @@ class OnBoard
               }
               opts = defaults.deep_merge(opts)
               slots = %w{ide0-hd0 ide0-hd1 ide1-hd1}
+                  # ide1-hd0'slot is hold by CD/DVD drive,
+                  # named ide1-cd0 actually.
               0.upto(opts[:scsi][:buses] - 1) do |bus|
                 0.upto(opts[:scsi][:units] - 1) do |unit|
                   slots << %Q{scsi#{bus}-hd#{unit}}
