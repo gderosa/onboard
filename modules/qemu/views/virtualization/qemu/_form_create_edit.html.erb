@@ -156,6 +156,7 @@
 
       <tr style="height:<%= sect_sep_height %>"> </tr> <!-- BEGIN HARD DISK IMAGES -->
 
+    <% taken_slots = formvals['disks'].map {|d| d.slot} %>  
     <% formvals['disks'].each_with_index do |hd, idx| %>
       <% # p hd # DEBUG %>
       <% unless idx == 0%>
@@ -169,15 +170,26 @@
         <td style="padding-right:1.5ex;">
           <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
           @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
-            <% ([''] + OnBoard::V12n::QEMU::Config::Drive.disk_slots).each do |slot| %>
+            <% OnBoard::V12n::QEMU::Config::Drive.disk_slots.each do |slot| %>
+              <!-- TODO: etach and remove special options... -->
               <%
                 runtime_name = begin 
                                  hd.runtime_name
                                rescue Exception
                                  nil
                                end              
-              %>
-              <option value="<%= slot %>" <%= 'selected' if slot == runtime_name %>>
+
+                extra_attr = (
+                  if slot == runtime_name
+                    ' selected'
+                  elsif taken_slots.include? slot
+                    ' disabled'
+                  else
+                    ''
+                  end
+                )
+              %>                    
+              <option value="<%= slot %>"<%= extra_attr %>>
                 <%= slot %>
               </option>
             <% end %>
