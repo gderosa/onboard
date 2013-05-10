@@ -288,7 +288,12 @@
           <!-- try to follow strftime(3) conventions --> 
           <select name="snapshot_schedule[H]">
             <option value="*">*</option>
-            <% 0.upto(23) do |_H| %>
+            <% 
+              # 0 is a special case: it shouldn't match "0,1,2,3,4,5..." which
+              # should atcually match the cron entry '*'
+            %>
+            <option value="0"<%= ' selected' if vals['M'] =~ /^\s*0+\s*$/ %>>00</option>            
+            <% 1.upto(23) do |_H| %>
               <option value="<%= _H %>" <%= 'selected' if _H == vals['H'].to_i %>><%= _H %></option>
             <% end %>
           </select>

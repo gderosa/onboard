@@ -153,14 +153,7 @@
           <input class="vimagepath" type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" value="<%= formvals['cdrom'] %>"/>
         </td>
       </tr>
-      <!--
-      <tr> 
-        <th scope="row">External USB disk/pendrive image (optional)</th>
-        <td>
-          <input class="vimagepath" type="text" name="usbdisk" id="usbdisk" onclick="javascript:popup_filechooser(this);" value="<%# formvals['usbdisk'] %>"/>
-        </td>
-      </tr>
-      -->
+
       <tr style="height:<%= sect_sep_height %>"> </tr> <!-- BEGIN HARD DISK IMAGES -->
 
     <% formvals['disks'].each_with_index do |hd, idx| %>
