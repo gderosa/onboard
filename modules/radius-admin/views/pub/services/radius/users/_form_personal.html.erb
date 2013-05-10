@@ -8,6 +8,7 @@
   conf['mandatory']['personal'] ||= {}
   
   m                             = conf['mandatory']['personal']
+  smo                           = (conf['show_mandatory_only'] == 'on')
 
   user                          ||= nil
 
@@ -53,7 +54,7 @@
 </style>
 
 <table class="raduserform">
-  <tr>
+  <tr style="<%= 'display:none' if smo and not m['Name'] %>">
     <th scope="row"><%= i18n.personal.name.full.capitalize %> <%= mandatory_mark if m['Name'] %></th>
     <td>
       <span class="input-container">
@@ -68,14 +69,14 @@
             value="<%= personal['Last-Name'] %>"/>(<%= i18n.personal.name.last.capitalize %>)</span>
     </td>
   </tr>
-  <tr>
+  <tr style="<%= 'display:none' if smo and not m['Email'] %>">
     <th scope="row">Email <%= mandatory_mark if m['Email'] %></th>
     <td>
       <input type="text" name="personal[Email]" 
           value="<%= personal['Email'] %>"/>
     </td>
   </tr>
-  <tr>
+  <tr style="<%= 'display:none' if smo and not m['Birth'] %>">
     <th scope="row">
       <%= i18n.personal.birth.all_data.capitalize %> <%= mandatory_mark if m['Birth'] %>
       <div class="optinfo">
@@ -102,7 +103,7 @@
             value="<%= personal['Birth-State'] %>">(<%= i18n.personal.state.capitalize %>)</span>
     </td>
   </tr>
-  <tr>
+  <tr style="<%= 'display:none' if smo and not m['Full-Address'] %>">
     <th scope="row"><%= i18n.personal.address.capitalize %> <%= mandatory_mark if m['Full-Address'] %></th>
     <td>
       <span class="input-container">
@@ -135,7 +136,7 @@
       </span>   
     </td>
   </tr>
-  <tr>
+  <tr style="<%= 'display:none' if smo and not m['Phone'] %>">
     <th scope="row">
       <%= i18n.personal.phone.phone.capitalize %> <%= mandatory_mark if m['Phone'] %>
       <div class="optinfo"><%= i18n.personal.phone.at_least_one.capitalize if m['Phone'] %></div>
@@ -158,7 +159,7 @@
             value="<%= personal['Mobile-Phone'] %>">(<%= i18n.personal.phone.mobile.capitalize %>)</span>
     </td>
   </tr>
-  <tr id="personal-attachments">
+  <tr id="personal-attachments" style="<%= 'display:none' if smo %>"> <%# and not m['Attachments'] %>
     <th scope="row"><%= i18n.attachment(3).capitalize %></th> 
     <td>
       <% if user and personal['Attachments'].respond_to? :each and personal['Attachments'].any? %>
@@ -186,7 +187,7 @@
       <% end %>
     </td>
   </tr>
-  <tr>
+  <tr style="<%= 'display:none' if smo and not m['ID-Code'] %>"> 
     <th scope="row">
       <%= i18n.personal.id_code.id_code.titlecase %> <%= mandatory_mark if m['ID-Code'] %>
       <div class="optinfo"><%= i18n.personal.id_code.alt %></div>
@@ -213,7 +214,7 @@
       </td>      
     </tr>
   <% end %>
-  <tr>
+  <tr style="<%= 'display:none' if smo %>"> <%# notes are optional by definition %>
     <th scope="row"><%= i18n.notes.capitalize %></th>
     <td>
       <textarea style="width: 40ex;" name="personal[Notes]"><%= personal['Notes'] %></textarea>

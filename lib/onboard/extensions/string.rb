@@ -147,18 +147,24 @@ class String
   #
   def to_i(*args)
 
-    return to_i_orig(*args) if args.length > 0
+    return to_i_orig(*args) if args.length > 0 and not args.include? :guess_octal_always
 
     case self
-    when /^\s*0x(\h*)\s*$/      # hexadecimal 
+    when /^\s*0x(\h+)\s*$/      # hexadecimal 
       return $1.to_i_orig(16)
-    when /^\s*0o?([0-7]*)\s*$/  # octal
+    when /^\s*0o([0-7]+)\s*$/   # unambiguous octal
       return $1.to_i_orig(8)
-    when /^\s*0b([01]*)\s*$/    # binary ("0" and "1")
+    when /^\s*0b([01]+)\s*$/    # binary ("0" and "1")
       return $1.to_i_orig(2)
     else
-      return to_i_orig
+      if args.include? :guess_octal_always
+        if self =~ /^\s*0([0-7]+)\s*$/ # ambiguous octal
+          return $1.to_i_orig(8)
+        end
+      end
     end
+
+    return to_i_orig(*args)
 
   end
 
@@ -169,6 +175,10 @@ class String
   def split_unescaping_spaces
     strip!
     gsub(/([^\\])\s+/, "\\1\0").split("\0").map{|x| x.gsub '\ ',  ' '} 
+  end
+
+  def is_uri?
+    self =~ /^\w+:\//i
   end
 
 end

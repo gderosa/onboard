@@ -267,13 +267,14 @@
           <input type="checkbox" name="snapshot_schedule[enable]" <%= 'checked' if vals['enable'] %>/> 
         </td>
         <td style="text-align:right;">
-          <% drives_w_snapshots.keys.each do |drive_name| %>
-            <% 
-              checked = true 
-              if snapshot_cron_entry
-                unless snapshot_cron_entry[:command].include? drive_name # naive!!
-                  checked = false
-                end
+          <% vm.drives.each_pair do |drive_name, drive| %>
+            <% next unless drive['config']['media'] == 'disk' %>
+            <%
+              checked = false 
+              if  snapshot_cron_entry                 and 
+                  snapshot_cron_entry.respond_to? :[] and
+                  snapshot_cron_entry[:command].include? drive_name # naive !!
+                checked = true
               end
             %>
             <%= drive_name %> <input 
@@ -288,7 +289,12 @@
           <!-- try to follow strftime(3) conventions --> 
           <select name="snapshot_schedule[H]">
             <option value="*">*</option>
-            <% 0.upto(23) do |_H| %>
+            <% 
+              # 0 is a special case: it shouldn't match "0,1,2,3,4,5..." which
+              # should atcually match the cron entry '*'
+            %>
+            <option value="0"<%= ' selected' if vals['M'] =~ /^\s*0+\s*$/ %>>00</option>            
+            <% 1.upto(23) do |_H| %>
               <option value="<%= _H %>" <%= 'selected' if _H == vals['H'].to_i %>><%= _H %></option>
             <% end %>
           </select>
@@ -312,8 +318,8 @@
             <option value="6" <%= 'selected' if vals['w'] == '6' %>>Saturday</option>
           </select> 
         </td>
-        <td>
-          <select name="snapshot_schedule[d]">
+        <td style="text-align:center">
+          <select name="snapshot_schedule[d]" style="width:95%">
             <option value="*">*</option>
             <% 1.upto(31) do |d| %>
               <% 
@@ -324,10 +330,11 @@
             <% end %>
           </select>
         </td>
-        <td>
+        <td style="text-align:center">
           <input 
-            type="text" size="2" name="snapshot_schedule[delete_older_than_days]"
+            type="text" name="snapshot_schedule[delete_older_than_days]"
             value="<%= vals['delete_older_than_days'] %>"
+            style="text-align:right; margin-right:1ex; width:3.5ex;"
           /> days
         </td>
       </tr>
@@ -361,7 +368,7 @@
   <%# js functions implemented in qemu/_js.html.erb %>
   qemuSaveRestoreControls('<%= vm.uuid %>');
   qemuNetIfControls();
-  <% if vm.running? and not params['quit'] %>
+  <% if vm.running? and not params['quit'] and false # tmp disable %>
     window.setInterval(
       function(){
         //qemuRefreshRunPanel('runPanel', '<%= "#{vm.uuid_short}/bits/run.html" %>');

@@ -2,6 +2,8 @@ require 'uuid'
 
 require 'facets/hash'
 
+require 'onboard/extensions/string'
+
 class OnBoard
   module Virtualization
     module QEMU
@@ -9,6 +11,7 @@ class OnBoard
 
         autoload :Common, 'onboard/virtualization/qemu/config/common'
         autoload :Drive,  'onboard/virtualization/qemu/config/drive'
+        autoload :USB,    'onboard/virtualization/qemu/config/usb'
 
         # paste from man page
         KEYBOARD_LAYOUTS = %w{ 
@@ -20,7 +23,7 @@ class OnBoard
         class << self
 
           def absolute_path(path)
-            return path if path =~ /^\//
+            return path if path =~ /^\// or path.is_uri?
             return File.join FILESDIR, path
           end
 
@@ -31,7 +34,7 @@ class OnBoard
 
         end
 
-        attr_reader :uuid, :cmd
+        attr_reader :uuid, :cmd, :drop_privileges, :force_command_line
 
         def [](k)
           @cmd['opts'][k] 
@@ -41,12 +44,16 @@ class OnBoard
           @cmd['opts'][k] = val
         end 
 
+        alias drop_privileges? drop_privileges
+
         def name
           self['-name'] 
         end
 
         def initialize(h)
+          @drop_privileges = true
           if h[:http_params]
+            @drop_privileges = false if h[:http_params]['run_as_root'] == 'on'
             @uuid = h[:uuid] || h[:http_params][:uuid] || UUID.generate 
             @cmd  = {
               #'exe'   => 'kvm',
@@ -80,6 +87,49 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 '-pidfile'    => "#{VARRUN}/qemu-#{uuid_short}.pid"
               }
             }
+
+            @cmd['opts']['-device'] ||= []
+            # Load default devices
+            @cmd['opts']['-device'] += USB::DEFAULT_CONTROLLERS
+
+            # Host Device Passthrough
+            # PCI Passthrough
+            if h[:http_params]['pci_passthrough']
+              h[:http_params]['pci_passthrough'].each_pair do |id, type|
+                next if type == ''
+                @cmd['opts']['-device'] << {
+                  'type'  => type,
+                  'host'  => id
+                }
+              end
+            end
+            # USB Passthrough
+            if h[:http_params]['usb_passthrough'].respond_to? :each
+              h[:http_params]['usb_passthrough'].each do |device_http_params|
+                if device_http_params.respond_to? :[]
+                  # device_http_params['mode'] is something like:
+                  # ""
+                  # "hostbus,hostport"
+                  # "hostbus,hostaddr"
+                  # "vendorid,productid"
+                  if device_http_params['mode'].respond_to? :split
+                    usb_param_list = device_http_params['mode'].split(',')
+                    if usb_param_list.any?
+                      device_conf_entry = {'type' => 'usb-host'}
+                      usb_param_list.each do |p|
+                        device_conf_entry[p] = device_http_params[p]
+                      end
+                      if device_http_params['bus'] =~ /\S/
+                        device_conf_entry['bus'] = device_http_params['bus'] + '.0'
+                      end
+                      @cmd['opts']['-device'] << device_conf_entry
+                    end
+                  end
+                end
+              end
+            end
+            # END Host Device Passthrough
+
             if h[:http_params]['usbdisk'] =~ /\S/
               @cmd['opts']['-usbdevice'] ||= []
               @cmd['opts']['-usbdevice'] << {
@@ -101,7 +151,14 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 #
                 # newhd = hd | default | (Drive.slot2data(hd['slot']) || {}) 
                 #
-                newhd = default.merge(hd).merge( Drive.slot2data(hd['slot']) || {}  ) 
+                newhd = default.merge(hd).merge( Drive.slot2data(hd['slot']) || {}  )
+
+                # TODO: do not hardcode '[network]'
+                if newhd['use_network_url'] and newhd['path'] =~ %r{\[network\]/([^/]+)/([^/]+)/([^/]+)/(.*)}
+                  protocol, host, volume, path_to_image = $1, $2, $3, $4
+                  newhd['file_url'] = "#{protocol}://#{host}/#{volume}/#{path_to_image}"
+                end
+                # pp newhd # DEBUG
                 
                 @cmd['opts']['-drive'] << newhd
               end
@@ -143,9 +200,20 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 }
               end 
             end
+            if h[:http_params]['cmdline_append'] =~ /\S/
+              @cmd['opts']['append'] = h[:http_params]['cmdline_append']
+            end
+            if h[:http_params]['edit_the_command_line'] == 'on'
+              @force_command_line = h[:http_params]['command_line']
+            else
+              @force_command_line = false
+            end
           else
-            @uuid = h[:config]['uuid']
-            @cmd  = h[:config]['cmd']
+            @uuid               = h[:config]['uuid']
+            @cmd                = h[:config]['cmd']
+            @drop_privileges    = h[:config]['drop_privileges'] if
+                h[:config].keys.include? 'drop_privileges' # avoid assigning non true as default
+            @force_command_line = h[:config]['force_command_line']
           end
         end
 
@@ -192,8 +260,10 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
 
         def to_h
           {
-            'uuid'  => @uuid,
-            'cmd'   => @cmd 
+            'uuid'                => @uuid,
+            'cmd'                 => @cmd,
+            'drop_privileges'     => @drop_privileges,
+            'force_command_line'  => @force_command_line
           }
         end
 

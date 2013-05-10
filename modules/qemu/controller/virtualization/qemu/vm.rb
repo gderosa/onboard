@@ -74,7 +74,7 @@ class OnBoard
             :uuid         =>  vm_old.uuid
           )
           
-          vm_new.save # replace configuration file # NOP, DEV
+          vm_new.save # replace configuration file
         end
 
         # Action buttons / runtime

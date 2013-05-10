@@ -20,7 +20,9 @@ class OnBoard::Controller
   end
 
   get "/system/logs/:logid.raw" do
-    hash = OnBoard::System::Log.getAll.detect {|h| h['id'] == params['logid']}
+    hash = OnBoard::System::Log.getAll.detect do |h| 
+      h['id'] == params['logid'] or h['path'] == params['logid']
+    end
     not_found if not hash
     attachment(params['logid']) 
     content_type 'text/plain'

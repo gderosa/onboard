@@ -1,6 +1,7 @@
 <% 
   superhighlight  = "#080"
-  highlight       = "#44b" 
+  highlight       = "#44b"
+  lighthighlight  = "#88e" 
   almostblack     = "#222"
   lowlight        = "#666" 
   superlowlight   = "#bbb" 
@@ -20,15 +21,20 @@ body {
 }
 
 .highlight{
-  color: <%= highlight %>
+  color: <%= highlight %>;
 }
 
 .superhighlight{
-  color: <%= superhighlight %>
+  color: <%= superhighlight %>;
 }
 
 .lowlight{
-  color: <%= lowlight %>
+  color: <%= lowlight %>;
+}
+
+.lowlight a {
+  color: <%= lighthighlight %>;
+  font-style: normal;
 }
 
 div#sidebar {

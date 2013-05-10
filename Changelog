@@ -1,3 +1,29 @@
+2013.05
+
+* QEMU: 
+	* USB and PCI Pass-Through
+		* supports pci-assign and VFIO and all USB versions
+	* GlusterFS and distributed storage native support
+	* Snapshot fixes
+	* suggest "slots" for new disks
+	* disable JS autorefresh for now (not robust at all)
+
+* Hardware::LSUSB library
+
+* OpenVPN: fix vpn deletion
+
+* System/Logs: fix log detection
+
+* Policy Routing: fix style inconsistencies
+
+* Core Ruby extensions: fix String#to_i
+
+2013.03.04
+
+* AAA/Hotspot/RADIUS:
+	* redirect users after a successful registration (signup)
+	* localized error and welcome messages
+
 2013.03.03
 
 * QEMU/KVM: 

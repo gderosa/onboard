@@ -1,10 +1,17 @@
 require 'fileutils'
 require 'time'
 
+require 'onboard/extensions/string'
+
 class OnBoard
   module Virtualization
     module QEMU
       class Img
+
+        # Please don'use url like gluster:// with qemu-img, ecen when supported;
+        # it hangs for long time in case of a degraded cluster. Always prefer
+        # mount points (but of course you can use urls with qemu itself, if 
+        # available, to get performance boost).
 
         ROOTDIR = File.join ENV['HOME'], 'files/QEMU'
 
@@ -27,13 +34,22 @@ class OnBoard
             if h['qemu-img'] and h['qemu-img']['create']
               size_str = h['qemu-img']['size']['G'] + 'G'
               fmt = h['qemu-img']['fmt']
-              FileUtils.mkdir_p File.join ROOTDIR, name
-              filepath = "#{ROOTDIR}/#{name}/disk#{h['idx']}.#{fmt}"
+              subdir = if h['qemu-img']['subdir'] =~ /^(.*)\/qemu\/?$/i
+                         h['qemu-img']['subdir']
+                       else
+                         h['qemu-img']['subdir'] + '/QEMU'
+                       end
+              dir = File.join QEMU::FILESDIR, subdir, name
+              System::Command.run "mkdir -p '#{dir}'", :sudo # sudo, otherwise 
+                  # we should ensure that the onboard user has the same UID 
+                  # across the cluster, in case directories are on a 
+                  # distributed file system.
+              filepath = "#{dir}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
-                FileUtils.mv filepath, "#{filepath}.old"
+                System::Command.run "mv '#{filepath}' '#{filepath}.old'", :sudo
               end
               System::Command.run(
-                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :raise_BadRequest) 
+                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :sudo, :raise_BadRequest) 
               return filepath
             end
           end
@@ -47,8 +63,10 @@ class OnBoard
 
         def snapshots
           list = []
-          if @file and File.exists? @file
-            `qemu-img snapshot -l "#{@file}"`.each_line do |line|
+          if @file and (File.exists? @file or @file.is_uri?)
+            cmd = %Q{qemu-img snapshot -l "#{@file}"}
+            out = `sudo #{cmd}` # sudo to access gluster://
+            out.each_line do |line|
               if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
                 list << Snapshot.new(
                   :id       =>                                $1.to_i,
@@ -65,8 +83,8 @@ class OnBoard
 
         def info
           h = {}
-          if @file and File.exists? @file
-            `qemu-img info "#{@file}"`.each_line do |line|
+          if @file and (File.exists? @file or @file.is_uri?)
+            `sudo qemu-img info "#{@file}"`.each_line do |line|
               break if line =~ /^\s*Snapshot list:/
               if line =~ /([^:]+):([^:]+)/ 
                 k = $1

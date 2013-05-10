@@ -6,8 +6,21 @@ class OnBoard
     module FS
       class Mount
 
+        class << self
+
+          def all
+          end
+
+          def which_include(path)
+          end
+
+        end
+
         def initialize(h)
-          @mount_point = h[:mount_point]
+          @device       = h[:device]
+          @mount_point  = h[:mount_point]
+          @type         = h[:type]
+          @options      = h[:options] # list, may include Hashes?
         end
     
         def writable?

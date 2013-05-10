@@ -1,10 +1,14 @@
+Compile coova-chilli[1] from source, DO NOT use debian/ directory
+under source tree to create a Debian Wheezy package: as per our
+tests it leds to issues with child processes.
+
 Assumptions:
 
-* one instance per network interface (which is absolutely reasonable) 
+* one instance per network interface
 
 * only configuration file is parsed, no command line options (except --conf)
 
-Based on CoovaChilli[1], maybe it works with other Chillispot-compatible NACs.
+---
 
 [1] http://www.coova.org
 

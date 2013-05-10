@@ -35,11 +35,12 @@ class OnBoard
         def self.update_config(params)
           FileUtils.mkdir_p CONFDIR # just in case
           config_data = {
-            'enable'          => ( params['enable']           ? true : false )  ,
-            'enable_selfcare' => ( params['enable_selfcare']  ? true : false )  ,
-            'check'           => params['check']                                ,
-            'reply'           => params['reply']                                ,
-            'mandatory'       => params['mandatory']
+            'enable'              => ( params['enable']           ? true : false )  ,
+            'enable_selfcare'     => ( params['enable_selfcare']  ? true : false )  ,
+            'check'               => params['check']                                ,
+            'reply'               => params['reply']                                ,
+            'mandatory'           => params['mandatory']                            ,
+            'show_mandatory_only' => params['show_mandatory_only']                  ,
           }
           File.open CONFFILE, 'w' do |f|
             f.write DEFAULT_CONFIG.deep_merge(config_data).to_yaml
