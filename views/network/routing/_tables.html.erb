@@ -16,9 +16,9 @@
         <% if name %>
           <td><a href="tables/<%= name || number %>.html"><code><%= name %></code></a></td>
         <% else %>
-          <td class="optinfo" style="text-align:right;"><a href="tables/<%= name || number %>.html">(no name)</a></td>
+          <td style="text-align:right;"><a href="tables/<%= name || number %>.html">(no name)</a></td>
         <% end %>
-        <td class="optinfo"><%= comments[number] || OnBoard::Network::Routing::Table.id2comment(number, name) || '' %></td>
+        <td style="font-style:italic"><%= comments[number] || OnBoard::Network::Routing::Table.id2comment(number, name) || '' %></td>
       </tr>
     <% end %>
   </tbody>
