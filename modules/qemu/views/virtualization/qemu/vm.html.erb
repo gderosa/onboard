@@ -267,13 +267,14 @@
           <input type="checkbox" name="snapshot_schedule[enable]" <%= 'checked' if vals['enable'] %>/> 
         </td>
         <td style="text-align:right;">
-          <% drives_w_snapshots.keys.each do |drive_name| %>
-            <% 
-              checked = true 
-              if snapshot_cron_entry and snapshot_cron_entry.respond_to? :include?
-                unless snapshot_cron_entry[:command].include? drive_name # naive!!
-                  checked = false
-                end
+          <% vm.drives.each_pair do |drive_name, drive| %>
+            <% next unless drive['config']['media'] == 'disk' %>
+            <%
+              checked = false 
+              if  snapshot_cron_entry                 and 
+                  snapshot_cron_entry.respond_to? :[] and
+                  snapshot_cron_entry[:command].include? drive_name # naive !!
+                checked = true
               end
             %>
             <%= drive_name %> <input 

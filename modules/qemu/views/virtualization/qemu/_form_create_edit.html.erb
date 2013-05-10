@@ -171,6 +171,7 @@
           <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
           @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
             <% OnBoard::V12n::QEMU::Config::Drive.disk_slots.each do |slot| %>
+              <!-- TODO: etach and remove special options... -->
               <%
                 runtime_name = begin 
                                  hd.runtime_name
