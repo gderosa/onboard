@@ -6,7 +6,7 @@
 	* GlusterFS and distributed storage native support
 	* Snapshot fixes
 	* suggest "slots" for new disks
-	* disable JS autorefresh for now
+	* disable JS autorefresh for now (not robust at all)
 
 * Hardware::LSUSB library
 
