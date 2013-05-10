@@ -270,7 +270,7 @@
           <% drives_w_snapshots.keys.each do |drive_name| %>
             <% 
               checked = true 
-              if snapshot_cron_entry
+              if snapshot_cron_entry and snapshot_cron_entry.respond_to? :include?
                 unless snapshot_cron_entry[:command].include? drive_name # naive!!
                   checked = false
                 end
