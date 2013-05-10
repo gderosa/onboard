@@ -57,8 +57,29 @@ class OnBoard
               slots
             end
 
-            def next_slot(slots)
-              'virtio7' # stub
+            # Next available/syggested "slot". drives_ is a list of
+            # existing Drive objects (or their respective data Hash'es)
+            def next_slot(drives_)
+              drives_ ||= []
+              drives  =   []
+              all_slots = disk_slots
+              drives_.each do |drive_|
+                if drive_.is_a? Drive
+                  drives << drive_
+                else # Hash or other initialization data
+                  drives << Drive.new(drive_)
+                end
+              end
+              return all_slots.first unless drives.any?
+              taken_slots = drives.map{|d| d.slot}
+              last_taken_idx = all_slots.rindex{|s| taken_slots.include? s}
+              all_slots[last_taken_idx..-1].each do |slot|
+                return slot unless taken_slots.include? slot
+              end
+              all_slots[0..last_taken_idx].each do |slot|
+                return slot unless taken_slots.include? slot
+              end
+              nil
             end
 
           end          
@@ -98,6 +119,9 @@ class OnBoard
             end
           end
           alias runtime_name to_runtime_name
+          alias slot runtime_name
+          # The idea is a one-to-one correspondence between 
+          # (bus, index, unit) and runtime name (as shown by qemu monitor)
 
           def img_info
             img = QEMU::Img.new :drive_config => @config

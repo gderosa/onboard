@@ -53,16 +53,6 @@
       hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['file'] if hd['file']
       formvals['disks'] << hd
     end
-    next_suggested_slot = OnBoard::V12n::QEMU::Config::Drive.next_slot(hd_drives)
-    formvals['disks'] << 
-        OnBoard::V12n::QEMU::Config::Drive.new({
-          'cache' => cache_default,
-          'slot'  => next_suggested_slot
-        })
-
-    #if usb_disk
-    #  formvals['usbdisk'] = OnBoard::V12n::QEMU::Config.relative_path usb_disk['file']
-    #end
 
     if vm.config['-smp'] and vm.config['-smp']['n'] and vm.config['-smp']['n'].to_i > 0
       formvals['smp'] ||= {}
@@ -87,6 +77,15 @@
     end
 
   end
+
+  next_suggested_slot = OnBoard::V12n::QEMU::Config::Drive.next_slot(hd_drives)
+  formvals['disks'] ||= []
+  formvals['disks'] <<
+      OnBoard::V12n::QEMU::Config::Drive.new({
+        'cache' => cache_default,
+        'slot'  => next_suggested_slot
+      })
+
 
   # Some defaults:
   formvals['m']             ||= 348
