@@ -374,8 +374,8 @@
       <th colspan="3">Host</th>
       <th colspan="2">ID</th>
       <th rowspan="2">Description</th>
-      <th rowspan="2">Pass-Through from Host</th>
-      <th rowspan="2">Attach to Guest Controller</th>
+      <th rowspan="2" style="padding: 0 1em">Pass-Through from Host</th>
+      <th rowspan="2" style="padding: 0 1em">Attach to Guest Controller</th>
     </tr>
     <tr>
       <th>Bus</th><th>Port</th><th>Dev/Addr</th>
@@ -540,7 +540,7 @@
     </tbody>
   </table>
 
-  <% if settings.environment == :development %>
+  <% if vm and settings.environment == :development and false # disable for now %>
   <h3>Experts/Development</h3>
   <h4>Edit/Force QEMU command line <input style="vertical-align:-0.3ex" type="checkbox" name="edit_the_command_line"<%= ' checked' if vm and vm.config.force_command_line %>></h4>
   <textarea name="command_line" style="width:100%; height:11em"><%
