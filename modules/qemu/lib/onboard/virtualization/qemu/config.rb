@@ -99,8 +99,8 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               h[:http_params]['pci_passthrough'].each_pair do |id, type|
                 next if type == ''
                 @cmd['opts']['-device'] << {
-                  'drive' => type,
-                  'host'  => id
+                  'driver'  => type,
+                  'host'    => id
                 }
               end
             end
