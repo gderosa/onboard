@@ -91,6 +91,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             @cmd['opts']['-device'] ||= []
             # Load default devices
             @cmd['opts']['-device'] += USB::DEFAULT_CONTROLLERS
+            @cmd['opts']['-device'] += USB::DEFAULT_DEVICES
 
             # Host Device Passthrough
             # PCI Passthrough

@@ -268,7 +268,7 @@
         </td>
         <td style="text-align:right;">
           <% vm.drives.each_pair do |drive_name, drive| %>
-            <% next unless drive['config']['media'] == 'disk' %>
+            <% next unless drive and drive['config'] and drive['config']['media'] == 'disk' %>
             <%
               checked = false 
               if  snapshot_cron_entry                 and 
