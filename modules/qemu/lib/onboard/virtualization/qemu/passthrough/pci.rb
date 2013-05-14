@@ -7,7 +7,8 @@ class OnBoard
           autoload :PCIAssign, 'onboard/virtualization/qemu/passthrough/pci/pci-assign'
           autoload :VFIOPCI,   'onboard/virtualization/qemu/passthrough/pci/vfio-pci'
 
-          TYPES         = %w{pci-assign vfio-pci}
+          DRIVERS       = %w{pci-assign vfio-pci}
+          TYPES         = DRIVERS
           EXCLUDE_LSPCI_DESCS = 
               /host bridge|pci bridge|isa bridge|ide interface|usb controller|smbus|communication controller/i
           EXCLUDE_DESCS = EXCLUDE_LSPCI_DESCS # Compat
@@ -21,7 +22,7 @@ class OnBoard
             @all_vm.each do |vm|
               next unless vm.config.opts['-device'].respond_to? :each
               vm.config.opts['-device'].each do |device|
-                next unless TYPES.include? device['type']
+                next unless DRIVERS.include? device['driver'] or TYPES.include? device['type']
                 return vm if device['host'] == @pci_id
               end
             end
@@ -31,7 +32,8 @@ class OnBoard
           class << self
 
             def prepare(h)
-              case h['type']
+              type = h['driver'] || h['type']
+              case type
               when 'pci-assign'
                 # http://www.linux-kvm.org/page/How_to_assign_devices_with_VT-d_in_KVM
                 PCIAssign.prepare h['host']

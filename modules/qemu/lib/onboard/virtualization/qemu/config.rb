@@ -99,7 +99,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               h[:http_params]['pci_passthrough'].each_pair do |id, type|
                 next if type == ''
                 @cmd['opts']['-device'] << {
-                  'type'  => type,
+                  'drive' => type,
                   'host'  => id
                 }
               end
@@ -116,7 +116,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   if device_http_params['mode'].respond_to? :split
                     usb_param_list = device_http_params['mode'].split(',')
                     if usb_param_list.any?
-                      device_conf_entry = {'type' => 'usb-host'}
+                      device_conf_entry = {'driver' => 'usb-host'}
                       usb_param_list.each do |p|
                         device_conf_entry[p] = device_http_params[p]
                       end
@@ -131,6 +131,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             end
             # END Host Device Passthrough
 
+            # TODO: -device instead of -usbdevice ... ?
             if h[:http_params]['usbdisk'] =~ /\S/
               @cmd['opts']['-usbdevice'] ||= []
               @cmd['opts']['-usbdevice'] << {
@@ -138,6 +139,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 'file'  => self.class.absolute_path(h[:http_params]['usbdisk']),
               }
             end
+
             @cmd['opts']['-drive'] ||= []
             h[:http_params]['disk'].each_with_index do |hd, idx|
               if hd['file']
