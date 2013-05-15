@@ -129,8 +129,6 @@
   formvals['smp']['n']  ||= 1
 %>
   <table id="vmcreateedit">
-    <thead>
-    </thead>
     <tbody>
       <tr>
         <th title="A descriptive name" scope="row">Name</th>
@@ -219,7 +217,14 @@
         </td>
       </tr>
 
-      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- BEGIN HARD DISK IMAGES -->
+      <tr style="height:<%= sect_sep_height %>"> </tr>
+    </tbody>
+  </table>
+
+  <!-- BEGIN HARD DISK IMAGES -->
+
+  <table>
+    <tbody>
 
     <% taken_slots = formvals['disks'].map {|d| d.slot} %>  
     <% formvals['disks'].each_with_index do |hd, idx| %>
