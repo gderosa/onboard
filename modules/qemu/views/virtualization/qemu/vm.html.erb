@@ -43,11 +43,17 @@
     color: <%= DEFAULT_THEME[:highlight] %>;
   }  
   div#tabs div a:hover {color:white}
+  div#tabs div.ui-tabs-panel h3 {
+    display:none;
+  }
+  div#tabs div.ui-tabs-panel h4.first {
+    margin-top: 0;
+  }
 </style>
 
 <div id="tabs">
   <ul>
-    <li><a href="#tabs-status">Status</a></li>
+    <li><a href="#tabs-status">Status/Runtime</a></li>
     <li><a href="#tabs-snapshots">Snapshots</a></li>
     <li><a href="#tabs-other">Configuration</a></li>
   </ul>
@@ -86,7 +92,7 @@
 
 <h3>Snapshots</h3>
 
-<h4>Status</h4>
+<h4 class="first">Status</h4>
 
 <p>
   <% if vm.snapshotting? %>
