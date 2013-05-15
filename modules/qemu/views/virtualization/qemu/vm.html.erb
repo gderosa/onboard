@@ -62,6 +62,14 @@
     </div>
 </form>
 
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-snapshots">Snapshots</a></li>
+    <li><a href="#tabs-other">Anything else</a></li>
+  <ul>
+
+  <div id="tabs-snapshots">
+
 <h3>Snapshots</h3>
 
 <h4>Status</h4>
@@ -341,6 +349,11 @@
     </tbody>
   </table>
   <button type="submit">Set!</button>
+</form>
+
+  </div> <!-- div#tab-snapshots -->
+
+  <div id="tabs-other">
 
 <h3>Configuration</h3>
 
@@ -363,6 +376,10 @@
 
   <button style="margin-top:3.3ex;" type="submit">Change!</button>
 </form>
+
+  </div> <!-- div#tab-other -->
+
+</div> <!-- div#tabs --> <!-- jQueryUI tabs -->
 
 <script type="text/javascript">
   <%# js functions implemented in qemu/_js.html.erb %>
