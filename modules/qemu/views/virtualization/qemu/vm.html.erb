@@ -36,6 +36,15 @@
 
 <h2>QEMU Virtual Machine: &ldquo;<%= vm.config['-name'] %>&rdquo;</h2>
 
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-status">Status</a></li>
+    <li><a href="#tabs-snapshots">Snapshots</a></li>
+    <li><a href="#tabs-other">Configuration</a></li>
+  </ul>
+
+  <div id="tabs-status">
+
 <% if vm.running? %>
   <% screenshot_path = "#{vm.uuid_short}/screen.png" %>
   <a title="Click for full-size screenshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:50%;margin-bottom:0" id="screenshot"/></a>
@@ -62,11 +71,7 @@
     </div>
 </form>
 
-<div id="tabs">
-  <ul>
-    <li><a href="#tabs-snapshots">Snapshots</a></li>
-    <li><a href="#tabs-other">Anything else</a></li>
-  </ul>
+  </div> <!-- #tabs-status -->
 
   <div id="tabs-snapshots">
 
