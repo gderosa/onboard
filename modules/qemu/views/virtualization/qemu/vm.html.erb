@@ -49,11 +49,14 @@
   div#tabs div.ui-tabs-panel h4.first {
     margin-top: 0;
   }
+  /* div#tabs ul[role="tablist"] {
+    background: transparent;
+  } */
 </style>
 
 <div id="tabs">
   <ul>
-    <li><a href="#tabs-status">Status/Runtime</a></li>
+    <li><a href="#tabs-status">Start/Shutdown/Status</a></li>
     <li><a href="#tabs-snapshots">Snapshots</a></li>
     <li><a href="#tabs-other">Configuration</a></li>
   </ul>
@@ -377,7 +380,7 @@
 
 <h3>Configuration</h3>
 
-<div class="warn" style="margin-bottom:4.3ex; margin-top: 0;">
+<div class="warn" style="margin-bottom:1em; margin-top: 0;">
   Changes will take effect the next time you start the VM.
 </div>
 
