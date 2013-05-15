@@ -36,6 +36,15 @@
 
 <h2>QEMU Virtual Machine: &ldquo;<%= vm.config['-name'] %>&rdquo;</h2>
 
+<!-- CSS fixes to what jQueryUI "broke"... -->
+<style type="text/css">
+  div#tabs a:hover {color:white}
+  div#tabs div a:link {
+    color: blue; <%# TODO: DRY CSS colors ... %>
+  }  
+  div#tabs div a:hover {color:white}
+</style>
+
 <div id="tabs">
   <ul>
     <li><a href="#tabs-status">Status</a></li>
