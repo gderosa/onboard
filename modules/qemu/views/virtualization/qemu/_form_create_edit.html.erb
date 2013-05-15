@@ -146,6 +146,71 @@
         <th scope="row">Number of CPUs / cores</th>
         <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
       </tr>
+      <tr>
+        <th scope="row">Remote Display</th>
+        <td>
+          VNC Display
+          <select name="vnc">
+            <% 1.upto(vnc_max) do |n| %>
+              <% 
+                selected = ''
+                disabled = ''
+                if ":#{n}" == formvals['vnc']
+                  selected = 'selected'
+                elsif not vnc_available.include? n 
+                  disabled = 'disabled'
+                end
+              %>
+              <option <%= selected %> <%= disabled %> value=":<%= n %>">:<%= n %></option>
+            <% end %>
+          </select>
+          &nbsp;&nbsp; <!-- horrible -->
+          SPICE port
+          <select name="spice[port]">
+            <option <%= 'selected' if formvals['spice']['port'] == 0 %> value="0">(disable)</option>
+            <% spice_min.upto(spice_max) do |n| %>
+              <% 
+                selected = ''
+                disabled = ''
+                if n == formvals['spice']['port']
+                  selected = 'selected'
+                elsif not spice_available.include? n 
+                  disabled = 'disabled'
+                end
+              %>
+              <option <%= selected %> <%= disabled %> value="<%= n %>"><%= n %></option>
+            <% end %>
+          </select>
+
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          Keyboard layout
+          <div class="optinfo">For VNC, etc.</div>
+        </th>
+        <td>
+          <select name="k">
+            <option value=""></option>
+            <% OnBoard::V12n::QEMU::Config::KEYBOARD_LAYOUTS.each do |k| %>
+              <option <%= 'selected' if formvals['k'] == k %> value="<%= k %>"><%= k %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Sound card</th>
+        <td>
+          <select id="soundhw" name="soundhw">
+            <option value="">(none/default)</option>
+            <% OnBoard::V12n::QEMU::Sound::Hardware.models.each do |model| %>
+              <option <%= 'selected' if model == formvals['soundhw'] %> value="<%= model %>"><%= model %></option> 
+            <% end %>
+          </select>
+        </td>
+      </tr>
+
+      <tr style="height:<%= sect_sep_height %>"> </tr>
 
       <tr> 
         <th scope="row">CD/DVD image (optional)</th>
@@ -263,69 +328,6 @@
 
       <tr style="height:<%= sect_sep_height %>"> </tr> <!-- END HARD DISK IMAGES -->
 
-      <tr>
-        <th scope="row">Remote Display</th>
-        <td>
-          VNC Display
-          <select name="vnc">
-            <% 1.upto(vnc_max) do |n| %>
-              <% 
-                selected = ''
-                disabled = ''
-                if ":#{n}" == formvals['vnc']
-                  selected = 'selected'
-                elsif not vnc_available.include? n 
-                  disabled = 'disabled'
-                end
-              %>
-              <option <%= selected %> <%= disabled %> value=":<%= n %>">:<%= n %></option>
-            <% end %>
-          </select>
-          &nbsp;&nbsp; <!-- horrible -->
-          SPICE port
-          <select name="spice[port]">
-            <option <%= 'selected' if formvals['spice']['port'] == 0 %> value="0">(disable)</option>
-            <% spice_min.upto(spice_max) do |n| %>
-              <% 
-                selected = ''
-                disabled = ''
-                if n == formvals['spice']['port']
-                  selected = 'selected'
-                elsif not spice_available.include? n 
-                  disabled = 'disabled'
-                end
-              %>
-              <option <%= selected %> <%= disabled %> value="<%= n %>"><%= n %></option>
-            <% end %>
-          </select>
-
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">
-          Keyboard layout
-          <div class="optinfo">For VNC, etc.</div>
-        </th>
-        <td>
-          <select name="k">
-            <option value=""></option>
-            <% OnBoard::V12n::QEMU::Config::KEYBOARD_LAYOUTS.each do |k| %>
-              <option <%= 'selected' if formvals['k'] == k %> value="<%= k %>"><%= k %></option>
-            <% end %>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">Sound card</th>
-        <td>
-          <select id="soundhw" name="soundhw">
-            <option value="">(none/default)</option>
-            <% OnBoard::V12n::QEMU::Sound::Hardware.models.each do |model| %>
-              <option <%= 'selected' if model == formvals['soundhw'] %> value="<%= model %>"><%= model %></option> 
-            <% end %>
-          </select>
-        </td>
-      </tr>
     </tbody>
   </table>
 
