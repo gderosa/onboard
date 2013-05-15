@@ -38,15 +38,27 @@
 
 <!-- CSS fixes to what jQueryUI "broke"... -->
 <style type="text/css">
-  div#tabs a:hover {color:white}
-  div#tabs div a:link {
+  div.ui-tabs a:hover {
+    color: white;
+  }
+  div.ui-tabs div.ui-tabs-panel a
+  {
     color: <%= DEFAULT_THEME[:highlight] %>;
   }  
-  div#tabs div a:hover {color:white}
-  div#tabs div.ui-tabs-panel h3 {
-    display:none;
+  div.ui-tabs div.ui-tabs-panel a:hover {
+    color: white;
+    background: <%= DEFAULT_THEME[:highlight] %>;
   }
-  div#tabs div.ui-tabs-panel h4.first {
+  div.ui-tabs div.ui-tabs-panel a.img, 
+  div.ui-tabs div.ui-tabs-panel a.img:hover, 
+  div.ui-tabs div.ui-tabs-panel a img  {
+    border: none;
+    background: transparent;
+  }
+  div.ui-tabs div.ui-tabs-panel h3 {
+    display: none;
+  }
+  div.ui-tabs div.ui-tabs-panel h4.first {
     margin-top: 0;
   }
 </style>
