@@ -38,11 +38,16 @@
 
 <!-- CSS fixes to what jQueryUI "broke"... -->
 <style type="text/css">
+  div.ui-tabs {
+    border: none;
+  }
   div.ui-tabs a:hover {
     color: white;
   }
-  div.ui-tabs div.ui-tabs-panel a
-  {
+  div.ui-tabs div.ui-tabs-panel {
+    padding: 2em 0 0 0;
+  }
+  div.ui-tabs div.ui-tabs-panel a {
     color: <%= DEFAULT_THEME[:highlight] %>;
   }  
   div.ui-tabs div.ui-tabs-panel a:hover {
