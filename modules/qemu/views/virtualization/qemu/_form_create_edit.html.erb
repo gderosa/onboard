@@ -128,6 +128,9 @@
   formvals['smp']       ||= {}
   formvals['smp']['n']  ||= 1
 %>
+
+<div id="tabs-config-general">
+
   <table id="vmcreateedit">
     <tbody>
       <tr>
@@ -217,9 +220,12 @@
         </td>
       </tr>
 
-      <tr style="height:<%= sect_sep_height %>"> </tr>
     </tbody>
   </table>
+
+</div> <!-- tabs-config-general -->
+
+<div id="tabs-config-disks">
 
   <!-- BEGIN HARD DISK IMAGES -->
 
@@ -331,13 +337,17 @@
       </tr>
     <% end %>
 
-      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- END HARD DISK IMAGES -->
+      <!-- END HARD DISK IMAGES -->
 
     </tbody>
   </table>
 
+</div> <!-- tabs-config-disks -->
+
+<div id="tabs-config-passthrough">
+
   <h4>PCI passthrough</h4>
-  <div class="warn" style="margin-top:0;">Make real PCI hardware available to the VM. Your CPU and motherboard must have Intel VT-d or AMD/Vi working. Your Linux kernel must have all the necessary drivers. Use with caution as this disables PCI cards from the host!</div>
+  <div class="warn" style="margin: 0 0 1ex 0">Make real PCI hardware available to the VM. Your CPU and motherboard must have Intel VT-d or AMD/Vi working. Your Linux kernel must have all the necessary drivers. Use with caution as this disables PCI cards from the host!</div>
   <table class="passthrough-devices">
     <% OnBoard::Hardware::LSPCI.by_id.each_pair do |pci_id, pci_device| %>
       <% next if pci_device[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
@@ -489,6 +499,10 @@
   </table>
   <!-- END USB PASSTHROUGH -->
 
+</div> <!-- tabs-config-passthrough -->
+
+<div id="tabs-config-net">
+
   <h4>Emulated Network Interfaces</h4>
   <table id="net">
     <thead>
@@ -560,6 +574,7 @@
       <% end %>
     </tbody>
   </table>
+</div> <!-- tabs-config-net -->
 
   <% if vm and settings.environment == :development and false # disable for now %>
   <h3>Experts/Development</h3>
@@ -574,5 +589,6 @@
     <input type="checkbox" name="run_as_root" <%= 'checked' if vm and not vm.config.drop_privileges? %>/>
   </div>
   <% end %>
+
   
 

@@ -35,6 +35,7 @@
 <script>
   $(function() {
     $( "#tabs" ).tabs();
+    $( "#tabs-config" ).tabs();
   });
 </script>
 
@@ -51,9 +52,27 @@
   div.ui-tabs a:hover {
     color: white;
   }
-  div.ui-tabs div.ui-tabs-panel {
-    padding: 1.8em 3px 0 3px;
+  div.ui-tabs div.ui-tabs-panel,
+  div.ui-tabs div.ui-tabs-panel div.ui-tabs div.ui-tabs-panel
+  {
+    padding: 0;
+    margin: 8px 4px 4px 4px;
   }
+  div.ui-tabs div.ui-tabs-panel div.ui-tabs-panel {
+    /* border: 1px red dotted; */
+    /* height: 52ex;*/
+    overflow: auto;
+  }
+  div.ui-tabs div.ui-tabs-panel div.ui-tabs-panel h4 {
+    margin: 1ex 0;
+  }
+  div.ui-tabs div.ui-tabs-panel div.ui-tabs-panel h4:first-child {
+    margin-top: 0;
+  }
+  div.ui-tabs div.ui-tabs {
+    margin: 1px 0;
+  }
+  /*
   div.ui-tabs div.ui-tabs-panel a {
     color: <%= DEFAULT_THEME[:highlight] %>;
   }  
@@ -61,12 +80,15 @@
     color: white;
     background: <%= DEFAULT_THEME[:highlight] %>;
   }
+  */
+  /*
   div.ui-tabs div.ui-tabs-panel a.img, 
   div.ui-tabs div.ui-tabs-panel a.img:hover, 
   div.ui-tabs div.ui-tabs-panel a img  {
     border: none;
     background: transparent;
   }
+  */
   div.ui-tabs div.ui-tabs-panel h3 {
     display: none;
   }
@@ -402,9 +424,12 @@
 
 <h3>Configuration</h3>
 
-<div class="warn" style="margin-bottom:1em; margin-top: 0;">
-  Changes will take effect the next time you start the VM.
-</div>
+<ul>
+  <li><a href="#tabs-config-general">General</a></li>
+  <li><a href="#tabs-config-disks">Disks</a></li>
+  <li><a href="#tabs-config-passthrough">Host Hardware Pass-Through</a></li>
+  <li><a href="#tabs-config-net">Virtual Networking</a></li>
+</ul>
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
@@ -419,7 +444,7 @@
     )
   %>
 
-  <button style="margin-top:3.3ex;" type="submit">Change!</button>
+  <button style="margin:1ex 4px 0 4px" type="submit">Change!</button>
 </form>
 
   </div> <!-- div#tabs-config -->
