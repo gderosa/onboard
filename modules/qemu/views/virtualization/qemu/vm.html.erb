@@ -32,6 +32,13 @@
   )
 %>
 
+<script>
+  $(function() {
+    $( "#tabs" ).tabs();
+  });
+</script>
+
+
 <%= message_partial(msg) %>
 
 <h2>QEMU Virtual Machine: &ldquo;<%= vm.config['-name'] %>&rdquo;</h2>
@@ -70,12 +77,12 @@
 
 <div id="tabs">
   <ul>
-    <li><a href="#tab-status">Start/Shutdown/Status</a></li>
-    <li><a href="#tab-config">Configuration</a></li>
-    <li><a href="#tab-snapshots">Snapshots</a></li>
+    <li><a href="#tabs-status">Start/Shutdown/Status</a></li>
+    <li><a href="#tabs-config">Configuration</a></li>
+    <li><a href="#tabs-snapshots">Snapshots</a></li>
   </ul>
 
-  <div id="tab-status">
+  <div id="tabs-status">
 
 <% if vm.running? %>
   <% screenshot_path = "#{vm.uuid_short}/screen.png" %>
@@ -103,9 +110,9 @@
     </div>
 </form>
 
-  </div> <!-- #tab-status -->
+  </div> <!-- #tabs-status -->
 
-  <div id="tab-snapshots">
+  <div id="tabs-snapshots">
 
 <h3>Snapshots</h3>
 
@@ -389,9 +396,9 @@
   <button type="submit">Set!</button>
 </form>
 
-  </div> <!-- div#tab-snapshots -->
+  </div> <!-- div#tabs-snapshots -->
 
-  <div id="tab-config"> 
+  <div id="tabs-config"> 
 
 <h3>Configuration</h3>
 
@@ -415,7 +422,7 @@
   <button style="margin-top:3.3ex;" type="submit">Change!</button>
 </form>
 
-  </div> <!-- div#tab-config -->
+  </div> <!-- div#tabs-config -->
 
 </div> <!-- div#tabs --> <!-- jQueryUI tabs -->
 
