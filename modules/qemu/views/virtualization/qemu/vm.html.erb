@@ -36,6 +36,7 @@
   $(function() {
     $( "#tabs" ).tabs();
     $( "#tabs-config" ).tabs();
+    $( "#tabs-snapshots" ).tabs();
   });
 </script>
 
@@ -135,9 +136,16 @@
   </div> <!-- #tabs-status -->
 
   <div id="tabs-snapshots">
+    <ul>
+      <li><a href="#tabs-snapshots-status">Status</a></li>
+      <li><a href="#tabs-snapshots-saved">Snapshot List</a></li>
+      <li><a href="#tabs-snapshots-schedule">Schedule</a></li>
+    </ul>
+
 
 <h3>Snapshots</h3>
 
+    <div id="tabs-snapshots-status">
 <h4 class="first">Status</h4>
 
 <p>
@@ -169,6 +177,10 @@
 <% if snapshot_stderr =~ /\S/m %>
  <pre class="error" style="margin-top:0.3em;"><%== snapshot_stderr %></pre>
 <% end %>
+    
+    </div> <!-- tabs-snapshots-status -->
+
+    <div id="tabs-snapshots-saved">
 
 <h4>Saved Snapshots</h4>
 
@@ -281,6 +293,10 @@
 
   </tbody>
 </table>
+
+    </div> <!-- tabs-snapshots-saved -->
+
+    <div id="tabs-snapshots-schedule">
 
 <h4>Schedule Snapshot</h4>
 <% 
@@ -418,7 +434,8 @@
   <button type="submit">Set!</button>
 </form>
 
-  </div> <!-- div#tabs-snapshots -->
+    </div> <!-- tabs-snapshots-schedule -->
+  </div> <!-- tabs-snapshots -->
 
   <div id="tabs-config"> 
 
