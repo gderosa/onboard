@@ -7,7 +7,8 @@ class OnBoard
 
     # TODO? Move all colors etc. here from default.css.erb
     DEFAULT_THEME = {
-      :highlight       => "#44b"
+      :highlight      =>  "#44b",
+      :lowlight       =>  "#666",
     }
 
     public_access! %r{^/backgrounds/} 
