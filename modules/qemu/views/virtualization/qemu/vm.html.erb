@@ -70,12 +70,12 @@
 
 <div id="tabs">
   <ul>
-    <li><a href="#tabs-status">Start/Shutdown/Status</a></li>
-    <li><a href="#tabs-snapshots">Snapshots</a></li>
-    <li><a href="#tabs-other">Configuration</a></li>
+    <li><a href="#tab-status">Start/Shutdown/Status</a></li>
+    <li><a href="#tab-config">Configuration</a></li>
+    <li><a href="#tab-snapshots">Snapshots</a></li>
   </ul>
 
-  <div id="tabs-status">
+  <div id="tab-status">
 
 <% if vm.running? %>
   <% screenshot_path = "#{vm.uuid_short}/screen.png" %>
@@ -103,9 +103,9 @@
     </div>
 </form>
 
-  </div> <!-- #tabs-status -->
+  </div> <!-- #tab-status -->
 
-  <div id="tabs-snapshots">
+  <div id="tab-snapshots">
 
 <h3>Snapshots</h3>
 
@@ -390,7 +390,7 @@
 
   </div> <!-- div#tab-snapshots -->
 
-  <div id="tabs-other"> 
+  <div id="tab-config"> 
 
 <h3>Configuration</h3>
 
@@ -414,7 +414,7 @@
   <button style="margin-top:3.3ex;" type="submit">Change!</button>
 </form>
 
-  </div> <!-- div#tab-other -->
+  </div> <!-- div#tab-config -->
 
 </div> <!-- div#tabs --> <!-- jQueryUI tabs -->
 
