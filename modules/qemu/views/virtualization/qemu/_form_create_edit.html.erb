@@ -7,7 +7,7 @@
 
   passthrough_highlight = 'superhighlight'
 
-  sect_sep_height = '0.8ex'
+  sect_sep_height = '1ex'
 
   vm ||= nil
 
@@ -287,9 +287,7 @@
         <th scope="row">
           <div class="optinfo">
             Or create a new one 
-            <span style="vertical-align:middle; margin: 0 0 0 2em">
               <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="disk[<%= idx %>][qemu-img][create]" id="disk_<%= idx %>_qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls(<%= idx %>)"/>
-            </span>
           </div>        
         </th> 
         <td>
@@ -318,11 +316,11 @@
       </tr> 
       <tr>
         <th scope="row">
-          Optimize for networked / distributed storage
-          <% if idx == 0 %><div class="optinfo" style="width:46ex;">Bypass flesystem mount and use URL e.g. <code>gluster://localhost/gv0/path/vm.qcow2</code>. Not available for all QEMU versions and protocols. Disable if you encounter errors. Ignored for local storage. Some useful information <a href="http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/">here</a>.</span><% end %>
+          Optimize access to distributed storage
+          <% if idx == 0 %><div class="optinfo" style="width:46ex;"> An explaination for e.g. GlusterFS is <a target="_blank" href="http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/">here</a>.</div><% end %>
         </th>
         <td style="vertical-align:middle;">
-          <input type="checkbox" name="disk[<%= idx %>][use_network_url]" <%= 'checked' if hd['file_url'] %>/>
+          <input title="Use URLs like gluster://hostname/vol0/vm.img instead of mounted filesystems. Not available for all QEMU builds and/or storage systems. Disable if you encounter problems." type="checkbox" name="disk[<%= idx %>][use_network_url]" <%= 'checked' if hd['file_url'] %>/>
         </td>
       </tr>
       <tr>
