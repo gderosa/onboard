@@ -8,6 +8,12 @@ class OnBoard
       content_type 'text/css'
       erubis (:"css/default.css")
     end
+
+    get '/css/jqueryui-fixes.css' do
+      content_type 'text/css'
+      erubis (:"css/jqueryui-fixes.css")
+    end
+
     get '/css/default.mobi.css' do
       content_type 'text/css'
       erubis (:"css/default.mobi.css")
