@@ -1,7 +1,7 @@
 OnBoard -- http://dev.vemarsas.it/onboard/ .
 
 Except where otherwise stated, this work is
-Copyright 2009, 2010, 2011 
+Copyright 2009, 2010, 2011, 2012, 2013 
 Guido De Rosa <guido.derosa at vemarsas.it> and
 Antonello Ventre <antonello.ventre at vemarsas.it> .
 
@@ -12,15 +12,15 @@ See public/*/* for details and Copyright info.
 
 ---
 
-A web interface to configure Linux-based network appliances. It's been
-developed and tested on Debian GNU/Linux and its derivative for
-embedded systems, Voyage Linux (http://linux.voyage.hk/). It should work on 
-other distros too, altough untested right now. Feel free to contribute and 
-test.
+A web interface to manage Linux-based networking and virtualization
+appliances. It's been developed and tested on Debian GNU/Linux and its 
+derivative for embedded systems, Voyage Linux (http://linux.voyage.hk/). 
+It should work on other distros too, altough untested right now. Feel free 
+to contribute and test.
 
 ---
 
-For any web page, you may change .html extension into .json or .yaml to
+For any web page, you may change .html extension into .json to
 get machine-readable data. 
 
 An .rb extension is also available for debugging purposes when in 
@@ -31,7 +31,7 @@ Sinatra 'development' environment.
 Software requirements for "core" (check individual directories under modules/
 for module-specific, additional requirements): 
 
-* ruby 1.9.2 (yeah! use File.realpath, among other things)
+* ruby 1.9.2 (currently tested with 1.9.3)
 * sudo
 * iproute2
 * iptables (with proper kernel support)

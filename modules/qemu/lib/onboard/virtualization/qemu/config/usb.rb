@@ -4,6 +4,7 @@ class OnBoard
       class Config
 
         module USB
+
           DEFAULT_CONTROLLERS = [
             {
               'driver'    => 'piix3-usb-uhci',
@@ -21,6 +22,14 @@ class OnBoard
               '_comment'  => 'USB 3.0'
             },
           ]
+
+          DEFAULT_DEVICES     = [
+            {
+              'driver'    => 'usb-tablet',
+              'bus'       => DEFAULT_CONTROLLERS.first['id'] + '.0' 
+            },
+          ]
+
         end
 
       end

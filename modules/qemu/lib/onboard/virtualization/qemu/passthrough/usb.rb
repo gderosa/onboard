@@ -15,7 +15,7 @@ class OnBoard
           # cnf is an element of vmconfig.opts['-device']
           # where vmconfig is an OnBoard::Virtualization::QEMU::Config object
           def match_config?(cnf)
-            return false unless cnf['type'] == 'usb-host' 
+            return false unless cnf['type'] == 'usb-host' or cnf['driver'] == 'usb-host'
             retval = (
               (
                 cnf['hostbus'] and cnf['hostbus'] == dev.bus_id and

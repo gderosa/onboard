@@ -1,0 +1,49 @@
+/* CSS fixes to what jQueryUI "broke"... -*/
+ul.ui-tabs-nav li a {
+  font-size: 10pt;
+}
+div.ui-tabs {
+  border: none;
+}
+div.ui-tabs div.ui-tabs-panel,
+div.ui-tabs div.ui-tabs-panel div.ui-tabs div.ui-tabs-panel
+{
+  padding: 0;
+  margin: 0.8em 4px 4px 4px;
+}
+div.ui-tabs div.ui-tabs-panel div.ui-tabs-panel h4 {
+  margin: 1ex 0;
+}
+div.ui-tabs div.ui-tabs-panel div.ui-tabs-panel h4:first-child {
+  margin-top: 0;
+}
+div.ui-tabs div.ui-tabs {
+  margin: 1px 0;
+}
+div.ui-tabs div.ui-tabs-panel a {
+  color: <%= DEFAULT_THEME[:highlight] %>;
+}
+div.ui-tabs div.ui-tabs-panel a:hover {
+  color: white;
+  background: <%= DEFAULT_THEME[:highlight] %>;
+}
+div.ui-tabs ul li a.ui-tabs-anchor {
+  color: <%= DEFAULT_THEME[:lowlight] %>;
+}
+div.ui-tabs ul li.ui-state-active a.ui-tabs-anchor {
+  color: black;
+}
+div.ui-tabs ul li a.ui-tabs-anchor:hover{
+  color: white;
+}
+div.ui-tabs div.ui-tabs-panel a.img,
+div.ui-tabs div.ui-tabs-panel a.img img {
+  border:none;
+  background: transparent;
+}
+div.ui-tabs div.ui-tabs-panel h3 {
+  display: none;
+}
+div.ui-tabs div.ui-tabs-panel h4.first {
+  margin-top: 0;
+}

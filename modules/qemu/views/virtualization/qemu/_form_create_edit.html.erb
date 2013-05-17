@@ -7,7 +7,7 @@
 
   passthrough_highlight = 'superhighlight'
 
-  sect_sep_height = '0.8ex'
+  sect_sep_height = '1ex'
 
   vm ||= nil
 
@@ -128,9 +128,10 @@
   formvals['smp']       ||= {}
   formvals['smp']['n']  ||= 1
 %>
+
+<div id="tabs-config-general">
+
   <table id="vmcreateedit">
-    <thead>
-    </thead>
     <tbody>
       <tr>
         <th title="A descriptive name" scope="row">Name</th>
@@ -146,123 +147,6 @@
         <th scope="row">Number of CPUs / cores</th>
         <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
       </tr>
-
-      <tr> 
-        <th scope="row">CD/DVD image (optional)</th>
-        <td>
-          <input class="vimagepath" type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" value="<%= formvals['cdrom'] %>"/>
-        </td>
-      </tr>
-
-      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- BEGIN HARD DISK IMAGES -->
-
-    <% taken_slots = formvals['disks'].map {|d| d.slot} %>  
-    <% formvals['disks'].each_with_index do |hd, idx| %>
-      <% # p hd # DEBUG %>
-      <% unless idx == 0%>
-        <tr style="height:<%= sect_sep_height %>"> </tr>
-      <% end %>
-      <tr>
-        <th scope="row">
-          Hard Disk Image <span style="font-weight:normal;">(@ <em style="font-size:110%">slot</em>)</span>
-          <div class="optinfo">Choose existing</div>
-        </th>
-        <td style="padding-right:1.5ex;">
-          <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
-          @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
-            <% OnBoard::V12n::QEMU::Config::Drive.disk_slots.each do |slot| %>
-              <!-- TODO: etach and remove special options... -->
-              <%
-                runtime_name = begin 
-                                 hd.runtime_name
-                               rescue Exception
-                                 nil
-                               end              
-
-                extra_attr = (
-                  if slot == runtime_name
-                    ' selected'
-                  elsif taken_slots.include? slot
-                    ' disabled'
-                  else
-                    ''
-                  end
-                )
-              %>                    
-              <option value="<%= slot %>"<%= extra_attr %>>
-                <%= slot %>
-              </option>
-            <% end %>
-          </select>
-          <!-- -->
-          <% begin %>
-            <% if hd.img_info %>  
-              <span class="lowlight" style="margin:0 1ex">(<%= hd.img_info['virtual_size'].split.first %>)</span>
-            <% end %>
-          <% rescue NoMethodError %>
-            <% # turn the Hash into an object with proper methods %> 
-            <% hd = OnBoard::V12n::QEMU::Config::Drive.new hd %>
-            <% retry %>
-          <% end %>
-          <!-- -->
-        </td>  
-      </tr>
-      <tr>
-        <th scope="row">
-          <div class="optinfo">
-            Or create a new one 
-            <span style="vertical-align:middle; margin: 0 0 0 2em">
-              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="disk[<%= idx %>][qemu-img][create]" id="disk_<%= idx %>_qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls(<%= idx %>)"/>
-            </span>
-          </div>        
-        </th> 
-        <td>
-          &nbsp;Size <input type="text" name="disk[<%= idx %>][qemu-img][size][G]" id="disk_<%= idx %>_qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
-          &nbsp;Format <select name="disk[<%= idx %>][qemu-img][fmt]" id="disk_<%= idx %>_qemu-img_create_fmt" disabled>
-            <option value="qcow2">QCOW2 (recommended)</option>
-            <option value="raw">Raw</option>
-            <!-- exclude "alien" image formats for now... -->
-          </select>
-          On
-          <select name="disk[<%= idx %>][qemu-img][subdir]" id="disk_<%= idx %>_qemu-img_create_subdir" disabled>
-            <option value="">Local storage</option>
-            <% OnBoard::V12n::QEMU.net_storage_subdirs.each do |subdir|  %>
-              <%
-                subdir_show_as = subdir
-                # TODO: DRY: implement a library method 
-                if subdir =~ %r{^[^/]*net[^/]*/([^/]+)/([^/]+)/([^/]+)}
-                  proto, host, vol = $1, $2, $3
-                  subdir_show_as = "#{proto}://#{host}/#{vol}"
-                end
-              %>
-              <option value="<%= subdir %>"><%= subdir_show_as %></option>
-            <% end %>
-          </select>
-        </td>
-      </tr> 
-      <tr>
-        <th scope="row">
-          Optimize for networked / distributed storage
-          <% if idx == 0 %><div class="optinfo" style="width:46ex;">Bypass flesystem mount and use URL e.g. <code>gluster://localhost/gv0/path/vm.qcow2</code>. Not available for all QEMU versions and protocols. Disable if you encounter errors. Ignored for local storage. Some useful information <a href="http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/">here</a>.</span><% end %>
-        </th>
-        <td style="vertical-align:middle;">
-          <input type="checkbox" name="disk[<%= idx %>][use_network_url]" <%= 'checked' if hd['file_url'] %>/>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">Disk Caching</th>
-        <td>
-          <select name="disk[<%= idx %>][cache]">
-            <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
-              <option <%= 'selected' if c == hd['cache'] %> value="<%= c %>" title="<%= cache_description[c] %>"><%= c %></option>
-            <% end %>
-          </select>
-        </td>
-      </tr>
-    <% end %>
-
-      <tr style="height:<%= sect_sep_height %>"> </tr> <!-- END HARD DISK IMAGES -->
-
       <tr>
         <th scope="row">Remote Display</th>
         <td>
@@ -326,11 +210,142 @@
           </select>
         </td>
       </tr>
+
+      <tr style="height:<%= sect_sep_height %>"> </tr>
+
+      <tr> 
+        <th scope="row">CD/DVD image (optional)</th>
+        <td>
+          <input class="vimagepath" type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" value="<%= formvals['cdrom'] %>"/>
+        </td>
+      </tr>
+
     </tbody>
   </table>
 
+</div> <!-- tabs-config-general -->
+
+<div id="tabs-config-disks">
+
+  <!-- BEGIN HARD DISK IMAGES -->
+
+  <table>
+    <tbody>
+
+    <% taken_slots = formvals['disks'].map {|d| d.slot} %>  
+    <% formvals['disks'].each_with_index do |hd, idx| %>
+      <% # p hd # DEBUG %>
+      <% unless idx == 0%>
+        <tr style="height:<%= sect_sep_height %>"> </tr>
+      <% end %>
+      <tr>
+        <th scope="row">
+          Hard Disk Image <span style="font-weight:normal;">(@ <em style="font-size:110%">slot</em>)</span>
+          <div class="optinfo">Choose existing</div>
+        </th>
+        <td style="padding-right:1.5ex;">
+          <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
+          @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
+            <% OnBoard::V12n::QEMU::Config::Drive.disk_slots.each do |slot| %>
+              <!-- TODO: etach and remove special options... -->
+              <%
+                runtime_name = begin 
+                                 hd.runtime_name
+                               rescue Exception
+                                 nil
+                               end              
+
+                extra_attr = (
+                  if slot == runtime_name
+                    ' selected'
+                  elsif taken_slots.include? slot
+                    ' disabled'
+                  else
+                    ''
+                  end
+                )
+              %>                    
+              <option value="<%= slot %>"<%= extra_attr %>>
+                <%= slot %>
+              </option>
+            <% end %>
+          </select>
+          <!-- -->
+          <% begin %>
+            <% if hd.img_info %>  
+              <span class="lowlight" style="margin:0 1ex">(<%= hd.img_info['virtual_size'].split.first %>)</span>
+            <% end %>
+          <% rescue NoMethodError %>
+            <% # turn the Hash into an object with proper methods %> 
+            <% hd = OnBoard::V12n::QEMU::Config::Drive.new hd %>
+            <% retry %>
+          <% end %>
+          <!-- -->
+        </td>  
+      </tr>
+      <tr>
+        <th scope="row">
+          <div class="optinfo">
+            Or create a new one 
+              <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="disk[<%= idx %>][qemu-img][create]" id="disk_<%= idx %>_qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls(<%= idx %>)"/>
+          </div>        
+        </th> 
+        <td>
+          &nbsp;Size <input type="text" name="disk[<%= idx %>][qemu-img][size][G]" id="disk_<%= idx %>_qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
+          &nbsp;Format <select name="disk[<%= idx %>][qemu-img][fmt]" id="disk_<%= idx %>_qemu-img_create_fmt" disabled>
+            <option value="qcow2">QCOW2 (recommended)</option>
+            <option value="raw">Raw</option>
+            <!-- exclude "alien" image formats for now... -->
+          </select>
+          On
+          <select name="disk[<%= idx %>][qemu-img][subdir]" id="disk_<%= idx %>_qemu-img_create_subdir" disabled>
+            <option value="">Local storage</option>
+            <% OnBoard::V12n::QEMU.net_storage_subdirs.each do |subdir|  %>
+              <%
+                subdir_show_as = subdir
+                # TODO: DRY: implement a library method 
+                if subdir =~ %r{^[^/]*net[^/]*/([^/]+)/([^/]+)/([^/]+)}
+                  proto, host, vol = $1, $2, $3
+                  subdir_show_as = "#{proto}://#{host}/#{vol}"
+                end
+              %>
+              <option value="<%= subdir %>"><%= subdir_show_as %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">
+          Optimize access to distributed storage
+          <% if idx == 0 %><div class="optinfo" style="width:46ex;"> An explaination for e.g. GlusterFS is <a target="_blank" href="http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/">here</a>.</div><% end %>
+        </th>
+        <td style="vertical-align:middle;">
+          <input title="Use URLs like gluster://hostname/vol0/vm.img instead of mounted filesystems. Not available for all QEMU builds and/or storage systems. Disable if you encounter problems." type="checkbox" name="disk[<%= idx %>][use_network_url]" <%= 'checked' if hd['file_url'] %>/>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Disk Caching</th>
+        <td>
+          <select name="disk[<%= idx %>][cache]">
+            <% OnBoard::V12n::QEMU::Config::Drive::CACHE.each do |c| %>
+              <option <%= 'selected' if c == hd['cache'] %> value="<%= c %>" title="<%= cache_description[c] %>"><%= c %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+    <% end %>
+
+      <!-- END HARD DISK IMAGES -->
+
+    </tbody>
+  </table>
+
+</div> <!-- tabs-config-disks -->
+
+<div id="tabs-config-passthrough">
+
   <h4>PCI passthrough</h4>
-  <div class="warn" style="margin-top:0;">Make real PCI hardware available to the VM. Your CPU and motherboard must have Intel VT-d or AMD/Vi working. Your Linux kernel must have all the necessary drivers. Use with caution as this disables PCI cards from the host!</div>
+  <div class="warn" style="margin: 0 0 1ex 0">Make real PCI hardware available to the VM. Your CPU and motherboard must have Intel VT-d or AMD/Vi working. Your Linux kernel must have all the necessary drivers. Use with caution as this disables PCI cards from the host!</div>
   <table class="passthrough-devices">
     <% OnBoard::Hardware::LSPCI.by_id.each_pair do |pci_id, pci_device| %>
       <% next if pci_device[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
@@ -378,109 +393,118 @@
   <!-- END PCI PASSTHROUGH -->
 
   <h4>USB passthrough</h4>
-  <table class="passthrough-devices">
-    <thead>
-    <tr>
-      <th colspan="3">Host</th>
-      <th colspan="2">ID</th>
-      <th rowspan="2">Description</th>
-      <th rowspan="2" style="padding: 0 1em">Pass-Through from Host</th>
-      <th rowspan="2" style="padding: 0 1em">Attach to Guest Controller</th>
-    </tr>
-    <tr>
-      <th>Bus</th><th>Port</th><th>Dev/Addr</th>
-      <th>Vendor</th><th>Product</th>
-    </tr>
-    <tbody>
-    <% OnBoard::Hardware::LSUSB.all.each do |dev| %>
-      <% 
-        usb_passthrough = OnBoard::V12n::QEMU::Passthrough::USB.new(dev)
-        conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find do |cnf|
-          usb_passthrough.match_config? cnf
-        end 
-        conf_h ||= {}
-      %>
-      <% 
-        available = true
-        using_vm = usb_passthrough.used_by
-        if vm
-          if using_vm and using_vm.uuid != vm.uuid
-            available = false
-          end
-        else
-          if using_vm
-            available = false 
-          end
-        end
-      %>
-      <%
-        if conf_h.any?
-          tr_class = 'partialhighlight'
-        elsif available
-          tr_class = ''
-        else
-          tr_class = 'lowlight'
-        end
-      %>
-      <tr class="<%= tr_class %>">
-        <td class="<%= passthrough_highlight if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
-        <input type="hidden" name="usb_passthrough[][hostbus]" value="<%= dev.bus_id %>"/>
-        
-        <td class="<%= passthrough_highlight if conf_h['hostport'] %>"><%= dev.port_id %></td>
-        <input type="hidden" name="usb_passthrough[][hostport]" value="<%= dev.port_id %>"/>
-
-        <td class="<%= passthrough_highlight if conf_h['hostaddr'] %>"><%= dev.device_id %></td>
-        <input type="hidden" name="usb_passthrough[][hostaddr]" value="<%= dev.device_id %>"/>
-
-        <td class="<%= passthrough_highlight if conf_h['vendorid'] %>"><%= dev.vendor_id %></td>
-        <input type="hidden" name="usb_passthrough[][vendorid]" value="0x<%= dev.vendor_id %>"/>
-
-        <td class="<%= passthrough_highlight if conf_h['productid'] %>"><%= dev.product_id %></td>
-        <input type="hidden" name="usb_passthrough[][productid]" value="0x<%= dev.product_id %>"/>
-
-        <td class="<%= passthrough_highlight if conf_h.any? %>"><%= dev.description %></td>
-        <% if available %>
-          <td>
-            <select name="usb_passthrough[][mode]"> 
-              <option value="">(none)</option>
-              <option 
-                  value="hostbus,hostport" 
-                  <%= 'selected' if conf_h['hostbus'] and conf_h['hostport'] %>
-              >By Bus / Port</option>
-              <option 
-                  value="hostbus,hostaddr"
-                  <%= 'selected' if conf_h['hostbus'] and conf_h['hostaddr'] %>    
-              >By Bus / Device addr.</option>
-              <option 
-                  value="vendorid,productid"
-                  <%= 'selected' if conf_h['vendorid'] and conf_h['productid'] %>    
-              >By Vendor / Product</option> 
-            </select>
-          </td>
-          <td>
-            <select name="usb_passthrough[][bus]">
-              <option value="">(auto)</option>
-              <%
-                # Again, a JSON client still can't access this information: 
-                # TODO: move into ``objects'' or provide /virtualization/qemu/usb/default_controllers.json
-              %>
-              <% OnBoard::V12n::QEMU::Config::USB::DEFAULT_CONTROLLERS.each do |bus| %>
-                <option value="<%= bus['id'] %>"<%= ' selected' if conf_h['bus'] =~ /#{bus['id']}(\.\d+)?$/ %>>
-                  <%= bus['_comment'] %> (<%= bus['driver'] %>)
-                </option>
-              <% end %>
-            </select>
-          </td>
-        <% else %>
-          <td colspan="2">
-            <input type="hidden" name="usb_passthrough[][mode]" value=""/>
-            Already used by &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;
-          </td>
-        <% end %>
+  <% all_usb_devices = OnBoard::Hardware::LSUSB.all %>
+  <% if all_usb_devices.any? %>
+    <table class="passthrough-devices">
+      <thead>
+      <tr>
+        <th colspan="3">Host</th>
+        <th colspan="2">ID</th>
+        <th rowspan="2" style="width:37%">Description</th>
+        <th rowspan="2" style="padding: 0 1em">Pass-Through from Host</th>
+        <th rowspan="2" style="padding: 0 1em">Attach to Guest Controller</th>
       </tr>
-    <% end # loop over LSUSB devices %>
-  </table>
+      <tr>
+        <th>Bus</th><th>Port</th><th>Dev/Addr</th>
+        <th>Vendor</th><th>Product</th>
+      </tr>
+      <tbody>
+      <% all_usb_devices.each do |dev| %>
+        <% 
+          usb_passthrough = OnBoard::V12n::QEMU::Passthrough::USB.new(dev)
+          conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find do |cnf|
+            usb_passthrough.match_config? cnf
+          end 
+          conf_h ||= {}
+        %>
+        <% 
+          available = true
+          using_vm = usb_passthrough.used_by
+          if vm
+            if using_vm and using_vm.uuid != vm.uuid
+              available = false
+            end
+          else
+            if using_vm
+              available = false 
+            end
+          end
+        %>
+        <%
+          if conf_h.any?
+            tr_class = 'partialhighlight'
+          elsif available
+            tr_class = ''
+          else
+            tr_class = 'lowlight'
+          end
+        %>
+        <tr class="<%= tr_class %>">
+          <td class="<%= passthrough_highlight if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
+          <input type="hidden" name="usb_passthrough[][hostbus]" value="<%= dev.bus_id %>"/>
+          
+          <td class="<%= passthrough_highlight if conf_h['hostport'] %>"><%= dev.port_id %></td>
+          <input type="hidden" name="usb_passthrough[][hostport]" value="<%= dev.port_id %>"/>
+
+          <td class="<%= passthrough_highlight if conf_h['hostaddr'] %>"><%= dev.device_id %></td>
+          <input type="hidden" name="usb_passthrough[][hostaddr]" value="<%= dev.device_id %>"/>
+
+          <td class="<%= passthrough_highlight if conf_h['vendorid'] %>"><%= dev.vendor_id %></td>
+          <input type="hidden" name="usb_passthrough[][vendorid]" value="0x<%= dev.vendor_id %>"/>
+
+          <td class="<%= passthrough_highlight if conf_h['productid'] %>"><%= dev.product_id %></td>
+          <input type="hidden" name="usb_passthrough[][productid]" value="0x<%= dev.product_id %>"/>
+
+          <td class="<%= passthrough_highlight if conf_h.any? %>"><%= dev.description %></td>
+          <% if available %>
+            <td>
+              <select name="usb_passthrough[][mode]"> 
+                <option value="">(none)</option>
+                <option 
+                    value="hostbus,hostport" 
+                    <%= 'selected' if conf_h['hostbus'] and conf_h['hostport'] %>
+                >By Bus / Port</option>
+                <option 
+                    value="hostbus,hostaddr"
+                    <%= 'selected' if conf_h['hostbus'] and conf_h['hostaddr'] %>    
+                >By Bus / Device addr.</option>
+                <option 
+                    value="vendorid,productid"
+                    <%= 'selected' if conf_h['vendorid'] and conf_h['productid'] %>    
+                >By Vendor / Product</option> 
+              </select>
+            </td>
+            <td>
+              <select name="usb_passthrough[][bus]">
+                <option value="">(auto)</option>
+                <%
+                  # Again, a JSON client still can't access this information: 
+                  # TODO: move into ``objects'' or provide /virtualization/qemu/usb/default_controllers.json
+                %>
+                <% OnBoard::V12n::QEMU::Config::USB::DEFAULT_CONTROLLERS.each do |bus| %>
+                  <option value="<%= bus['id'] %>"<%= ' selected' if conf_h['bus'] =~ /#{bus['id']}(\.\d+)?$/ %>>
+                    <%= bus['_comment'] %> (<%= bus['driver'] %>)
+                  </option>
+                <% end %>
+              </select>
+            </td>
+          <% else %>
+            <td colspan="2">
+              <input type="hidden" name="usb_passthrough[][mode]" value=""/>
+              Already used by &ldquo;<a href="/virtualization/qemu/vm/<%= using_vm.uuid_short %>.html"><%= using_vm.name %></a>&rdquo;
+            </td>
+          <% end %>
+        </tr>
+      <% end # loop over LSUSB devices %>
+    </table>
+  <% else %>
+    (No USB devices found)
+  <% end %>
   <!-- END USB PASSTHROUGH -->
+
+</div> <!-- tabs-config-passthrough -->
+
+<div id="tabs-config-net">
 
   <h4>Emulated Network Interfaces</h4>
   <table id="net">
@@ -553,6 +577,7 @@
       <% end %>
     </tbody>
   </table>
+</div> <!-- tabs-config-net -->
 
   <% if vm and settings.environment == :development and false # disable for now %>
   <h3>Experts/Development</h3>
@@ -567,5 +592,6 @@
     <input type="checkbox" name="run_as_root" <%= 'checked' if vm and not vm.config.drop_privileges? %>/>
   </div>
   <% end %>
+
   
 
