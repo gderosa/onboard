@@ -72,6 +72,7 @@ class OnBoard
                   :description  => $5,
                   :full_line    => line.strip,
                 }
+                next if h[:vendor_id].to_i == 0 # or h[:product_id].to_i == 0 # ?
                 sysfs_entry = @sysfs_data.find do |entry| 
                   # NOTE: String#to_i has been "smartly" overwritten
                   # in lib/extensions, so a String like "011" would be interpreted
