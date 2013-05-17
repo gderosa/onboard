@@ -1,3 +1,16 @@
+2012.05.01
+
+* QEMU:
+	* various fixes (mainly presentation)
+	* vm: jQueryUI tabs (double layer)
+
+* jQueryUI:
+	* embedded in core dirs, available to any modules
+	* CSS fixes
+
+* LSUSB:
+	* skip '0000' vendorid
+
 2013.05
 
 * QEMU: 
