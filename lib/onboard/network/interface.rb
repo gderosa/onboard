@@ -469,7 +469,7 @@ class OnBoard
       alias ip_addr_flush flush_ip
 
       def start_dhcp_client
-        success = Command.bgexec "dhcpcd #{@name}", :sudo
+        success = Command.bgexec "dhcpcd -p #{@name}", :sudo
         sleep(0.1) # so the new running process will be detected
         return success
       end
