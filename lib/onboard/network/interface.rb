@@ -12,6 +12,12 @@ class OnBoard
 
       # Constants
 
+      DHCPC_ATTEMPTS = [
+        lambda{|ifname| System::Command.send_command  "dhcpcd5  -b  -p  #{ifname}", :sudo},
+        lambda{|ifname| System::Command.send_command  "dhcpcd   -b  -p  #{ifname}", :sudo},
+        lambda{|ifname| System::Command.bgexec        "dhcpcd       -p  #{ifname}", :sudo},
+      ]
+
       TYPES = {
         'loopback'    => {
           :preferred_order  => 0,
@@ -469,8 +475,12 @@ class OnBoard
       alias ip_addr_flush flush_ip
 
       def start_dhcp_client
-        success = Command.send_command "dhcpcd5 -b -p #{@name} ", :sudo
-        sleep(0.1) # so the new running process will be detected
+        success = nil
+        DHCPC_ATTEMPTS.each do |lmbda|
+          success = lmbda.call @name
+          break if success
+        end
+        sleep(0.1) # horrible
         return success
       end
 
