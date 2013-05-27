@@ -25,7 +25,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2013.03.02'
+  VERSION           = '2013.05.01'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -39,6 +39,7 @@ class OnBoard
   FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
   CONFDIR             = File.join RWDIR, '/etc/config'
   LOGDIR              = File.join RWDIR, '/var/log'
+  FILESDIR            = File.join ENV['HOME'], 'files' # mass storage...
   # sometimes files are uploaded elsewhere, as best suitable
   DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
   LOGFILE_BASENAME    = 'onboard.log'

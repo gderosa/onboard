@@ -70,8 +70,14 @@ class OnBoard
           to_h.to_json(*a)
         end
 
-        def format_cmdline
-          opts = @config.cmd['opts'] 
+        def opts
+          @config.cmd['opts']
+        end
+
+        def format_cmdline          
+
+          return @config.force_command_line if @config.force_command_line
+
           exe = Config::Common.get['exe'] 
           cmdline = ''
           cmdline << %Q{#{exe} } 
@@ -126,19 +132,49 @@ class OnBoard
               cmdline << '-smp ' << args.join(',') << ' ' 
             end
           end
+
+          # This SHOLUD NOT be used; use -device instead
           if opts['-usbdevice'].respond_to? :each
             opts['-usbdevice'].each do |device|
-              if device['type'] == 'disk'
+              if    device['type'] == 'disk'
                 cmdline << "-usbdevice disk:#{device['file']}" << ' '
+              elsif device['type'] == 'host'
+                if    device['bus']       and device['addr']
+                  cmdline << "-usbdevice host:#{device['bus']}.#{device['addr']}"             << ' '
+                elsif device['vendor_id'] and device['product_id']
+                  cmdline << "-usbdevice host:#{device['vendor_id']}:#{device['product_id']}" << ' '
+                end
               end
             end
           end
+          # END This SHOULD NOT be used: use -device instead
+
+          # Add various kinds of devices, including USB and PCI passthrough
+          if opts['-device'].respond_to? :each
+            opts['-device'].each do |device|
+              driver = device['driver'] || device['type']
+              next unless driver
+              cmdline << "-device " << driver
+              device.each_pair do |k, v|
+                cmdline << ",#{k}=#{v}" unless 
+                    %{driver type}.include? k or k =~ /^_/ # e.g. '_comment'
+              end
+              cmdline << ' '
+            end
+          end
+
           if opts['-drive'].respond_to? :each
             opts['-drive'].each do |d|
               drive_args = []
               # Non empty nor space-only Strings
-              %w{serial if file media cache}.each do |par|  
+              %w{serial if media cache}.each do |par|  
                 drive_args << %Q{#{par}="#{d[par]}"} if d[par] =~ /\S/
+              end
+              # Disk image might be on distributed storage...
+              if d['file_url'] # e.g. gluster:// -- but qemu-img still use mount point
+                drive_args << %Q{file=#{d['file_url']}}
+              elsif d['file']
+                drive_args << %Q{file=#{d['file']}}
               end
               # Numeric or nil
               %w{index bus unit}.each do |par|
@@ -176,15 +212,17 @@ class OnBoard
           # 
           # Guest CPU will have host CPU features ('flags') 
           cmdline << '-cpu' << ' ' << 'host' << ' '
-
+=begin
           cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
           # The above should fix some problems with VNC,
           # but you have problems anyway with -loadvm ...
           #
           # Solution: use a VNC client like Vinagre, supporting
           # capture/release.
-
+=end
           cmdline << '-enable-kvm' << ' ' 
+
+          cmdline << opts['append'] if opts['append'] 
 
           return cmdline
         end
@@ -214,16 +252,33 @@ class OnBoard
           )
         end
 
+        def prepare_pci_passthrough
+          if opts['-device']
+            opts['-device'].each do |device|
+              if Passthrough::PCI::TYPES.include? device['type']
+                Passthrough::PCI.prepare device
+              end
+            end
+          end
+        end
+
         def start(*opts)
           cmdline = format_cmdline
           cmdline << ' -S' if opts.include? :paused
-          cmdline << " -runas #{ENV['USER']}"
+          cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
           begin
-            msg = System::Command.run cmdline, :sudo, :raise_Conflict
+            prepare_pci_passthrough
+            msg = System::Command.run "sh -c 'ulimit -l unlimited ; #{cmdline}'", :sudo, :raise_Conflict
+              # ``ulimit -l unlimited'' to circumvent problems with VFIO and 
+              # limits on locking memory. The QEMU process must be child 
+              # of the process wich sets ulimit, so ulimit must me called 
+              # in the same shell which launches qemu. For that reason it 
+              # couldn't be moved to Instance#prepare_pci_passthrough .
+            setup_networking # bridge just-created TAP(s) 
           ensure
             fix_permissions
           end
-          setup_networking
+          # setup_networking
           return msg
         end
 
@@ -234,7 +289,12 @@ class OnBoard
         def pid
           pidfile = @config['-pidfile']
           if pidfile and File.exists? pidfile
-            return File.read(pidfile).to_i
+            begin
+              return File.read(pidfile).to_i
+            rescue Errno::EACCES
+              fix_permissions
+              retry
+            end
           end
         end
 
@@ -247,22 +307,27 @@ class OnBoard
           status =~ /paused/i
         end
 
-        def status
+        def status(opts={})
           return "Not Running#{', Snapshotting' if snapshotting?}" unless running?
           unless @cache['status'] =~ /\S/
-            get_status
+            get_status(opts)
           end
           return @cache['status']
         end
 
-        def get_status
-          str = @monitor.sendrecv 'info status'
-          if str =~ /error/i
-            if snapshotting?
-              str = 'Running, Snapshotting' 
+        def get_status(opts={})
+          begin
+            str = @monitor.sendrecv 'info status', opts
+            if str =~ /error/i
+              if snapshotting?
+                str = 'Running, Snapshotting' 
+              end
             end
+            @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
+          rescue Errno::EACCES
+            fix_permissions
+            retry
           end
-          @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
         end
 
         # TODO: move to QEMU::Snapshot::Runtime or something

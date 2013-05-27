@@ -1,8 +1,9 @@
 <% 
   superhighlight  = "#080"
-  highlight       = "#44b" 
+  highlight       = DEFAULT_THEME[:highlight]
+  lighthighlight  = "#88e" 
   almostblack     = "#222"
-  lowlight        = "#666" 
+  lowlight        = DEFAULT_THEME[:lowlight] 
   superlowlight   = "#bbb" 
   hover           = "color: white; background: #{highlight};" 
   lightbg         = "#dfdfdf" 
@@ -20,15 +21,20 @@ body {
 }
 
 .highlight{
-  color: <%= highlight %>
+  color: <%= highlight %>;
 }
 
 .superhighlight{
-  color: <%= superhighlight %>
+  color: <%= superhighlight %>;
 }
 
 .lowlight{
-  color: <%= lowlight %>
+  color: <%= lowlight %>;
+}
+
+.lowlight a {
+  color: <%= lighthighlight %>;
+  font-style: normal;
 }
 
 div#sidebar {
@@ -287,8 +293,7 @@ table tr td, table tr th, table thead tr th, table tbody tr td {
   border: 1px white solid;
 }
 
-table tr td, table tr th, fieldset, .table-cell-bg { 
-  /* background: url("/backgrounds/kollermedia.at/pattern4u/dirty/10yellow.jpg"); */
+table tr td, table tr th, fieldset, .table-cell-bg, ul[role="tablist"] { 
   background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png"); 
   background-attachment: fixed;
 }

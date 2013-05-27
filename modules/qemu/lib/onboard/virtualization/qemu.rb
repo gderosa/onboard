@@ -2,6 +2,7 @@ require 'yaml'
 require 'uuid'
 require 'fileutils'
 
+require 'onboard/constants'
 require 'onboard/extensions/process'
 
 class OnBoard
@@ -10,22 +11,32 @@ class OnBoard
 
       ROOTDIR ||= File.realpath File.join File.dirname(__FILE__), '..'
       # TODO: do not hardcode so badly 
-      FILESDIR = "#{ENV['HOME']}/files"
+      FILESDIR = OnBoard::FILESDIR
       BINDIR = ROOTDIR + '/bin'
 
       DEFAULT_SNAPSHOT = '_last'
 
-      autoload :Config,   'onboard/virtualization/qemu/config'
-      autoload :Instance, 'onboard/virtualization/qemu/instance'
-      autoload :Img,      'onboard/virtualization/qemu/img'
-      autoload :Monitor,  'onboard/virtualization/qemu/monitor'
-      autoload :Network,  'onboard/virtualization/qemu/network'
-      autoload :Snapshot, 'onboard/virtualization/qemu/snapshot' 
-      autoload :VNC,      'onboard/virtualization/qemu/vnc'
-      autoload :SPICE,    'onboard/virtualization/qemu/spice'
-      autoload :Sound,    'onboard/virtualization/qemu/sound'
+      autoload :Config,       'onboard/virtualization/qemu/config'
+      autoload :Instance,     'onboard/virtualization/qemu/instance'
+      autoload :Img,          'onboard/virtualization/qemu/img'
+      autoload :Monitor,      'onboard/virtualization/qemu/monitor'
+      autoload :Network,      'onboard/virtualization/qemu/network'
+      autoload :Snapshot,     'onboard/virtualization/qemu/snapshot' 
+      autoload :VNC,          'onboard/virtualization/qemu/vnc'
+      autoload :SPICE,        'onboard/virtualization/qemu/spice'
+      autoload :Sound,        'onboard/virtualization/qemu/sound'
+      autoload :Passthrough,  'onboard/virtualization/qemu/passthrough'
 
       class << self
+
+        def net_storage_subdirs
+          ary = []
+          # TODO: do not hardcode '[network]'
+          Dir.glob("#{FILESDIR}/*network*/*/*/*").each do |abspath|
+            ary << Config.relative_path(abspath) 
+          end
+          ary
+        end
 
         def get_all
           ary = []
@@ -33,7 +44,7 @@ class OnBoard
             begin
               config = Config.new(:config => YAML.load(File.read file)) 
               ary << Instance.new(config)
-            rescue TypeError
+            rescue TypeError, NoMethodError
               LOGGER.error "qemu: Found an invalid config file: #{file}"
             end
           end
@@ -42,7 +53,11 @@ class OnBoard
 
         def find(h)
           Dir.glob "#{CONFDIR}/*.yml" do |file|
-            config = Config.new(:config => YAML.load(File.read file))
+            begin
+              config = Config.new(:config => YAML.load(File.read file))
+            rescue NoMethodError
+              next
+            end
             if config.uuid =~ /^#{h[:vmid]}/ # may be uuid or a shortened uuid
               return Instance.new(config)
             end
@@ -63,7 +78,11 @@ start start_paused pause resume powerdown delete
                 vm = all.find{|x| x.uuid == uuid}  
                 vm.loadvm_on_next_boot false unless 
                     params['saverestore'] and params['saverestore'][uuid] == 'on'
-                vm.send cmd
+                if cmd == 'start' and params['run_as_root'] == 'on' 
+                  vm.send :start, :run_as_root
+                else
+                  vm.send cmd
+                end
               end
             end
             if params['quit'] and params['quit']['uuid']

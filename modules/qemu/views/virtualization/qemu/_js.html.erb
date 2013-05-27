@@ -11,13 +11,15 @@
   function qemuImgCreateControls(idx) {
     var checkbox = document.getElementById('disk_' + idx + '_qemu-img_create_checkbox');
     if ( checkbox.checked ) {
-      document.getElementById('disk_' + idx + '_path').disabled = true;
-      document.getElementById('disk_' + idx + '_qemu-img_create_size').disabled = false;
-      document.getElementById('disk_' + idx + '_qemu-img_create_fmt' ).disabled = false;
+      document.getElementById('disk_' + idx + '_path'                   ).disabled = true;
+      document.getElementById('disk_' + idx + '_qemu-img_create_size'   ).disabled = false;
+      document.getElementById('disk_' + idx + '_qemu-img_create_fmt'    ).disabled = false;
+      document.getElementById('disk_' + idx + '_qemu-img_create_subdir' ).disabled = false;
     } else {
-      document.getElementById('disk_' + idx + '_path').disabled = false;
-      document.getElementById('disk_' + idx + '_qemu-img_create_size').disabled = true;
-      document.getElementById('disk_' + idx + '_qemu-img_create_fmt' ).disabled = true;
+      document.getElementById('disk_' + idx + '_path'                   ).disabled = false;
+      document.getElementById('disk_' + idx + '_qemu-img_create_size'   ).disabled = true;
+      document.getElementById('disk_' + idx + '_qemu-img_create_fmt'    ).disabled = true;
+      document.getElementById('disk_' + idx + '_qemu-img_create_subdir' ).disabled = true;
     }
   }
   function qemuNetIfControls() {
@@ -75,5 +77,45 @@
       }
     }
   }
+  function qemuRefreshScreenshot(id, basepath) {
+    var screenshot = document.getElementById(id);
+    if (screenshot) {
+      var src = basepath + '#cachebust-' + new Date().getTime();
+      var request = new XMLHttpRequest();
+      request.open("HEAD", src, false);
+      request.send();
+      if (request.status === 200) {
+        screenshot.src = src;
+        screenshot.style.display = '';
+      } else {
+        screenshot.style.display = 'none';
+      }
+    }
+  }
+  function qemuRefreshHTML(id, basepath) {
+    var elem = document.getElementById(id);
+    if (elem) {
+      var fetch_from = basepath + '?cachebust=' + new Date().getTime();
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET", fetch_from, false);
+      xmlhttp.send();
+      if (xmlhttp.status === 200) {
+        var snippet = xmlhttp.responseText;
+        elem.innerHTML = snippet;
+      }
+    }
+  }
+  function qemuIsRunning(vmid, basepath) {
+    if (typeof basepath === 'undefined') 
+      basepath = '';
+    var fetch_from = basepath + vmid + '/running.json';
+    var request = new XMLHttpRequest();
+    var isRunning = null;
+    request.open("GET", fetch_from, false);
+    request.send();
+    if (request.status === 200) {
+      var isRunning = JSON.parse(request.responseText).running;
+    }
+    return isRunning;
+  }
 </script>
-

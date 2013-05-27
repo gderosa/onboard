@@ -1,7 +1,7 @@
 <%
+  require 'onboard/extensions/string'
   require 'onboard/network/interface'
   require 'onboard/network/bridge'
-
   require 'onboard/virtualization/qemu'
 
   vm                  = objects[:vm] 
@@ -32,37 +32,70 @@
   )
 %>
 
+<script>
+  $(function() {
+    $( "#tabs" ).tabs();
+    $( "#tabs-config" ).tabs();
+    $( "#tabs-snapshots" ).tabs();
+  });
+</script>
+
+
 <%= message_partial(msg) %>
 
 <h2>QEMU Virtual Machine: &ldquo;<%= vm.config['-name'] %>&rdquo;</h2>
 
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-status">Start/Shutdown/Status</a></li>
+    <li><a href="#tabs-config">Configuration</a></li>
+    <li><a href="#tabs-snapshots">Snapshots</a></li>
+  </ul>
+
+  <div id="tabs-status">
+
 <% if vm.running? %>
   <% screenshot_path = "#{vm.uuid_short}/screen.png" %>
-  <a title="Click for full-size screenshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="width:30em;margin-bottom:0"/></a>
-  <div style="margin:0 0 1.5em 0; font-style:italic;">
-    <% if vnc_uri %>
-      <br/>VNC available at <a href="<%= vnc_uri %>"><%= vnc_uri %></a>
-    <% end %>
-    <% if spice_uri %>
-      <br/>SPICE available at <a href="<%= spice_uri %>"><%= spice_uri %></a>
-    <% end %>
+  <div style="margin: 0 1em 0 0;float:left;">
+    <a title="Click for full-size screenshot" class="img" href="<%= screenshot_path %>"><img src="<%= screenshot_path %>" style="height:25em" id="screenshot"/></a>
+    <div id="remote-displays" style="margin:0 0 1em 0; font-style:italic;">
+      <% if vnc_uri %>
+       <div>VNC available at <a href="<%= vnc_uri %>"><%= vnc_uri %></a></div>
+      <% end %>
+      <% if spice_uri %>
+        <div>SPICE available at <a href="<%= spice_uri %>"><%= spice_uri %></a></div>
+      <% end %>
+    </div>
   </div>
 <% end %>
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
-    <%= 
-      partial(
-        :module => 'qemu',
-        :path   => 'virtualization/qemu/vm/_run',
-        :locals => {:vm => vm} 
-      )
-    %>
+    <div id="runPanel" style="margin:0;padding:0;border:none">
+      <%= 
+        partial(
+          :module => 'qemu',
+          :path   => 'virtualization/qemu/vm/_run',
+          :locals => {:vm => vm} 
+        )
+      %>
+    </div>
 </form>
+
+  </div> <!-- #tabs-status -->
+
+  <div id="tabs-snapshots">
+    <ul>
+      <li><a href="#tabs-snapshots-status">Status</a></li>
+      <li><a href="#tabs-snapshots-saved">Snapshot List</a></li>
+      <li><a href="#tabs-snapshots-schedule">Schedule</a></li>
+    </ul>
+
 
 <h3>Snapshots</h3>
 
-<h4>Status</h4>
+    <div id="tabs-snapshots-status">
+<h4 class="first">Status</h4>
 
 <p>
   <% if vm.snapshotting? %>
@@ -93,6 +126,10 @@
 <% if snapshot_stderr =~ /\S/m %>
  <pre class="error" style="margin-top:0.3em;"><%== snapshot_stderr %></pre>
 <% end %>
+    
+    </div> <!-- tabs-snapshots-status -->
+
+    <div id="tabs-snapshots-saved">
 
 <h4>Saved Snapshots</h4>
 
@@ -206,6 +243,10 @@
   </tbody>
 </table>
 
+    </div> <!-- tabs-snapshots-saved -->
+
+    <div id="tabs-snapshots-schedule">
+
 <h4>Schedule Snapshot</h4>
 <% 
   snapshot_cron_entry     = vm.snapshot_cron_entry # CronEdit::CronEntry
@@ -243,6 +284,7 @@
   vals = snapshot_cron_defaults # shorten
 %>
 <form method="POST">
+  <input type="hidden" name="_method" value="put"/>
   <table>
     <thead>
       <tr>
@@ -265,13 +307,14 @@
           <input type="checkbox" name="snapshot_schedule[enable]" <%= 'checked' if vals['enable'] %>/> 
         </td>
         <td style="text-align:right;">
-          <% drives_w_snapshots.keys.each do |drive_name| %>
-            <% 
-              checked = true 
-              if snapshot_cron_entry
-                unless snapshot_cron_entry[:command].include? drive_name # naive!!
-                  checked = false
-                end
+          <% vm.drives.each_pair do |drive_name, drive| %>
+            <% next unless drive and drive['config'] and drive['config']['media'] == 'disk' %>
+            <%
+              checked = false 
+              if  snapshot_cron_entry                 and 
+                  snapshot_cron_entry.respond_to? :[] and
+                  snapshot_cron_entry[:command].include? drive_name # naive !!
+                checked = true
               end
             %>
             <%= drive_name %> <input 
@@ -286,7 +329,12 @@
           <!-- try to follow strftime(3) conventions --> 
           <select name="snapshot_schedule[H]">
             <option value="*">*</option>
-            <% 0.upto(23) do |_H| %>
+            <% 
+              # 0 is a special case: it shouldn't match "0,1,2,3,4,5..." which
+              # should atcually match the cron entry '*'
+            %>
+            <option value="0"<%= ' selected' if vals['M'] =~ /^\s*0+\s*$/ %>>0 </option>            
+            <% 1.upto(23) do |_H| %>
               <option value="<%= _H %>" <%= 'selected' if _H == vals['H'].to_i %>><%= _H %></option>
             <% end %>
           </select>
@@ -310,8 +358,8 @@
             <option value="6" <%= 'selected' if vals['w'] == '6' %>>Saturday</option>
           </select> 
         </td>
-        <td>
-          <select name="snapshot_schedule[d]">
+        <td style="text-align:center">
+          <select name="snapshot_schedule[d]" style="width:95%">
             <option value="*">*</option>
             <% 1.upto(31) do |d| %>
               <% 
@@ -322,22 +370,32 @@
             <% end %>
           </select>
         </td>
-        <td>
+        <td style="text-align:center">
           <input 
-            type="text" size="2" name="snapshot_schedule[delete_older_than_days]"
+            type="text" name="snapshot_schedule[delete_older_than_days]"
             value="<%= vals['delete_older_than_days'] %>"
+            style="text-align:right; margin-right:1ex; width:3.5ex;"
           /> days
         </td>
       </tr>
     </tbody>
   </table>
   <button type="submit">Set!</button>
+</form>
+
+    </div> <!-- tabs-snapshots-schedule -->
+  </div> <!-- tabs-snapshots -->
+
+  <div id="tabs-config"> 
 
 <h3>Configuration</h3>
 
-<div class="warn" style="margin-bottom:4.3ex; margin-top: 0;">
-  Changes will take effect the next time you start the VM.
-</div>
+<ul>
+  <li><a href="#tabs-config-general">General</a></li>
+  <li><a href="#tabs-config-disks">Disks</a></li>
+  <li><a href="#tabs-config-passthrough">Host Hardware Pass-Through</a></li>
+  <li><a href="#tabs-config-net">Virtual Networking</a></li>
+</ul>
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
@@ -352,11 +410,38 @@
     )
   %>
 
-  <button style="margin-top:3.3ex;" type="submit">Change!</button>
+  <button style="margin:1ex 4px 0 4px" type="submit">Change!</button>
 </form>
+
+  </div> <!-- div#tabs-config -->
+
+</div> <!-- div#tabs --> <!-- jQueryUI tabs -->
 
 <script type="text/javascript">
   <%# js functions implemented in qemu/_js.html.erb %>
   qemuSaveRestoreControls('<%= vm.uuid %>');
   qemuNetIfControls();
+  <% if vm.running? and not params['quit'] and false # tmp disable %>
+    window.setInterval(
+      function(){
+        //qemuRefreshRunPanel('runPanel', '<%= "#{vm.uuid_short}/bits/run.html" %>');
+        //qemuSaveRestoreControls('<%= vm.uuid %>');
+        qemuRefreshHTML('status[<%= vm.uuid %>]',               '<%= "#{vm.uuid_short}/bits/status" %>');
+
+        qemuRefreshHTML('button_power_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/power.html" %>');
+        qemuRefreshHTML('button_resumepause_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/resumepause.html" %>');
+        qemuRefreshHTML('button_quit_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/quit.html" %>');
+        qemuSaveRestoreControls('<%= vm.uuid %>');   
+        qemuRefreshHTML('button_delete_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/delete.html" %>');
+ 
+        qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
+        if (qemuIsRunning('<%= vm.uuid_short %>')) {
+          document.getElementById('remote-displays').style.display = '';
+        } else {
+          document.getElementById('remote-displays').style.display = 'none';
+        }
+      }, 
+      1400
+    );
+  <% end %>
 </script>

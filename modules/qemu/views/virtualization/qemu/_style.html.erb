@@ -18,6 +18,22 @@
     padding-left:   1ex;
     padding-right:  1ex;
   }
+  table.passthrough-devices tr td {
+    height: 2em;
+  }
+  table.passthrough-devices tr td select, table#net tr td select {
+    width: 100%;
+  }
+  table tr td.highlight, table tr.highlight td, 
+  table tr td.superhighlight, table tr.superhighlight td  {
+    font-weight: bold;
+  }
+  table tr.highlight        td:first-child,
+  table tr.superhighlight   td:first-child,
+  table tr.partialhighlight td:first-child {
+    border-left: 2px #88f solid;
+  }
+
   .vmdetails {
     font-size: 95%;
   }
@@ -74,6 +90,10 @@
     vertical-align: middle;
   }
   input[type=text].vimagepath {
-    width: 48ex;
+    width: 54ex;
+  }
+  table#vmcreateedit tbody tr td fieldset {
+    margin-left: 0;
+    padding-left: 0;
   }
 </style>

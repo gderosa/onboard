@@ -29,8 +29,8 @@
   <tbody>
     <% all_rules.each do |rule| %>
       <tr>
-        <td><input class="rwtext" name="rules[][prio]" size="5" style="text-align: right;" value="<%= rule.prio %>"/></td>
-        <td><input size="19" class="rwtext" name="rules[][from]" value="<%= rule.from %>"/></td>
+        <td><input type="text" class="rwtext" name="rules[][prio]" size="5" style="text-align: right;" value="<%= rule.prio %>"/></td>
+        <td><input type="text" size="19" class="rwtext" name="rules[][from]" value="<%= rule.from %>"/></td>
         <!-- <td><input size="19" class="rwtext" name="rules[][to]"   value="<%= rule.to %>"  /></td> --> <!-- makes little sense... -->
         <!-- 
           "iif" recalls ip rule keyword, but really the process goes

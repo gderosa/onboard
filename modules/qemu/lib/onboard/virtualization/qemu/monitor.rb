@@ -52,7 +52,8 @@ class OnBoard
             end # Timeout
           rescue Timeout::Error, Errno::ECONNRESET, Errno::ECONNREFUSED
             LOGGER.handled_error $! 
-            out << "[Monitor Error: #{$!}]" 
+            out << "[Monitor Error: #{$!}]" unless opts[:on_errors] == :silent 
+            raise if opts[:raise]
           end
           if opts[:log] == :verbose  
             LOGGER.debug "qemu: Monitor socket at #{unix_path}"

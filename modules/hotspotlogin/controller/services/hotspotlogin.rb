@@ -12,7 +12,8 @@ class OnBoard
         :module => 'hotspotlogin',
         :path => '/services/hotspotlogin',
         :format => params[:format],
-        :objects  => Service::HotSpotLogin.data
+        :objects  => Service::HotSpotLogin.data,
+        :title  => 'Hotspot Login page'
       )
     end
 
@@ -47,7 +48,8 @@ class OnBoard
         :path => '/services/hotspotlogin',
         :format => params[:format],
         :objects  => Service::HotSpotLogin.data,
-        :msg => msg
+        :msg => msg,
+        :title  => 'Hotspot Login page'
       )
     end
 

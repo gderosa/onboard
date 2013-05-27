@@ -30,6 +30,10 @@ such a device:
 it's not actually used: TAPs are created on demand by qemu-kvm itself,
 but may be useful nonethless).
 
+attr: could be useful for distributed filesystems to store images: namely GlusterFS
+(there are plans to integrate); see 
+http://community.gluster.org/q/how-do-i-reuse-a-brick-after-deleting-the-volume-it-was-formerly-part-of/
+
 
 == OnBoard module dependencies:
 

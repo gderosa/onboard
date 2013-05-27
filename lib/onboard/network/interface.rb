@@ -12,6 +12,12 @@ class OnBoard
 
       # Constants
 
+      DHCPC_ATTEMPTS = [
+        lambda{|ifname| System::Command.send_command  "dhcpcd5  -b  -p  #{ifname}", :sudo},
+        lambda{|ifname| System::Command.send_command  "dhcpcd   -b  -p  #{ifname}", :sudo},
+        lambda{|ifname| System::Command.bgexec        "dhcpcd       -p  #{ifname}", :sudo},
+      ]
+
       TYPES = {
         'loopback'    => {
           :preferred_order  => 0,
@@ -180,10 +186,11 @@ class OnBoard
               cmd             = $2
               args            = $4.strip
               ifaces = ary.select do |i| 
-                args =~ /\s#{i.name}$/      or  # ends as " eth0"
-                args =~ /\s\-\w#{i.name}$/  or  # ends as " -ieth0"
-                args =~ /\s#{i.name}\s/     or  # contains " eth0 "
-                args =~ /\s\-\w#{i.name}\s/     # contains " -ieth0 "
+                args == i.name              or  # is        "eth0"
+                args =~ /\s#{i.name}$/      or  # ends as   " eth0"
+                args =~ /\s\-\w#{i.name}$/  or  # ends as   " -ieth0"
+                args =~ /\s#{i.name}\s/     or  # contains  " eth0 "
+                args =~ /\s\-\w#{i.name}\s/     # contains  " -ieth0 "
               end
               if ifaces.length > 1
                 fail "fix your regexps: looks like a dhcp client process is managing more than one interface: #{ifaces.map{|i| i.name}.join}"
@@ -469,8 +476,12 @@ class OnBoard
       alias ip_addr_flush flush_ip
 
       def start_dhcp_client
-        success = Command.bgexec "dhcpcd #{@name}", :sudo
-        sleep(0.1) # so the new running process will be detected
+        success = nil
+        DHCPC_ATTEMPTS.each do |lmbda|
+          success = lmbda.call @name
+          break if success
+        end
+        sleep(0.1) # horrible
         return success
       end
 

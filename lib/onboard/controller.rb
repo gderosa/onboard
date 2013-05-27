@@ -36,8 +36,13 @@ class OnBoard
     set :views, OnBoard::ROOTDIR + '/views'
 
     not_found do
-      status(404)
-      format(:path=>'404', :format=>'html') 
+      @override_not_found ||= false
+      status 404
+      if @override_not_found
+        pass
+      else
+        format(:path=>'404', :format=>'html') 
+      end
     end
 
     # modular controller

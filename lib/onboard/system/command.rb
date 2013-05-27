@@ -26,16 +26,22 @@ class OnBoard
         LOGGER.info "Executing \"#{cmd}\" in background..."
         stdin, stdout, stderr, wait_thr = Open3.popen3(cmd_do)
         Thread.new do
-          stdout.each_line do |line|
-            LOGGER.info line.strip
+          begin
+            stdout.each_line do |line|
+              LOGGER.info line.strip
+            end
+          rescue IOError
           end
         end
         Thread.new do
           # very basic heuristic to interpret stderr output as warning or error
-          stderr.each_line do |line|
-            level = :warn
-            level = :error if line =~ /err(orr|[^a-z])/i
-            LOGGER.method(level).call line.strip
+          begin  
+            stderr.each_line do |line|
+              level = :warn
+              level = :error if line =~ /err(orr|[^a-z])/i
+              LOGGER.method(level).call line.strip
+            end
+          rescue IOError
           end
         end
         Thread.new do
