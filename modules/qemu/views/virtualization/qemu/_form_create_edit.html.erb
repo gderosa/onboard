@@ -351,7 +351,7 @@
       <% next if pci_device[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
       <%
         conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find{|h| h['host'] == pci_id }
-        passthrough_type = conf_h && conf_h['type']
+        passthrough_type = conf_h && (conf_h['type'] || conf_h['driver'])
       %>
       <% 
         available = true
