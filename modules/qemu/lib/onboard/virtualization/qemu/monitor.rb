@@ -25,8 +25,10 @@ class OnBoard
             timeout(opts[:timeout]) do
               UNIXSocket.open(unix_path) do |uds|
                 uds.puts                  # just to get the prompt
-                banner = uds.gets         # unused, just to go ahead
-                prompt = uds.gets         # tipically "(qemu) \r\n"
+                banner = uds.gets         # unused, just to go ahead, could be empty
+                prompt_long = uds.gets    # "(qemu)" or "(qemu) QEMU 1.5.0 ..."
+	 	prompt_long =~ /^\s*(\S+)/
+		prompt = $1	
 
                 uds.puts msg
                 spurious_line = uds.gets  
@@ -37,8 +39,8 @@ class OnBoard
                 # Last line has no trailing line-terminating char, so we have to
                 # perform some character-level operations.
 
-                while (line != prompt.sub(/\r?\n/, '') ) 
-                    # "(qemu) " or something
+                while (line.strip != prompt) 
+                    # "(qemu)" or something
                   c = uds.getc
                   break unless c
                   line << c
