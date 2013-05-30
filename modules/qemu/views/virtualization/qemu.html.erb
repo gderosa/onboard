@@ -262,6 +262,7 @@
             <% if vm.running? %>
               </a>
             <% end %>
+            <br/>
 
             <% if vm.config.opts['-spice'] and vm.config.opts['-spice']['port'].to_i > 0 %>
               <% spice_uri = "spice://#{request.host}:#{vm.config.opts['-spice']['port']}"%>       
