@@ -351,7 +351,7 @@
       <% next if pci_device[:desc] =~ OnBoard::V12n::QEMU::Passthrough::PCI::EXCLUDE_DESCS %>
       <%
         conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find{|h| h['host'] == pci_id }
-        passthrough_type = conf_h && conf_h['type']
+        passthrough_type = conf_h && (conf_h['type'] || conf_h['driver'])
       %>
       <% 
         available = true
@@ -579,7 +579,7 @@
   </table>
 </div> <!-- tabs-config-net -->
 
-  <% if vm and settings.environment == :development and false # disable for now %>
+  <% if vm and settings.environment == :development %>
   <h3>Experts/Development</h3>
   <h4>Edit/Force QEMU command line <input style="vertical-align:-0.3ex" type="checkbox" name="edit_the_command_line"<%= ' checked' if vm and vm.config.force_command_line %>></h4>
   <textarea name="command_line" style="width:100%; height:11em"><%
@@ -587,7 +587,7 @@
   %></textarea>
   
   <!-- not really necessary, using sudo qemu -runas onboard -->
-  <div style="display:none;">
+  <div style="">
     <h4>Run as root</h4>
     <input type="checkbox" name="run_as_root" <%= 'checked' if vm and not vm.config.drop_privileges? %>/>
   </div>

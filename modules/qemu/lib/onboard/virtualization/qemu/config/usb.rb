@@ -16,11 +16,15 @@ class OnBoard
               'id'        => 'ehci',
               '_comment'  => 'USB 2.0'
             },
+# Disabled due to https://bugs.launchpad.net/qemu/+bug/1185888
+# TODO: make it a user choice, with proper warning
+=begin
             {
               'driver'    => 'nec-usb-xhci',
               'id'        => 'xhci',
               '_comment'  => 'USB 3.0'
             },
+=end
           ]
 
           DEFAULT_DEVICES     = [

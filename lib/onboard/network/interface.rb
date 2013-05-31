@@ -186,10 +186,11 @@ class OnBoard
               cmd             = $2
               args            = $4.strip
               ifaces = ary.select do |i| 
-                args =~ /\s#{i.name}$/      or  # ends as " eth0"
-                args =~ /\s\-\w#{i.name}$/  or  # ends as " -ieth0"
-                args =~ /\s#{i.name}\s/     or  # contains " eth0 "
-                args =~ /\s\-\w#{i.name}\s/     # contains " -ieth0 "
+                args == i.name              or  # is        "eth0"
+                args =~ /\s#{i.name}$/      or  # ends as   " eth0"
+                args =~ /\s\-\w#{i.name}$/  or  # ends as   " -ieth0"
+                args =~ /\s#{i.name}\s/     or  # contains  " eth0 "
+                args =~ /\s\-\w#{i.name}\s/     # contains  " -ieth0 "
               end
               if ifaces.length > 1
                 fail "fix your regexps: looks like a dhcp client process is managing more than one interface: #{ifaces.map{|i| i.name}.join}"
