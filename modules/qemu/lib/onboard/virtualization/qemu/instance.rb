@@ -255,7 +255,7 @@ class OnBoard
         def prepare_pci_passthrough
           if opts['-device']
             opts['-device'].each do |device|
-              if Passthrough::PCI::TYPES.include? device['type']
+              if Passthrough::PCI::TYPES.include? (device['driver'] || device['type']) # compat, 'driver' preferred
                 Passthrough::PCI.prepare device
               end
             end
