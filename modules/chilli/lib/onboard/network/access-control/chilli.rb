@@ -404,6 +404,10 @@ class OnBoard
           }
         end
 
+        def to_json(*a)
+          data.to_json(*a)
+        end
+
       end
     end
   end
