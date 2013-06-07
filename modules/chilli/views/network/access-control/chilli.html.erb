@@ -43,7 +43,7 @@
         <td><%= chilli.conf['dhcpif'] %></td>
         <td><%= chilli.conf['net'] %></td>
         <td><%= chilli.conf['uamlisten'] %></td>
-        <td><% if chilli.dhcp_range %><%= chilli.dhcp_range.first.to_s %> - <%= chilli.dhcp_range.last.to_s %><% end %></td>
+        <td><% if chilli.conf['dhcpstart'] or chilli.conf['dhcpend'] and chilli.dhcp_range %><%= chilli.dhcp_range.first.to_s %> - <%= chilli.dhcp_range.last.to_s %><% end %></td>
         <td style="text-align: center;"><%= yes_no_icon(chilli.running?, :print_no) %></td>
         <!-- Actions -->
         <td style="text-align: center;">

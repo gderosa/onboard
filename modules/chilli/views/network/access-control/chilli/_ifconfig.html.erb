@@ -79,7 +79,7 @@
     </tr>
     <tr>
       <th scope="row">DHCP range</th>
-      <td><input type="text" name="dhcp_start" value="<%= chilli.dhcp_range.first if chilli and chilli.conf['net'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/> - <input type="text" name="dhcp_end" value="<%= chilli.dhcp_range.last if chilli and chilli.conf['net'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+      <td><input type="text" name="dhcp_start" value="<%= chilli.dhcp_range.first if chilli and chilli.conf['net'] and chilli.conf['dhcpstart'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/> - <input type="text" name="dhcp_end" value="<%= chilli.dhcp_range.last if chilli and chilli.conf['net'] and chilli.conf['dhcpend'] %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
   </tbody>
 </table>
