@@ -1,4 +1,26 @@
-2012.05.01
+2013.05.02
+
+* [Coova]Chilli: 
+	* allow static IPs
+	* do not show spurious records only due to forking
+	* json fixes
+
+* QEMU: 
+	* prepare pci passthrough: fix 'type' vs 'driver' in config file
+	* disable USB 3 (breaks snapshots):
+		* reported at: http://bugs.launchpad.net/qemu/+bug/1185888
+	* fix monitor parsing for qemu 1.5
+
+* DHCP client: 
+	* fix dhcp detection
+	* dhcpcd5
+	* --persistent (try to not loose connection setting to static)
+
+* System::Process.running?
+
+* Export config: add var/www
+
+2013.05.01
 
 * QEMU:
 	* various fixes (mainly presentation)
