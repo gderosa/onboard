@@ -33,13 +33,30 @@ class OnBoard
           end
         end
 
+        def self.all_pids_from_pidfiles
+          pids = []
+          Dir.glob(CURRENT_CONF_GLOB).each do |conffile|
+            chilli = new(:conffile => conffile)
+            if chilli.conf['pidfile']
+              if File.exists? chilli.conf['pidfile']
+                pid = File.read(chilli.conf['pidfile']).to_i
+                if pid > 0 
+                  pids << pid
+                end
+              end
+            end
+          end
+          pids
+        end
+
         def self.getAll
           ary = []
           # running processes
-          `pidof chilli`.split.each do |pid|
+          `pidof chilli`.split.each do |pid_str|
+            pid = pid_str.to_i
             ary << new( # new Chilli object
               :process => OnBoard::System::Process.new(pid)
-            )
+            ) if all_pids_from_pidfiles.include? pid
           end
           # may be not running, but a configuration files exists
           Dir.glob(CURRENT_CONF_GLOB).each do |conffile|
