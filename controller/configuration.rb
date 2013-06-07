@@ -28,7 +28,11 @@ class OnBoard::Controller
   end
 
   get "/configuration.tgz" do
-    cmd = "tar --directory #{OnBoard::DATADIR} --create etc/config var/lib | gzip -cf"
+    base = OnBoard::DATADIR
+    subdirs = %w{etc/config var/lib var/www}.select do |subdir|
+      File.exists? File.join base, subdir
+    end
+    cmd = "tar --directory #{base} --create #{subdirs.join ' '} | gzip -cf"
     content_type 'application/x-gzip'
     `#{cmd}`
   end
