@@ -261,12 +261,24 @@ class OnBoard
         end
 
         def write_conffile(opt_h={})  
+          
           FileUtils.mkdir_p File.dirname @conffile if @conffile
           if opt_h[:tmp] 
             f = Tempfile.new 'chilli-test'
           else
             f = File.open @conffile, 'w'
           end
+
+          # Allow either static and dynamic ip in net
+          if @conf['net']
+            unless @conf['statip']
+              @conf['statip'] = @conf['net']
+            end
+            unless @conf['dynip']
+              @conf['dynip'] = @conf['net']
+            end
+          end
+
           @conf.each_pair do |key, value|
             if value == true
               f.write "#{key}\n"
