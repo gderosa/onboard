@@ -1,14 +1,26 @@
 class OnBoard
   module System
     class Process
+
+      class << self
+        def running?(pid)
+          # http://stackoverflow.com/a/325097
+          begin
+            return !!::Process.getpgid(pid) 
+          rescue Errno::ESRCH
+            return false
+          end
+        end
+      end
+
       attr_reader :pid, :cwd, :exe, :cmdline, :env
       def initialize(pid)
         @pid      = pid
         @cwd      = `sudo readlink /proc/#{@pid}/cwd`.strip
         @exe      = `sudo readlink /proc/#{@pid}/exe`.strip
         @cmdline_raw \
-                  = File.read("/proc/#{@pid}/cmdline")
-        @cmdline  = @cmdline_raw.split("\0")
+                  = File.read("/proc/#{@pid}/cmdline") if File.exists? "/proc/#{@pid}/cmdline"
+        @cmdline  = @cmdline_raw.split("\0") if @cmdline_raw
         @env      = getenv()
       end
       def data

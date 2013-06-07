@@ -33,13 +33,30 @@ class OnBoard
           end
         end
 
+        def self.all_pids_from_pidfiles
+          pids = []
+          Dir.glob(CURRENT_CONF_GLOB).each do |conffile|
+            chilli = new(:conffile => conffile)
+            if chilli.conf['pidfile']
+              if File.exists? chilli.conf['pidfile']
+                pid = File.read(chilli.conf['pidfile']).to_i
+                if pid > 0 
+                  pids << pid
+                end
+              end
+            end
+          end
+          pids
+        end
+
         def self.getAll
           ary = []
           # running processes
-          `pidof chilli`.split.each do |pid|
+          `pidof chilli`.split.each do |pid_str|
+            pid = pid_str.to_i
             ary << new( # new Chilli object
               :process => OnBoard::System::Process.new(pid)
-            )
+            ) if all_pids_from_pidfiles.include? pid
           end
           # may be not running, but a configuration files exists
           Dir.glob(CURRENT_CONF_GLOB).each do |conffile|
@@ -244,12 +261,24 @@ class OnBoard
         end
 
         def write_conffile(opt_h={})  
+          
           FileUtils.mkdir_p File.dirname @conffile if @conffile
           if opt_h[:tmp] 
             f = Tempfile.new 'chilli-test'
           else
             f = File.open @conffile, 'w'
           end
+
+          # Allow either static and dynamic ip in net
+          if @conf['net']
+            unless @conf['statip']
+              @conf['statip'] = @conf['net']
+            end
+            unless @conf['dynip']
+              @conf['dynip'] = @conf['net']
+            end
+          end
+
           @conf.each_pair do |key, value|
             if value == true
               f.write "#{key}\n"
@@ -402,6 +431,10 @@ class OnBoard
               'end'       => dhcp_range.last.to_s
             }
           }
+        end
+
+        def to_json(*a)
+          data.to_json(*a)
         end
 
       end

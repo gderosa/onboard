@@ -180,7 +180,7 @@ class OnBoard
           end
           ary << self.new(netif_h) if netif_h # fill in the last element
           # Now detect ip assigment method for each interface
-          `ps -e -o pid,cmd`.each_line do |line|
+          `ps -e -ww -o pid,cmd`.each_line do |line|
             if line =~ /^\s*(\d+)\s+(\S*(dhclient|dhcpcd|pump|udhcpc)[^\/\s]*)\s+(.*)$/
               pid             = $1
               cmd             = $2
