@@ -83,8 +83,12 @@ logfileformat = 1
 # specify each IP on an individual filterip line.
 filterip =
 
-# the port that DansGuardian listens to.
-filterport = 8080
+# the ports that DansGuardian listens to.  Specify one line per filterip
+# line.  You can specify different authentication mechanisms per port but
+# only if the mechanisms can co-exist (e.g. basic/proxy auth can't)
+filterports = 8080
+#filterports = 8081
+
 
 # the ip of the proxy (default is the loopback - i.e. this server)
 proxyip = 127.0.0.1
