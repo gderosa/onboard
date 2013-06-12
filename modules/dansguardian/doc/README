@@ -1,10 +1,14 @@
-DEPENDENCIES (and setup instruction
+DEPENDENCIES (and setup instruction)
 
-SQLAUTH PATCH:
+DansGuardian >=  2.12
+
+Squid3
+
+SQLAUTH PATCH/FORK:
 
 http://tech.groups.yahoo.com/group/dansguardian/message/24647
 
-You will need squid.
+https://github.com/gderosa/dansguardian
 
 ANTIVIRUS:
 
