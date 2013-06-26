@@ -88,6 +88,7 @@ class OnBoard
             -loadvm
             -vnc
             -k
+            -vga
             -soundhw
             -pidfile
           }.each do |o|

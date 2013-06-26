@@ -70,6 +70,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   ),
                 },
                 '-k'          => h[:http_params]['k'],
+                '-vga'        => h[:http_params]['vga'],
                 '-soundhw'    => h[:http_params]['soundhw'],
                 #'-drive'     => [
                 #  {

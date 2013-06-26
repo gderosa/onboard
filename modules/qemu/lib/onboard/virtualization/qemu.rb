@@ -24,6 +24,7 @@ class OnBoard
       autoload :Snapshot,     'onboard/virtualization/qemu/snapshot' 
       autoload :VNC,          'onboard/virtualization/qemu/vnc'
       autoload :SPICE,        'onboard/virtualization/qemu/spice'
+      autoload :VGA,          'onboard/virtualization/qemu/vga'
       autoload :Sound,        'onboard/virtualization/qemu/sound'
       autoload :Passthrough,  'onboard/virtualization/qemu/passthrough'
 

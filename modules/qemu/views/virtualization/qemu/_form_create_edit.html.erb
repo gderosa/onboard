@@ -29,7 +29,7 @@
   # On a single-vm page, grab data from the vm object:
   if vm
 
-    %w{name m vnc k soundhw}.each do |k|
+    %w{name m vnc k vga soundhw}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
     formvals['cmdline_append'] = vm.config.opts['append']
@@ -195,6 +195,17 @@
             <option value=""></option>
             <% OnBoard::V12n::QEMU::Config::KEYBOARD_LAYOUTS.each do |k| %>
               <option <%= 'selected' if formvals['k'] == k %> value="<%= k %>"><%= k %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Graphic card</th>
+        <td>
+          <select id="vga" name="vga">
+            <option value="">(default/unspec)</option>
+            <% OnBoard::V12n::QEMU::VGA::OPTIONS.each do |opt| %>
+              <option <%= 'selected' if opt == formvals['vga'] %> value="<%= opt %>"><%= opt %></option> 
             <% end %>
           </select>
         </td>
