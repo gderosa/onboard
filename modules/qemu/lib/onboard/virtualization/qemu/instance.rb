@@ -171,9 +171,9 @@ class OnBoard
               end
               # Disk image might be on distributed storage...
               if d['file_url'] # e.g. gluster:// -- but qemu-img still use mount point
-                drive_args << %Q{file=#{d['file_url']}}
+                drive_args << %Q{file="#{d['file_url']}"}
               elsif d['file']
-                drive_args << %Q{file=#{d['file']}}
+                drive_args << %Q{file="#{d['file']}"}
               end
               # Numeric or nil
               %w{index bus unit}.each do |par|
