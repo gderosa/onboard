@@ -106,8 +106,6 @@ class OnBoard
               #,streaming-video=[off|all|filter]
             end
           end
-          # cmdline << '-vga qxl '
-              # TODO: do not hardcode: remove in the meanwhile
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
             if opts['-monitor']['unix']
@@ -450,9 +448,15 @@ class OnBoard
           @monitor.sendrecv 'cont'
         end
 
-        def loadvm_on_next_boot(name)
+        def loadvm_on_next_boot(name=:__not_given__)
+          return @config['-loadvm'] if name == :__not_given__
+
           @config['-loadvm'] = name
           @config.save
+        end
+
+        def loadvm_on_next_boot?
+          @config['-loadvm']
         end
 
         def powerdown
