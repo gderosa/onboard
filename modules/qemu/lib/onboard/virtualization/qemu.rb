@@ -177,13 +177,26 @@ start start_paused pause resume powerdown delete
           return unless File.exists? "#{CONFDIR}/common/instances.yml"
           saved_VMs   = YAML.load File.read "#{CONFDIR}/common/instances.yml"
           current_VMs = get_all
+          failed_VMs  = []
           saved_VMs.each do |saved_vm|
             # QEMU::Instance#running is the saved state
             # QEMU::Instance#running? is the actual state
             current_VM = current_VMs.find{|vm| vm.uuid == saved_vm.uuid} 
             if current_VM
-              current_VM.start if saved_vm.running and not current_VM.running?
+              if saved_vm.running and not current_VM.running?
+                begin
+                  current_VM.start
+                rescue OnBoard::Error
+                  failed_VMs << current_VM
+                  errmsg = "Couldn't start VM ``#{current_VM.name}''"
+                  LOGGER.error errmsg
+                end
+              end
             end
+          end
+          if failed_VMs.any?
+            raise \
+                OnBoard::RestoreFailure, "Some VMs were not restored correctly #{failed_VMs.map{|vm| vm.name}} (see logs)" 
           end
         end
 
