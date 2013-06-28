@@ -28,6 +28,8 @@ class OnBoard
 
   InternalServerError = ServerError
 
+  class RestoreFailure < ServerError;     end
+
   class Error
     def http_status_code
       case self # plays well with inheritance

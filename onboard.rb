@@ -143,7 +143,8 @@ class OnBoard
         rescue Exception
           exception = $!
 
-          puts exception.inspect
+          puts "ERR!"
+          puts "#{exception.class}: #{exception.message}"
 
           LOGGER.error "loading #{script}: #{exception.inspect}"
           backtrace_str = "Exception backtrace follows:"
