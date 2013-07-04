@@ -20,18 +20,21 @@ class OnBoard
 
         def self.restore(opt_h={})
           return false unless File.readable? SAVE_FILE
-          # This is dangerous, but if you "moved down" system default rules
-          # you may find a copy at the old position, which might break your policy 
-          # routing setup :-O
-          # TODO: develop a smarter system which makes sure that local and main
-          # tables are referenced by some saved rule before flushing the curent ones
+
+          # This is critical code. If something goes wrong here your network
+          # may break...
+
           System::Command.run "ip rule flush", :sudo if opt_h[:flush] 
           File.foreach SAVE_FILE do |line|
             if line =~ /^\s*(\d+):\s+(\S.*\S)\s*$/
               prio, rulespec = $1, $2
-              next if prio.to_i == 0
+              # next if prio.to_i == 0
+                # Yes, rule 0 (lookup local) may have been deleted by misuse
+                # of 'ip rule' at the shell, so it definitely makes sense to 
+                # restore it.
               del = "ip rule del prio #{prio} #{rulespec}"  
               add = "ip rule add prio #{prio} #{rulespec}"
+	      # Avoid duplicates / make restoring idempotent
               System::Command.run del, :sudo, :try unless opt_h[:flush]
               System::Command.run add, :sudo
             end
