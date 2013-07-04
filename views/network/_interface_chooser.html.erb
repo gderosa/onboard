@@ -5,9 +5,10 @@
 		OnBoard::Network::Interface::PREFERRED_ORDER
 	)
   print_bridge_info ||= false
-	selected_if       ||= lambda {|x| false} # as in <option selected ... >
+  selected_if       ||= lambda {|x| false} # as in <option selected ... >
+  select_style      ||= nil
 %>
-            <select name="<%= select_name %>">
+            <select name="<%= select_name %>" style="<%= select_style %>">
               <option value=""></option>
               <% all_interfaces.each do |iface| %>
                 <%
