@@ -165,6 +165,11 @@ start start_paused pause resume powerdown delete
           end
         end
 
+        def reset_capabilities 
+          Network::NIC.   models :reset
+          Sound::Hardware.models :reset
+        end
+
         def save
           FileUtils.mkdir_p "#{CONFDIR}/common"
           File.open "#{CONFDIR}/common/instances.yml", 'w' do |f|

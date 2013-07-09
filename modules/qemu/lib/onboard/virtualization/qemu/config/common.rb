@@ -29,6 +29,7 @@ class OnBoard
               File.open CONFFILE, 'w' do |f|
                 f.write YAML.dump h[:http_params].let_in('exe' => true)  
               end
+              QEMU.reset_capabilities
             end
           end
         end

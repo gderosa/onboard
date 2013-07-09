@@ -1,3 +1,6 @@
+require 'onboard/extensions/array'
+require 'onboard/extensions/nilclass'
+
 class OnBoard
   module Virtualization
     module QEMU
@@ -6,8 +9,9 @@ class OnBoard
 
           class << self
 
-            def models
-              @@models ||= get_models
+            def models(*opts)
+              @models = get_models if @models.none? or opts.include_any_of? [:reset, :reset_list, :rescan]
+              return @models
             end
 
             def get_models 
