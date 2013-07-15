@@ -1,0 +1,11 @@
+Gluster service should be started by OnBoard and not by Debian/Init/whatever
+because network could be unconfigured at that stage and service may
+fail to start. Moreover, this fork
+
+https://github.com/gderosa/glusterfs-debian/blob/deb-3.4.0/debian/glusterfs-server.init
+
+adds a retry mechanism which, in case of unconfigured network, may furtherly slow down
+system bootup.
+
+
+

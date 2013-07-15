@@ -11,17 +11,21 @@ puts if running_VMs.any?
 
 running_VMs.each do |vm|
   next unless vm.running?
-  puts "  Shutting down VM '#{vm.name}'... "
-  STDOUT.flush
   if vm.quick_snapshots?
+    print "  Saving state of VM '#{vm.name}'... "
+    STDOUT.flush
     begin
       Timeout.timeout(QUICK_SAVEVM_TIMEOUT) do
         vm.savevm_quit
+        puts 'OK'
       end
     rescue Timeout::Error
+      puts $!.class
       vm.quit
     end
   else
+    print "  Shutting down VM '#{vm.name}'... "
+    STDOUT.flush
     begin
       Timeout.timeout(SHUTDOWN_TIMEOUT) do
         while(vm.running?)
@@ -30,6 +34,7 @@ running_VMs.each do |vm|
         end
       end
     rescue Timeout::Error
+      puts $!.class
       vm.quit
     end
   end

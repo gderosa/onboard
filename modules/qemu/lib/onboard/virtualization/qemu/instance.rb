@@ -88,6 +88,7 @@ class OnBoard
             -loadvm
             -vnc
             -k
+            -vga
             -soundhw
             -pidfile
           }.each do |o|
@@ -105,8 +106,6 @@ class OnBoard
               #,streaming-video=[off|all|filter]
             end
           end
-          # cmdline << '-vga qxl '
-              # TODO: do not hardcode: remove in the meanwhile
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
           if opts['-monitor']
             if opts['-monitor']['unix']
@@ -172,9 +171,9 @@ class OnBoard
               end
               # Disk image might be on distributed storage...
               if d['file_url'] # e.g. gluster:// -- but qemu-img still use mount point
-                drive_args << %Q{file=#{d['file_url']}}
+                drive_args << %Q{file="#{d['file_url']}"}
               elsif d['file']
-                drive_args << %Q{file=#{d['file']}}
+                drive_args << %Q{file="#{d['file']}"}
               end
               # Numeric or nil
               %w{index bus unit}.each do |par|
@@ -449,9 +448,15 @@ class OnBoard
           @monitor.sendrecv 'cont'
         end
 
-        def loadvm_on_next_boot(name)
+        def loadvm_on_next_boot(name=:__not_given__)
+          return @config['-loadvm'] if name == :__not_given__
+
           @config['-loadvm'] = name
           @config.save
+        end
+
+        def loadvm_on_next_boot?
+          @config['-loadvm']
         end
 
         def powerdown

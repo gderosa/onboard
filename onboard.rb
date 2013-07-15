@@ -25,7 +25,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2013.05.03'
+  VERSION           = '2013.05.04'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
@@ -143,7 +143,8 @@ class OnBoard
         rescue Exception
           exception = $!
 
-          puts exception.inspect
+          puts "ERR!"
+          puts "#{exception.class}: #{exception.message}"
 
           LOGGER.error "loading #{script}: #{exception.inspect}"
           backtrace_str = "Exception backtrace follows:"

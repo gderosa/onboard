@@ -1,24 +1,34 @@
 # These exceptions MUST always be caught, displaying a human-readable
 # message in html view, and something useful for JSON/YAML clients (custom
 # HTTP headers might be a way).
-#
-# Inheritance is encouraged.
 
 class OnBoard
-  class Exception     < ::Exception;    end
+  
+  # This is the case where multiple inheritance 
+  # would've been proven useful...
+  module Exception
+  end
 
-  class Error         < ::Exception;    end  
-  class Warning       < ::Exception;    end  # TODO: use catch and throw
+  class Error         < ::StandardError;
+    include Exception
+  end  
+
+  # TODO: use catch and throw
+  class Warning       < ::Exception;
+    include Exception
+  end
   
   # an useful alias
   RuntimeError        = Error
 
-  class ServerError   < Error;          end
-  class BadRequest    < Error;          end
-  class Conflict      < Error;          end 
-  class Unauthorized  < Error;          end
+  class ServerError   < Error;            end
+  class BadRequest    < Error;            end
+  class Conflict      < Error;            end 
+  class Unauthorized  < Error;            end
 
   InternalServerError = ServerError
+
+  class RestoreFailure < ServerError;     end
 
   class Error
     def http_status_code

@@ -24,6 +24,7 @@ class OnBoard
       autoload :Snapshot,     'onboard/virtualization/qemu/snapshot' 
       autoload :VNC,          'onboard/virtualization/qemu/vnc'
       autoload :SPICE,        'onboard/virtualization/qemu/spice'
+      autoload :VGA,          'onboard/virtualization/qemu/vga'
       autoload :Sound,        'onboard/virtualization/qemu/sound'
       autoload :Passthrough,  'onboard/virtualization/qemu/passthrough'
 
@@ -164,6 +165,11 @@ start start_paused pause resume powerdown delete
           end
         end
 
+        def reset_capabilities 
+          Network::NIC.   models :reset
+          Sound::Hardware.models :reset
+        end
+
         def save
           FileUtils.mkdir_p "#{CONFDIR}/common"
           File.open "#{CONFDIR}/common/instances.yml", 'w' do |f|
@@ -174,15 +180,50 @@ start start_paused pause resume powerdown delete
         def restore
           # TODO: DRY this config file name
           return unless File.exists? "#{CONFDIR}/common/instances.yml"
-          saved_VMs   = YAML.load File.read "#{CONFDIR}/common/instances.yml"
-          current_VMs = get_all
+          saved_VMs     = YAML.load File.read "#{CONFDIR}/common/instances.yml"
+          current_VMs   = get_all
+          failed_VMs    = []
+          restored_VMs  = []
           saved_VMs.each do |saved_vm|
             # QEMU::Instance#running is the saved state
             # QEMU::Instance#running? is the actual state
             current_VM = current_VMs.find{|vm| vm.uuid == saved_vm.uuid} 
             if current_VM
-              current_VM.start if saved_vm.running and not current_VM.running?
+              if saved_vm.running and not current_VM.running?
+                begin
+                  print "\n  Starting VM '#{current_VM.name}'#{' (with machine state)' if current_VM.opts['-loadvm'] =~ /\S/}... "
+                  STDOUT.flush
+                  current_VM.start
+                  print 'OK'
+                  STDOUT.flush
+                  if current_VM.opts['-loadvm'] == DEFAULT_SNAPSHOT
+                    current_VM.loadvm_on_next_boot false
+                    LOGGER.error "DEBUG: #{__FILE__}##{__LINE__}: current_VM.loadvm_on_next_boot false"
+                    # After an eventual host power failure,
+                    # do not force loading from DEFAULT_SNAPSHOT,
+                    # which may not be recent at all.                    #
+                    # 
+                    # It should be up
+                    # to the administrator to decide if load a snapshot 
+                    # or try to recover
+                    # even from an inconsistent guest filesystem (whose state
+                    # would be completely lost with -loadvm).
+                  end
+                  restored_VMs << current_VM
+                rescue OnBoard::Error
+                  print 'ERR!'
+                  STDOUT.flush
+                  failed_VMs << current_VM
+                  errmsg = "Couldn't start VM ``#{current_VM.name}''"
+                  LOGGER.error errmsg
+                end
+              end
             end
+          end
+          puts if restored_VMs.any? or failed_VMs.any?
+          if failed_VMs.any?
+            raise \
+                OnBoard::RestoreFailure, "Some VMs were not restored correctly #{failed_VMs.map{|vm| vm.name}} (see logs)" 
           end
         end
 
