@@ -73,7 +73,8 @@
                   :select_name          => 'rules[][iphysdev]',
                   :all_interfaces       => all_interfaces.select{|x| x.bridged?},
                   :selected_if          => lambda {|x| x.name == rule.iphysdev},
-                  :print_bridge_info    => true
+		  :print_bridge_info    => true,
+		  :select_style	        => 'width:16ex'
                 }
               }
             ) 
