@@ -1,3 +1,25 @@
+2013.05.04
+
+* QEMU:
+	* reset hw lists after executable change
+	* support disk image path with spaces (closes #108)
+	* some improved startup/restore error handlings
+	* supports -vga (closes #110)
+
+* Policy Routing:
+	* restore rule 0: 
+		so a possible, scheduled ./restore.sh or similar could
+		recover from a disastrous ``local'' table removal
+	
+* Init: 
+	* ensure that /etc/init.d/onboard stop has been completed before
+	  halting the machine
+
+* Design: OnBoard::Error now inherits from StandardError, 
+	so a default rescue would catch it
+
+* DabsGuardian: move maxuploadsize to filter group
+
 2013.05.03
 
 * DansGuardian: update config templates
