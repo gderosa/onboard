@@ -2,7 +2,7 @@ require 'fileutils'
 
 class OnBoard
   module Platform
-    module Debian
+    module Debian # with fallback if no /etc/init.d/ ...
       def self.restart_dnsmasq(confdir)
         msg = OnBoard::System::Command.run(
             '/etc/init.d/dnsmasq stop', :sudo, :try)
@@ -20,8 +20,14 @@ class OnBoard
             'DNSMASQ_OPTS="--conf-dir=' << 
             confdir << '" ' <<
             '/etc/init.d/dnsmasq start', 
-            :sudo
-        )   
+            :sudo, :try
+        )
+        if not msg[:ok]
+          msg = OnBoard::System::Command.run(
+              "dnsmasq --conf-dir=#{confdir}", 
+              :sudo
+          )
+        end   
       end
     end
   end
