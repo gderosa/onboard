@@ -12,8 +12,14 @@ class OnBoard
         case e 
         when Sequel::DatabaseConnectionError # db misconfigured
           status, check_your_db_config = 500, true  # HTTP Internal Server Error
-        when Sequel::DatabaseError # foreign key etc.
-          status, check_your_db_config = 409, false # HTTP Conflict
+        else
+          raise # temporarily? disable the following error-handling case and let the
+          # exception propagate so developers can fix them, not the user/operator.
+          # Specificaly we now have to hanlde the deprecation (and actual removal! :-p)
+          # of  https://github.com/jeremyevans/sequel/pull/373#issuecomment-1792266
+          # and this now does led to a Sequel::DatabaseError.
+        #when Sequel::DatabaseError # foreign key etc.
+        #  status, check_your_db_config = 409, false # HTTP Conflict
         end                  
         {
           :status => status,
