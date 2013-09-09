@@ -8,10 +8,9 @@ require 'onboard/extensions/sequel/dataset'
 require 'onboard/extensions/object/deep'
 require 'onboard/extensions/hash'
 
-# WARNING WARNING WARNING! We're depending upon deprecated features:
+# NOTE: According to
 # https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
-#
-# TODO: remove the configurable-column-names feature until a robust solution is found
+# we're trying to adopt correct syntax (with Sequel.as or :mycolumn___myalias)
 
 class OnBoard
   module Service
@@ -70,8 +69,13 @@ class OnBoard
             per_page    = params[:per_page].to_i
 
             q_check     = RADIUS.db[@@chktable].select(
-              column      => :username
+              Sequel.as(column, :username)#, Sequel.as(:id, :my_aliased_id)
             )
+
+            # DEBUG
+            #pp column
+            #pp q_check.to_a
+            # /DEBUG
 
             q_usergroup = RADIUS.db[Group.maptable].select(
               Group.mapcols['User-Name'] => :username
