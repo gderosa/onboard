@@ -4,7 +4,7 @@ require 'facets/hash'
 require 'sequel'
 require 'sequel/extensions/pagination'
 
-require 'onboard/extensions/sequel/dataset'
+require 'onboard/extensions/sequel'
 require 'onboard/extensions/object/deep'
 require 'onboard/extensions/hash'
 
@@ -228,8 +228,15 @@ class OnBoard
 
         def retrieve_personal_info_from_db
           setup
+          
+          # DEBUG
+          # pp @@perscols.invert.symbolize_all
+          # dbg_row = RADIUS.db[@@perstable].select(*Sequel.aliases( @@perscols.invert )) 
+          # pp dbg_row.all
+          # /DEBUG
+
           row = RADIUS.db[@@perstable].select(
-            @@perscols.invert.symbolize_all
+            *Sequel.aliases(@@perscols.invert)
           ).filter(
             @@perscols['User-Name'] => @name
           ).first
