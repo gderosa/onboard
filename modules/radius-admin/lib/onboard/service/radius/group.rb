@@ -261,7 +261,7 @@ class OnBoard
           RADIUS.db[@@chktable].filter(
             @@chkcols['Group-Name']  => @name
           ).filter(
-            @@chkcols['Attribute'].like '%-Password'
+            Sequel.like(@@chkcols['Attribute'], '%-Password') # Sequel.ilike ?
           ).delete
           if params['check']['Password-Type'] =~ /\S/
             RADIUS.db[@@chktable].insert(
