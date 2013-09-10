@@ -30,12 +30,6 @@ class OnBoard
         class << self
 
           def setup
-            # WARNING WARNING WARNING! We're depending upon deprecated features:
-            # https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
-            #
-            # TODO: remove the configurable-column-names feature until a robust 
-            # solution is found
-            #
             # Most of the following hashes are used in various calls to
             # Sequel::Dataset#select 
 
@@ -201,13 +195,13 @@ class OnBoard
           setup
           
           @check = RADIUS.db[@@chktable].select(
-            @@chkcols.invert
+            *Sequel.aliases(@@chkcols.invert)
           ).where(
             @@chkcols['User-Name'] => @name
           ).to_a
 
           @reply = RADIUS.db[@@rpltable].select(
-            @@rplcols.invert
+            *Sequel.aliases(@@rplcols.invert)
           ).where(
             @@rplcols['User-Name'] => @name
           ).to_a
@@ -218,7 +212,7 @@ class OnBoard
           Group.setup
 
           @groups = RADIUS.db[Group.maptable].select(
-            Group.mapcols.invert.symbolize_keys
+            *Sequel.aliases(Group.mapcols.invert)
           ).where(
             Group.mapcols['User-Name'] => @name
           ).order_by(
@@ -229,12 +223,6 @@ class OnBoard
         def retrieve_personal_info_from_db
           setup
           
-          # DEBUG
-          # pp @@perscols.invert.symbolize_all
-          # dbg_row = RADIUS.db[@@perstable].select(*Sequel.aliases( @@perscols.invert )) 
-          # pp dbg_row.all
-          # /DEBUG
-
           row = RADIUS.db[@@perstable].select(
             *Sequel.aliases(@@perscols.invert)
           ).filter(
