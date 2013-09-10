@@ -1,7 +1,7 @@
 require 'sequel/extensions/pagination'
 
 require 'onboard/extensions/hash'
-require 'onboard/extensions/sequel/dataset'
+require 'onboard/extensions/sequel'
 
 class OnBoard
   module Service
@@ -46,13 +46,16 @@ class OnBoard
             setup
             q_usergroup     =  
                 RADIUS.db[@@maptable].select(
-                    @@mapcols['Group-Name'] => :groupname) 
+                    Sequel.as(@@mapcols['Group-Name'], :groupname)
+                ) 
             q_groupcheck    =
                 RADIUS.db[@@chktable].select(
-                    @@chkcols['Group-Name'] => :groupname) 
+                    Sequel.as(@@chkcols['Group-Name'], :groupname)
+                ) 
             q_groupreply    =
                 RADIUS.db[@@rpltable].select(
-                    @@rplcols['Group-Name'] => :groupname)
+                    Sequel.as(@@rplcols['Group-Name'], :groupname)
+                )
             q_union         = q_usergroup | q_groupcheck | q_groupreply
             q_paginate      = q_union.paginate(page, per_page)
             groupnames      = 
@@ -153,13 +156,13 @@ class OnBoard
           setup
 
           @check = RADIUS.db[@@chktable].select(
-            @@chkcols.invert
+            *Sequel.aliases(@@chkcols.invert)
           ).where(
             @@chkcols['Group-Name'] => @name
           ).to_a
 
           @reply = RADIUS.db[@@rpltable].select(
-            @@rplcols.invert
+            *Sequel.aliases(@@rplcols.invert)
           ).where(
             @@chkcols['Group-Name'] => @name
           ).to_a
