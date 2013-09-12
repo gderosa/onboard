@@ -36,4 +36,17 @@
   <div style="margin-top:1.8em;"><button type="submit" name="update_groups" value="on">Update group membership!</button></div>
 </form>
 
+<div style="height:2em;"> <!-- separator --> </div>
+<h3>Delete this user</h3>
+<form method="POST">
+  <input type="hidden" name="_method" value="delete"/>
+  <table>
+    <tr>
+      <th scope="row">Yes, I am sure</th>
+      <td><input type="checkbox" name="confirm"/></td>
+    </tr>
+  </table>
+  <button type="submit" style="margin-top:1.2em;">Delete!</button>
+</form>
+<div style="height:1em;"> <!-- separator --> </div>
 
