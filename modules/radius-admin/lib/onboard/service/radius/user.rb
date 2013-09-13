@@ -92,7 +92,7 @@ class OnBoard
             User.setup
             Group.setup
 
-            # we do not use sonfigutrable column names here...
+            # we do not use configurable column names here...
 
             page        = params[:page].to_i 
             per_page    = params[:per_page].to_i
@@ -245,6 +245,22 @@ class OnBoard
           @accepted_terms = Terms::Document.get_all(:id => list) 
         end
         alias retrieve_accepted_terms retrieve_accepted_terms_from_db
+
+        def retrieve_info_from_db
+          retrieve_attributes_from_db
+          retrieve_group_membership_from_db
+          retrieve_personal_info_from_db
+          retrieve_accepted_terms_from_db
+        end
+
+        def delete!
+          setup
+          RADIUS.db[@@chktable        ].where(@@chkcols[  'User-Name'] => @name          ).delete
+          RADIUS.db[@@rpltable        ].where(@@rplcols[  'User-Name'] => @name          ).delete
+          RADIUS.db[@@perstable       ].where(@@perscols[ 'User-Name'] => @name          ).delete
+          # Terms & Conditions doesnt't have configurable column names...
+          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
+        end
 
         def accept_terms!(accepted_terms)
           setup
