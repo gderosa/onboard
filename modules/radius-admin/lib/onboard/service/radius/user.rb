@@ -260,6 +260,7 @@ class OnBoard
           RADIUS.db[@@perstable       ].where(@@perscols[ 'User-Name'] => @name          ).delete
           # Terms & Conditions doesnt't have configurable column names...
           RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
+          update_group_membership 'groups' => ''
         end
 
         def accept_terms!(accepted_terms)
