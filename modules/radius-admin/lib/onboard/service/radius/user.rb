@@ -66,14 +66,14 @@ class OnBoard
               Sequel.as(column, :username)#, Sequel.as(:id, :my_aliased_id)
             )
 
-            # DEBUG
-            #pp column
-            #pp q_check.to_a
-            # /DEBUG
-
             q_usergroup = RADIUS.db[Group.maptable].select(
-              Group.mapcols['User-Name'] => :username
+              Sequel.as(Group.mapcols['User-Name'], :username)
             )
+
+            # DEBUG
+            #pp Group.mapcols['User-Name']
+            #pp q_usergroup
+            # /DEBUG
 
             union       = (q_check | q_usergroup).group_by :username
 
