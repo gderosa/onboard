@@ -68,6 +68,7 @@ class OnBoard
             :password => conf['dbpass'],
             :encoding => 'utf8'
           ) 
+          @@db.extension :pagination
         end
 
         def db_disconnect

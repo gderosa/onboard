@@ -115,5 +115,39 @@ class OnBoard
       ) )
     end
 
+    delete '/services/radius/users/:userid.:format' do
+      user = Service::RADIUS::User.new params[:userid]
+      user.retrieve_info_from_db
+      msg = handle_errors do
+        if user.found?
+          if params['confirm'] =~ /on|yes|true|1/
+            user.delete!
+            status 303 # HTTP See Other
+            headers 'Location' => "/services/radius/users.#{params[:format]}"
+          else
+            status 204 # HTTP No Content # TODO: is this the right code?
+          end
+        else
+          not_found
+        end
+      end
+
+      # You should not get this point if everything was ok...
+
+      # modeled on groups: is it ok? 
+      format(
+        :module   => 'radius-admin',
+        :path     => '/services/radius/users/user',
+        :title    => "RADIUS User: #{params[:userid]}",
+        :format   => params[:format],
+        :msg      => msg,
+        :objects  => {
+          'user'      => user
+        }
+      )
+
+    end
+
+
   end
 end

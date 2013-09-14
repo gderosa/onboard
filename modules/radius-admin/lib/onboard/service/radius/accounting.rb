@@ -2,6 +2,7 @@ require 'sequel'
 require 'sequel/extensions/pagination'
 
 require 'onboard/extensions/hash'
+require 'onboard/extensions/sequel'
 
 class OnBoard
   module Service
@@ -17,7 +18,7 @@ class OnBoard
             page      = params[:page].to_i
             per_page  = params[:per_page].to_i
             select    = RADIUS.db[table].select(
-              columns.symbolize_all.invert
+              *Sequel.aliases(columns.invert)
             )
             {
               'rows'        => select.paginate(page, per_page).to_a,

@@ -4,14 +4,13 @@ require 'facets/hash'
 require 'sequel'
 require 'sequel/extensions/pagination'
 
-require 'onboard/extensions/sequel/dataset'
+require 'onboard/extensions/sequel'
 require 'onboard/extensions/object/deep'
 require 'onboard/extensions/hash'
 
-# WARNING WARNING WARNING! We're depending upon deprecated features:
+# NOTE: According to
 # https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
-#
-# TODO: remove the configurable-column-names feature until a robust solution is found
+# we're trying to adopt correct syntax (with Sequel.as or :mycolumn___myalias)
 
 class OnBoard
   module Service
@@ -31,12 +30,6 @@ class OnBoard
         class << self
 
           def setup
-            # WARNING WARNING WARNING! We're depending upon deprecated features:
-            # https://github.com/jeremyevans/sequel/pull/373#issuecomment-1816441
-            #
-            # TODO: remove the configurable-column-names feature until a robust 
-            # solution is found
-            #
             # Most of the following hashes are used in various calls to
             # Sequel::Dataset#select 
 
@@ -70,12 +63,17 @@ class OnBoard
             per_page    = params[:per_page].to_i
 
             q_check     = RADIUS.db[@@chktable].select(
-              column      => :username
+              Sequel.as(column, :username)#, Sequel.as(:id, :my_aliased_id)
             )
 
             q_usergroup = RADIUS.db[Group.maptable].select(
-              Group.mapcols['User-Name'] => :username
+              Sequel.as(Group.mapcols['User-Name'], :username)
             )
+
+            # DEBUG
+            #pp Group.mapcols['User-Name']
+            #pp q_usergroup
+            # /DEBUG
 
             union       = (q_check | q_usergroup).group_by :username
 
@@ -94,7 +92,7 @@ class OnBoard
             User.setup
             Group.setup
 
-            # we do not use sonfigutrable column names here...
+            # we do not use configurable column names here...
 
             page        = params[:page].to_i 
             per_page    = params[:per_page].to_i
@@ -197,13 +195,13 @@ class OnBoard
           setup
           
           @check = RADIUS.db[@@chktable].select(
-            @@chkcols.invert
+            *Sequel.aliases(@@chkcols.invert)
           ).where(
             @@chkcols['User-Name'] => @name
           ).to_a
 
           @reply = RADIUS.db[@@rpltable].select(
-            @@rplcols.invert
+            *Sequel.aliases(@@rplcols.invert)
           ).where(
             @@rplcols['User-Name'] => @name
           ).to_a
@@ -214,7 +212,7 @@ class OnBoard
           Group.setup
 
           @groups = RADIUS.db[Group.maptable].select(
-            Group.mapcols.invert.symbolize_keys
+            *Sequel.aliases(Group.mapcols.invert)
           ).where(
             Group.mapcols['User-Name'] => @name
           ).order_by(
@@ -224,8 +222,9 @@ class OnBoard
 
         def retrieve_personal_info_from_db
           setup
+          
           row = RADIUS.db[@@perstable].select(
-            @@perscols.invert.symbolize_all
+            *Sequel.aliases(@@perscols.invert)
           ).filter(
             @@perscols['User-Name'] => @name
           ).first
@@ -246,6 +245,23 @@ class OnBoard
           @accepted_terms = Terms::Document.get_all(:id => list) 
         end
         alias retrieve_accepted_terms retrieve_accepted_terms_from_db
+
+        def retrieve_info_from_db
+          retrieve_attributes_from_db
+          retrieve_group_membership_from_db
+          retrieve_personal_info_from_db
+          retrieve_accepted_terms_from_db
+        end
+
+        def delete!
+          setup
+          RADIUS.db[@@chktable        ].where(@@chkcols[  'User-Name'] => @name          ).delete
+          RADIUS.db[@@rpltable        ].where(@@rplcols[  'User-Name'] => @name          ).delete
+          RADIUS.db[@@perstable       ].where(@@perscols[ 'User-Name'] => @name          ).delete
+          # Terms & Conditions doesnt't have configurable column names...
+          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
+          update_group_membership 'groups' => ''
+        end
 
         def accept_terms!(accepted_terms)
           setup
