@@ -1,3 +1,13 @@
+2013.09
+
+* AAA/RADIUS/HOTSPOT:
+	* User deletion
+	* Handle deprecation/removal of Hash-based aliases feauture in Sequel: https://github.com/jeremyevans/sequel/pull/373#issuecomment-1792266
+	* Explicit (in-method) loading of pagination extension
+
+* Dnsmasq:
+	* Simple start for non-SysVInit systems e.g. Ubuntu and others
+
 2013.05.04
 
 * QEMU:
@@ -12,13 +22,12 @@
 		recover from a disastrous ``local'' table removal
 	
 * Init: 
-	* ensure that /etc/init.d/onboard stop has been completed before
-	  halting the machine
+	* ensure that /etc/init.d/onboard stop has been completed before halting the machine
 
 * Design: OnBoard::Error now inherits from StandardError, 
 	so a default rescue would catch it
 
-* DabsGuardian: move maxuploadsize to filter group
+* DansGuardian: move maxuploadsize to filter group
 
 2013.05.03
 
