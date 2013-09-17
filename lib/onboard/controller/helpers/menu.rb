@@ -22,9 +22,11 @@ class OnBoard
               output[:extra_class] = "hmenu-selected" unless
                   # do not highlight if any descendant matches already
                   node.any? do |n|
-                    n.content[:href]      ==  request.path_info or
-                    n.content[:children]  === request.path_info and
-                    n                     !=  node # exclude itself
+                    n.content                                   and (
+                      n.content[:href]      ==  request.path_info or
+                      n.content[:children]  === request.path_info and
+                      n                     !=  node # exclude itself 
+                    )
                   end
             end
           end
