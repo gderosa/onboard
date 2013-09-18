@@ -1,0 +1,38 @@
+<% objects = {} %>
+
+<% config = objects %>
+
+<h2><%= title %></h2>
+
+<h3>SMTP Configuration</h3>
+
+<form method="POST">
+  <input type="hidden" name="_method" value="put"/>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">SMTP server (Host or IP address)</th>
+      <td><input class="rwtext" type="text" name="smtp[host]" value="<%= config['host'] %>"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Port number</th>
+      <td><input class="rwtext" type="text" name="smtp[port]" value="<%= config['port'] %>"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Username</th>
+      <td><input class="rwtext" type="text" name="smtp[username]" value="<%= config['username'] %>"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Password</th>
+      <td title="Empty to leave unchanged"><input class="rwtext" type="password" name="smtp[password]"/></td>
+    </tr>
+    <tr>
+      <th scope="row">Use SSL/TLS encryption</th>
+      <td style="height:2em;"><input style="margin-left:2px;" type="checkbox" name="starttls"/></td>
+    </tr>
+  </tbody>
+</table>
+<button type="submit">Change!</button>
+</form>
+
+
