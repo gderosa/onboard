@@ -16,6 +16,12 @@ class OnBoard
     end
 
     put '/services/mail/smtp.:format' do
+      smtp      = Service::Mail::SMTP::Config.new params['smtp']
+      smtp_orig = Service::Mail::SMTP::Config.get
+      if !smtp['password'] or smtp['password'] == ''
+        smtp['password'] = smtp_orig['password']
+      end
+      smtp.save
       same_as_get
     end
 

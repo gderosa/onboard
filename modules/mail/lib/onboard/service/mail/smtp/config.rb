@@ -1,4 +1,5 @@
 require 'onboard/service/mail/constants'
+require 'onboard/service/mail/smtp/constants'
 
 class OnBoard
   module Service
@@ -8,11 +9,32 @@ class OnBoard
           
           class << self
             def get
-              self.new
+              begin
+                self.new YAML.load File.read SMTP::CONFFILE
+              rescue Errno::ENOENT
+                self.new({})
+              end
             end
           end
 
-          def initialize
+          def initialize(h)
+            @data = h 
+          end
+
+          def save
+            File.open SMTP::CONFFILE, 'w' do |f|
+              f.write YAML.dump @data
+            end
+          end
+
+          def to_json(*a)
+            export = @data.dup
+            export['password'] = '<removed>'
+            export.to_json(*a)
+          end
+
+          def method_missing(metid, *args, &blk)
+            @data.send metid, *args, &blk
           end
 
         end
