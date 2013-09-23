@@ -104,9 +104,12 @@
           </fieldset>
         </td>
       </tr>
+      <% 
+        login_time = user.attribute :check, 'Login-Time'
+      %>
       <tr>
         <th scope="row">Login-Time</th>
-        <td><input type="text" class="rwtext" name="check[Login-Time]"/></td>
+        <td><input type="text" class="rwtext" name="check[Login-Time]" value="<%= login_time %>"/></td>
       </tr>
     </tbody>
   </table>
