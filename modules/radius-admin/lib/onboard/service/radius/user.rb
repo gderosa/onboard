@@ -461,16 +461,16 @@ class OnBoard
           end
         end
 
-        #   user.find_attribute do |attrib, op, val|
-        #     attrib =~ /-Password$/
+        #   user.find_attribute(:check) do |attr, op, val|
+        #     attr =~ /-Password$/
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
-        #     attrib == 'Auth-Type'
+        #   user.find_attribute(:check) do |attr, op, val|
+        #     attr == 'Auth-Type'
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
-        #     attrib == 'Idle-Timeout' and val < 1800
+        #   user.find_attribute(:reply) do |attr, op, val|
+        #     attr == 'Idle-Timeout' and val < 1800
         #   end
         #
         # Returns an Hash.
