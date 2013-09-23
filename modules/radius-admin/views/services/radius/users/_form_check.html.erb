@@ -105,7 +105,7 @@
         </td>
       </tr>
       <% 
-        login_time = user.attribute :check, 'Login-Time'
+        login_time = (user.attribute :check, 'Login-Time' if user.respond_to? :attribute)
       %>
       <tr>
         <th scope="row">Login-Time</th>
