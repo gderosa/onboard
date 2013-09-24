@@ -255,11 +255,15 @@ class OnBoard
 
         def delete!
           setup
+
+	  # Because of referential integrity, accepted terms rows must be deleted first.
+
+	  # Terms & Conditions doesnt't have configurable column names...
+          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
+
           RADIUS.db[@@chktable        ].where(@@chkcols[  'User-Name'] => @name          ).delete
           RADIUS.db[@@rpltable        ].where(@@rplcols[  'User-Name'] => @name          ).delete
           RADIUS.db[@@perstable       ].where(@@perscols[ 'User-Name'] => @name          ).delete
-          # Terms & Conditions doesnt't have configurable column names...
-          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
           update_group_membership 'groups' => ''
         end
 
@@ -361,7 +365,7 @@ class OnBoard
           RADIUS.db[@@chktable].filter(
             @@chkcols['User-Name']  => @name
           ).filter(
-            @@chkcols['Attribute'].like '%-Password'
+            Sequel.like(@@chkcols['Attribute'], '%-Password')
           ).delete if params['check']['Password-Type'] # nil != '' ; nil =  unchanged
           if params['check']['Password-Type'] =~ /\S/
             RADIUS.db[@@chktable].insert(
@@ -461,16 +465,16 @@ class OnBoard
           end
         end
 
-        #   user.find_attribute do |attrib, op, val|
-        #     attrib =~ /-Password$/
+        #   user.find_attribute(:check) do |attr, op, val|
+        #     attr =~ /-Password$/
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
-        #     attrib == 'Auth-Type'
+        #   user.find_attribute(:check) do |attr, op, val|
+        #     attr == 'Auth-Type'
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
-        #     attrib == 'Idle-Timeout' and val < 1800
+        #   user.find_attribute(:reply) do |attr, op, val|
+        #     attr == 'Idle-Timeout' and val < 1800
         #   end
         #
         # Returns an Hash.
