@@ -255,11 +255,15 @@ class OnBoard
 
         def delete!
           setup
+
+	  # Because of referential integrity, accepted terms rows must be deleted first.
+
+	  # Terms & Conditions doesnt't have configurable column names...
+          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
+
           RADIUS.db[@@chktable        ].where(@@chkcols[  'User-Name'] => @name          ).delete
           RADIUS.db[@@rpltable        ].where(@@rplcols[  'User-Name'] => @name          ).delete
           RADIUS.db[@@perstable       ].where(@@perscols[ 'User-Name'] => @name          ).delete
-          # Terms & Conditions doesnt't have configurable column names...
-          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
           update_group_membership 'groups' => ''
         end
 
