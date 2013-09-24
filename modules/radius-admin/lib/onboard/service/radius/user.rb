@@ -401,8 +401,26 @@ class OnBoard
             RADIUS.db[Group.maptable].insert(row)
             g = Group.new row[Group.mapcols['Group-Name']] 
             g.retrieve_attributes_from_db
-            g.insert_fall_through_if_not_exists
-          end 
+            # g.insert_fall_through_if_not_exists
+          end
+         insert_fall_through_if_not_exists 
+        end
+
+        def insert_fall_through_if_not_exists
+          setup
+          unless @reply.find do |row|
+            row[:Attribute] == 'Fall-Through' and
+            row[:Operator]  =~ /=$/           and
+            row[:Value]     =~ /yes/i
+          end
+            LOGGER.info "radius-admin: I am inserting Fall-Through reply attribute for user #{@name}!"
+            RADIUS.db[@@rpltable].insert(
+              @@rplcols['User-Name']  => @name,
+              @@rplcols['Operator']   => '=',
+              @@rplcols['Attribute']  => 'Fall-Through',
+              @@rplcols['Value']      => 'yes'
+            )
+          end
         end
 
         def update_personal_data(params)
