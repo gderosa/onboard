@@ -296,7 +296,8 @@ class OnBoard
           ).delete
         end
 
-        # TODO: DRY
+        # NOTE: should this method exist?
+        # Fall-Through makes sense in radreply, not radgroupreply
         def insert_fall_through_if_not_exists
           setup
           unless @reply.find do |row|
@@ -309,7 +310,7 @@ class OnBoard
               @@rplcols['Group-Name'] => @name,
               @@rplcols['Operator']   => '=',
               @@rplcols['Attribute']  => 'Fall-Through',
-              @@rplcols['Value']      => 'yes'
+              @@rplcols['Value']      => 'Yes'
             )
           end
         end
