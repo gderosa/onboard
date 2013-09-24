@@ -87,5 +87,12 @@
           </fieldset>
         </td>
       </tr>
+      <%
+        login_time = (group.attribute :check, 'Login-Time' if group.respond_to? :attribute)
+      %>
+      <tr>
+        <th scope="row">Login-Time</th>
+        <td><input type="text" class="rwtext" name="check[Login-Time]" value="<%= login_time %>"/></td>
+      </tr>
     </tbody>
   </table>
