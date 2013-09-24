@@ -325,9 +325,9 @@ class OnBoard
         def update_check_attributes(params) # no passwords
           return unless  params['check'].respond_to? :each_pair
           params['check'].each_pair do |attribute, value|
-            # passwords are managed by #update_password
+            # passwords are managed by #update_passwd
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
-            # inerting User-Name attribute doesn't make sense: there's 
+            # inserting User-Name attribute doesn't make sense: there's 
             # already @@chkcols['User-Name'] column
             next if attribute == 'User-Name'
             RADIUS.db[@@chktable].filter(
@@ -351,9 +351,12 @@ class OnBoard
             raise PasswordsDoNotMatch, 'Passwords do not match!'
           end
           validate_empty_password(params)
-          unless params['check']['Password-Type'] =~ /\S/
+          # params['check']['Password-Type']:
+          # nil:  leave unchanged
+          # '' :  no password - e.g. group authentication  
+          unless params['check']['Password-Type'] 
             params['check']['Password-Type'] = password_type
-          end
+          end 
           if params['check']['Password-Type'] =~ /\S/
             return unless params['check']['User-Password'] =~ /\S/
             # so an incorrect Password-Type would raise an exception
