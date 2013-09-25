@@ -296,7 +296,8 @@ class OnBoard
           ).delete
         end
 
-        # TODO: DRY
+        # NOTE: should this method exist?
+        # Fall-Through makes sense in radreply, not radgroupreply
         def insert_fall_through_if_not_exists
           setup
           unless @reply.find do |row|
@@ -309,7 +310,7 @@ class OnBoard
               @@rplcols['Group-Name'] => @name,
               @@rplcols['Operator']   => '=',
               @@rplcols['Attribute']  => 'Fall-Through',
-              @@rplcols['Value']      => 'yes'
+              @@rplcols['Value']      => 'Yes'
             )
           end
         end
@@ -345,21 +346,22 @@ class OnBoard
           end
         end
 
-        #   user.find_attribute do |attrib, op, val|
+        #   group.find_attribute(:check) do |attrib, op, val|
         #     attrib =~ /-Password$/
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
+        #   user.find_attribute(:check) do |attrib, op, val|
         #     attrib == 'Auth-Type'
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
+        #   user.find_attribute(:reply) do |attrib, op, val|
         #     attrib == 'Idle-Timeout' and val < 1800
         #   end
         #
         # Returns an Hash.
         #
-        def find_attribute(tbl, &blk) 
+        def find_attribute(tbl, &blk)
+         # TODO: DRY - a common mudule shared with User
           case tbl
           when :check
             row = @check.find do |h| 

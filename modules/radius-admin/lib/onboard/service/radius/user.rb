@@ -255,11 +255,15 @@ class OnBoard
 
         def delete!
           setup
+
+	  # Because of referential integrity, accepted terms rows must be deleted first.
+
+	  # Terms & Conditions doesnt't have configurable column names...
+          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
+
           RADIUS.db[@@chktable        ].where(@@chkcols[  'User-Name'] => @name          ).delete
           RADIUS.db[@@rpltable        ].where(@@rplcols[  'User-Name'] => @name          ).delete
           RADIUS.db[@@perstable       ].where(@@perscols[ 'User-Name'] => @name          ).delete
-          # Terms & Conditions doesnt't have configurable column names...
-          RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
           update_group_membership 'groups' => ''
         end
 
@@ -321,9 +325,9 @@ class OnBoard
         def update_check_attributes(params) # no passwords
           return unless  params['check'].respond_to? :each_pair
           params['check'].each_pair do |attribute, value|
-            # passwords are managed by #update_password
+            # passwords are managed by #update_passwd
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
-            # inerting User-Name attribute doesn't make sense: there's 
+            # inserting User-Name attribute doesn't make sense: there's 
             # already @@chkcols['User-Name'] column
             next if attribute == 'User-Name'
             RADIUS.db[@@chktable].filter(
@@ -347,9 +351,12 @@ class OnBoard
             raise PasswordsDoNotMatch, 'Passwords do not match!'
           end
           validate_empty_password(params)
-          unless params['check']['Password-Type'] =~ /\S/
+          # params['check']['Password-Type']:
+          # nil:  leave unchanged
+          # '' :  no password - e.g. group authentication  
+          unless params['check']['Password-Type'] 
             params['check']['Password-Type'] = password_type
-          end
+          end 
           if params['check']['Password-Type'] =~ /\S/
             return unless params['check']['User-Password'] =~ /\S/
             # so an incorrect Password-Type would raise an exception
@@ -361,7 +368,7 @@ class OnBoard
           RADIUS.db[@@chktable].filter(
             @@chkcols['User-Name']  => @name
           ).filter(
-            @@chkcols['Attribute'].like '%-Password'
+            Sequel.like(@@chkcols['Attribute'], '%-Password')
           ).delete if params['check']['Password-Type'] # nil != '' ; nil =  unchanged
           if params['check']['Password-Type'] =~ /\S/
             RADIUS.db[@@chktable].insert(
@@ -397,8 +404,26 @@ class OnBoard
             RADIUS.db[Group.maptable].insert(row)
             g = Group.new row[Group.mapcols['Group-Name']] 
             g.retrieve_attributes_from_db
-            g.insert_fall_through_if_not_exists
-          end 
+            # g.insert_fall_through_if_not_exists
+          end
+         insert_fall_through_if_not_exists 
+        end
+
+        def insert_fall_through_if_not_exists
+          setup
+          unless @reply.find do |row|
+            row[:Attribute] == 'Fall-Through' and
+            row[:Operator]  =~ /=$/           and
+            row[:Value]     =~ /yes/i
+          end
+            LOGGER.info "radius-admin: I am inserting Fall-Through reply attribute for user #{@name}!"
+            RADIUS.db[@@rpltable].insert(
+              @@rplcols['User-Name']  => @name,
+              @@rplcols['Operator']   => '=',
+              @@rplcols['Attribute']  => 'Fall-Through',
+              @@rplcols['Value']      => 'yes'
+            )
+          end
         end
 
         def update_personal_data(params)
@@ -461,16 +486,16 @@ class OnBoard
           end
         end
 
-        #   user.find_attribute do |attrib, op, val|
-        #     attrib =~ /-Password$/
+        #   user.find_attribute(:check) do |attr, op, val|
+        #     attr =~ /-Password$/
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
-        #     attrib == 'Auth-Type'
+        #   user.find_attribute(:check) do |attr, op, val|
+        #     attr == 'Auth-Type'
         #   end
         #
-        #   user.find_attribute do |attr, op, val|
-        #     attrib == 'Idle-Timeout' and val < 1800
+        #   user.find_attribute(:reply) do |attr, op, val|
+        #     attr == 'Idle-Timeout' and val < 1800
         #   end
         #
         # Returns an Hash.

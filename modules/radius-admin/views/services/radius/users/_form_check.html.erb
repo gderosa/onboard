@@ -104,5 +104,22 @@
           </fieldset>
         </td>
       </tr>
+      <% 
+        login_time = (user.attribute :check, 'Login-Time' if user.respond_to? :attribute)
+      %>
+      <tr>
+        <th scope="row">
+          Login-Time
+          <div class="optinfo">
+            See <span class="term">Login-Time</span> at 
+            <a href="/services/radius/groups.html">Groups</a>
+            for some info (or read 
+<a href="http://wiki.freeradius.org/config/Users#Special-attributes-used-in-the-users-file">this document</a>).
+<p>
+            Leave blank to allow any time/date, or to check login time on a per-group basis. 
+          </div>
+        </th>
+        <td><input type="text" class="rwtext" name="check[Login-Time]" value="<%= login_time %>"/></td>
+      </tr>
     </tbody>
   </table>
