@@ -91,7 +91,15 @@
         login_time = (group.attribute :check, 'Login-Time' if group.respond_to? :attribute)
       %>
       <tr>
-        <th scope="row">Login-Time</th>
+        <th scope="row">
+          Login-Time
+          <div class="optinfo">
+             Time span users of this group may login to the system. For example: <pre>Always
+Never
+Wk0900-1700,Sa0830-1230
+Mo-We1630-1830</pre>
+          </div>
+        </th>
         <td><input type="text" class="rwtext" name="check[Login-Time]" value="<%= login_time %>"/></td>
       </tr>
     </tbody>
