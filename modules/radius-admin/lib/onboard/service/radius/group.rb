@@ -97,10 +97,10 @@ class OnBoard
             if params['check']['Password-Type'] =~ /\S/
               RADIUS.db[@@chktable].insert(
                 @@chkcols['Group-Name'] => params['check']['Group-Name'],
-                # Use '=' operator instead of ':=', so if an attribute
+                # Use '+=' operator instead of ':=', so if an attribute
                 # is already set for the specific user, it will take 
                 # precedence.
-                @@chkcols['Operator']   => '=',
+                @@chkcols['Operator']   => '+=',
                 @@chkcols['Attribute']  => params['check']['Password-Type'],
                 @@chkcols['Value']      => RADIUS.compute_password(
                   :type             => params['check']['Password-Type'],
@@ -110,7 +110,7 @@ class OnBoard
             end
             RADIUS.db[@@chktable].insert(
               @@chkcols['Group-Name'] => params['check']['Group-Name'],
-              @@chkcols['Operator']   => '=',
+              @@chkcols['Operator']   => '+=',
               @@chkcols['Attribute']  => 'Auth-Type',
               @@chkcols['Value']      => params['check']['Auth-Type'],
             ) if params['check']['Auth-Type'] =~ /\S/
@@ -123,7 +123,7 @@ class OnBoard
             # the insert method.
             RADIUS.db[@@chktable].insert(
               @@chkcols['Group-Name'] => params['check']['Group-Name'],
-              @@chkcols['Operator']   => '=',
+              @@chkcols['Operator']   => '=', # or better ':=' ?
               @@chkcols['Attribute']  => 'Group',
               @@chkcols['Value']      => params['check']['Group-Name']
             )
@@ -238,7 +238,7 @@ class OnBoard
             RADIUS.db[@@chktable].insert(
               @@chkcols['Group-Name']  => @name,
               @@chkcols['Attribute']  => attribute,
-              @@chkcols['Operator']   => '=', # so user attr w/ ':=' prevail
+              @@chkcols['Operator']   => '+=', # so user attr w/ ':=' prevail
               @@chkcols['Value']      => value
             )
           end
@@ -267,7 +267,7 @@ class OnBoard
             RADIUS.db[@@chktable].insert(
               @@chkcols['Group-Name']  => @name,
               @@chkcols['Attribute']  => params['check']['Password-Type'],
-              @@chkcols['Operator']   => ':=',
+              @@chkcols['Operator']   => '+=',
               @@chkcols['Value']      => encrypted_passwd
             )
           end
