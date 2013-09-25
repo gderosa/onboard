@@ -123,7 +123,7 @@ class OnBoard
             # the insert method.
             RADIUS.db[@@chktable].insert(
               @@chkcols['Group-Name'] => params['check']['Group-Name'],
-              @@chkcols['Operator']   => '=', # or better ':=' ?
+              @@chkcols['Operator']   => ':=', 
               @@chkcols['Attribute']  => 'Group',
               @@chkcols['Value']      => params['check']['Group-Name']
             )
