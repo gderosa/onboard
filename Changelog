@@ -1,3 +1,14 @@
+2013.09.01
+
+* AAA/RADIUS/HOTSPOT:
+	* Login-Time support
+	* Sequel / db fixes: 
+		* use Sequel.like
+		* referential integrity on User#delete!
+	* (r)doc fixes
+	* fix Fall-Through
+	* fix user "(no password)" - e.g. to use group passwords
+
 2013.09
 
 * AAA/RADIUS/HOTSPOT:
