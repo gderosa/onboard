@@ -11,6 +11,8 @@
   logo_link       = hslogin['conf']['logo-link']
   signup_url      = hslogin['conf']['signup-url']
   my_url          = hslogin['conf']['my-url']
+  remember_credentials =
+                    hslogin['conf']['remember_credentials']
   custom_headline = hslogin['conf']['custom-headline'] 
   custom_text     = hslogin['conf']['custom-text']
   custom_footer   = hslogin['conf']['custom-footer']
@@ -178,6 +180,22 @@
       <td style="text-align: center;">
         <input type="checkbox" name="delete[my_url]"/>
       </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        &ldquo;Remember password&rdquo;
+        <div class="optinfo">
+          Offer users the possibility to store their credentials within a 
+          <em>cookie</em> in their own computers and reuse them for successive
+          logins with no need to retype them.
+        </div>
+      </th>
+      <td>
+        <input type="checkbox" name="remember_credentials" <%= 'checked' if remember_credentials %>/>
+      </td>
+      <td>
+      <td>
     </tr>
    
     <tr>
