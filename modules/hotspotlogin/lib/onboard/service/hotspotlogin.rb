@@ -220,8 +220,10 @@ end
 
           # Boolean params 
           %w{remember_credentials}.each do |p|
-            conf_h[p] = !!params[p] # "!!" coerces to true/false ...
+            conf_h[p.gsub('_', '-')] = !!params[p] # "!!" coerces to true/false ...
           end
+
+          # This underscore vs dash thing is very awkward :-/
          
           File.open CONFFILE, 'w' do |f|
             f.write YAML.dump conf_h
