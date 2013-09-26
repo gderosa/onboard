@@ -217,6 +217,11 @@ end
             end
             conf_h['custom-footer'] = CUSTOMFOOTER_HTMLFRAGMENT
           end
+
+          # Boolean params 
+          %w{remember_credentials}.each do |p|
+            conf_h[p] = !!params[p] # "!!" coerces to true/false ...
+          end
          
           File.open CONFFILE, 'w' do |f|
             f.write YAML.dump conf_h
