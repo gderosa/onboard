@@ -1,3 +1,7 @@
+2013.09.03
+
+* hotspotlogin: cookie-based user/password persistance can be disallowed
+
 2013.09.02
 
 * AAA/RADIUS/HOTSPOT:
