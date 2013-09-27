@@ -1,3 +1,13 @@
+2013.09.03
+
+* hotspotlogin: cookie-based user/password persistance can be disallowed
+
+2013.09.02
+
+* AAA/RADIUS/HOTSPOT:
+	* Check Attributes operator fixes to get a "reasonable" user-group
+	Fall-Through.
+
 2013.09.01
 
 * AAA/RADIUS/HOTSPOT:
