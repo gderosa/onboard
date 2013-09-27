@@ -25,6 +25,9 @@ hotspot:
   account:
     management: "Hotspot: gestione account"
   signup_success: "Benvenuto! Ti sei registrato con successo. Adesso inizia a navigare (inserici utente e password se ti saranno richiesti)."
+  password:
+    recovery:
+      you!: recupera password
 
 personal:
   info: informazioni personali

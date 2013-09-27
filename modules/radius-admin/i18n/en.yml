@@ -25,7 +25,9 @@ hotspot:
   account:
     management: "Hotspot account management"
   signup_success: "User <span style=\"font-weight:bold\">\"%1\"</span> has been successfully created. You will be soon redirected to the page you requested, otherwise just type any address in your browser and surf the web (you might be asked again for username and password you’ve just created)."
-    
+  password:
+    recovery:
+      you!: recover password    
 
 personal:
   info: personal data
