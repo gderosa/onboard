@@ -27,6 +27,9 @@ notes: notes
 
 confirm: confirm
 
+send:
+  you: send
+
 eg: e.g.
 
 password:
@@ -64,4 +67,6 @@ name:
     1: name
     n: names
 
-
+email:
+  address: e-mail address
+  invalid_address: invalid e-mail address

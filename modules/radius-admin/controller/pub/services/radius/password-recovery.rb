@@ -18,12 +18,30 @@ class OnBoard
     end
 
     post '/pub/services/radius/password-recovery.html' do
+      msg = {}
+      params['email'].strip!
+      if params['email'] =~ /\S+@\S+\.\S+/
+        #
+        # Code here to possibly reset passwd and send email
+        # ...
+        #
+        msg = {
+          :ok   => true,
+          :info => t.hotspot.password.recovery.message
+        }
+      else
+        status 409
+        msg = {
+          :ok   => false,
+          :err  => t.email.invalid_address.capitalize + '.'
+        }
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/password-recovery',
         :title    => i18n.hotspot.password.recovery.you!.capitalize,
-        :objects  => {
-        }
+        :objects  => {},
+        :msg      => msg
       )
     end
 
