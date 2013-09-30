@@ -90,7 +90,7 @@ class OnBoard
               message.deliver!
             else
               LOGGER.error "Hotspot password recovery: no user has email <#{h[:email]}>"
-              sleep 1 # Fake some time passes to send the email...
+              sleep 2 # Fake some time passes to send the email...
             end
           end
 
