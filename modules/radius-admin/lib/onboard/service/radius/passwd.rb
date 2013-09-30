@@ -64,6 +64,8 @@ class OnBoard
               end,
         }
 
+        RANDOMLY_GENERATED_LENGTH = 7 # opinionated
+
         class UnknownType < ArgumentError; end
 
         class << self
@@ -71,7 +73,15 @@ class OnBoard
           #   Password.recovery(:email => 'user@domain.com')
           def recovery(h)
             user = User.find :Email => h[:email]
-            pp user # DEBUG
+            pp user
+            pp generate_random
+          end
+
+          def generate_random
+            length = Passwd::RANDOMLY_GENERATED_LENGTH
+            # Inspired by http://stackoverflow.com/a/493230
+            charset = %w{ 2 3 4 6 7 a b c d e f h j k m n p q r t w x y z}
+            (0...length).map{ charset.to_a[rand(charset.size)] }.join
           end
 
         end
