@@ -67,7 +67,7 @@ class OnBoard
               end,
         }
 
-        RANDOMLY_GENERATED_LENGTH = 7 # opinionated
+        RANDOMLY_GENERATED_LENGTH = 6 # opinionated
 
         class UnknownType < ArgumentError; end
 
