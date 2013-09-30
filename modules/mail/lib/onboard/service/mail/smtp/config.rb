@@ -9,7 +9,7 @@ class OnBoard
       module SMTP
         class Config
 
-          CONFFILE ||= SMTP::CONFFILE
+          CONFFILE = SMTP::CONFFILE
 
           include Configurable
           
