@@ -77,6 +77,12 @@ class OnBoard
     :n        => 50
   })
 
+  MENU_ROOT.add_path('/network/access-control/radius/endusers/password-recovery', {
+    :href     => '/services/radius/password-recovery',
+    :name     => 'Password Recovery',
+    :n        => 60
+  })
+
   MENU_ROOT.add_path('/network/access-control/radius/resetdb', {
     :href     => '/services/radius/resetdb',
     :name     => 'Reset Database',
