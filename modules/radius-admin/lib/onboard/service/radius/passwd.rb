@@ -66,6 +66,15 @@ class OnBoard
 
         class UnknownType < ArgumentError; end
 
+        class < self
+          
+          #   Password.recovery(:email => 'user@domain.com')
+          def recovery(h)
+            
+          end
+
+        end
+
         def initialize(h)
           @type       = h[:type]
           @cleartext  = h[:cleartext]
