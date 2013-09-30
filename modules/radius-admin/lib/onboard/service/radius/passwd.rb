@@ -97,7 +97,7 @@ class OnBoard
           def generate_random
             length = Passwd::RANDOMLY_GENERATED_LENGTH
             # Inspired by http://stackoverflow.com/a/493230
-            charset = %w{ 2 3 4 6 7 a b c d e f h j k m n p q r t w x y z}
+            charset = %w{ 2 3 4 5 6 7 8 a b c d e f h j k m n p q t w x y z}
             (0...length).map{ charset.to_a[rand(charset.size)] }.join
           end
 
