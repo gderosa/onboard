@@ -81,12 +81,13 @@ class OnBoard
             if user
               LOGGER.info "Hotspot: sending new password to <#{h[:email]}> for user ``#{user.name}''"
               Service::Mail::SMTP.setup
-              ::Mail.deliver do
-                from    'Hotspot System <guidoderosa@gmail.com>'
+              message = ::Mail.new do
+                from    'guidoderosa@gmail.com'
                 to      h[:email]
                 subject 'Password reset'
                 body    "New password for user ``#{user.name}'' is #{password} ."
               end
+              message.deliver!
             else
               LOGGER.err "Hotspot password recovery: no user has email <#{h[:email]}>"
             end
