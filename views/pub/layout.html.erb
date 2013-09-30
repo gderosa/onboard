@@ -16,10 +16,12 @@ require 'onboard/pub/layout'
     <title><%= title %></title> 
     <link rel="stylesheet" href="/css/default.css"/>
     <link rel="stylesheet" href="/css/custom.css"/>
+    <link rel="stylesheet" href="/pub/css/pub.css"/>
     <link rel="icon" href="/icons/favicon.ico"/> <%# TODO: make it uploadable %> 
   </head>
   <body> 
-    <div id="sidebar">
+    <div id="common-logo-and-info-area">  <!-- Not sure: as a header? footer? sidebar? -->
+                                          <!-- Should fit in narrow screens or windows... -->
       <div style="text-align: center">
         <% if c['logo_link'] =~ /\S/ %>
           <a class="img" target="_blank" href="<%= c['logo_link'] %>"><img src="/pub/logo"/></a>
@@ -30,8 +32,6 @@ require 'onboard/pub/layout'
       <div><%= c['custom_text'] %></div>
     </div>
     <div id="main">
-
-      <%= erubis(:"pub/_navbar.html", :layout => false) %>
 
       <%= yield %>
 
