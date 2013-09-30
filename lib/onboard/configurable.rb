@@ -47,7 +47,11 @@ class OnBoard
     end
 
     def method_missing(metid, *args, &blk)
-      @data[metid.to_sym] || @data[metid.to_s] # TODO setters...
+      if metid.to_s =~ /=$/
+        @data[metid.to_s.sub(/=$/, '')] = args.first
+      else
+        @data[metid.to_s]
+      end
     end
       
   end
