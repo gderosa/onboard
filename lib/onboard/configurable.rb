@@ -2,14 +2,22 @@ class OnBoard
   # The include you missed
   module Configurable
 
-    class << self
+    # http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/
+    
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+        
+    module ClassMethods
+
       def get
         begin
-          self.new YAML.load File.read CONFFILE
+          self.new YAML.load File.read self::CONFFILE
         rescue Errno::ENOENT
           self.new({})
         end
       end
+
     end
 
     attr_reader :data
