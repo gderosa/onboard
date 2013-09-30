@@ -17,6 +17,8 @@ class OnBoard
             end
           end
 
+          attr_reader :data
+
           def initialize(h)
             @data = h 
           end
@@ -25,6 +27,14 @@ class OnBoard
             File.open SMTP::CONFFILE, 'w' do |f|
               f.write YAML.dump @data
             end
+          end
+
+          def [](k)
+            @data[k]
+          end
+
+          def []=(k, v)
+            @data[k] = v
           end
 
           def to_json(*a)
