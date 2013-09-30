@@ -34,7 +34,7 @@ class OnBoard
           end
 
           def method_missing(metid, *args, &blk)
-            @data.send metid, *args, &blk
+            @data[:metid] # TODO setters...
           end
 
         end

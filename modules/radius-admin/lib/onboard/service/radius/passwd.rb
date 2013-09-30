@@ -1,6 +1,9 @@
 require 'onboard/extensions/string'
 require 'onboard/extensions/digest'
 
+require 'onboard/service/mail'
+require 'onboard/service/mail/smtp'
+
 autoload :Base64, 'base64'
 
 class OnBoard
@@ -73,8 +76,20 @@ class OnBoard
           #   Password.recovery(:email => 'user@domain.com')
           def recovery(h)
             user = User.find :Email => h[:email]
-            pp user
-            pp generate_random
+            password = generate_random
+            # Code here to actually modify the password TODO TODO
+            if user
+              LOGGER.info "Hotspot: sending new password to <#{h[:email]}> for user ``#{user.name}''"
+              Service::Mail::SMTP.setup
+              ::Mail.deliver do
+                from    'Hotspot System <guidoderosa@gmail.com>'
+                to      h[:email]
+                subject 'Password reset'
+                body    "New password for user ``#{user.name}'' is #{password} ."
+              end
+            else
+              LOGGER.err "Hotspot password recovery: no user has email <#{h[:email]}>"
+            end
           end
 
           def generate_random
