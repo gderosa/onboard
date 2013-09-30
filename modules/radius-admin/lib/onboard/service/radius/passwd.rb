@@ -82,14 +82,15 @@ class OnBoard
               LOGGER.info "Hotspot: sending new password to <#{h[:email]}> for user ``#{user.name}''"
               Service::Mail::SMTP.setup
               message = ::Mail.new do
-                from    'guidoderosa@gmail.com'
+                from    'Hotspot System <noreply@vemarsas.it>'
                 to      h[:email]
                 subject 'Password reset'
-                body    "New password for user ``#{user.name}'' is #{password} ."
+                body    "New password for user ``#{user.name}'' is\n\n#{password}\n\nThanks."
               end
               message.deliver!
             else
-              LOGGER.err "Hotspot password recovery: no user has email <#{h[:email]}>"
+              LOGGER.error "Hotspot password recovery: no user has email <#{h[:email]}>"
+              sleep 1 # Fake some time passes to send the email...
             end
           end
 

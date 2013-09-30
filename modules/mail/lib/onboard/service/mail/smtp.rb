@@ -12,7 +12,7 @@ class OnBoard
           def setup
             conf = SMTP::Config.get
             ::Mail.defaults do
-              delivery_method :smtp, { 
+              smtp_h = {
                 :address => conf.host,
                 :port => conf.port,
                 :user_name => conf.username,
@@ -20,6 +20,8 @@ class OnBoard
                 :authentication => :plain,
                 :enable_starttls_auto => (conf.starttls =~ /on|yes|true/i)
               }
+              # p smtp_h # DEBUG
+              delivery_method :smtp, smtp_h
             end
           end
 
