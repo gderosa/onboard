@@ -21,7 +21,7 @@ class OnBoard
       msg = {}
       params['email'].strip!
       if params['email'] =~ /\S+@\S+\.\S+/
-        Service::RADIUS::Passwd.recovery :email => params['email']
+        Service::RADIUS::Passwd.recovery({:email => params['email']})
         msg = {
           :ok   => true,
           :info => t.hotspot.password.recovery.message

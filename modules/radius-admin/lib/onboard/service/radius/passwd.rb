@@ -66,11 +66,12 @@ class OnBoard
 
         class UnknownType < ArgumentError; end
 
-        class < self
+        class << self
           
           #   Password.recovery(:email => 'user@domain.com')
           def recovery(h)
-            
+            user = User.find :Email => h[:email]
+            pp user # DEBUG
           end
 
         end
