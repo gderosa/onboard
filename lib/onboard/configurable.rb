@@ -1,3 +1,5 @@
+require 'onboard/extensions/hash'
+
 class OnBoard
   # The include you missed
   module Configurable
@@ -23,7 +25,7 @@ class OnBoard
     attr_reader :data
 
     def initialize(h)
-      @data = h 
+      @data = h.recursively_stringify_keys 
     end
 
     def save
