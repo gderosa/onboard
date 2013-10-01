@@ -26,6 +26,7 @@ class OnBoard
           :ok   => true,
           :info => t.hotspot.password.recovery.message
         }
+        hotspot_redirect
       else
         status 409
         msg = {
