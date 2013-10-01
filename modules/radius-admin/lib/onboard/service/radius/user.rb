@@ -408,6 +408,21 @@ class OnBoard
           end
         end
 
+        def update_password_direct(password)
+          # fake an "html form"
+          params = {
+            'check'   => {
+              'User-Password' => password
+            },
+            'confirm' => {
+              'check'   => {
+                'User-Password' => password
+              }
+            }            
+          }
+          update_passwd params
+        end
+
         def update_group_membership(params)
           Group.setup
           groupnames = 
