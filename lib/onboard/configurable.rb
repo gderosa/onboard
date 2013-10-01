@@ -27,7 +27,8 @@ class OnBoard
     end
 
     def save
-      File.open CONFFILE, 'w' do |f|
+      FileUtils.mkdir_p self.class::CONFDIR
+      File.open self.class::CONFFILE, 'w' do |f|
         f.write YAML.dump @data
       end
     end
@@ -42,7 +43,7 @@ class OnBoard
 
     def to_json(*a)
       export = @data.dup
-      export['password'] = '<removed>'
+      export['password'] = '<removed>' if export['password']
       export.to_json(*a)
     end
 

@@ -26,7 +26,16 @@ class OnBoard
       end
 
       def handle_errors(&blk)
-        @msg = {}
+        # @msg has ben reset to {} by before filter.
+        # This method could be called more times during a
+        # request/response: if a previous call raised errors
+        # they shouldn't be ignored just because the last call
+        # has been successful.
+        #
+        # Consider the typical case of a configuration which is
+        # set-ted and then get-ted, and errors raised just in the
+        # write part (which is not uncommon...). We should get an error
+        # msg in such case.
         begin
           blk.call
         rescue OnBoard::Error

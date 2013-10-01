@@ -11,6 +11,8 @@ class OnBoard
     module RADIUS
       class Passwd
 
+        autoload :Recovery, 'onboard/service/radius/passwd/recovery'
+
         ENCRYPT = {
           'Cleartext-Password'  => 
               lambda{|cleartxt| cleartxt},
