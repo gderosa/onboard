@@ -9,7 +9,8 @@ class OnBoard
       module SMTP
         class Config
 
-          CONFFILE = CONFFILE unless const_defined? :CONFFILE
+          CONFDIR   = CONFDIR   unless const_defined? :CONFDIR
+          CONFFILE  = CONFFILE  unless const_defined? :CONFFILE
 
           include Configurable
           
