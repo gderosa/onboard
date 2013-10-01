@@ -84,7 +84,7 @@ class OnBoard
               recov = Recovery.new(
                   :config   => Recovery::Config.get,
                   :username => user.name,
-                  :passwd   => password,
+                  :password => password,
               )
               LOGGER.info "Hotspot: sending new password to <#{h[:email]}> for user ``#{user.name}''"
               Service::Mail::SMTP.setup

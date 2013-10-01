@@ -13,7 +13,7 @@ class OnBoard
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/password-recovery',
-        :title    => 'Password recovery / reset configuration',
+        :title    => 'Password recovery/reset configuration',
         :format   => params[:format],
         :objects  => config,
         :msg      => @msg

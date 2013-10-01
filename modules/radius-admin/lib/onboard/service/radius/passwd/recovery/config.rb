@@ -4,7 +4,7 @@ class OnBoard
   module Service
     module RADIUS
       class Passwd
-        module Recovery
+        class Recovery
           class Config
             CONFDIR   = RADIUS::CONFDIR + '/passwd'
             CONFFILE  = CONFDIR + '/recovery.yml'
