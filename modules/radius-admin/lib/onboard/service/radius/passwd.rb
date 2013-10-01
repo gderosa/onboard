@@ -79,8 +79,8 @@ class OnBoard
           def recovery(h)
             user = User.find :Email => h[:email]
             password = generate_random
-            # Code here to actually modify the password TODO TODO
             if user
+              user.update_password_direct password
               recov = Recovery.new(
                   :config   => Recovery::Config.get,
                   :username => user.name,
