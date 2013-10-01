@@ -81,13 +81,18 @@ class OnBoard
             password = generate_random
             # Code here to actually modify the password TODO TODO
             if user
+              recov = Recovery.new(
+                  :config   => Recovery::Config.get,
+                  :username => user.name,
+                  :passwd   => password,
+              )
               LOGGER.info "Hotspot: sending new password to <#{h[:email]}> for user ``#{user.name}''"
               Service::Mail::SMTP.setup
               message = ::Mail.new do
-                from    'Hotspot System <noreply@vemarsas.it>'
+                from    recov.from
                 to      h[:email]
-                subject 'Password reset'
-                body    "New password for user ``#{user.name}'' is\n\n#{password}\n\nThanks."
+                subject recov.subject
+                body    recov.body
               end
               message.deliver!
             else
