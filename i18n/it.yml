@@ -27,6 +27,9 @@ notes: note
 
 confirm: conferma
 
+send:
+  you: invia
+
 eg: p. es.
 
 password:
@@ -66,3 +69,6 @@ name:
     1: il nome
     n: i nomi
 
+email:
+  address: indirizzo e-mail
+  invalid_address: indirizzo e-mail non valido

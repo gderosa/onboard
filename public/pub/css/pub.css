@@ -1,0 +1,12 @@
+body {
+}
+
+div#main {
+  width:inherit;
+  margin: 1em auto 0 auto;
+  float: none;
+}
+
+div#common-logo-and-info-area {
+  margin: 1ex auto;
+}

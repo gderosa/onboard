@@ -1,12 +1,17 @@
 require 'onboard/extensions/string'
 require 'onboard/extensions/digest'
 
+require 'onboard/service/mail'
+require 'onboard/service/mail/smtp'
+
 autoload :Base64, 'base64'
 
 class OnBoard
   module Service
     module RADIUS
       class Passwd
+
+        autoload :Recovery, 'onboard/service/radius/passwd/recovery'
 
         ENCRYPT = {
           'Cleartext-Password'  => 
@@ -64,7 +69,55 @@ class OnBoard
               end,
         }
 
+        RANDOMLY_GENERATED_LENGTH = 6 # opinionated
+
         class UnknownType < ArgumentError; end
+
+        class << self
+          
+          #   Password.recovery(:email => 'user@domain.com')
+          def recovery(h)
+            user = User.find :Email => h[:email]
+            password = generate_random
+            if user
+              user.update_password_direct password
+              recov = Recovery.new(
+                  :config   => Recovery::Config.get,
+                  :username => user.name,
+                  :password => password,
+              )
+              LOGGER.info "Hotspot: sending new password to <#{h[:email]}> for user ``#{user.name}''"
+              Service::Mail::SMTP.setup
+              message = ::Mail.new do
+                from    recov.from
+                to      h[:email]
+                subject recov.subject
+                body    recov.body
+              end
+              delivery_begins_at = Time.now
+              message.deliver!
+              @last_time_passed_to_deliver_recovery         ||= {}
+              @last_time_passed_to_deliver_recovery[:mail]    = Time.now - delivery_begins_at
+            else
+              LOGGER.error "Hotspot password recovery: no user has email <#{h[:email]}>"
+              @last_time_passed_to_deliver_recovery         ||= {}
+              @last_time_passed_to_deliver_recovery[:mail]  ||= 0.8
+              sleep [@last_time_passed_to_deliver_recovery[:mail], 2.5].min 
+                  # Fake some time has passed to send the email...
+                  # NOTE: This would be unnecessary if we use(d) an asynchronous way:
+                  # sendmail, localhost 25, or Thread's...
+                  # TODO? get rid of this crap...? 
+            end
+          end
+
+          def generate_random
+            length = Passwd::RANDOMLY_GENERATED_LENGTH
+            # Inspired by http://stackoverflow.com/a/493230
+            charset = %w{ 2 3 4 5 6 7 8 a b c d e f h j k m n p q t w x y z}
+            (0...length).map{ charset.to_a[rand(charset.size)] }.join
+          end
+
+        end
 
         def initialize(h)
           @type       = h[:type]

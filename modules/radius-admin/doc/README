@@ -6,5 +6,8 @@ it may also manage a remote radius server.
 DEPENDENCIES:
 # gem install sequel mysql
 
+MODULE DEPENDENCIES:
+radius-admin
+mail
 
 

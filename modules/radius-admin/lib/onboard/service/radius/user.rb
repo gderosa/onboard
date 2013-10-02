@@ -70,11 +70,6 @@ class OnBoard
               Sequel.as(Group.mapcols['User-Name'], :username)
             )
 
-            # DEBUG
-            #pp Group.mapcols['User-Name']
-            #pp q_usergroup
-            # /DEBUG
-
             union       = (q_check | q_usergroup).group_by :username
 
             users       = union.paginate(page, per_page).map do |h| 
@@ -86,6 +81,38 @@ class OnBoard
               'per_page'    => per_page,
               'users'       => users.map{|u| new(u)} 
             }
+          end
+
+          # Currently just
+          #   find :Email => 'email@address' # uppercase key to mimic attributes...
+          def find(h)
+            # TODO: DRY
+            User.setup
+            Group.setup
+
+            if h[:Email]
+              email = h[:Email]
+            
+              row = RADIUS.db[@@perstable].select(
+                *Sequel.aliases(@@perscols.invert)
+              ).filter(
+                @@perscols['Email'] => email
+              ).first
+              if row
+                personal = row.stringify_keys
+                user = User.new personal['User-Name']
+                user.personal = personal
+
+                user.retrieve_attributes_from_db
+                user.retrieve_group_membership_from_db
+                # retrieve_personal_info_from_db # unnecessary, already done
+                user.retrieve_accepted_terms_from_db
+
+                return user
+              else
+                return nil
+              end
+            end
           end
 
           def by_terms(params)
@@ -179,6 +206,7 @@ class OnBoard
         end
 
         attr_reader :name, :check, :reply, :groups, :personal, :accepted_terms
+        attr_writer :personal
 
         def setup;  self.class.setup;   end
         def setup!; self.class.setup!;  end
@@ -378,6 +406,21 @@ class OnBoard
               @@chkcols['Value']      => encrypted_passwd
             )
           end
+        end
+
+        def update_password_direct(password)
+          # fake an "html form"
+          params = {
+            'check'   => {
+              'User-Password' => password
+            },
+            'confirm' => {
+              'check'   => {
+                'User-Password' => password
+              }
+            }            
+          }
+          update_passwd params
         end
 
         def update_group_membership(params)

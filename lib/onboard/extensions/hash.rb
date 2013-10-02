@@ -1,3 +1,5 @@
+require 'facets/hash' # http://facets.rubyforge.org/
+
 class Hash
 
   # Filter nested data in a granular way, only letting in what specified in +allowed+,
@@ -65,21 +67,20 @@ class Hash
     return yes, no
   end
 
-  require 'facets/hash' # http://facets.rubyforge.org/
 
   # Some sugar:
 
   def recursively_stringify_keys
-    recursive{|h| h.rekey{|k| k.to_s}}
+    recurse{|h| h.rekey{|k| k.to_s}}
   end
   def recursively_simbolize_keys
-    recursive{|h| h.rekey{|k| k.to_sym}}
+    recurse{|h| h.rekey{|k| k.to_sym}}
   end
   def recursively_stringify_keys!
-    recursive!{|h| h.rekey{|k| k.to_s}}
+    recurse!{|h| h.rekey{|k| k.to_s}}
   end
   def recursively_simbolize_keys!
-    recursive!{|h| h.rekey{|k| k.to_sym}}
+    recurse!{|h| h.rekey{|k| k.to_sym}}
   end
 
   # non-facets

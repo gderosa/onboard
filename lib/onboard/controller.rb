@@ -22,6 +22,10 @@ class OnBoard
     attr_accessor :msg 
         # so you don't need to pass it between routes, views, helpers ...
 
+    before do
+      @msg = {}
+    end
+
     # Several options are not enabled by default if you inherit from 
     # Sinatra::Base .
     enable :method_override, :static, :show_exceptions

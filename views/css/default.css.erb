@@ -185,7 +185,7 @@ div#main p {
 	margin-top: 0.3em;
 }
 
-div#main pre {
+div#main pre, kbd, code {
   /* font-size: 11pt; */
   color: <%= highlight %>;
 }
@@ -403,6 +403,10 @@ button[disabled] {
 button[disabled] img { /* CSS3 */ 
   opacity: 0.4; /* Firefox */
   filter: alpha(opacity=40); /* MSIE */
+}
+
+form table+button[type="submit"] {
+  margin-top: 1.7ex;
 }
 
 input[disabled] {

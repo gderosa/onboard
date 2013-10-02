@@ -114,6 +114,7 @@ class OnBoard
               @@chkcols['Attribute']  => 'Auth-Type',
               @@chkcols['Value']      => params['check']['Auth-Type'],
             ) if params['check']['Auth-Type'] =~ /\S/
+            # See http://wiki.freeradius.org/config/Operators
           end
 
           def insert_dummy_attributes(params)
@@ -210,6 +211,11 @@ class OnBoard
           return false
         end
 
+        # http://wiki.freeradius.org/config/Operators
+        # ':=' operator _must_ be used for standard (non internal) check 
+        # attributes. '=' _can_ be used for someting like Auth-Type
+        # or for reply attributes.
+        
         def update_reply_attributes(params)
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(

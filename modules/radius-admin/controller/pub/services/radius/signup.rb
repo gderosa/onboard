@@ -100,6 +100,7 @@ class OnBoard
         #msg[:info] = %Q{User <a href="users/#{user.name}.html">'#{user.name}'</a> has been created!}
         msg[:info] = i18n.hotspot.signup_success(user.name)
 
+        # TODO: use hotspot_redirect helper
         if \
                 params['redirect'] =~ /^https?:\/\/[a-z]+.*\.[a-z]+/i and \
             not params['redirect'] =~ /hotspot/i
