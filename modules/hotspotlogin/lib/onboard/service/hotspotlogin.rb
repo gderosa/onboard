@@ -183,6 +183,13 @@ end
             conf_h['my-url'] = params['my_url']
           end
 
+          # password_recovery_url
+          if params['delete'] and params['delete']['password_recovery_url']
+            conf_h['password-recovery-url'] = nil
+          elsif params['password_recovery_url'] and params['password_recovery_url'] =~ /\S/
+            conf_h['password-recovery-url'] = params['password_recovery_url']
+          end
+ 
           # custom headline
           if params['delete'] and params['delete']['custom_headline']
             conf_h['custom-headline'] = nil
