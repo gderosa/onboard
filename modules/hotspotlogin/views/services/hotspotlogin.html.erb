@@ -11,8 +11,10 @@
   logo_link       = hslogin['conf']['logo-link']
   signup_url      = hslogin['conf']['signup-url']
   my_url          = hslogin['conf']['my-url']
-  remember_credentials =
-                    hslogin['conf']['remember-credentials']
+  remember_credentials  =
+      hslogin['conf']['remember-credentials']
+  password_recovery_url =
+      hslogin['conf']['password-recovery-url']
   custom_headline = hslogin['conf']['custom-headline'] 
   custom_text     = hslogin['conf']['custom-text']
   custom_footer   = hslogin['conf']['custom-footer']
@@ -196,6 +198,22 @@
       </td>
       <td>
       <td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        Password Recovery Link 
+        <div class="optinfo">Leave blank to not display</div>
+      </th>
+      <td>
+        <input type="text" size="<%= textcols %>" class="rwtext" name="password_recovery_url" value="<%= password_recovery_url %>"/> 
+      </td>
+      <td style="text-align: center;">
+      <% if password_recovery_url and password_recovery_url =~ /\S/ %><a title="Displayed text may vary according to localization" target="_blank" href="<%= password_recovery_url %>">Recover password</a><% end %>
+      </td>
+      <td style="text-align: center;">
+        <input type="checkbox" name="delete[password_recovery_url]"/>
+      </td>
     </tr>
    
     <tr>
