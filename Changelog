@@ -1,3 +1,15 @@
+2013.10
+
+* AAA/RADIUS/HOTSPOT:
+	* Password recovery (via email)
+	* Login-Time
+	* RADIUS operator fixes, to allow a reasonable fall-through
+
+* mail module
+
+* Design:
+	* include Configurable
+
 2013.09.03
 
 * hotspotlogin: cookie-based user/password persistance can be disallowed
