@@ -1,3 +1,8 @@
+2013.10.02
+
+* AAA/RADIUS/HOTSPOT:
+	* Password recovery: short note on public url
+
 2013.10.01
 
 * hotspotlogin: form field to edit password recovery URL (was missing, fixed)
