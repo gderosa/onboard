@@ -94,10 +94,19 @@ class OnBoard
                 subject recov.subject
                 body    recov.body
               end
+              delivery_begins_at = Time.now
               message.deliver!
+              @last_time_passed_to_deliver_recovery         ||= {}
+              @last_time_passed_to_deliver_recovery[:mail]    = Time.now - delivery_begins_at
             else
               LOGGER.error "Hotspot password recovery: no user has email <#{h[:email]}>"
-              sleep 2 # Fake some time passes to send the email...
+              @last_time_passed_to_deliver_recovery         ||= {}
+              @last_time_passed_to_deliver_recovery[:mail]  ||= 0.8
+              sleep [@last_time_passed_to_deliver_recovery[:mail], 2.5].min 
+                  # Fake some time has passed to send the email...
+                  # NOTE: This would be unnecessary if we use(d) an asynchronous way:
+                  # sendmail, localhost 25, or Thread's...
+                  # TODO? get rid of this crap...? 
             end
           end
 
