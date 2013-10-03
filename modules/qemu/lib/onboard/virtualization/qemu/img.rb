@@ -25,6 +25,12 @@ class OnBoard
             QEMU::Config.relative_path *a
           end
 
+	  # gluster:// doesn't like spaces or brackets, even with quoting or 
+	  # escaping...
+	  def sanitize_file_or_dirname(name)
+            name.gsub(/\s/, '_').gsub(/[^\d\w_\+\-\.]/, '+').gsub(/\+{2,}/, '++')
+	  end
+
           # for example an image is created at: ~/files/QEMU/Win7/{idx}.qcow2
           # or ~/files/QEMU/Debian/#{idx}.raw
           def create(h)
@@ -39,7 +45,7 @@ class OnBoard
                        else
                          h['qemu-img']['subdir'] + '/QEMU'
                        end
-              dir = File.join QEMU::FILESDIR, subdir, name
+              dir = File.join QEMU::FILESDIR, subdir, sanitize_file_or_dirname(name)
               System::Command.run "mkdir -p '#{dir}'", :sudo # sudo, otherwise 
                   # we should ensure that the onboard user has the same UID 
                   # across the cluster, in case directories are on a 
