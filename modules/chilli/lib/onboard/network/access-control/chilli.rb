@@ -271,13 +271,15 @@ class OnBoard
 
           # Allow either static and dynamic ip in net
           if @conf['net']
-            unless @conf['statip']
+            #unless @conf['statip']
               @conf['statip'] = @conf['net']
-            end
-            unless @conf['dynip']
+            #end
+            #unless @conf['dynip']
               @conf['dynip'] = @conf['net']
-            end
+            #end
           end
+          # until a form field is created, dynip & statip
+          # should be *always* updated
 
           @conf.each_pair do |key, value|
             if value == true
