@@ -381,6 +381,7 @@ class OnBoard
                 info.sub! /\[not inserted\]/, ''
                 drives_h[name]['file'] = nil
               end
+              next unless info # in case line is something like "\r\n"
               info.split_unescaping_spaces.each do |pair|
                 k, val = pair.split('=')
                 if %w{removable ro encrypted locked tray-open}.include? k
