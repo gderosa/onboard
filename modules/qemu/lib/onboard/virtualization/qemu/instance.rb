@@ -376,13 +376,36 @@ class OnBoard
         def drives
           drives_h = {}
           if running?
-            #
+            
             @cache['block_json'] ||= @qmp.execute 'query-block'
             qmp_data = JSON.load @cache['block_json']
-            pp qmp_data
+            qmp_return = qmp_data['return']
 
+            pp qmp_return # DEBUG
 
+            # Compatibility with the old return value of this method
+            # (which has been based on "human-redable" monitor...)
+            # (and have been parsing interactive output...)
+            qmp_return.each do |device|
+              name = device['device']
+              drives_h[name] = {
+                'removable' => device['removable'],
+                'io-status' => device['io-status'],
+              }
+              # merge non-Hash values of device['inserted'] into drives_h[name]
+              if device['inserted'].respond_to? :each_pair
+                device['inserted'].each_pair do |k, v|
+                  unless v.respond_to? :each_pair
+                    drives_h[name][k] = v
+                  end
+                end
+              end
+            end
+            # This should suffice to reproduce old output...
+            # Lots of data are lost here and got via qemu-img etc.
 
+=begin
+# Non-QMP monitor...
 
             @cache['block'] ||= @monitor.sendrecv 'info block'
             @cache['block'].each_line do |line|
@@ -411,15 +434,10 @@ class OnBoard
                 end
               end
             end
-
-
-
-
-
-
-
+=end
 
           end
+
           # Now, determine correspondance with configured (non runtime)
           # drives
           @config['-drive'].each do |drive_config|
