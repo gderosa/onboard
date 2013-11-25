@@ -85,6 +85,12 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   'server'      => true,
                   'nowait'      => true
                 },
+                # In the long term, we should use QMP only
+                '-qmp'    => {
+                  'unix'        => "#{VARRUN}/qemu-#{uuid_short}.qmp.sock",
+                  'server'      => true,
+                  'nowait'      => true
+                },
                 '-pidfile'    => "#{VARRUN}/qemu-#{uuid_short}.pid"
               }
             }

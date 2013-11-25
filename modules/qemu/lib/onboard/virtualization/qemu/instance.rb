@@ -107,14 +107,16 @@ class OnBoard
             end
           end
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
-          if opts['-monitor']
-            if opts['-monitor']['unix']
-              unix_args = []
-              unix_args << %Q{unix:"#{opts['-monitor']['unix']}"} 
-              unix_args << 'server' if opts['-monitor']['server']
-              unix_args << 'nowait' if opts['-monitor']['nowait']
-              cmdline << '-monitor ' << unix_args.join(',') << ' '
-            end 
+          %w{-monitor -qmp}.each do |k| # TODO: switch to QMP completely
+            if opts[k]
+              if opts[k]['unix']
+                unix_args = []
+                unix_args << %Q{unix:"#{opts[k]['unix']}"}
+                unix_args << 'server' if opts[k]['server']
+                unix_args << 'nowait' if opts[k]['nowait']
+                cmdline << k << ' ' << unix_args.join(',') << ' '
+              end
+            end
           end
           #cmdline << "-D /tmp/qemu-#{uuid_short}.log "
           #cmdline << "-debugcon file:/tmp/qemu-#{uuid_short}.dbg "
