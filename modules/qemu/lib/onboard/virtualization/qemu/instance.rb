@@ -33,9 +33,10 @@ class OnBoard
         # useful for save/restore after a host machine reboot
 
         def initialize(config)
-          @config   = config
+          @config = config
           @cache = {}
           @monitor = Monitor.new config['-monitor']
+          @qmp = Monitor::QMP.new config['-qmp']
           update_info
         end
 
@@ -375,6 +376,14 @@ class OnBoard
         def drives
           drives_h = {}
           if running?
+            #
+            @cache['block_json'] ||= @qmp.execute 'query-block'
+            qmp_data = JSON.load @cache['block_json']
+            pp qmp_data
+
+
+
+
             @cache['block'] ||= @monitor.sendrecv 'info block'
             @cache['block'].each_line do |line|
               name, info = line.split(/:\s+/)
@@ -402,6 +411,14 @@ class OnBoard
                 end
               end
             end
+
+
+
+
+
+
+
+
           end
           # Now, determine correspondance with configured (non runtime)
           # drives
