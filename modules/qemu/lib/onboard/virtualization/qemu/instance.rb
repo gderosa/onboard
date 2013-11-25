@@ -36,7 +36,7 @@ class OnBoard
           @config = config
           @cache = {}
           @monitor = Monitor.new config['-monitor']
-          @qmp = Monitor::QMP.new config['-qmp']
+          @qmp = Monitor::QMP.new config['-qmp'] if config['-qmp']
           update_info
         end
 
@@ -375,68 +375,68 @@ class OnBoard
 
         def drives
           drives_h = {}
-          if running?
-            
-            @cache['block_json'] ||= @qmp.execute 'query-block'
-            qmp_data = JSON.load @cache['block_json']
-            qmp_return = qmp_data['return']
+          if running? 
 
-            pp qmp_return # DEBUG
+            if @qmp.respond_to? :execute # TODO: move to drives_qmp
 
-            # Compatibility with the old return value of this method
-            # (which has been based on "human-redable" monitor...)
-            # (and have been parsing interactive output...)
-            qmp_return.each do |device|
-              name = device['device']
-              drives_h[name] = {
-                'removable' => device['removable'],
-                'io-status' => device['io-status'],
-              }
-              # merge non-Hash values of device['inserted'] into drives_h[name]
-              if device['inserted'].respond_to? :each_pair
-                device['inserted'].each_pair do |k, v|
-                  unless v.respond_to? :each_pair
-                    drives_h[name][k] = v
+              @cache['block_json'] ||= @qmp.execute 'query-block'
+              qmp_data = JSON.load @cache['block_json']
+              qmp_return = qmp_data['return']
+              
+              # Compatibility with the old return value of this method
+              # (which has been based on "human-redable" monitor...)
+              # (and have been parsing interactive output...)
+              qmp_return.each do |device|
+                name = device['device']
+                drives_h[name] = {
+                  'removable' => device['removable'],
+                  'io-status' => device['io-status'],
+                }
+                # merge non-Hash values of device['inserted'] into drives_h[name]
+                if device['inserted'].respond_to? :each_pair
+                  device['inserted'].each_pair do |k, v|
+                    unless v.respond_to? :each_pair
+                      drives_h[name][k] = v
+                    end
                   end
                 end
               end
-            end
-            # This should suffice to reproduce old output...
-            # Lots of data are lost here and got via qemu-img etc.
+              # This should suffice to reproduce old output...
+              # Lots of data are lost here and got via qemu-img etc.
 
-=begin
-# Non-QMP monitor...
+            else # Non-QMP monitor... # TODO: move to drives_hmp
 
-            @cache['block'] ||= @monitor.sendrecv 'info block'
-            @cache['block'].each_line do |line|
-              name, info = line.split(/:\s+/)
-              drives_h[name] = {}
-              if info =~ /\[not inserted\]/
-                info.sub! /\[not inserted\]/, ''
-                drives_h[name]['file'] = nil
-              end
-              next unless info # in case line is something like "\r\n"
-              info.split_unescaping_spaces.each do |pair|
-                k, val = pair.split('=')
-                if %w{removable ro encrypted locked tray-open}.include? k
-                  drives_h[name][k] = case val
-                                      when '0'
-                                        false
-                                      when '1'
-                                        true
-                                      else
-                                        raise ArgumentError, 
-  "Asking 'info block' to monitor, either #{k}=0 or #{k}=1 was expected; "
-  "got #{k}=#{val} instead"
-                                      end
-                else
-                  drives_h[name][k] = val 
+              @cache['block'] ||= @monitor.sendrecv 'info block'
+              @cache['block'].each_line do |line|
+                name, info = line.split(/:\s+/)
+                drives_h[name] = {}
+                if info =~ /\[not inserted\]/
+                  info.sub! /\[not inserted\]/, ''
+                  drives_h[name]['file'] = nil
+                end
+                next unless info # in case line is something like "\r\n"
+                info.split_unescaping_spaces.each do |pair|
+                  k, val = pair.split('=')
+                  if %w{removable ro encrypted locked tray-open}.include? k
+                    drives_h[name][k] = case val
+                                        when '0'
+                                          false
+                                        when '1'
+                                          true
+                                        else
+                                          raise ArgumentError, 
+    "Asking 'info block' to monitor, either #{k}=0 or #{k}=1 was expected; "
+    "got #{k}=#{val} instead"
+                                        end
+                  else
+                    drives_h[name][k] = val 
+                  end
                 end
               end
-            end
-=end
 
-          end
+            end # QMP (JSON) or HMP ("human")
+
+          end # running?
 
           # Now, determine correspondance with configured (non runtime)
           # drives
