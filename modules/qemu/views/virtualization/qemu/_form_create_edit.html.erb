@@ -32,6 +32,10 @@
     %w{name m vnc k vga soundhw}.each do |k|
       formvals[k] = vm.config["-#{k}"] 
     end
+    formvals['rtc_base_localtime'] = (
+      vm.config['-rtc']                         and
+      vm.config['-rtc']['base'] == 'localtime'
+    )
     formvals['cmdline_append'] = vm.config.opts['append']
     formvals['spice'] ||= {}
     formvals['spice']['port'] = vm.config['-spice']['port'] if 
@@ -219,6 +223,17 @@
               <option <%= 'selected' if model == formvals['soundhw'] %> value="<%= model %>"><%= model %></option> 
             <% end %>
           </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          Set machine clock to local time
+          <div class="optinfo">
+            Necessary for Windows&reg; guests
+          </div>
+        </th>
+        <td>
+          <input type="checkbox" id="rtc_base_localtime" name="rtc_base_localtime"<%= ' checked' if formvals['rtc_base_localtime'] %>/>
         </td>
       </tr>
 
