@@ -266,6 +266,8 @@ class OnBoard
 
         def start(*opts)
 
+          # Auto-update from previous versions' configs 
+          # which didn't use QMP.
           @config.upgrade :add_qmp and @config.save
           
           cmdline = format_cmdline
