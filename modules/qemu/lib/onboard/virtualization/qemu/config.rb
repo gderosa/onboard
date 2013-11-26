@@ -227,6 +227,17 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
           end
         end
 
+        def upgrade(what)
+          case what
+          when :add_qmp
+            if @cmd['opts']['-monitor'] and not @cmd['opts']['-qmp']
+              @cmd['opts']['-qmp'] = @cmd['opts']['-monitor'].dup
+              @cmd['opts']['-qmp']['unix'] = 
+                  @cmd['opts']['-monitor']['unix'].sub /\.sock$/, '.qmp.sock'
+            end
+          end
+        end
+
         def generate_drive_serial
           return ('QM' + uuid_short + sprintf('%02x', drive_counter)).upcase
         end

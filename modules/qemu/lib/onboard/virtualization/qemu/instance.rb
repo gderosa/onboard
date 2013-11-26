@@ -265,6 +265,9 @@ class OnBoard
         end
 
         def start(*opts)
+
+          @config.upgrade :add_qmp and @config.save
+          
           cmdline = format_cmdline
           cmdline << ' -S' if opts.include? :paused
           cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
