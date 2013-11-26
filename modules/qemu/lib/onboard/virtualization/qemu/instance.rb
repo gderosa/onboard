@@ -135,6 +135,14 @@ class OnBoard
             end
           end
 
+          if opts['-rtc'].respond_to? :each_pair
+            args = []
+            opts['-rtc'].each_pair do |k,v|
+              args << "#{k}=#{v}"
+            end
+            cmdline << '-rtc ' << args.join(',') << ' '
+          end
+
           # This SHOLUD NOT be used; use -device instead
           if opts['-usbdevice'].respond_to? :each
             opts['-usbdevice'].each do |device|

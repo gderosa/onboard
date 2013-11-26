@@ -95,6 +95,11 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               }
             }
 
+            if h[:http_params]['rtc_base_localtime']
+              @cmd['opts']['-rtc']          ||= {}
+              @cmd['opts']['-rtc']['base']  =   'localtime' 
+            end
+
             @cmd['opts']['-device'] ||= []
             # Load default devices
             @cmd['opts']['-device'] += USB::DEFAULT_CONTROLLERS
