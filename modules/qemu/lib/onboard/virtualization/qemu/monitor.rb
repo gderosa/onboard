@@ -8,6 +8,13 @@ class OnBoard
     module QEMU
       class Monitor
 
+        # TODO: make this class "abstract", moving most of its logic to
+        # a fresh Monitor::HMP class (human monitor, as opposed to QMP)
+        # See also
+        # http://git.qemu.org/?p=qemu.git;a=blob_plain;f=docs/qmp/README;hb=HEAD
+
+        autoload :QMP, 'onboard/virtualization/qemu/monitor/qmp'
+
         def initialize(h)
           @config = h
         end
@@ -27,8 +34,8 @@ class OnBoard
                 uds.puts                  # just to get the prompt
                 banner = uds.gets         # unused, just to go ahead, could be empty
                 prompt_long = uds.gets    # "(qemu)" or "(qemu) QEMU 1.5.0 ..."
-	 	prompt_long =~ /^\s*(\S+)/
-		prompt = $1	
+                prompt_long =~ /^\s*(\S+)/
+                prompt = $1
 
                 uds.puts msg
                 spurious_line = uds.gets  

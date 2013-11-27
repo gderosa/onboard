@@ -85,9 +85,20 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   'server'      => true,
                   'nowait'      => true
                 },
+                # In the long term, we should use QMP only
+                '-qmp'    => {
+                  'unix'        => "#{VARRUN}/qemu-#{uuid_short}.qmp.sock",
+                  'server'      => true,
+                  'nowait'      => true
+                },
                 '-pidfile'    => "#{VARRUN}/qemu-#{uuid_short}.pid"
               }
             }
+
+            if h[:http_params]['rtc_base_localtime']
+              @cmd['opts']['-rtc']          ||= {}
+              @cmd['opts']['-rtc']['base']  =   'localtime' 
+            end
 
             @cmd['opts']['-device'] ||= []
             # Load default devices
@@ -218,6 +229,17 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             @drop_privileges    = h[:config]['drop_privileges'] if
                 h[:config].keys.include? 'drop_privileges' # avoid assigning non true as default
             @force_command_line = h[:config]['force_command_line']
+          end
+        end
+
+        def upgrade(what)
+          case what
+          when :add_qmp
+            if @cmd['opts']['-monitor'] and not @cmd['opts']['-qmp']
+              @cmd['opts']['-qmp'] = @cmd['opts']['-monitor'].dup
+              @cmd['opts']['-qmp']['unix'] = 
+                  @cmd['opts']['-monitor']['unix'].sub /\.sock$/, '.qmp.sock'
+            end
           end
         end
 

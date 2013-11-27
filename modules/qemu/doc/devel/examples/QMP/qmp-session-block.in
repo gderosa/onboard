@@ -1,0 +1,2 @@
+{ "execute": "qmp_capabilities" }
+{ "execute": "query-block", "arguments" : {} }

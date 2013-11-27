@@ -33,9 +33,10 @@ class OnBoard
         # useful for save/restore after a host machine reboot
 
         def initialize(config)
-          @config   = config
+          @config = config
           @cache = {}
           @monitor = Monitor.new config['-monitor']
+          @qmp = Monitor::QMP.new config['-qmp'] if config['-qmp']
           update_info
         end
 
@@ -107,14 +108,16 @@ class OnBoard
             end
           end
           cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
-          if opts['-monitor']
-            if opts['-monitor']['unix']
-              unix_args = []
-              unix_args << %Q{unix:"#{opts['-monitor']['unix']}"} 
-              unix_args << 'server' if opts['-monitor']['server']
-              unix_args << 'nowait' if opts['-monitor']['nowait']
-              cmdline << '-monitor ' << unix_args.join(',') << ' '
-            end 
+          %w{-monitor -qmp}.each do |k| # TODO: switch to QMP completely
+            if opts[k]
+              if opts[k]['unix']
+                unix_args = []
+                unix_args << %Q{unix:"#{opts[k]['unix']}"}
+                unix_args << 'server' if opts[k]['server']
+                unix_args << 'nowait' if opts[k]['nowait']
+                cmdline << k << ' ' << unix_args.join(',') << ' '
+              end
+            end
           end
           #cmdline << "-D /tmp/qemu-#{uuid_short}.log "
           #cmdline << "-debugcon file:/tmp/qemu-#{uuid_short}.dbg "
@@ -130,6 +133,14 @@ class OnBoard
             if args.any?
               cmdline << '-smp ' << args.join(',') << ' ' 
             end
+          end
+
+          if opts['-rtc'].respond_to? :each_pair
+            args = []
+            opts['-rtc'].each_pair do |k,v|
+              args << "#{k}=#{v}"
+            end
+            cmdline << '-rtc ' << args.join(',') << ' '
           end
 
           # This SHOLUD NOT be used; use -device instead
@@ -262,6 +273,11 @@ class OnBoard
         end
 
         def start(*opts)
+
+          # Auto-update from previous versions' configs 
+          # which didn't use QMP.
+          @config.upgrade :add_qmp and @config.save
+          
           cmdline = format_cmdline
           cmdline << ' -S' if opts.include? :paused
           cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
@@ -372,35 +388,69 @@ class OnBoard
 
         def drives
           drives_h = {}
-          if running?
-            @cache['block'] ||= @monitor.sendrecv 'info block'
-            @cache['block'].each_line do |line|
-              name, info = line.split(/:\s+/)
-              drives_h[name] = {}
-              if info =~ /\[not inserted\]/
-                info.sub! /\[not inserted\]/, ''
-                drives_h[name]['file'] = nil
-              end
-              next unless info # in case line is something like "\r\n"
-              info.split_unescaping_spaces.each do |pair|
-                k, val = pair.split('=')
-                if %w{removable ro encrypted locked tray-open}.include? k
-                  drives_h[name][k] = case val
-                                      when '0'
-                                        false
-                                      when '1'
-                                        true
-                                      else
-                                        raise ArgumentError, 
-  "Asking 'info block' to monitor, either #{k}=0 or #{k}=1 was expected; "
-  "got #{k}=#{val} instead"
-                                      end
-                else
-                  drives_h[name][k] = val 
+          if running? 
+
+            if @qmp.respond_to? :execute # TODO: move to drives_qmp
+
+              @cache['block_json'] ||= @qmp.execute 'query-block'
+              qmp_data = JSON.load @cache['block_json']
+              qmp_return = qmp_data['return']
+              
+              # Compatibility with the old return value of this method
+              # (which has been based on "human-redable" monitor...)
+              # (and have been parsing interactive output...)
+              qmp_return.each do |device|
+                name = device['device']
+                drives_h[name] = {
+                  'removable' => device['removable'],
+                  'io-status' => device['io-status'],
+                }
+                # merge non-Hash values of device['inserted'] into drives_h[name]
+                if device['inserted'].respond_to? :each_pair
+                  device['inserted'].each_pair do |k, v|
+                    unless v.respond_to? :each_pair
+                      drives_h[name][k] = v
+                    end
+                  end
                 end
               end
-            end
-          end
+              # This should suffice to reproduce old output...
+              # Lots of data are lost here and got via qemu-img etc.
+
+            else # Non-QMP monitor... # TODO: move to drives_hmp
+
+              @cache['block'] ||= @monitor.sendrecv 'info block'
+              @cache['block'].each_line do |line|
+                name, info = line.split(/:\s+/)
+                drives_h[name] = {}
+                if info =~ /\[not inserted\]/
+                  info.sub! /\[not inserted\]/, ''
+                  drives_h[name]['file'] = nil
+                end
+                next unless info # in case line is something like "\r\n"
+                info.split_unescaping_spaces.each do |pair|
+                  k, val = pair.split('=')
+                  if %w{removable ro encrypted locked tray-open}.include? k
+                    drives_h[name][k] = case val
+                                        when '0'
+                                          false
+                                        when '1'
+                                          true
+                                        else
+                                          raise ArgumentError, 
+    "Asking 'info block' to monitor, either #{k}=0 or #{k}=1 was expected; "
+    "got #{k}=#{val} instead"
+                                        end
+                  else
+                    drives_h[name][k] = val 
+                  end
+                end
+              end
+
+            end # QMP (JSON) or HMP ("human")
+
+          end # running?
+
           # Now, determine correspondance with configured (non runtime)
           # drives
           @config['-drive'].each do |drive_config|
