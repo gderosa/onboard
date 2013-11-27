@@ -28,7 +28,8 @@ class OnBoard
                 sleep pause
                 retry
               else
-                raise
+                LOGGER.error $!
+                return JSON.dump({'error' => {'message' => $!}}) 
               end
             end
           end

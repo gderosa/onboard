@@ -273,6 +273,19 @@ class OnBoard
         end
 
         def start(*opts)
+          # WARNING: opts is also a sugar method of this class...
+
+          QEMU.cleanup
+
+          # Circumvent a possible QEMU bug (as of 1.6.1) when a USB device
+          # is passed-through. (assertion failed)
+          unless opts.include? :paused
+            if @config.cmd['opts']['-loadvm']
+              start :paused, *opts
+              drives # a way to wait for QMP/Monitor sockets ready
+              resume
+            end
+          end
 
           # Auto-update from previous versions' configs 
           # which didn't use QMP.
@@ -395,6 +408,8 @@ class OnBoard
               @cache['block_json'] ||= @qmp.execute 'query-block'
               qmp_data = JSON.load @cache['block_json']
               qmp_return = qmp_data['return']
+
+              return {} unless qmp_return
               
               # Compatibility with the old return value of this method
               # (which has been based on "human-redable" monitor...)
