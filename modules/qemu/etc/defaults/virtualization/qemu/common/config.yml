@@ -1,2 +1,2 @@
 ---
-exe: kvm
+exe: qemu-system-x86_64
