@@ -1,3 +1,11 @@
+2013.11
+
+* QEMU:
+	* Gluster: sanitize image names containing spaces (see c3bfd49)
+	* use QMP to get runtime drives info
+		* auto-udate configs with no QMP
+	* -rtc base=localtime for Windows guests
+
 2013.10.03
 
 * Fix missing i18n in RADIUS selfcare
