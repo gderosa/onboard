@@ -6,6 +6,12 @@ class OnBoard
 
   class Controller < Sinatra::Base
 
+    before do
+      if request.path_info =~ /^\/virtualization\/qemu/
+        Virtualization::QEMU.cleanup
+      end
+    end
+
     get '/virtualization/qemu.:format' do
       format(
         :module   => 'qemu',
