@@ -14,7 +14,8 @@ autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
 autoload :Escape,     'escape'
-autoload :Erubis,     'erubis' 
+autoload :Erubis,     'erubis'
+autoload :YAML,       'yaml'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/extensions/openssl'
@@ -54,11 +55,11 @@ class OnBoard
           @@all_vpn = getAll() unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
           File.open(
-              CONFDIR + '/vpn.dat', 
+              CONFDIR + '/vpn.yml', 
               'w'
           ) do |f|
             f.write(
-              Marshal.dump(
+              YAML.dump(
                 @@all_vpn.map do |vpn| 
                   vpn_data_internal = vpn.instance_variable_get(:@data_internal)
                   {
@@ -73,10 +74,10 @@ class OnBoard
         end
 
         def self.restore
-          datafile = DATADIR + '/etc/config/network/openvpn/vpn/vpn.dat'
+          datafile = DATADIR + '/etc/config/network/openvpn/vpn/vpn.yml'
           return false unless File.readable? datafile
           current_VPNs = getAll()
-          Marshal.load(File.read datafile).each do |h|
+          YAML.load(File.read datafile).each do |h|
             if current_vpn = current_VPNs.detect{ |x| 
                 h[:process].portable_id == x.data['portable_id'] }
               next if current_vpn.data['running'] 
