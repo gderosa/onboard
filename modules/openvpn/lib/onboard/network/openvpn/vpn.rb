@@ -89,6 +89,14 @@ class OnBoard
             end
           end
         end
+
+        # This is basically useful to persist non-running VPN instances across
+        # web interface restarts (not system reboots).
+        def self.persist_current
+          File.open "#{CONFDIR}/vpn_current.yml", 'w' do |f|
+            f.write YAML.dump @@all_vpn
+          end
+        end
     
         # get info on running OpenVPN instances
         def self.getAll
@@ -98,8 +106,12 @@ class OnBoard
           @@all_vpn         = [] unless ( 
               class_variable_defined? :@@all_vpn and @@all_vpn)
 
+          if @@all_vpn.none? and File.readable? "#{CONFDIR}/vpn_current.yml"
+            @@all_vpn = YAML.load File.read "#{CONFDIR}/vpn_current.yml" # TODO: DRY
+          end
+
           @@all_vpn.each do |vpn|
-            vpn.set_not_running # ...until we'll find it actually running ;)
+            vpn.set_not_running # ...until we find it actually running ;)
           end
 
           `pidof openvpn`.split.each do |pid|

@@ -92,6 +92,7 @@ class OnBoard
       else
         status(409) # HTTP Conflict by default
       end
+      OnBoard::Network::OpenVPN::VPN.persist_current
       format(
         :module => 'openvpn',
         :path => '/network/openvpn/vpn',
@@ -118,6 +119,7 @@ class OnBoard
           status(200)                       # HTTP 'OK'
         end
       end
+      OnBoard::Network::OpenVPN::VPN.persist_current
       format(
         :module   => 'openvpn',
         :path     => '/network/openvpn/vpn',
@@ -153,6 +155,7 @@ class OnBoard
         msg = vpn.modify_from_HTTP_request(params)
         vpn = OnBoard::Network::OpenVPN::VPN.lookup(
           :any => params[:vpn_identifier]) # update
+        OnBoard::Network::OpenVPN::VPN.persist_current
         format(
           :module   => 'openvpn',
           :path     => '/network/openvpn/vpn/advanced',
@@ -177,7 +180,8 @@ class OnBoard
         redirection = "/network/openvpn.#{params[:format]}"
         status(303)                       # HTTP "See Other"
         headers('Location' => redirection)
-        # altough the client will move, an entity-body is always returned
+        OnBoard::Network::OpenVPN::VPN.persist_current
+        # altough the client will be redirected, an entity-body is always returned
         format(
           :path     => '/303',
           :format   => params[:format],
