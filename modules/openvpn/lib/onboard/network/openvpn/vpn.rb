@@ -182,7 +182,7 @@ class OnBoard
           cmdline << '--setenv' << 'PATH' << ENV['PATH']
           cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
           cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' << 
-              OnBoard::CONFDIR + '/network/interfaces.dat' 
+              OnBoard::CONFDIR + '/network/interfaces.yml' 
           cmdline << '--setenv' << 'STATIC_ROUTES_DATFILE' << 
               OnBoard::CONFDIR + '/network/routing/static_routes'          
           cmdline << '--persist-tun'

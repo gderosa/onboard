@@ -8,7 +8,7 @@
 #   prepend to the standard Ruby $LOAD_PATH 
 #
 # NETWORK_INTERFACES_DATFILE
-#   marshal dump of the saved interfaces state
+#   YAML (was Marshal) dump of the saved interfaces state
 #
 # STATIC_ROUTES_DATFILE
 #   saved output of "ip -[6|4] route show proto static"
@@ -22,9 +22,9 @@
 #
 # EXAMPLE:
 #   
-# RUBYLIB=/home/onboard/onboard/lib NETWORK_INTERFACES_DATFILE=/home/onboard/onboard/etc/config/network/interfaces.dat ./up ovpn_tap0
+# RUBYLIB=/home/onboard/onboard/lib NETWORK_INTERFACES_DATFILE=/home/onboard/onboard/etc/config/network/interfaces.yml ./up ovpn_tap0
 
-require 'pp' # DEBUG
+# require 'pp' # DEBUG
 
 require 'onboard/network/interface'
 require 'onboard/network/routing'
@@ -35,7 +35,7 @@ all_interfaces = OnBoard::Network::Interface.getAll
 
 if File.exists? ENV['NETWORK_INTERFACES_DATFILE']
   all_interfaces_saved = 
-      Marshal.load File.read ENV['NETWORK_INTERFACES_DATFILE']
+      YAML.load File.read ENV['NETWORK_INTERFACES_DATFILE']
 else
   all_interfaces_saved = []
 end
