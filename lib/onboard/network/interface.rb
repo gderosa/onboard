@@ -1,4 +1,5 @@
 require 'timeout'
+require 'yaml'
 
 require 'onboard/network/interface/mac'
 require 'onboard/network/interface/ip'
@@ -262,8 +263,8 @@ class OnBoard
 
         def save
           self_getAll = self.getAll
-          File.open(OnBoard::CONFDIR + '/network/interfaces.dat', 'w') do |f|
-            Marshal.dump self_getAll, f
+          File.open(OnBoard::CONFDIR + '/network/interfaces.yml', 'w') do |f|
+            YAML.dump self_getAll, f
           end
           #File.open(OnBoard::CONFDIR + '/network/interfaces.dbg.yaml', 'w') do |f|
           #  YAML.dump self_getAll, f
@@ -278,8 +279,8 @@ class OnBoard
           else 
 	          begin
               File.open(
-                  OnBoard::CONFDIR + '/network/interfaces.dat', 'r') do |f|
-                saved_ifaces =  Marshal.load f
+                  OnBoard::CONFDIR + '/network/interfaces.yml', 'r') do |f|
+                saved_ifaces =  YAML.load f
               end
             rescue # invalid or non-existent dat file? skip!
               return

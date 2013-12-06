@@ -14,7 +14,8 @@ autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
 autoload :Escape,     'escape'
-autoload :Erubis,     'erubis' 
+autoload :Erubis,     'erubis'
+autoload :YAML,       'yaml'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/extensions/openssl'
@@ -54,11 +55,11 @@ class OnBoard
           @@all_vpn = getAll() unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
           File.open(
-              CONFDIR + '/vpn.dat', 
+              CONFDIR + '/vpn.yml', 
               'w'
           ) do |f|
             f.write(
-              Marshal.dump(
+              YAML.dump(
                 @@all_vpn.map do |vpn| 
                   vpn_data_internal = vpn.instance_variable_get(:@data_internal)
                   {
@@ -73,10 +74,10 @@ class OnBoard
         end
 
         def self.restore
-          datafile = DATADIR + '/etc/config/network/openvpn/vpn/vpn.dat'
+          datafile = DATADIR + '/etc/config/network/openvpn/vpn/vpn.yml'
           return false unless File.readable? datafile
           current_VPNs = getAll()
-          Marshal.load(File.read datafile).each do |h|
+          YAML.load(File.read datafile).each do |h|
             if current_vpn = current_VPNs.detect{ |x| 
                 h[:process].portable_id == x.data['portable_id'] }
               next if current_vpn.data['running'] 
@@ -88,6 +89,14 @@ class OnBoard
             end
           end
         end
+
+        # This is basically useful to persist non-running VPN instances across
+        # web interface restarts (not system reboots).
+        def self.persist_current
+          File.open "#{CONFDIR}/vpn_current.yml", 'w' do |f|
+            f.write YAML.dump @@all_vpn
+          end
+        end
     
         # get info on running OpenVPN instances
         def self.getAll
@@ -97,8 +106,12 @@ class OnBoard
           @@all_vpn         = [] unless ( 
               class_variable_defined? :@@all_vpn and @@all_vpn)
 
+          if @@all_vpn.none? and File.readable? "#{CONFDIR}/vpn_current.yml"
+            @@all_vpn = YAML.load File.read "#{CONFDIR}/vpn_current.yml" # TODO: DRY
+          end
+
           @@all_vpn.each do |vpn|
-            vpn.set_not_running # ...until we'll find it actually running ;)
+            vpn.set_not_running # ...until we find it actually running ;)
           end
 
           `pidof openvpn`.split.each do |pid|
@@ -169,7 +182,7 @@ class OnBoard
           cmdline << '--setenv' << 'PATH' << ENV['PATH']
           cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
           cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' << 
-              OnBoard::CONFDIR + '/network/interfaces.dat' 
+              OnBoard::CONFDIR + '/network/interfaces.yml' 
           cmdline << '--setenv' << 'STATIC_ROUTES_DATFILE' << 
               OnBoard::CONFDIR + '/network/routing/static_routes'          
           cmdline << '--persist-tun'
