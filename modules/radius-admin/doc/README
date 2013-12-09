@@ -1,13 +1,21 @@
-This module just read/writes into the FreeRADIUS MySQL database. It's somewhat
+This module just reads/writes into the FreeRADIUS MySQL database. It's somewhat
 inspired to the PHP project DaloRADIUS ( http://daloradius.com/ ). 
 /etc/freeradius must be pre-configured to make this module work. Of course,
-it may also manage a remote radius server.
+it may also manage data on a remote server.
 
 DEPENDENCIES:
-# gem install sequel mysql
 
-MODULE DEPENDENCIES:
-radius-admin
-mail
+Distro packages (Debian - please find equivalent for your distribution):
+
+  apt-get install freeradius freeradius-mysql
+
+Gems:
+
+  gem install sequel mysql
+
+OnBoard modules:
+
+* radius-admin
+* mail
 
 
