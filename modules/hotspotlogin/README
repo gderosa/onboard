@@ -1,0 +1,5 @@
+You need to install the hotspotlogin Ruby gem:
+
+  gem install hotspotlogin uuid
+
+More useful information to deploy this module is under doc/ .
