@@ -4,6 +4,7 @@
   # TODO: Include PCI/USB lists in "objects" passed by Controller ?
   require 'onboard/hardware/lspci'
   require 'onboard/hardware/lsusb'
+  require 'onboard/hardware/serial'
 
   passthrough_highlight = 'superhighlight'
 
@@ -527,6 +528,15 @@
     (No USB devices found)
   <% end %>
   <!-- END USB PASSTHROUGH -->
+
+  <h4>Serial ports</h4>
+  <%
+    OnBoard::Hardware::Serial.ls.each do |dev|
+  %>
+    <input type="checkbox" name="serial[<%= dev %>]"/><code><%= dev %></code> <span class="lowlight">|</span>
+  <%
+    end
+  %>
 
 </div> <!-- tabs-config-passthrough -->
 
