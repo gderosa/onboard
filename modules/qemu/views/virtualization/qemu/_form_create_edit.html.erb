@@ -533,7 +533,7 @@
   <%
     OnBoard::Hardware::Serial.ls.each do |dev|
   %>
-    <input type="checkbox" name="serial[<%= dev %>]"/><code><%= dev %></code> <span class="lowlight">|</span>
+  <input type="checkbox" name="serial[<%= dev %>]"<%= ' checked' if vm.config['-serial'].include? dev %>/><code class="<%= 'superhighlight' if vm.config['-serial'].include? dev %>"><%= dev %></code> <span class="lowlight">|</span>
   <%
     end
   %>
