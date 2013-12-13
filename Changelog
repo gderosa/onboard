@@ -1,3 +1,16 @@
+2013.12
+
+* Persistence: Marshal -> YAML for portability (core and openvpn)
+	* In addition, persist non running openvpn instances across web
+	interface restarts
+
+* AAA: doc improvements (Thanks to Francesco Tripiciano - www.fusiontec.it)
+
+* QEMU: 
+	* Advanced configuration tab: Run as root and Edit cmdline
+	* Host serial ports support
+	* doc fixes
+
 2013.11
 
 * QEMU:
