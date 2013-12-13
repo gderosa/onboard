@@ -13,15 +13,17 @@ Copy [this directory]/doc/sysadm/examples/etc/modprobe.d/kvm-intel-nested.conf
 into your host's /etc/modprobe.d/ to enable Nested VMX. More info at
 https://github.com/torvalds/linux/blob/master/Documentation/virtual/kvm/nested-vmx.txt
 
-Now, USB disk/pendrive support is enabled. If you want to *boot* from
-such a device:
+THIS HAS BEEN DISABLED, MAYBE WILL BE RE-ENABLED SOON?
+(But you can pass-through a real USB device if you wish):
+		Now, USB disk/pendrive support is enabled. If you want to *boot* from
+		such a device:
 
-  * you need a recent qemu-kvm release (and related/included BIOSes): 
-    * fine: qemu-kvm-1.2.0 compiled from source;
-    * bad:  qemu-kvm-1.0   from Ubuntu package;
-  * you must use the boot menu (press F12) and choose the USB device; 
-  * you might have to *wait* a bit, after bootloader screen (for example
-    with a Debian installer image).
+		  * you need a recent qemu-kvm release (and related/included BIOSes): 
+		    * fine: qemu-kvm-1.2.0 compiled from source;
+		    * bad:  qemu-kvm-1.0   from Ubuntu package;
+		  * you must use the boot menu (press F12) and choose the USB device; 
+		  * you might have to *wait* a bit, after bootloader screen (for example
+		    with a Debian installer image).
 
 
 === Other programs
