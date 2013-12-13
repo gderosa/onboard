@@ -4,6 +4,7 @@
   # TODO: Include PCI/USB lists in "objects" passed by Controller ?
   require 'onboard/hardware/lspci'
   require 'onboard/hardware/lsusb'
+  require 'onboard/hardware/serial'
 
   passthrough_highlight = 'superhighlight'
 
@@ -528,6 +529,15 @@
   <% end %>
   <!-- END USB PASSTHROUGH -->
 
+  <h4>Host serial ports</h4>
+  <%
+    OnBoard::Hardware::Serial.ls.each do |dev|
+  %>
+  <input type="checkbox" name="serial[<%= dev %>]"<%= ' checked' if vm and vm.config['-serial'].include? dev %>/><code class="<%= 'superhighlight' if vm and vm.config['-serial'].include? dev %>"><%= dev %></code> <span class="lowlight">|</span>
+  <%
+    end
+  %>
+
 </div> <!-- tabs-config-passthrough -->
 
 <div id="tabs-config-net">
@@ -605,18 +615,25 @@
   </table>
 </div> <!-- tabs-config-net -->
 
-  <% if vm and settings.environment == :development %>
-  <h3>Experts/Development</h3>
-  <h4>Edit/Force QEMU command line <input style="vertical-align:-0.3ex" type="checkbox" name="edit_the_command_line"<%= ' checked' if vm and vm.config.force_command_line %>></h4>
-  <textarea name="command_line" style="width:100%; height:11em"><%
-    %><%= vm.format_cmdline if vm %><%
-  %></textarea>
-  
-  <!-- not really necessary, using sudo qemu -runas onboard -->
-  <div style="">
-    <h4>Run as root</h4>
-    <input type="checkbox" name="run_as_root" <%= 'checked' if vm and not vm.config.drop_privileges? %>/>
-  </div>
+  <% if vm %>
+    
+    <div id="tabs-config-advanced">
+      <h3>Experts/Development</h3>
+      
+      <!-- sudo qemu -runas onboard might not suffice... -->
+      <h4>
+        Run as root
+        <input type="checkbox" name="run_as_root" <%= 'checked' if vm and not vm.config.drop_privileges? %>/>
+      </h4>
+
+      <h4>Edit/Force QEMU command line <input style="vertical-align:-0.3ex" type="checkbox" name="edit_the_command_line"<%= ' checked' if vm and vm.config.force_command_line %>></h4>
+      <p class="optinfo warn" style="margin-top:1ex">This does <em>not</em> include <code>sudo</code>, <code>-runas</code> and possibly <code>-S</code> .</p>
+      <textarea name="command_line" style="width:100%; height:11em"><%
+        %><%= vm.format_cmdline if vm %><%
+      %></textarea>
+      
+    </div>
+
   <% end %>
 
   

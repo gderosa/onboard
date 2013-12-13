@@ -72,13 +72,11 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 '-k'          => h[:http_params]['k'],
                 '-vga'        => h[:http_params]['vga'],
                 '-soundhw'    => h[:http_params]['soundhw'],
-                #'-drive'     => [
-                #  {
-                #    'file'     => h[:http_params]['disk'], 
-                #    'media'    => 'disk',
-                #    'index'    => 0
-                #  }
-                #],
+                '-serial'     => (
+                      h[:http_params]['serial'].respond_to?(:keys)  ? 
+                      h[:http_params]['serial'].keys                : 
+                      []
+                ),
                 '-daemonize'  => true,
                 '-monitor'    => {
                   'unix'        => "#{VARRUN}/qemu-#{uuid_short}.sock",

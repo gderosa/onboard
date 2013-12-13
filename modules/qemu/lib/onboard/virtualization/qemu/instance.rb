@@ -215,6 +215,13 @@ class OnBoard
             cmdline << '-net' << ' ' << net_args.join(',') << ' '
           end
 
+          # (Host) serial ports
+          if opts['-serial'].respond_to? :each
+            opts['-serial'].each do |device|
+              cmdline << '-serial' << ' ' << device << ' '
+            end
+          end
+
           # Useful defaults: TODO? make them configurable?
           #
           # Boot order: CDROM, disk (Network would be 'n')
@@ -595,6 +602,9 @@ class OnBoard
         def screendump(format='ppm')
           ppmfile = "#{VARRUN}/qemu-#{uuid_short}.ppm"
           @monitor.sendrecv "screendump #{ppmfile}"
+          unless File.readable? ppmfile
+            System::Command.send_command "chown #{Process.uid} #{ppmfile}", :sudo
+          end
           case format
           when 'png'
             pngfile = "#{VARRUN}/qemu-#{uuid_short}.png"
