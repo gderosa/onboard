@@ -215,6 +215,13 @@ class OnBoard
             cmdline << '-net' << ' ' << net_args.join(',') << ' '
           end
 
+          # (Host) serial ports
+          if opts['-serial'].respond_to? :each
+            opts['-serial'].each do |device|
+              cmdline << '-serial' << ' ' << device << ' '
+            end
+          end
+
           # Useful defaults: TODO? make them configurable?
           #
           # Boot order: CDROM, disk (Network would be 'n')
