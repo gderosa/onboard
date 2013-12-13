@@ -117,6 +117,10 @@ class OnBoard
           vm.respond_to? :screendump                  and 
           vm.running?                                 and 
           screendump = vm.screendump(params[:format])
+        # This is done inside vm.screendump, inlcluding (intermediate) ppm file
+        # unless File.readable? screendump
+        #   OnBoard::System::Command.send_command "chown #{Process.uid} #{screendump}", :sudo
+        # end
         send_file screendump 
       else
         not_found

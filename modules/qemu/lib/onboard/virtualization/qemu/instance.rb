@@ -602,6 +602,9 @@ class OnBoard
         def screendump(format='ppm')
           ppmfile = "#{VARRUN}/qemu-#{uuid_short}.ppm"
           @monitor.sendrecv "screendump #{ppmfile}"
+          unless File.readable? ppmfile
+            System::Command.send_command "chown #{Process.uid} #{ppmfile}", :sudo
+          end
           case format
           when 'png'
             pngfile = "#{VARRUN}/qemu-#{uuid_short}.png"
