@@ -532,8 +532,9 @@
   <h4>Host serial ports</h4>
   <%
     OnBoard::Hardware::Serial.ls.each do |dev|
+      checked = (vm and vm.config['-serial'] and vm.config['-serial'].include?(dev) )
   %>
-  <input type="checkbox" name="serial[<%= dev %>]"<%= ' checked' if vm and vm.config['-serial'].include? dev %>/><code class="<%= 'superhighlight' if vm and vm.config['-serial'].include? dev %>"><%= dev %></code> <span class="lowlight">|</span>
+      <input type="checkbox" name="serial[<%= dev %>]"<%= ' checked' if checked %>/><code class="<%= 'superhighlight' if checked %>"><%= dev %></code> <span class="lowlight">|</span>
   <%
     end
   %>
