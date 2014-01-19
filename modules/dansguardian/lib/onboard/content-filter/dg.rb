@@ -233,12 +233,17 @@ class OnBoard
       def to_yaml(*args); export.to_yaml(*args); end
 
       def save
-        File.open saverestore_file, 'w' do |f|
-          f.write YAML.dump (
-            {
-              :running => running? 
-            }
-          )
+        begin
+          File.open saverestore_file, 'w' do |f|
+            f.write YAML.dump (
+              {
+                :running => running? 
+              }
+            )
+          end
+        rescue Errno::ENOENT
+          write_all
+          retry
         end
       end
 
