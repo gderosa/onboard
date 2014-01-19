@@ -22,6 +22,10 @@ class OnBoard
         
         def need_writable_root!;  root.must_be_writable!; end
 
+        def mountpoint?(mntpt)
+          system "mountpoint -q #{mntpt}"
+        end
+
       end
   
     end
