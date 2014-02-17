@@ -139,8 +139,8 @@
       </td>
       <td style="text-align: center;">
         <% if logo and File.exists? logo %>
-          <% if logo_link and logo_link =~ /\S/ %><a style="border:none;" href="<%= logo_link %>" target="_blank"><% end %>
-              <img style="border:none;" src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
+          <% if logo_link and logo_link =~ /\S/ %><a class="img" href="<%= logo_link %>" target="_blank"><% end %>
+              <img src="/services/hotspotlogin/logo_preview?nocache=<%= UUID.generate %>"/>
           <% if logo_link and logo_link =~ /\S/ %></a><% end %>
         <% end %>
       </td>
