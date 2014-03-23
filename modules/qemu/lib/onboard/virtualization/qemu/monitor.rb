@@ -6,7 +6,11 @@ require 'onboard/extensions/logger'
 class OnBoard
   module Virtualization
     module QEMU
+
+      class MonitorError < RuntimeError; end
+
       class Monitor
+
 
         # TODO: make this class "abstract", moving most of its logic to
         # a fresh Monitor::HMP class (human monitor, as opposed to QMP)
@@ -59,10 +63,18 @@ class OnBoard
 
               end # UNIXSocket
             end # Timeout
-          rescue Timeout::Error, Errno::ECONNRESET, Errno::ECONNREFUSED
+          rescue \
+                  ::Timeout::Error, 
+                  ::Errno::ECONNRESET, 
+                  ::Errno::ECONNREFUSED, 
+                  ::Errno::ENOENT
             LOGGER.handled_error $! 
-            out << "[Monitor Error: #{$!}]" unless opts[:on_errors] == :silent 
-            raise if opts[:raise]
+            out << "[Monitor Error: #{$!}]" unless opts[:on_errors] == :silent
+            if opts[:raise] == :monitor
+              raise MonitorError, $!
+            elsif opts[:raise]
+              raise
+            end
           end
           if opts[:log] == :verbose  
             LOGGER.debug "qemu: Monitor socket at #{unix_path}"

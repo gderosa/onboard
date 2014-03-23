@@ -538,8 +538,18 @@ class OnBoard
         end
         alias acpi_powerdown powerdown
 
-        def quit
-          @monitor.sendrecv 'quit'
+        def quit(opts={:on_monitor_error => :kill})
+          begin
+            @monitor.sendrecv 'quit', :raise => :monitor
+          rescue MonitorError
+            if opts[:on_monitor_error] == :kill
+              kill
+            end
+          end
+        end
+
+        def kill
+          System::Command.send_command "kill -9 #{pid}", :sudo
         end
 
         def drive_eject(drive)
