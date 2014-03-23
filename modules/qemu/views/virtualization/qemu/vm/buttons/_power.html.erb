@@ -6,7 +6,7 @@
                   :title    =>
 'ACPI Shutdown (may require some time to cleanly power off)',
                   :value    => vm.uuid,
-                  :disabled => vm.snapshotting?
+                  :disabled => (vm.snapshotting? or not vm.monitor.works?)
                 )
               else
                 action_button(

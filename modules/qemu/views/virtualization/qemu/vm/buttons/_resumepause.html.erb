@@ -6,7 +6,7 @@
                     :name     => 'resume[uuid]', 
                     :title    => 'Resume from Pause',
                     :value    => vm.uuid,
-                    :disabled => vm.snapshotting?
+                    :disabled => (vm.snapshotting? or not vm.monitor.works?)
                   )
                 else
                   action_button(
@@ -14,7 +14,7 @@
                     :name     => 'pause[uuid]', 
                     :title    => 'Pause',
                     :value    => vm.uuid,
-                    :disabled => vm.snapshotting?
+                    :disabled => (vm.snapshotting? or not vm.monitor.works?)
                   ) 
                 end
               else
