@@ -549,7 +549,9 @@ class OnBoard
         end
 
         def kill
-          System::Command.send_command "kill -9 #{pid}", :sudo
+          # System::Command.send_command "kill -9 #{pid}", :sudo
+          p = OnBoard::System::Process.new pid
+          p.kill :sudo => true, :wait => true 
         end
 
         def drive_eject(drive)
