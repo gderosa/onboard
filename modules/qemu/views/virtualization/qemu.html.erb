@@ -86,8 +86,10 @@
             DRYing this with a partial is complicated by heavy usage of
             colspan, rowspan, etc.
           %>
-          <% show_saverestore = ( 
-              vm.quick_snapshots? and vm.running? or vm.config['-loadvm'] ) %> 
+          <% show_saverestore = vm.running?             ?
+                  vm.monitor.works? && vm.quick_snapshots?  :
+                  vm.config['-loadvm']
+          %>          
           <% action_button_rowspan = 1 %>
           <td class="button button_left" rowspan="<%= action_button_rowspan %>">
             <%=

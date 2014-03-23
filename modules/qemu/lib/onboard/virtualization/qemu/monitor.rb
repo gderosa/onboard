@@ -84,6 +84,15 @@ class OnBoard
           return out
         end
 
+        def works?
+          begin
+            sendrecv '', :raise => :monitor
+            return true
+          rescue MonitorError
+            return false
+          end
+        end
+
       end
     end
   end
