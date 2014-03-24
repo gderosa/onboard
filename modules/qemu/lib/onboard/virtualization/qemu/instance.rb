@@ -288,9 +288,10 @@ class OnBoard
           # is passed-through. (assertion failed)
           unless opts.include? :paused
             if @config.cmd['opts']['-loadvm']
-              start :paused, *opts
+              msg = start :paused, *opts
               drives # a way to wait for QMP/Monitor sockets ready
-              resume
+              msg[:resume_monitor_out] = resume
+              return msg
             end
           end
 
