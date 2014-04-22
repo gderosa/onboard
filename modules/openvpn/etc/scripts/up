@@ -34,8 +34,24 @@ ifname = ARGV[0]
 all_interfaces = OnBoard::Network::Interface.getAll
 
 if File.exists? ENV['NETWORK_INTERFACES_DATFILE']
-  all_interfaces_saved = 
-      YAML.load File.read ENV['NETWORK_INTERFACES_DATFILE']
+  begin
+    all_interfaces_saved = 
+        YAML.load File.read ENV['NETWORK_INTERFACES_DATFILE']
+  rescue Exception# Psych::SyntaxError (and others?)
+    # Handle the case when you get a .dat (Marshal) instead of
+    # a .yml file (legacy stuff)
+    if ENV['NETWORK_INTERFACES_DATFILE'] =~ /^(.+)\.([^\.]+)$/
+      noext, ext = $1, $2
+      unless ext =~ /^ya?ml$/i
+        ymlfile = "#{noext}.yml"
+        if File.readable? ymlfile
+          ENV['NETWORK_INTERFACES_DATFILE'] = ymlfile
+          retry
+        end
+      end
+    end
+    raise # if you reach this point, the problem has not been handled
+  end
 else
   all_interfaces_saved = []
 end
