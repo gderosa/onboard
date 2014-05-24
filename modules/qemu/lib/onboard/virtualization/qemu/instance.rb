@@ -19,6 +19,8 @@ class OnBoard
     module QEMU
       class Instance
 
+        class AlreadyRunning < RuntimeError; end
+
         SAVEVM_TIMEOUT = 0 # 0 means infinite...
         # Very slow with qcow2 and cache=writethrough;
         # as opposite, it take a few seconds with cache=unsafe :-P
@@ -82,11 +84,12 @@ class OnBoard
           exe = Config::Common.get['exe'] 
           cmdline = ''
           cmdline << %Q{#{exe} } 
+          # NOTE: -loadvm has been excluded from the below for safety reason.
+          # NOTE: A (full VM) snapshot will be actually loaded within #start
           %w{
             -uuid 
             -name 
             -m
-            -loadvm
             -vnc
             -k
             -vga
@@ -282,14 +285,32 @@ class OnBoard
         def start(*opts)
           # WARNING: opts is also a sugar method of this class...
 
+          raise AlreadyRunning if running?
+
           QEMU.cleanup
 
           # Circumvent a possible QEMU bug (as of 1.6.1) when a USB device
           # is passed-through. (assertion failed)
+          #
+          # Also useful to implement a safety mechanism before -loadvm .
           unless opts.include? :paused
             if @config.cmd['opts']['-loadvm']
               msg = start :paused, *opts
               drives # a way to wait for QMP/Monitor sockets ready
+              if opts()['-loadvm'] =~ /\S/
+                # Unattended / non-interactive application of snapshots
+                # may result in loss of recent data, so a snapshot of what would be
+                # booted without applying -loadvm is taken.
+                #
+                # A full vm snapshot indeed, so to get advantage of the speed of
+                # cache=unsafe (although the purpose of this whole machinery - safety
+                # itself - might be questioned then).
+                #
+                # TODO: disk-only snaps might be faster on recent versions of qemu!
+                # TODO: do a siak-only snap when vm is still not running?
+                savevm "boot-from-unchanged-disk-#{`date +%Y%m%d_%H%M`}"
+                loadvm opts()['-loadvm']
+              end
               msg[:resume_monitor_out] = resume
               return msg
             end

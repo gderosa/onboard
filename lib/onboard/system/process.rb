@@ -52,7 +52,7 @@ class OnBoard
           loop do
             sleep 0.1
             redo if File.exists? "/proc/#{@pid}"
-            redo if `pidof #{@cmdline[0]}`.split.include?(@pid.to_s)
+            redo if @cmdline and `pidof #{@cmdline[0]}`.split.include?(@pid.to_s)
             break
           end
           sleep 0.1
