@@ -1,3 +1,7 @@
+2014.05
+
+* QEMU: preserve data from unwanted application of stale snapshots
+
 2013.12
 
 * Persistence: Marshal -> YAML for portability (core and openvpn)
