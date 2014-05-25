@@ -312,6 +312,7 @@ class OnBoard
                 loadvm opts()['-loadvm']
               end
               msg[:resume_monitor_out] = resume
+              loadvm_on_next_boot false
               return msg
             end
           end
@@ -331,6 +332,10 @@ class OnBoard
               # of the process wich sets ulimit, so ulimit must me called 
               # in the same shell which launches qemu. For that reason it 
               # couldn't be moved to Instance#prepare_pci_passthrough .
+
+            loadvm_on_next_boot false unless opts.include? :paused
+              # not now, but on #resume, the "last" snapshot will be "outdated"
+
             setup_networking # bridge just-created TAP(s) 
           ensure
             fix_permissions
@@ -540,7 +545,7 @@ class OnBoard
         end
 
         def resume
-          @monitor.sendrecv 'cont'
+          @monitor.sendrecv 'cont' and loadvm_on_next_boot false
         end
 
         def loadvm_on_next_boot(name=:__not_given__)
