@@ -8,6 +8,9 @@
 # Description:    DHCP and DNS server
 ### END INIT INFO
 
+# Slight modifications to Debian init script.
+# Namely, removal of --local-service, at the time of writing.
+
 set +e   # Don't exit on error status
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -102,7 +105,14 @@ fi
 # have no effect, but for otherwise-unconfigured installations, it stops dnsmasq
 # from being vulnerable to DNS-reflection attacks.
 
-DNSMASQ_OPTS="$DNSMASQ_OPTS --local-service"
+# This security thing adopted by Debian is actually annoying.
+#
+# As per our tests, it disallow queries from vm guests through
+# a TAP bridge to a dnsmasq server running in the host, unless
+# you list the interface explicitely in dnsmasq's command
+# line or configuration.
+#
+# DNSMASQ_OPTS="$DNSMASQ_OPTS --local-service"
 
 start()
 {
