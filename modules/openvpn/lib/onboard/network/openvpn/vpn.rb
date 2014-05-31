@@ -93,6 +93,7 @@ class OnBoard
         # This is basically useful to persist non-running VPN instances across
         # web interface restarts (not system reboots).
         def self.persist_current
+          FileUtils.mkdir_p CONFDIR unless File.exists? CONFDIR
           File.open "#{CONFDIR}/vpn_current.yml", 'w' do |f|
             f.write YAML.dump @@all_vpn
           end
