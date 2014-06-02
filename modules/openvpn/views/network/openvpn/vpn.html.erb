@@ -2,9 +2,10 @@
   require 'onboard/extensions/hash'
   require 'onboard/extensions/ipaddr'
   require 'onboard/crypto/ssl'
+  require 'onboard/network/bridge'
 
-  ssl = OnBoard::Crypto::SSL.getAll
-
+  ssl     = OnBoard::Crypto::SSL.getAll
+  bridges = OnBoard::Network::Bridge.get_all
 %>
 
 <style type="text/css">
@@ -36,7 +37,7 @@
 
 <%
   common_name_description = "Information contained in the cryptographic certificate for the VPN"
-  ifname_form_field = '<input size="15" maxlength="15" type="text" class="rwtext" name="dev"/>'
+  ifname_form_field = '<input size="12" maxlength="15" type="text" class="rwtext" name="dev"/>'
 %>
 <h3>Running/Configured VPNs</h3>
 <table>
@@ -82,6 +83,7 @@
         </th>
         <th colspan="3">Real Network</th>
         <th colspan="2">Virtual Interface</th>
+        <th rowspan="1">Bridge to</th>
         <th colspan="2">Options</th>
       </tr>
       <tr>
@@ -91,6 +93,9 @@
         <th colspan="2">Server</th>
         <th rowspan="2">Name</th>
         <th rowspan="2">Type</th>
+        <th rowspan="2">
+          <div style="text-align:center" class="optinfo">(TAP only)</div>
+        </th>
         <th rowspan="2">Demand Server-type Certificate for the Server?</th>
         <th rowspan="2">LZO Compression?</th>
       </tr>
@@ -170,6 +175,14 @@
             )
           %>
         </td>
+        <td rowspan="<%= rowspan %>">
+          <select name="bridge_to" style="width:7.5em">
+          <option></option>
+          <% bridges.each do |br| %>
+            <option value="<% br.name %>"><%= br.name %></option>    
+          <% end %>
+          </select>
+        </td>
         <td rowspan="<%= rowspan %>" style="text-align:center;">
           <input type="checkbox" name="ns-cert-type_server" checked/><br/>
           <em>(recommended)</em>
@@ -200,7 +213,7 @@
         <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
           (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
         </td>
-        <td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td>
       </tr>
     </tbody>
   </table>
