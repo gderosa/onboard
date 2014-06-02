@@ -84,7 +84,7 @@
         <th colspan="3">Real Network</th>
         <th colspan="2">Virtual Interface</th>
         <th rowspan="1">Bridge to</th>
-        <th colspan="1">Options</th>
+        <th colspan="2">Options</th>
       </tr>
       <tr>
         <th rowspan="2">Certificate (must have Private Key)</th>
@@ -96,7 +96,7 @@
         <th rowspan="2">
           <div style="text-align:center" class="optinfo">(TAP only)</div>
         </th>
-        <!-- <th rowspan="2">Demand Server-type Certificate for the Server?</th> -->
+        <th rowspan="2">Demand Server-type Certificate for the Server?</th> 
         <th rowspan="2">LZO Compression?</th>
       </tr>
       <tr>
@@ -107,7 +107,7 @@
     <tbody>
       <tr>
         <% rowspan = (params['failover'] || 1).to_i %>
-        <td rowspan="<%= rowspan %>">
+        <td style="text-align:center" rowspan="<%= rowspan %>">
           <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
         </td>
         <%
@@ -183,12 +183,10 @@
           <% end %>
           </select>
         </td>
-        <!--
         <td rowspan="<%= rowspan %>" style="text-align:center;">
           <input type="checkbox" name="ns-cert-type_server" checked/><br/>
           <em>(recommended)</em>
         </td>
-        -->
         <td rowspan="<%= rowspan %>" style="text-align: center;">
           <input type="checkbox" checked name="comp-lzo"/>
         </td>
@@ -210,12 +208,12 @@
           </td>
         </tr>
       <% end %>
-      <tr> <!-- a row to add more server -->
+      <tr> <!-- a row to add more servers -->
         <td></td><td></td><td></td>
         <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
           (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
         </td>
-        <td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td>
       </tr>
     </tbody>
   </table>
@@ -232,6 +230,7 @@
         </th>
         <th colspan="3">Real Network</th>
         <th colspan="3" rowspan="1">Virtual</th>
+        <th colspan="1" rowspan="3">Bridge to (TAP&nbsp;only)</th>
         <th rowspan="3">LZO<br/>Compression?</th>
       </tr>
       <tr>
@@ -241,12 +240,7 @@
         <th rowspan="2">Local address (optional)</th>
         <th rowspan="2">Local<br/>port</th>
         <th rowspan="2">
-          Network (Point-to-Point, IPv4 only)
-          <div class="optinfo">
-            If you choose Virtual Ethernet as Interface type, this field will be ignored.
-
-            Virtual ethernets will be configured just like ordinary network devices (<a href="/network/interfaces.html">here</a>)
-          </div>
+          Network (TUN&nbsp;only)
         </th>
         <th colspan="2">Interface</th>
       </tr>
@@ -257,14 +251,11 @@
     </thead>
     <tbody>
       <tr>
-        <td>
+        <td style="text-align:center">
           <button type="submit"><img alt="+" src="<%= icondir %>/<%= iconsize %>/actions/add.png"/></button>
         </td>
         <td>
           <select name="cert">
-            <% 
-              # ruby1.9 only
-            %>
             <% 
               selected = ssl['certs'].select do |k,v| 
                 v['private_key'] and !v['cert']['is_ca']
@@ -312,7 +303,7 @@
           <input type="text" class="rwtext" name="port" size="5" maxlength="5" value="1194"/>
         </td>
         <td>
-          <input style="width: 100%;" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/> 
+          <input style="width:15ex" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/> 
           <!-- <input style="width: 100%;" type="text" class="rwtext" name="server_net"/> -->
         </td>
         <td><%= ifname_form_field %></td>
@@ -325,6 +316,14 @@
               :format => 'html'
             )
           %>
+        </td>
+        <td>
+          <select name="bridge_to" style="width:7.5em">
+          <option></option>
+          <% bridges.each do |br| %>
+            <option value="<% br.name %>"><%= br.name %></option>
+          <% end %>
+          </select>
         </td>
         <td style="text-align: center;">
           <input type="checkbox" checked name="comp-lzo"/>
