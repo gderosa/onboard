@@ -13,6 +13,8 @@
 # STATIC_ROUTES_DATFILE
 #   saved output of "ip -[6|4] route show proto static"
 #
+# bridge_to
+#   (TAP only) add to bridge
 #
 # COMMAND LINE ARGUMENTS:
 #
@@ -30,6 +32,8 @@ require 'onboard/network/interface'
 require 'onboard/network/routing'
 
 ifname = ARGV[0]
+
+puts "PATH=#{ENV['PATH']}"
 
 all_interfaces = OnBoard::Network::Interface.getAll
 
@@ -64,6 +68,19 @@ OnBoard::Network::Interface.restore(
   :saved_interfaces => netifs_saved,
   :current_interfaces => netifs 
 )
+
+# For bridged TAP, implement our own persistence...
+if ENV['bridge_to'] =~ /\S/
+  br = OnBoard::Network::Bridge.get_all.find{|b| b.name == ENV['bridge_to']}
+  if br
+    OnBoard::System::Command.send_command \
+      "ip link set up dev #{ifname}",
+      :sudo
+    OnBoard::System::Command.send_command \
+      "brctl addif \"#{ENV['bridge_to']}\" #{ifname}",
+      :sudo
+  end
+end
 
 OnBoard::Network::Routing::Route.restore_static(
   :match => lambda { |line| line =~ /dev\s+#{ifname}/ },  # Linux iproute2 syntax 

@@ -181,6 +181,7 @@ class OnBoard
           cmdline << '--up' << UPSCRIPT
           # cmdline << '--up-restart'
           cmdline << '--setenv' << 'PATH' << ENV['PATH']
+	  cmdline << '--setenv' << 'bridge_to' << params['bridge_to']
           cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
           cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' << 
               OnBoard::CONFDIR + '/network/interfaces.yml' 
