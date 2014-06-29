@@ -326,12 +326,20 @@ class OnBoard
           cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
           begin
             prepare_pci_passthrough
-            msg = System::Command.run "sh -c 'ulimit -l unlimited ; #{cmdline}'", :sudo, :raise_Conflict
+            msg = System::Command.bgexec "sh -c 'ulimit -l unlimited ; #{cmdline}'", :sudo, :raise_Conflict
               # ``ulimit -l unlimited'' to circumvent problems with VFIO and 
               # limits on locking memory. The QEMU process must be child 
               # of the process wich sets ulimit, so ulimit must me called 
               # in the same shell which launches qemu. For that reason it 
               # couldn't be moved to Instance#prepare_pci_passthrough .
+              #
+              # bgexec (uses Threads) because qemu 2.0 doens't detach
+              # promptly when used on gluster://
+
+            sleep 1.5 # diiirty!
+              # TODO: better ways of waiting for pidfile, sockets and
+              # the TAP interface to be ready; provisionally, sleeping
+              # for 1.5 seconds looks wise
 
             loadvm_on_next_boot false unless opts.include? :paused
               # not now, but on #resume, the "last" snapshot will be "outdated"
