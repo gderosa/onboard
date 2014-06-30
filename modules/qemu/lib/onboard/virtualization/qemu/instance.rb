@@ -10,14 +10,18 @@ rescue Gem::LoadError
 end
 autoload :Magick, 'RMagick'
 
+require 'onboard/util'
 require 'onboard/extensions/process'
 require 'onboard/extensions/string'
 require 'onboard/system/command'
+require 'onboard/network/interface'
 
 class OnBoard
   module Virtualization
     module QEMU
       class Instance
+
+        include OnBoard::Util
 
         class AlreadyRunning < RuntimeError; end
 
@@ -247,9 +251,16 @@ class OnBoard
           return cmdline
         end
 
-        def setup_networking
+        def setup_networking(*opts)
           uid = Process.uid
           @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap| 
+            if opts.include? :wait
+              wait_for do
+                OnBoard::Network::Interface.getAll_layer2.find do |i|
+                  i.name == tap['ifname']
+                end
+              end
+            end
             # TODO: use OnBoard Network library
             System::Command.run( 
                 "ip link set up dev #{tap['ifname']}",
@@ -263,9 +274,27 @@ class OnBoard
           end
         end
 
-        def fix_permissions
+        def runfiles
+          [
+            opts['-pidfile'],
+            opts['-monitor'] && opts['-monitor']['unix'],
+            opts['-qmp'] && opts['-qmp']['unix']
+          ]
+          .select do |file|
+            file
+          end
+        end
+
+        def fix_permissions(*opts)
           uid = Process.uid
           gid = Process.gid
+          if opts.include? :wait
+            runfiles.each do |file|
+              wait_for do
+                File.exists? file
+              end
+            end
+          end
           System::Command.run(
             "chown #{uid}:#{gid} #{VARRUN}/qemu-#{uuid_short}.*",
             :sudo
@@ -336,17 +365,13 @@ class OnBoard
               # bgexec (uses Threads) because qemu 2.0 doens't detach
               # promptly when used on gluster://
 
-            sleep 1.5 # diiirty!
-              # TODO: better ways of waiting for pidfile, sockets and
-              # the TAP interface to be ready; provisionally, sleeping
-              # for 1.5 seconds looks wise
-
             loadvm_on_next_boot false unless opts.include? :paused
               # not now, but on #resume, the "last" snapshot will be "outdated"
 
-            setup_networking # bridge just-created TAP(s) 
+            setup_networking :wait
+              # bridge just-created TAP(s)
           ensure
-            fix_permissions
+            fix_permissions :wait
           end
           # setup_networking
           return msg
