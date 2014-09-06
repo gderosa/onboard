@@ -1,3 +1,8 @@
+2014.06.02
+
+* YAML fixes in Network::Interface and IP:
+	* local persistance, NOT data export, save as Ruby objects!
+
 2014.06.01
 
 * OpenVPN fixes:
