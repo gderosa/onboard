@@ -1,3 +1,9 @@
+2014.06.01
+
+* OpenVPN fixes:
+	* get rid of Zippy unmaintained incompatibilities
+	* consolidate YAML as internal persistance, NOT data export
+
 2014.06
 
 * OpenVPN: bridge persistence
