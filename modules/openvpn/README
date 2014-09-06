@@ -12,5 +12,5 @@ This module depends on the module "easy-rsa".
 
 GEMS:
 
-gem install uuid zippy archive-tar-minitar --no-ri --no-rdoc
+gem install uuid rubyzip archive-tar-minitar --no-ri --no-rdoc
 

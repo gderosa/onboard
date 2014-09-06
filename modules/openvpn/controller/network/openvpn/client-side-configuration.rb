@@ -1,8 +1,10 @@
-require 'zlib'
+require 'rubygems'
 require 'stringio'
 require 'facets/hash'
 require 'archive/tar/minitar'
-require 'zippy'
+require 'zlib'
+gem 'rubyzip', '>= 1.0.0'
+require 'zip'
 require 'sinatra/base'
 
 class OnBoard
@@ -107,10 +109,15 @@ class OnBoard
       
       case requested_file_extension
       when 'zip'
-        zip_h = {}
-        files.each{|file_h| zip_h[file_h[:name]] = file_h[:content]} 
+        zout = StringIO.new
+        Zip::OutputStream.write_buffer(zout) do |zin|
+          files.each do |file_h|
+            zin.put_next_entry file_h[:name]
+            zin.write file_h[:content]
+          end
+        end
         content_type 'application/zip'
-        Zippy.new(zip_h).data 
+        zout.string
       when 'tgz', 'tar.gz' # sadly, there's nothing like Zippy for tar.gz
         content_type 'application/x-gzip'
         StringIO.open do |sio|
