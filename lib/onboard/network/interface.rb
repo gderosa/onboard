@@ -549,7 +549,7 @@ class OnBoard
       alias data to_h
 
       def to_json(*a); to_h.to_json(*a); end
-      def to_yaml(*a); to_h.to_yaml(*a); end
+      # def to_yaml(*a); to_h.to_yaml(*a); end # save as object
      
       private
 

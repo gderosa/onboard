@@ -115,7 +115,7 @@ class OnBoard
         alias data to_h
 
         def to_json(*a); to_h.to_json(*a); end
-        def to_yaml(*a); to_h.to_yaml(*a); end
+        # def to_yaml(*a); to_h.to_yaml(*a); end # save as an object!
 
         # Detection of invalid IP addresses is too SLOW in the standard 
         # IPAddr library, so we implemented our own check. # TODO such a
