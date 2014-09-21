@@ -255,7 +255,6 @@ class OnBoard
           uid = Process.uid
           @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap| 
             if opts.include? :wait
-              # TODO TODO TODO: Timeout!!
               wait_for do
 	        System::Command.run( 
                   "ip link set up dev #{tap['ifname']}",
