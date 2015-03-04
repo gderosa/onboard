@@ -19,8 +19,8 @@ class OnBoard
                 :password             => (conf.password if conf.password =~ /\S/),
                 :authentication       => (:plain        if conf.username =~ /\S/),
                 :enable_starttls_auto => (conf.starttls =~ /on|yes|true/i),
-		:openssl_verify_mode  => OpenSSL::SSL::VERIFY_NONE
-		  # Unsecure, but hostnames often don't match...
+                :openssl_verify_mode  => OpenSSL::SSL::VERIFY_NONE
+                  # Unsecure, but hostnames often don't match...
               }
               # p smtp_h # DEBUG
               delivery_method :smtp, smtp_h
