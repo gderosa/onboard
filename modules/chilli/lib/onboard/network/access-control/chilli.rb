@@ -56,7 +56,12 @@ class OnBoard
             pid = pid_str.to_i
             ary << new( # new Chilli object
               :process => OnBoard::System::Process.new(pid)
-            ) if all_pids_from_pidfiles.include? pid
+            ) # if all_pids_from_pidfiles.include? pid
+              #
+              # The above has been commented out in order to handle pidfile
+              # mismatches that may happen in real world (after abrupt system
+              # exits etc.). We want to be able to detect processes who have
+              # not a correct pidfile, terminate them, start new ones etc.
           end
           # may be not running, but a configuration files exists
           Dir.glob(CURRENT_CONF_GLOB).each do |conffile|
