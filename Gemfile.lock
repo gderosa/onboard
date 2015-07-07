@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     archive-tar-minitar (0.5.2)
+    cronedit (0.3.0)
     daemons (1.2.3)
     erubis (2.7.0)
     eventmachine (1.0.7)
@@ -43,6 +44,7 @@ PLATFORMS
 
 DEPENDENCIES
   archive-tar-minitar
+  cronedit
   erubis
   facets
   hierarchical_menu
