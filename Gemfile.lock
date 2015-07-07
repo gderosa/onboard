@@ -4,6 +4,7 @@ GEM
     daemons (1.2.3)
     erubis (2.7.0)
     eventmachine (1.0.7)
+    facets (3.0.0)
     hierarchical_menu (0.1.4)
       rubytree (>= 0.8.0)
     json (1.8.3)
@@ -39,6 +40,7 @@ PLATFORMS
 
 DEPENDENCIES
   erubis
+  facets
   hierarchical_menu
   locale
   sinatra
