@@ -3,6 +3,11 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib'
 
 require 'rubygems'
+begin
+  require 'bundler/setup'
+rescue LoadError
+  warn 'Warning: Not leveraging Bundler -- is it installed?'
+end
 require 'find'
 require 'logger'
 require 'etc'
