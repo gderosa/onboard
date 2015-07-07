@@ -31,7 +31,7 @@ Sinatra 'development' environment.
 Software requirements for "core" (check individual directories under modules/
 for module-specific, additional requirements): 
 
-* ruby 1.9.2 (currently tested with 1.9.3)
+* ruby >= 2.0.0
 * sudo
 * iproute2
 * iptables (with proper kernel support)
@@ -50,16 +50,12 @@ for module-specific, additional requirements):
 
 Gems:
 
-(some gems are written in C or C++ , so you need a reasonably complete 
-C/C++ build environment; and, if you installed a pre-packaged ruby, you
-will need header files from a package named ruby-dev or something alike)
+    gem install bundler
 
-gem install erubis rack rubytree sinatra i18n_data locale thin r18n-core sinatra-r18n escape facets hierarchical_menu uuid --no-ri --no-rdoc
+    bundle install
 
-Gem version specific requirements:
-
-  * facets            >= 2.9.0
-  * hierarchical_menu >= 0.1.4
+Please note there might still be module-specific dependencies, check
+documentation of individual modules to troubleshoot.
 
 --
 

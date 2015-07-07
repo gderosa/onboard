@@ -1,0 +1,60 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    archive-tar-minitar (0.5.2)
+    cronedit (0.3.0)
+    daemons (1.2.3)
+    erubis (2.7.0)
+    eventmachine (1.0.7)
+    facets (3.0.0)
+    hierarchical_menu (0.1.4)
+      rubytree (>= 0.8.0)
+    i18n_data (0.7.0)
+    json (1.8.3)
+    locale (2.1.1)
+    macaddr (1.7.1)
+      systemu (~> 2.6.2)
+    r18n-core (2.0.4)
+    rack (1.6.4)
+    rack-protection (1.5.3)
+      rack
+    rubytree (0.9.6)
+      json (~> 1.8)
+      structured_warnings (~> 0.2)
+    rubyzip (1.1.7)
+    sinatra (1.4.6)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
+    sinatra-r18n (2.0.4)
+      r18n-core (= 2.0.4)
+      sinatra (>= 1.3)
+    structured_warnings (0.2.0)
+    systemu (2.6.5)
+    thin (1.6.3)
+      daemons (~> 1.0, >= 1.0.9)
+      eventmachine (~> 1.0)
+      rack (~> 1.0)
+    tilt (2.0.1)
+    uuid (2.3.8)
+      macaddr (~> 1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  archive-tar-minitar
+  cronedit
+  erubis
+  facets
+  hierarchical_menu
+  i18n_data
+  locale
+  rubyzip
+  sinatra
+  sinatra-r18n
+  thin
+  uuid
+
+BUNDLED WITH
+   1.10.5

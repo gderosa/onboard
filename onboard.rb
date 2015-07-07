@@ -3,6 +3,11 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib'
 
 require 'rubygems'
+begin
+  require 'bundler/setup'
+rescue LoadError
+  warn 'Warning: Not leveraging Bundler -- is it installed?'
+end
 require 'find'
 require 'logger'
 require 'etc'
@@ -25,7 +30,7 @@ end
 
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2014.06.02'
+  VERSION           = '2015.07'
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
