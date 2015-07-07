@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'thin' 
 require 'sinatra/base'
-require 'erubis'
+require 'tilt/erubis'
 
 require 'onboard/extensions/sinatra/base'
 require 'onboard/extensions/sinatra/templates'
