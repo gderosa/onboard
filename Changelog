@@ -1,3 +1,14 @@
+2015.07
+
+* Use Bundler
+
+* chilli: handle pidfile mismatches
+
+* mail: relax tls hostname check
+	* due to heavy use of customer domain names (with ISP cert)
+
+* QEMU: waiting mechanism fot TAP interface to show up
+
 2014.06.02
 
 * YAML fixes in Network::Interface and IP:
