@@ -7,6 +7,13 @@ __onboard_lib__ = File.realpath File.join __dir__, '../../../lib'
 $LOAD_PATH.unshift __onboard_lib__
 $LOAD_PATH.unshift __qemu_lib__
 
+require 'rubygems'
+begin
+  require 'bundler/setup'
+rescue LoadError
+  warn 'Warning: Not leveraging Bundler -- is it installed?'
+end
+
 # require 'pp' # DEBUG
 require 'fileutils'
 
