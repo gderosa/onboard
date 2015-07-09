@@ -20,7 +20,7 @@ gem 'chronic_duration'
 # gem 'rmagick', '~> 2.13.2'
 
 # Gems specific to modules. Use --without if you don't need them.
-group :hotspot do
+group :extras, :hotspot do
   gem 'hotspotlogin'
   # vendor_ruby prefered
   # gem 'sequel', '~> 4.15.0'
