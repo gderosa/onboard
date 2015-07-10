@@ -1,3 +1,4 @@
 *.swp
 .enable
 .disable
+.bundle/
