@@ -21,6 +21,9 @@ GEM
     locale (2.1.1)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
+    mail (2.6.3)
+      mime-types (>= 1.16, < 3)
+    mime-types (2.6.1)
     numerizer (0.1.1)
     r18n-core (2.0.4)
     rack (1.6.4)
@@ -51,20 +54,21 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  archive-tar-minitar
-  chronic_duration
-  cronedit
-  erubis
-  facets
-  hierarchical_menu
-  hotspotlogin
-  i18n_data
-  locale
-  rubyzip
-  sinatra
-  sinatra-r18n
-  thin
-  uuid
+  archive-tar-minitar!
+  chronic_duration!
+  cronedit!
+  erubis!
+  facets!
+  hierarchical_menu!
+  hotspotlogin!
+  i18n_data!
+  locale!
+  mail!
+  rubyzip!
+  sinatra!
+  sinatra-r18n!
+  thin!
+  uuid!
 
 BUNDLED WITH
    1.10.5

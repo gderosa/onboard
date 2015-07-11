@@ -1,0 +1,4 @@
+source "https://rubygems.org" do
+  # vendor_ruby prefered
+  # gem 'rmagick', '~> 2.13.2'
+end

@@ -1,28 +1,31 @@
-source "https://rubygems.org"
+MODULESDIR = File.dirname(__FILE__) + '/modules'
 
-# A few of the below are currently only required by certain modules.
-# However, they are of general use and may be required from within the
-# core as well at some point.
-gem 'hierarchical_menu'
-gem 'sinatra'
-gem 'locale'
-gem 'i18n_data'
-gem 'sinatra-r18n'
-gem 'thin'
-gem 'erubis'
-gem 'uuid'
-gem 'facets'
-gem 'archive-tar-minitar'
-gem 'rubyzip'
-gem 'cronedit'
-gem 'chronic_duration'
-# vendor_ruby prefered
-# gem 'rmagick', '~> 2.13.2'
+source "https://rubygems.org" do
+  # A few of the below are currently only required by certain modules.
+  # However, they are of general use (and perhaps not too heavyweight)
+  # and may be required by the core as well at some point.
+  gem 'hierarchical_menu'
+  gem 'sinatra'
+  gem 'locale'
+  gem 'i18n_data'
+  gem 'sinatra-r18n'
+  gem 'thin'
+  gem 'erubis'
+  gem 'uuid'
+  gem 'facets'
+  gem 'archive-tar-minitar'
+  gem 'rubyzip'
+  gem 'cronedit'
+  gem 'chronic_duration'
+  gem 'mail'
+end
 
-# Gems specific to modules. Use --without if you don't need them.
-group :extras, :hotspot do
-  gem 'hotspotlogin'
-  # vendor_ruby prefered
-  # gem 'sequel', '~> 4.15.0'
-  # gem 'mysql', '~> 2.9.1'
+Dir.foreach(MODULESDIR) do |mod|
+  next if ['..', '.'].include? mod 
+  gemfile = "#{MODULESDIR}/#{mod}/Gemfile"
+  if File.exists? gemfile
+    group mod.to_sym do
+      eval_gemfile gemfile
+    end
+  end
 end
