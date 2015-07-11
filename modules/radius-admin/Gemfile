@@ -1,0 +1,5 @@
+source "https://rubygems.org" do
+  # vendor_ruby prefered
+  # gem 'sequel', '~> 4.15.0'
+  # gem 'mysql', '~> 2.9.1'
+end
