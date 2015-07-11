@@ -2,8 +2,8 @@ MODULESDIR = File.dirname(__FILE__) + '/modules'
 
 source "https://rubygems.org" do
   # A few of the below are currently only required by certain modules.
-  # However, they are of general use and may be required from within the
-  # core as well at some point.
+  # However, they are of general use (and perhaps not too heavyweight)
+  # and may be required by the core as well at some point.
   gem 'hierarchical_menu'
   gem 'sinatra'
   gem 'locale'
@@ -18,8 +18,6 @@ source "https://rubygems.org" do
   gem 'cronedit'
   gem 'chronic_duration'
   gem 'mail'
-  # vendor_ruby prefered
-  # gem 'rmagick', '~> 2.13.2'
 end
 
 Dir.foreach(MODULESDIR) do |mod|
