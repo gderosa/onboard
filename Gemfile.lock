@@ -7,6 +7,7 @@ GEM
     cronedit (0.3.0)
     daemons (1.2.3)
     erubis (2.7.0)
+    escape (0.0.4)
     eventmachine (1.0.7)
     facets (3.0.0)
     hierarchical_menu (0.1.4)
@@ -58,6 +59,7 @@ DEPENDENCIES
   chronic_duration!
   cronedit!
   erubis!
+  escape!
   facets!
   hierarchical_menu!
   hotspotlogin!

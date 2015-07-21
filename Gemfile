@@ -18,6 +18,7 @@ source "https://rubygems.org" do
   gem 'cronedit'
   gem 'chronic_duration'
   gem 'mail'
+  gem 'escape'
 end
 
 Dir.foreach(MODULESDIR) do |mod|
