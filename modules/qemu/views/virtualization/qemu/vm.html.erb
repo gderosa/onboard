@@ -56,6 +56,17 @@
   </ul>
 
   <!-- <div id="tabs-status"> PARTIAL -->
+  <%=
+    partial(
+      :module => 'qemu',
+      :path   => 'virtualization/qemu/vm/tabs/_status.html.erb',
+      :locals => {
+        :vm => vm,
+        :vnc_uri => vnc_uri,
+        :spice_uri => spice_uri
+      }
+    )
+  %>
   <!-- <div id="tabs-snapshots"> PARTIAL -->
   <!-- <div id="tabs-remote-bck"> PARTIAL -->
   <!-- <div id="tabs-config"> PARTIAL -->
