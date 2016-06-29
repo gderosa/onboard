@@ -79,6 +79,15 @@
     )
   %>
   <!-- <div id="tabs-snapshots"> PARTIAL -->
+  <%=
+    partial(
+      :module => 'qemu',
+      :path   => 'virtualization/qemu/vm/tabs/_snapshots',
+      :locals => {
+        :vm => vm
+      }
+    )
+  %>
   <!-- <div id="tabs-remote-bck"> PARTIAL -->
 </div> <!-- div#tabs --> <!-- jQueryUI tabs -->
 
