@@ -5,7 +5,7 @@
   <div id="tabs-remote-bck">
     <ul>
       <li><a href="#tabs-remote-bck-status">Status</a></li>
-      <li><a href="#tabs-remote-bck-saved">Snapshot List</a></li>
+      <li><a href="#tabs-remote-bck-saved">Backup List</a></li>
     </ul>
 
     <h3>Remote backups</h3>
@@ -24,7 +24,7 @@
     <% if OnBoard::V12n::QEMU::Snapshot.running? %>
       Other VMs are currently under snapshotting (taking and/or applying).
     <% else %>
-      No snanpshot operations running.
+      No backups operations running.
     <% end %>
   <% end %>
 

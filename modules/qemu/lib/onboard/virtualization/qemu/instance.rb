@@ -461,6 +461,47 @@ class OnBoard
           Snapshot::Schedule.get_entry(uuid_short) 
         end
 
+        # TODO: my working progress Anto v.
+        
+        def remote_backup?
+          pidfile = "#{VARRUN}/qemu-#{uuid_short}.rmtbck.pid"
+          if File.exists? pidfile
+            return Process.running?(File.read(pidfile).to_i)
+          else
+            return nil
+          end
+        end
+        def remote_backup_waiting?
+          pidfile       = "#{VARRUN}/qemu-#{uuid_short}.rmtbck.pid"
+          waiting_file  = "#{VARRUN}/qemu-#{uuid_short}.rmtbck.waiting"
+          return (
+            File.exists? pidfile and
+            Process.running?(File.read(pidfile).to_i) and
+            File.exists? waiting_file
+          )
+        end
+        def remote_backup_cmdline
+          cmdline_file = "#{VARRUN}/qemu-#{uuid_short}.rmtbck.cmdline"
+          if File.exists? cmdline_file
+            File.read(cmdline_file).split("\0")
+          end
+        end
+        def remote_backup_stdout
+          outfile = "#{VARRUN}/qemu-#{uuid_short}.rmtbck.out"
+          if File.exists? outfile
+            File.read outfile
+          end
+        end
+        def remote_backup_stderr
+          errfile = "#{VARRUN}/qemu-#{uuid_short}.rmtbck.err"
+          if File.exists? errfile
+            File.read errfile
+          end
+        end
+        def remote_backup_cron_entry
+          #Snapshot::Schedule.get_entry(uuid_short) 
+        end
+
         def drives
           drives_h = {}
           if running? 
