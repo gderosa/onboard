@@ -18,7 +18,7 @@
     <% if vm.remote_backup_waiting? %>
       Waiting for other processes to complete. 
     <% else %>
-      Taking / Applying a snapshot.
+      Taking / Restoring a backup.
     <% end %>
   <% else %>
     <% if OnBoard::V12n::QEMU::RemoteBackup.running? %>
@@ -29,7 +29,7 @@
   <% end %>
 
 <% if vm.remote_backup_cmdline %>
-      <p><%= vm.remote_backup? ? 'Running: ' : 'Last remote backup process: ' %><code class="highlight" style="margin-left:0.2em;"> <%= vm.snapshot_cmdline.join(' ').sub(
+      <p><%= vm.remote_backup? ? 'Running: ' : 'Last remote backup process: ' %><code class="highlight" style="margin-left:0.2em;"> <%= vm.remote_backup_cmdline.join(' ').sub(
     %r{(^.*)bin/rmtbck(.*)$}, 'rmtbck\2'
   )  
   %></code>
@@ -71,7 +71,7 @@
               <tr>
                 <form method="POST">
                   <input type="hidden" name="_method" value="put"/>
-                  <input type="hidden" name="snapshot_drive" value="<%= drive_name %>"/>
+                  <input type="hidden" name="rmtbck_drive" value="<%= drive_name %>"/>
                   <td><%= drive_name %></td>
                   <td style="text-align:right;"><%= rmtbck.id %></td>
                   <td><%= rmtbck.time %></td>
@@ -85,7 +85,7 @@
                     <%= action_button :redo, :name=>"rmtbck_apply[name]", :value=>rmtbck.name, :title=>'Restore Backup!', :disabled=>disabled %>
                   </td>
                   <td>
-                    <%= action_button :delete, :name=>"snapshot_delete[name]", :value=>snapshot.name, :title=>'Delete Snapshot!', :disabled=>true %>
+                    <%= action_button :delete, :name=>"rmtbck_delete[name]", :value=>rmtbck.name, :title=>'Delete Backup!', :disabled=>true %>
                   </td>             
                 </form>
               </tr>
@@ -102,7 +102,7 @@
                 </select>
               </td>
               <td style="text-align:right;"></td>
-              <td><!-- snapshot time -->(Add New)</td>
+              <td><!-- remote backup time -->(Add New)</td>
               <td>
                 <%= action_button :save, :name=>"rmtbck_apply[name]", :title=>'Take New Backup!', :disabled=>(OnBoard::V12n::QEMU::RemoteBackup.running?) %>
               </td>
