@@ -104,7 +104,7 @@
               <td style="text-align:right;"></td>
               <td><!-- remote backup time -->(Add New)</td>
               <td>
-                <%= action_button :save, :name=>"rmtbck_apply[name]", :title=>'Take New Backup!', :disabled=>(OnBoard::V12n::QEMU::RemoteBackup.running?) %>
+                <%= action_button :save, :name=>"rmtbck_take[name]", :value => '', :title=>'Take New Backup!', :disabled=>(OnBoard::V12n::QEMU::RemoteBackup.running?) %>
               </td>
               <td>
                 <%= action_button :redo, :name=>"rmtbck_apply[name]", :title=>'Restore Backup!', :disabled=>true %>

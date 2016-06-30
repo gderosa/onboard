@@ -85,7 +85,7 @@ class OnBoard
                 # Yup, deleting with a PUT is unRESTful... :-P
           OnBoard::Virtualization::QEMU.manage(:http_params => params)
         end
-
+        puts params # DEBUG
         OnBoard::Virtualization::QEMU.cleanup
       end
 
