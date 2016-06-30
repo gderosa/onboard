@@ -49,22 +49,11 @@
 
       <h4>Saved Remote Backup</h4>
 
-      <p class="info" style="margin-top:0;">
-      <span class="term">Disk Only</span> remote backup are taken and applied at
-  machine turned off. Full <span class="term">VM</span> remote backups also include
-  CPU and memory state, and are taken and applied on a <em>running</em> machine 
-  (which is temporarily paused during the process). 
-      <span class="term">size</span> is the size of non-disk data in such case.
-      </p>
-
-
       <table>
         <thead>
           <tr>
             <th>Drive</th>
-            <th>Snapshot ID</th>
-            <th>Tag / Name</th>
-            <th>Type</th>
+            <th>RmtBck ID</th>
             <th>Date / Time</th>
             <th>Take</th>
             <th>Apply</th>
@@ -73,44 +62,30 @@
         </thead>
         <tbody>
           <% 
-            drives_w_snapshots = vm.drives.select do |k,v| 
-              v['snapshots'] and v['snapshots'].any?
+            drives_w_rmtbcks = vm.drives.select do |k,v|
+              v['rmtbcks'] and v['rmtbcks'].any?
             end
-            drives_w_snapshots.each_pair do |drive_name, drive| 
+            drives_w_rmtbcks.each_pair do |drive_name, drive|
           %>
-            <% drive['snapshots'].each do |snapshot| %>
+            <% drive['rmtbcks'].each do |rmtbck| %>
               <tr>
                 <form method="POST">
                   <input type="hidden" name="_method" value="put"/>
                   <input type="hidden" name="snapshot_drive" value="<%= drive_name %>"/>
                   <td><%= drive_name %></td>
-                  <td style="text-align:right;"><%= snapshot.id %></td>
-                  <td><%= snapshot.tag %></td>
-                  <td>
-                    <%= 
-                      if snapshot.vmsize == '0'
-                        'Disk Only'
-                      else
-                        "VM, size=#{snapshot.vmsize}"
-                      end
-                    %>
-                  </td>
-                  <td><%= snapshot.time %></td>
+                  <td style="text-align:right;"><%= rmtbck.id %></td>
+                  <td><%= rmtbck.time %></td>
                   <% 
-                    disabled = (
-                        OnBoard::V12n::QEMU::Snapshot.running?      or
-                        ( vm.running?     and snapshot.disk_only? ) or
-                        ( not vm.running? and snapshot.full_vm?   )           
-                    )
+                    disabled = OnBoard::V12n::QEMU::RemoteBackup.running?
                   %>
                   <td>
-                    <%= action_button :save, :name=>"snapshot_take[name]", :value=>snapshot.name, :title=>'Take Snapshot / Save VM!', :disabled=>disabled %>
+                    <%= action_button :save, :name=>"rmtbck_take[name]", :value=>rmtbck.name, :title=>'Take Backup!', :disabled=>disabled %>
                   </td>
                   <td>
-                    <%= action_button :redo, :name=>"snapshot_apply[name]", :value=>snapshot.name, :title=>'Apply Snapshot / Load VM!', :disabled=>disabled %>
+                    <%= action_button :redo, :name=>"rmtbck_apply[name]", :value=>rmtbck.name, :title=>'Restore Backup!', :disabled=>disabled %>
                   </td>
                   <td>
-                    <%= action_button :delete, :name=>"snapshot_delete[name]", :value=>snapshot.name, :title=>'Delete Snapshot!', :disabled=>disabled %>
+                    <%= action_button :delete, :name=>"snapshot_delete[name]", :value=>snapshot.name, :title=>'Delete Snapshot!', :disabled=>true %>
                   </td>             
                 </form>
               </tr>
@@ -120,32 +95,22 @@
             <form method="POST">
               <input type="hidden" name="_method" value="put"/>
               <td>
-                <select name="snapshot_drive" <%= 'disabled' if vm.running? %>>
-                  <% drives_w_snapshots.keys.each do |drive_name| %>
+                <select name="rmtbck_drive" <%= 'disabled' unless vm.running? %>>
+                  <% vm.drives.keys.each do |drive_name| %>
                     <option value="<%= drive_name %>"><%= drive_name %></option>
                   <% end %>
                 </select>
               </td>
               <td style="text-align:right;"></td>
-              <td><input type="text" name="snapshot_take[name]" title="Add New"/></td>
-              <td>
-                <%= 
-                  if vm.running?
-                    'VM'
-                  else
-                    'Disk Only'
-                  end
-                %>
-              </td>
               <td><!-- snapshot time -->(Add New)</td>
               <td>
-                <%= action_button :save, :title=>'Take New Snapshot / Save VM!', :disabled=>(OnBoard::V12n::QEMU::Snapshot.running?) %>
+                <%= action_button :save, :name=>"rmtbck_apply[name]", :title=>'Take New Backup!', :disabled=>(OnBoard::V12n::QEMU::RemoteBackup.running?) %>
               </td>
               <td>
-                <%= action_button :redo, :name=>"snapshot_apply[name]", :title=>'Apply Snapshot / Load VM!', :disabled=>true %>
+                <%= action_button :redo, :name=>"rmtbck_apply[name]", :title=>'Restore Backup!', :disabled=>true %>
               </td>
               <td>
-                <%= action_button :delete, :name=>"snapshot_delete[name]", :title=>'Delete Snapshot!', :disabled=>true %>
+                <%= action_button :delete, :name=>"rmtbck_delete[name]", :title=>'Delete Backup!', :disabled=>true %>
               </td>             
             </form>
           </tr>
