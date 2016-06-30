@@ -7,7 +7,7 @@ require 'onboard/system/process'
 class OnBoard
   module Virtualization
     module QEMU
-      class Snapshot
+      class RemoteBackup
 
         autoload :Schedule, 'onboard/virtualization/qemu/snapshot/schedule'
 

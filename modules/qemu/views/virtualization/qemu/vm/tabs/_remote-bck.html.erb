@@ -36,10 +36,10 @@
 <% end %>
 
 <% remote_backup_stdout, remote_backup_stderr = vm.remote_backup_stdout, vm.remote_backup_stderr %>
-<% if snapshot_stdout =~ /\S/m %>
+<% if remote_backup_stdout =~ /\S/m %>
     <pre class="warn" style="margin-top:0.3em;"><%== remote_backup_stdout %></pre>
 <% end %>
-<% if snapshot_stderr =~ /\S/m %>
+<% if remote_backup_stderr =~ /\S/m %>
     <pre class="error" style="margin-top:0.3em;"><%== remote_backup_stderr %></pre>
 <% end %>
     
