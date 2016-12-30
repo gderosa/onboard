@@ -1,5 +1,5 @@
 class OnBoard
-  MENU_ROOT.add_path('/network/access-control/chilli', {
+  MENU_ROOT.add_path('/network/access-control/expert/chilli', {
     :href     => '/network/access-control/chilli',
     :name     => '&ldquo;Chilli&rdquo; Controller',
     :desc     => 'Redirects unauthenticated users to a login page',

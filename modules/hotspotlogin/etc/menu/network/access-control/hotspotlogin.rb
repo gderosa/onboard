@@ -12,7 +12,7 @@
 # application layer only.
 
 class OnBoard
-  MENU_ROOT.add_path('/network/access-control/hotspotlogin', {
+  MENU_ROOT.add_path('/network/access-control/expert/hotspotlogin', {
     :href => '/services/hotspotlogin',
     :name => 'Integrated Login page',
     #:desc => 'Redirects unauthenticated users to a login page',

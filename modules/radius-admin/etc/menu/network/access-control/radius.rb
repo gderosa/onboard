@@ -23,7 +23,7 @@ class OnBoard
     :n    => 0
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius', {
     #:href => '/services/radius', # nil
     :name => 'RADIUS server',
     :desc => 'Authentication, Authorization and Accounting',
@@ -31,59 +31,59 @@ class OnBoard
     :n    => 0
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/config', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/config', {
     :href => '/services/radius/config', 
     :name => 'Configuration',
     :n    => 10
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/accounting', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/accounting', {
     :href => '/services/radius/accounting', 
     :name => 'Accounting',
     :desc => 'Track users consumption of network resources',
     :n    => 20
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/users', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/users', {
     :href     => '/services/radius/users',
     :name     => 'Users',
     :children => %r{/services/radius/users/.+$},
     :n        => 30
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/groups', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/groups', {
     :href     => '/services/radius/groups',
     :name     => 'Groups',
     :children => %r{/services/radius/groups/.+$},
     :n        => 40
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/endusers', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/endusers', {
     :name     => 'End users',
     :n        => 50,
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/endusers/signup', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/endusers/signup', {
     :href     => '/services/radius/signup',
     :name     => 'Signup and Selfcare',
     :desc     => 'End users may create new accounts or edit their own details',
     :n        => 40
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/endusers/terms', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/endusers/terms', {
     :href     => '/services/radius/terms',
     :name     => '&ldquo;Terms and Conditions&rdquo;',
     :desc     => 'Usage policies, Privacy and other regulation documents',
     :n        => 50
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/endusers/password-recovery', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/endusers/password-recovery', {
     :href     => '/services/radius/password-recovery',
     :name     => 'Password Recovery',
     :n        => 60
   })
 
-  MENU_ROOT.add_path('/network/access-control/radius/resetdb', {
+  MENU_ROOT.add_path('/network/access-control/expert/radius/resetdb', {
     :href     => '/services/radius/resetdb',
     :name     => 'Reset Database',
     :n        => 60
