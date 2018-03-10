@@ -31,8 +31,8 @@ GEM
     mime-types (2.6.1)
     numerizer (0.1.1)
     r18n-core (2.1.7)
-    rack (1.6.8)
-    rack-protection (1.5.3)
+    rack (1.6.9)
+    rack-protection (1.5.5)
       rack
     rubytree (0.9.6)
       json (~> 1.8)
