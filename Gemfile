@@ -5,11 +5,11 @@ source "https://rubygems.org" do
   # However, they are of general use (and perhaps not too heavyweight)
   # and may be required by the core as well at some point.
   gem 'hierarchical_menu'
-  gem 'sinatra'
+  gem 'sinatra', '~>2.0'
+  gem 'thin'
   gem 'locale'
   gem 'i18n_data'
   gem 'sinatra-r18n'
-  gem 'thin'
   gem 'erubis'
   gem 'uuid'
   gem 'facets'

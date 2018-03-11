@@ -4,7 +4,7 @@ require 'onboard/system/log'
 
 class OnBoard::Controller
 
-  get %r{^/system/logs} do
+  get %r{/system/logs} do
     OnBoard::System::Log.load
     pass
   end
@@ -48,7 +48,7 @@ class OnBoard::Controller
 
   # by path ## url_encode-ing is suggested to not confuse navbar
   # example: /system/logs/%2Fvar%2Flog%2Fmessages.html
-  get %r{^/system/logs/(.*)\.([\w\d]+)$} do
+  get %r{/system/logs/(.*)\.([\w\d]+)} do
     path, fmt = params[:captures]
     # p path # DEBUG
     hash = OnBoard::System::Log.getAll.detect {|h| h['path'] == path}
