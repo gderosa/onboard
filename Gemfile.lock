@@ -74,7 +74,7 @@ DEPENDENCIES
   locale!
   mail!
   rubyzip!
-  sinatra (~> 2.0.1)!
+  sinatra (~> 2.0)!
   sinatra-r18n!
   thin!
   uuid!
