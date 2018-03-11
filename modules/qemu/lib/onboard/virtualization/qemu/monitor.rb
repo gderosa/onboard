@@ -33,7 +33,7 @@ class OnBoard
           opts = {:timeout => 1}.merge(opts)  
 
           begin
-            timeout(opts[:timeout]) do
+            Timeout.timeout(opts[:timeout]) do
               UNIXSocket.open(unix_path) do |uds|
                 uds.puts                  # just to get the prompt
                 banner = uds.gets         # unused, just to go ahead, could be empty

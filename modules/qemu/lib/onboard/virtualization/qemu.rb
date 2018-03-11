@@ -199,7 +199,7 @@ start start_paused pause resume powerdown delete
                   if current_VM.opts['-loadvm'] == DEFAULT_SNAPSHOT
                     current_VM.loadvm_on_next_boot false
                     LOGGER.error "DEBUG: #{__FILE__}##{__LINE__}: current_VM.loadvm_on_next_boot false"
-                    # After an eventual host power failure,
+                    # After a possible host power failure,
                     # do not force loading from DEFAULT_SNAPSHOT,
                     # which may not be recent at all.                    #
                     # 
