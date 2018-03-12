@@ -257,7 +257,7 @@ class OnBoard
           @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap| 
             if opts.include? :wait
               wait_for :sleep => 0.8, :timeout => 10.0 do
-	              System::Command.run(
+	        System::Command.run(
                   "ip link set up dev #{tap['ifname']}",
                   :sudo,
                 )[:ok]
