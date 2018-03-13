@@ -8,7 +8,7 @@ begin
 rescue Gem::LoadError
   # May be available in vendor_ruby and not as a gem
 end
-autoload :Magick, 'RMagick'
+autoload :Magick, 'rmagick'
 
 require 'onboard/util'
 require 'onboard/extensions/process'
@@ -106,7 +106,7 @@ class OnBoard
           if opts['-spice'].respond_to? :[]
             if opts['-spice']['port'] and opts['-spice']['port'].to_i != 0
               cmdline << 
-"-spice port=#{opts['-spice']['port']},disable-ticketing "
+                "-spice port=#{opts['-spice']['port']},disable-ticketing "
               #,image-compression=[auto_glz|auto_lz|quic|glz|lz|off] 
               #,jpeg-wan-compression=[auto|never|always] 
               #,zlib-glz-wan-compression=[auto|never|always] 
@@ -236,14 +236,15 @@ class OnBoard
           # 
           # Guest CPU will have host CPU features ('flags') 
           cmdline << '-cpu' << ' ' << 'host' << ' '
-=begin
-          cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
+
+          # cmdline << '-usbdevice' << ' ' << 'tablet' << ' '
+          #
           # The above should fix some problems with VNC,
           # but you have problems anyway with -loadvm ...
           #
           # Solution: use a VNC client like Vinagre, supporting
           # capture/release.
-=end
+
           cmdline << '-enable-kvm' << ' ' 
 
           cmdline << opts['append'] if opts['append'] 
@@ -255,10 +256,10 @@ class OnBoard
           uid = Process.uid
           @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap| 
             if opts.include? :wait
-              wait_for do
-	        System::Command.run( 
+              wait_for :sleep => 0.8, :timeout => 10.0 do
+	        System::Command.run(
                   "ip link set up dev #{tap['ifname']}",
-                  :sudo, 
+                  :sudo,
                 )[:ok]
               end
             end
