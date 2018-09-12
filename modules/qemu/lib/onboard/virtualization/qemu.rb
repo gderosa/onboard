@@ -1,6 +1,7 @@
 require 'yaml'
 require 'uuid'
 require 'fileutils'
+require 'sinatra/base'  # Sinatra types in YAML such as IndifferentHash
 
 require 'onboard/constants'
 require 'onboard/extensions/process'
