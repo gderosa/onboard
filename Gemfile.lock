@@ -38,7 +38,7 @@ GEM
     rubytree (0.9.6)
       json (~> 1.8)
       structured_warnings (~> 0.2)
-    rubyzip (1.2.1)
+    rubyzip (1.2.2)
     sinatra (2.0.5)
       mustermann (~> 1.0)
       rack (~> 2.0)
