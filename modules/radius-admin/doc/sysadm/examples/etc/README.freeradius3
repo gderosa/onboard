@@ -1,0 +1,3 @@
+In Debian, /etc/freeradius and all subdurs and files are owned by freerad:freerad,
+the same user/group freeradius daemon drop privileges to at runtime. 
+Therefore, it's *writable* by freeradius in fact.
