@@ -6,16 +6,16 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.define "margay", primary: true do |margay|
+  config.vm.define "margay", primary: true do |mgy|
     # The most common configuration options are documented and commented below.
     # For a complete reference, please see the online documentation at
     # https://docs.vagrantup.com.
 
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://vagrantcloud.com/search.
-    margay.vm.box = "debian/stretch64"
+    mgy.vm.box = "debian/stretch64"
 
-    margay.vm.hostname = "margay"
+    mgy.vm.hostname = "margay"
 
     # Disable automatic box update checking. If you disable this, then
     # boxes will only be checked for updates when the user runs
@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     # within the machine from a port on the host machine. In the example below,
     # accessing "localhost:8080" will access port 80 on the guest machine.
     # NOTE: This will enable public access to the opened port
-    margay.vm.network "forwarded_port", guest: 4567, host: 4567
+    mgy.vm.network "forwarded_port", guest: 4567, host: 4567
 
     # Create a forwarded port mapping which allows access to a specific port
     # within the machine from a port on the host machine and only allow access
@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    margay.vm.network "private_network", ip: "10.192.168.11", netmask: "24",
+    mgy.vm.network "private_network", ip: "10.192.168.11", netmask: "24",
       virtualbox__intnet: "margay-net-downstream"
 
     # Create a public network, which generally matched to bridged network.
@@ -73,18 +73,21 @@ Vagrant.configure("2") do |config|
     # SHELL
   end
 
-  config.vm.define "margay-client" do |margay_client|
-    margay_client.vm.box = "debian/stretch64"
-    margay_client.vm.hostname = "margay-client"
-    margay_client.vm.network  "private_network", ip: "10.192.168.12", netmask: "24",
+  config.vm.define "margay-client" do |mgyc|
+    mgyc.vm.box = "debian/stretch64"
+    mgyc.vm.hostname = "margay-client"
+    mgyc.vm.network  "private_network", ip: "10.192.168.12", netmask: "24",
       virtualbox__intnet: "margay-net-downstream"
-    margay_client.vm.provider "virtualbox" do |vb|
+    mgyc.vm.provider "virtualbox" do |vb|
       vb.gui = true
-      vb.memory = "1024"
+      # vb.memory = "1024"
     end
-    margay_client.vm.provision "shell", inline: <<-EOF
+    mgyc.vm.provision "shell", inline: <<-EOF
+      export DEBIAN_FRONTEND=noninteractive
       apt-get update
-      apt-get -y install xfce4 midori
+      sudo dpkg --configure -a
+      apt-get -yq install task-lxde-desktop lightdm
+      systemctl start lightdm
     EOF
   end
 end
