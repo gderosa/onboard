@@ -89,6 +89,10 @@ Vagrant.configure("2") do |config|
       # TODO: a more lightweight solution? openbox/fluxbox? lxde-core only? (+lightdm)
       apt-get -yq install task-lxde-desktop lightdm
       systemctl start lightdm
+      # Remove default Internet connection, it will use the second interface behind
+      # margay (now that provisioning is done and software downloaded).
+      ip route del default via 10.0.2.2 dev eth0
+
       echo "----------------------------------------"
       echo ">>> Provisioning of client VM completed."
       echo ">>> If you don't see the graphical environment in VBox GUI,"
