@@ -86,8 +86,15 @@ Vagrant.configure("2") do |config|
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
       sudo dpkg --configure -a
+      # TODO: a more lightweight solution? openbox/fluxbox? lxde-core only? (+lightdm)
       apt-get -yq install task-lxde-desktop lightdm
       systemctl start lightdm
+      echo "----------------------------------------"
+      echo ">>> Provisioning of client VM completed."
+      echo ">>> If you don't see the graphical environment in VBox GUI,"
+      echo ">>> and there weren't other errors,"
+      echo ">>> try a manual start of lightdm service, or simply reboot the machine."
+      echo ">>> Then login with vagrant / vagrant , use the browser etc."
     EOF
   end
 end
