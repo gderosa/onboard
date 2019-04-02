@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+DEBIAN_BOX = "bento/debian-9.6"
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -13,7 +15,7 @@ Vagrant.configure("2") do |config|
 
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://vagrantcloud.com/search.
-    mgy.vm.box = "debian/stretch64"
+    mgy.vm.box = DEBIAN_BOX
 
     mgy.vm.hostname = "margay"
 
@@ -47,34 +49,25 @@ Vagrant.configure("2") do |config|
     # the path on the host to the actual folder. The second argument is
     # the path on the guest to mount the folder. And the optional third
     # argument is a set of non-required options.
-    #margay.vm.synced_folder ".", "/home/onboard/onboard"
 
-    # Provider-specific configuration so you can fine-tune various
-    # backing providers for Vagrant. These expose provider-specific options.
-    # Example for VirtualBox:
-    #
-    # config.vm.provider "virtualbox" do |vb|
-    #   # Display the VirtualBox GUI when booting the machine
-    #   vb.gui = true
-    #
-    #   # Customize the amount of memory on the VM:
-    #   vb.memory = "1024"
-    # end
-    #
-    # View the documentation for the provider you are using for more
-    # information on available options.
+    # A symlink could work too? Current strategy is running as vagrant,
+    # and generally being flexible/dynamic as per the user
+    # Margay/OnBoard runs as. So the dir is still owned by vagrant
+    # but compatibility with some legacy scripts is retained.
+
+    mgy.vm.synced_folder ".", "/home/onboard/onboard"
 
     # Enable provisioning with a shell script. Additional provisioners such as
     # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
     # documentation for more information about their specific syntax and use.
-    # config.vm.provision "shell", inline: <<-SHELL
-    #   apt-get update
-    #   apt-get install -y apache2
-    # SHELL
+    mgy.vm.provision "shell", path: "./etc/scripts/platform/debian/setup.sh"
   end
 
+  # The client achine may be any OS, but for economy of storage and download time,
+  # it's based on the same base box.
+
   config.vm.define "margay-client" do |mgyc|
-    mgyc.vm.box = "debian/stretch64"
+    mgyc.vm.box = DEBIAN_BOX
     mgyc.vm.hostname = "margay-client"
     mgyc.vm.network  "private_network", ip: "10.192.168.12", netmask: "24",
       virtualbox__intnet: "margay-net-downstream"
