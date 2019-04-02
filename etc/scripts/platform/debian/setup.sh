@@ -5,7 +5,7 @@
 # control from there. Another script may be implemented for that very initial
 # bootstrap instead.
 
-PROJECT_ROOT='/home/onboard/onboard'
+PROJECT_ROOT=${1:-'.'}
 
 cd $PROJECT_ROOT
 

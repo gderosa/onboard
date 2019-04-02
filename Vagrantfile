@@ -55,12 +55,13 @@ Vagrant.configure("2") do |config|
     # Margay/OnBoard runs as. So the dir is still owned by vagrant
     # but compatibility with some legacy scripts is retained.
 
-    mgy.vm.synced_folder ".", "/home/onboard/onboard"
+    # mgy.vm.synced_folder ".", "/home/onboard/onboard"
 
     # Enable provisioning with a shell script. Additional provisioners such as
     # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
     # documentation for more information about their specific syntax and use.
-    mgy.vm.provision "shell", path: "./etc/scripts/platform/debian/setup.sh"
+    mgy.vm.provision "shell", path: "./etc/scripts/platform/debian/setup.sh", args: ["/vagrant"]
+
   end
 
   # The client achine may be any OS, but for economy of storage and download time,
