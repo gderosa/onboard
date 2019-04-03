@@ -42,19 +42,33 @@ disable_app_modules() {
 	done
 }
 
+disable_dhcpcd_master() {
+	# Even if no interface is configured with dhcp in /etc/network/interfaces,
+	# dhcpcd is a system(d) service, that starts as just "dhcpcd" (master mode)
+	# which is incompatible with onboard detection and control.
+	if (systemctl status dhcpcd > /dev/null); then
+		systemctl disable dhcpcd
+	fi
+}
+
+
+export DEBIAN_FRONTEND=noninteractive
+
 cd $PROJECT_ROOT
 
 apt-get update
 # TODO: lighttpd removed: NGINX!
-apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute iptables bridge-utils pciutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
+apt-get -y install ruby ruby-bundler ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute iptables bridge-utils pciutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
 
-gem install --no-ri --no-rdoc bundler
+# echo 'Running: gem install --no-ri --no-rdoc bundler # This may take some time...'
+# gem install --no-ri --no-rdoc bundler # Let's use deb package
 
 install_conffiles
 
 su - $_USER -c "
 	cd $PROJECT_ROOT
 	# Module names are also Gemfile groups
+	echo Running: bundle install $(bundle_without_all_opts) \# This may take some time...
 	bundle install $(bundle_without_all_opts)
 "
 
@@ -66,3 +80,5 @@ service procps restart
 # systemctl enable onboard
 
 disable_app_modules
+
+disable_dhcpcd_master

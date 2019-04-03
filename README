@@ -88,6 +88,13 @@ for downloading packages during provisioning etc.
 
 See https://github.com/tmatilai/vagrant-proxyconf#environment-variables for more.
 
+A suggested value is
+
+    VAGRANT_HTTP_PROXY=http://10.0.2.2:8123
+
+if, for exmaple, you use polipo with default config (10.0.2.2
+is the default gateway for vbox NAT interface in the vm).
+
 ---
 
 This Free/Open Source Software project is sponsored by
