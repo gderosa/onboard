@@ -1,11 +1,11 @@
 OnBoard -- http://dev.vemarsas.it/onboard/ .
 
 Except where otherwise stated, this work is
-Copyright 2009, 2010, 2011, 2012, 2013 
+Copyright 2009-2019
 Guido De Rosa <guido.derosa at vemarsas.it> and
 Antonello Ventre <antonello.ventre at vemarsas.it> .
 
-License: GPLv2 
+License: GPLv2
 
 Artworks from various sources are included.
 See public/*/* for details and Copyright info.
@@ -13,23 +13,23 @@ See public/*/* for details and Copyright info.
 ---
 
 A web interface to manage Linux-based networking and virtualization
-appliances. It's been developed and tested on Debian GNU/Linux and its 
-derivative for embedded systems, Voyage Linux (http://linux.voyage.hk/). 
-It should work on other distros too, altough untested right now. Feel free 
+appliances. It's been developed and tested on Debian GNU/Linux and its
+derivative for embedded systems, Voyage Linux (http://linux.voyage.hk/).
+It should work on other distros too, altough untested right now. Feel free
 to contribute and test.
 
 ---
 
 For any web page, you may change .html extension into .json to
-get machine-readable data. 
+get machine-readable data.
 
-An .rb extension is also available for debugging purposes when in 
-Sinatra 'development' environment. 
+An .rb extension is also available for debugging purposes when in
+Sinatra 'development' environment.
 
 ---
 
 Software requirements for "core" (check individual directories under modules/
-for module-specific, additional requirements): 
+for module-specific, additional requirements):
 
 * ruby >= 2.0.0
 * sudo
@@ -38,15 +38,15 @@ for module-specific, additional requirements):
 * bridge-utils (brctl)
 * pciutils (lspci command)
 * usbutils (lsusb command)
-* dhcpcd 
+* dhcpcd
   * Also, resolvconf is recommended
 * dnsmasq >= 2.61, != 2.63
   * removed ISC-style leasefile format, which is assumed when no
     dhcp-range is provided -- and leads to troubles
   * --host-record (bugfree ;)
-* locales 
+* locales
   ## and generate (UTF8) locales for languages/countries you want to support
-* ifrename (optional) 
+* ifrename (optional)
 
 Gems:
 
@@ -59,12 +59,39 @@ documentation of individual modules to troubleshoot.
 
 --
 
-Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append 
+Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append
 the configuration to the Linux machine /etc/sysctl.conf file.
+
+--
+
+NEW: Automated provisioning
+
+etc/scripts/platform/*/setup.sh
+
+modules/radius-admin/etc/scripts/platform/*/setup.sh
+
+And more modules to come.
+
+For a local development environment you can use Vagrant (vagrantup.com).
+
+    vagrant up
+
+You can also start separately margay vm and client vm:
+
+    vagrant up nargay
+    vagrant up margay-client
+
+The same other Vagrant commands: provision, halt, suspend, destroy etc.
+
+If you install the vagrant-proxyconf plugin,
+you also set proxy environment variables if you want to use a proxy
+for downloading packages during provisioning etc.
+
+See https://github.com/tmatilai/vagrant-proxyconf#environment-variables for more.
 
 ---
 
-This Free/Open Source Software project is sponsored by 
-VEMAR sas, Paterno (PZ), Italy -- http://www.vemarsas.it/ 
+This Free/Open Source Software project is sponsored by
+VEMAR sas, Paterno (PZ), Italy -- http://www.vemarsas.it/
 
 
