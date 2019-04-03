@@ -13,8 +13,7 @@ See public/*/* for details and Copyright info.
 ---
 
 A web interface to manage Linux-based networking and virtualization
-appliances. It's been developed and tested on Debian GNU/Linux and its
-derivative for embedded systems, Voyage Linux (http://linux.voyage.hk/).
+appliances. It's been mainly developed and tested on Debian GNU/Linux.
 It should work on other distros too, altough untested right now. Feel free
 to contribute and test.
 
