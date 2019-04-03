@@ -32,6 +32,16 @@ bundle_without_all_opts() {
 	echo "$without_opt $groups" | xargs
 }
 
+disable_app_modules() {
+	for dir in $PROJECT_ROOT/modules/* ; do
+		if [ ! -f $dir/.enable ]; then
+			file=$dir/.disable
+			touch $file
+			chown $_USER $file
+		fi
+	done
+}
+
 cd $PROJECT_ROOT
 
 apt-get update
@@ -47,3 +57,12 @@ su - $_USER -c "
 	# Module names are also Gemfile groups
 	bundle install $(bundle_without_all_opts)
 "
+
+modprobe nf_conntrack_ipv4
+modprobe nf_conntrack_ipv6
+service procps restart
+
+# TODO: /etc/default/margay to set OnBoard user!
+# systemctl enable onboard
+
+disable_app_modules
