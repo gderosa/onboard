@@ -71,7 +71,8 @@ modules/radius-admin/etc/scripts/platform/*/setup.sh
 
 And more modules to come.
 
-For a local development environment you can use Vagrant (vagrantup.com).
+For a local development environment you can use Vagrant (vagrantup.com)
+-- which will in turn call the above scripts.
 
     vagrant up
 
