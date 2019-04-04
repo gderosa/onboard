@@ -77,10 +77,15 @@ For a local development environment you can use Vagrant (vagrantup.com).
 
 You can also start separately margay vm and client vm:
 
-    vagrant up nargay
-    vagrant up margay-client
+    vagrant up margay
+    vagrant up client
 
-The same other Vagrant commands: provision, halt, suspend, destroy etc.
+The client VM will show the VBox GUI, you will see a graphical login.
+Enter with credentials vagrant:vagrant, then right-click
+and open Web Browser (or Terminal etc.)
+
+The same distinction between margay and client machine holds for
+other Vagrant commands: provision, halt, suspend, destroy etc.
 
 If you install the vagrant-proxyconf plugin,
 you also set proxy environment variables if you want to use a proxy
@@ -92,8 +97,8 @@ A suggested value is
 
     VAGRANT_HTTP_PROXY=http://10.0.2.2:8123
 
-if, for exmaple, you use polipo with default config (10.0.2.2
-is the default gateway for vbox NAT interface in the vm).
+if, for example, you use polipo with default config
+(10.0.2.2 is the default gateway for vbox NAT interface in the vm).
 
 ---
 
