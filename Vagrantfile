@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
   # it's based on the same base box.
   config.vm.define "client" do |mgyc|
     mgyc.vm.box = DEBIAN_BOX
-    mgyc.vm.hostname = "mgyc2"
+    mgyc.vm.hostname = "mgyclient"
     mgyc.vm.network  "private_network", ip: "10.192.168.22", netmask: "24",
       virtualbox__intnet: "margay-net-downstream"
     mgyc.vm.provider "virtualbox" do |vb|
