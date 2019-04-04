@@ -64,13 +64,12 @@ Vagrant.configure("2") do |config|
 
   end
 
-  # The client achine may be any OS, but for economy of storage and download time,
+  # The client machine may be any OS, but for economy of storage and download time,
   # it's based on the same base box.
-
-  config.vm.define "margay-client" do |mgyc|
+  config.vm.define "client" do |mgyc|
     mgyc.vm.box = DEBIAN_BOX
-    mgyc.vm.hostname = "margay-client"
-    mgyc.vm.network  "private_network", ip: "10.192.168.12", netmask: "24",
+    mgyc.vm.hostname = "mgyc2"
+    mgyc.vm.network  "private_network", ip: "10.192.168.22", netmask: "24",
       virtualbox__intnet: "margay-net-downstream"
     mgyc.vm.provider "virtualbox" do |vb|
       vb.gui = true
@@ -79,20 +78,12 @@ Vagrant.configure("2") do |config|
     mgyc.vm.provision "shell", inline: <<-EOF
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
-      sudo dpkg --configure -a
-      # TODO: a more lightweight solution? openbox/fluxbox? lxde-core only? (+lightdm)
-      apt-get -yq install task-lxde-desktop lightdm
+      apt-get -y upgrade
+      apt-get install -y lightdm openbox lxterminal qupzilla
       systemctl start lightdm
       # Remove default Internet connection, it will use the second interface behind
       # margay (now that provisioning is done and software downloaded).
-      ip route del default via 10.0.2.2 dev eth0
-
-      echo "----------------------------------------"
-      echo ">>> Provisioning of client VM completed."
-      echo ">>> If you don't see the graphical environment in VBox GUI,"
-      echo ">>> and there weren't other errors,"
-      echo ">>> try a manual start of lightdm service, or simply reboot the machine."
-      echo ">>> Then login with vagrant / vagrant , use the browser etc."
+      # ip route del default via 10.0.2.2 dev eth0
     EOF
   end
 end
