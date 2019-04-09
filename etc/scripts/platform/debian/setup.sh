@@ -85,7 +85,13 @@ disable_app_modules
 disable_dhcpcd_master
 
 # Disable the legacy SysV service, now "margay"
-systemctl --no-pager status onboard && systemctl disable onboard
+if ( systemctl list-units -all | grep onboard ); then
+	# Stop if running
+	if ( systemctl status onboard ); then
+		systemctl stop onboard
+	fi
+	systemctl disable onboard
+fi
 
 if [ ! -f /etc/default/margay ]; then
 
