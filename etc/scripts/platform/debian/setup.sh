@@ -84,6 +84,11 @@ disable_app_modules
 
 disable_dhcpcd_master
 
+# Circumvent this bug:
+# http://debian.2.n7.nabble.com/Bug-732920-procps-sysctl-system-fails-to-load-etc-sysctl-conf-td3133311.html
+sysctl --load=/etc/sysctl.conf
+sysctl --load=$PROJECT_ROOT/doc/sysadm/examples/etc/sysctl.conf
+
 # Disable the legacy SysV service, now "margay"
 if ( systemctl list-units -all | grep onboard ); then
 	# Stop if running
@@ -102,3 +107,28 @@ PROJECT_ROOT=$PROJECT_ROOT
 EOF
 
 fi
+
+if ( ! systemctl list-units -all | grep margay ); then
+
+	cat > /etc/systemd/system/margay.service <<EOF
+[Unit]
+Description=Margay Service
+After=network.target
+
+[Service]
+Type=simple
+User=$APP_USER
+WorkingDirectory=$PROJECT_ROOT
+ExecStart=$PROJECT_ROOT/start.sh
+Restart=on-failure
+# Other Restart options: or always, on-abort, on-failure etc
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+	systemctl enable margay
+	systemctl start margay
+
+fi
+
