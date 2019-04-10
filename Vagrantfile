@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-DEBIAN_BOX = "bento/debian-9.6"
+DEBIAN_BOX = "bento/debian-9"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -55,12 +55,35 @@ Vagrant.configure("2") do |config|
     # Margay/OnBoard runs as. So the dir is still owned by vagrant
     # but compatibility with some legacy scripts is retained.
 
-    # mgy.vm.synced_folder ".", "/home/onboard/onboard"
+    mgy.vm.synced_folder ".", "/vagrant"
 
     # Enable provisioning with a shell script. Additional provisioners such as
     # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
     # documentation for more information about their specific syntax and use.
     mgy.vm.provision "shell", path: "./etc/scripts/platform/debian/setup.sh", args: ["/vagrant", "vagrant"]
+
+    # Make sure the VBox shared folder is mounted before the Margay systemd service is invoked
+    VAGRANT_MOUNT_TEMPLATE = <<-EOF
+[Unit]
+Description=Vagrant Shared Folder
+
+[Mount]
+What=vagrant
+Where=/vagrant
+Type=vboxsf
+Options=uid=`id -u vagrant`,gid=`id -g vagrant`
+
+[Install]
+RequiredBy=margay.service margay-persist.service
+EOF
+
+    mgy.vm.provision "shell", inline: <<-EOF
+      cat > /etc/systemd/system/vagrant.mount <<EOFF
+#{VAGRANT_MOUNT_TEMPLATE}
+EOFF
+      systemctl daemon-reload
+      systemctl enable vagrant.mount
+    EOF
 
   end
 

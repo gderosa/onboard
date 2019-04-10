@@ -74,6 +74,8 @@ And more modules to come.
 For a local development environment you can use Vagrant (vagrantup.com)
 -- which will in turn call the above scripts.
 
+    vagrant plugin install vagrant-vbguest  # ensure updated VBox Guest Additions in the vm
+
     vagrant up
 
 You can also start separately margay vm and client vm:
