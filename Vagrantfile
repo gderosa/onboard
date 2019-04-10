@@ -38,6 +38,7 @@ Vagrant.configure("2") do |config|
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
     mgy.vm.network "private_network", ip: "10.192.168.11", netmask: "24",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "margay-net-downstream"
 
     # Create a public network, which generally matched to bridged network.
