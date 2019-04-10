@@ -3,7 +3,6 @@ autoload :Filepath, 'filepath'
 
 require 'onboard/crypto/easy-rsa'
 
-
 class OnBoard
   module Crypto
     module EasyRSA
@@ -59,7 +58,7 @@ EOF
           if msg[:ok]
             [SSL::CAKEY, "#{KEYDIR}/index.txt", "#{KEYDIR}/serial"].each do |f| 
               begin
-                FileUtils.chown nil, 'onboard', f
+                FileUtils.chown nil, Process.gid, f
                 FileUtils.chmod 0640, f
               rescue
                 FileUtils.chmod 0600, f
@@ -67,7 +66,7 @@ EOF
             end
           end
           begin
-            FileUtils.chown nil, 'onboard', EasyRSA::KEYDIR
+            FileUtils.chown nil, Process.gid, EasyRSA::KEYDIR
             FileUtils.chmod 0750, EasyRSA::KEYDIR
           rescue
             FileUtils.chmod 0700, EasyRSA::KEYDIR

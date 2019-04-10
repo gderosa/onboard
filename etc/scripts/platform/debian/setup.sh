@@ -113,7 +113,7 @@ EOF
 # TODO: fix persistence (and shutdown)
 cat > /etc/systemd/system/margay-persist.service <<EOF
 [Unit]
-Description=Margay: restore persistent settings on boot; perform requirements on sutdown
+Description=Margay restore-persistent/teardown service
 After=network.target
 
 [Service]
@@ -121,8 +121,7 @@ Type=oneshot
 User=$APP_USER
 WorkingDirectory=$PROJECT_ROOT
 ExecStart=/usr/bin/env ruby onboard.rb --restore --no-web
-#ExecStop=/usr/bin/env ruby onboard.rb --shutdown --no-web
-ExecStop=/bin/true
+ExecStop=/usr/bin/env ruby onboard.rb --shutdown --no-web
 RemainAfterExit=true
 StandardOutput=journal
 

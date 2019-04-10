@@ -305,7 +305,7 @@ class OnBoard
             end
             msg = System::Command.run <<EOF
 sudo touch #{logfile}
-sudo chown :onboard #{logfile}
+sudo chown :#{Process.gid} #{logfile}
 sudo chmod g+rw #{logfile}
 cd /
 UUID=#{uuid} sudo -E openvpn --config #{conffile} # -E is important!
@@ -313,7 +313,7 @@ EOF
           else
             msg = System::Command.run <<EOF
 sudo touch #{logfile}
-sudo chown :onboard #{logfile}
+sudo chown :#{Process.gid} #{logfile}
 sudo chmod g+rw #{logfile}
 cd /
 UUID=#{uuid} sudo -E #{cmdline.join(' ')} # -E is important!
