@@ -16,8 +16,6 @@ PROJECT_ROOT=${1:-'.'}
 APP_USER=${2:-'onboard'}
 
 install_conffiles() {
-	# TODO: /etc/default/margay to set OnBoard user!
-	install -bvC -m 755 doc/sysadm/examples/etc/init.d/onboard 		/etc/init.d/
 	install -bvC -m 644 doc/sysadm/examples/etc/dnsmasq.conf 		/etc/
 	install -bvC -m 644 doc/sysadm/examples/etc/sysctl.conf		    /etc/
 }
@@ -77,9 +75,6 @@ modprobe nf_conntrack_ipv4
 modprobe nf_conntrack_ipv6
 service procps restart
 
-# TODO: /etc/default/margay to set OnBoard user!
-# systemctl enable onboard
-
 disable_app_modules
 
 disable_dhcpcd_master
@@ -111,6 +106,8 @@ fi
 if ( ! systemctl list-units -all | grep margay ); then
 
 	cat > /etc/systemd/system/margay.service <<EOF
+# TODO: persist?
+
 [Unit]
 Description=Margay Service
 After=network.target
@@ -119,7 +116,7 @@ After=network.target
 Type=simple
 User=$APP_USER
 WorkingDirectory=$PROJECT_ROOT
-ExecStart=$PROJECT_ROOT/start.sh
+ExecStart=/usr/bin/env ruby onboard.rb
 Restart=on-failure
 # Other Restart options: or always, on-abort, on-failure etc
 
