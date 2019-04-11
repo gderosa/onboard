@@ -86,6 +86,10 @@ EOFF
       systemctl enable vagrant.mount
     EOF
 
+    # Modules
+
+    mgy.vm.provision "shell", path: "./modules/openvpn/etc/scripts/platform/debian/setup.sh", args: ["/vagrant", "vagrant"]
+
   end
 
   # The client machine may be any OS, but for economy of storage and download time,
