@@ -8,14 +8,13 @@ APP_USER=${2:-'onboard'}
 # apt-get update
 apt-get -y install openvpn
 
-# TODO: unprivileged part!
-
 enable_onboard_modules() {
-    cd $ONBOARD_ROOT/modules/
-    rm -f easy-rsa/.disable
-    rm -f openvpn/.disable
-    touch easy-rsa/.enable
-    touch openvpn/.enable
+    rm -f modules/easy-rsa/.disable
+    rm -f modules/openvpn/.disable
+    touch modules/easy-rsa/.enable
+    touch modules/openvpn/.enable
+    chown $APP_USER modules/easy-rsa/.enable
+    chown $APP_USER modules/openvpn/.enable
 }
 
 
@@ -27,8 +26,11 @@ enable_onboard_modules
 
 systemctl stop margay
 
-./etc/scripts/bundle-with.rb openvpn easy-rsa
-bundle install
+su - $APP_USER -c "
+    cd $PROJECT_ROOT
+    ./etc/scripts/bundle-with.rb openvpn easy-rsa
+    bundle install
+"
 
 systemctl start margay
 
