@@ -67,7 +67,6 @@ cd $PROJECT_ROOT
 
 apt-get update
 apt-get -y upgrade
-# TODO: lighttpd removed: NGINX!
 apt-get -y install ruby ruby-bundler ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute iptables bridge-utils pciutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
 
 install_conffiles
@@ -118,7 +117,6 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-# TODO: fix persistence (and shutdown)
 cat > /etc/systemd/system/margay-persist.service <<EOF
 [Unit]
 Description=Margay restore-persistent/teardown service
