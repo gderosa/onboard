@@ -52,6 +52,14 @@ disable_dhcpcd_master() {
 	fi
 }
 
+setup_nginx() {
+	apt-get -y install nginx-light ssl-cert
+	rm -fv /etc/nginx/sites-enabled/default  # just a symlink
+	install -bvC -m 644 doc/sysadm/examples/etc/nginx/sites-available/margay /etc/nginx/sites-available/
+	ln -svf ../sites-available/margay /etc/nginx/sites-enabled/
+	systemctl reload nginx
+}
+
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -135,3 +143,5 @@ systemctl enable margay
 systemctl start margay
 
 systemctl enable margay-persist
+
+setup_nginx

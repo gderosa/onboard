@@ -29,6 +29,7 @@ Vagrant.configure("2") do |config|
     # accessing "localhost:8080" will access port 80 on the guest machine.
     # NOTE: This will enable public access to the opened port
     mgy.vm.network "forwarded_port", guest: 4567, host: 4567
+    mgy.vm.network "forwarded_port", guest: 443,  host: 4443
 
     # Create a forwarded port mapping which allows access to a specific port
     # within the machine from a port on the host machine and only allow access
