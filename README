@@ -74,7 +74,7 @@ And more modules to come.
 For a local development environment you can use Vagrant (vagrantup.com)
 -- which will in turn call the above scripts.
 
-    vagrant plugin install vagrant-vbguest  # ensure updated VBox Guest Additions in the vm
+    vagrant plugin install vagrant-vbguest  # optional, ensure updated VBox Guest Additions in the vm
 
     vagrant up
 
@@ -96,12 +96,18 @@ for downloading packages during provisioning etc.
 
 See https://github.com/tmatilai/vagrant-proxyconf#environment-variables for more.
 
-A suggested value is
+Suggested values are
 
     VAGRANT_HTTP_PROXY=http://10.0.2.2:8123
+    VAGRANT_HTTPS_PROXY=http://10.0.2.2:8123
 
 if, for example, you use polipo with default config
 (10.0.2.2 is the default gateway for vbox NAT interface in the vm).
+
+Margay server will be available at
+
+    http://localhost:4567
+    https://localhost:4443
 
 ---
 
