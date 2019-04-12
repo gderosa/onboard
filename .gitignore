@@ -2,3 +2,4 @@
 .enable
 .disable
 .bundle/
+.vagrant/

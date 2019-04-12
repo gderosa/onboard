@@ -100,7 +100,7 @@ class OnBoard
 
   def self.prepare
     system "sudo mkdir -p #{VARRUN}"
-    system "sudo chown onboard #{VARRUN}"
+    system "sudo chown #{Process.uid} #{VARRUN}"
 
     # modules
     Dir.foreach(ROOTDIR + '/modules') do |dir|

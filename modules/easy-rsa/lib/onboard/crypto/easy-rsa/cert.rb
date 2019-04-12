@@ -72,24 +72,24 @@ EOF
               destkey = "#{SSL::KEYDIR}/#{params['CN']}.key"
               begin
                 FileUtils.mv(
-                    KEYDIR + "/#{params['CN']}.crt", 
-                    SSL::CERTDIR 
+                    KEYDIR + "/#{params['CN']}.crt",
+                    SSL::CERTDIR
                 )
                 FileUtils.symlink(
                     destcert,
                     EasyRSA::KEYDIR
-                )              
-                FileUtils.mv( 
-                    KEYDIR + "/#{params['CN']}.key", 
-                    SSL::KEYDIR  
+                )
+                FileUtils.mv(
+                    KEYDIR + "/#{params['CN']}.key",
+                    SSL::KEYDIR
                 )
                 FileUtils.symlink(
                     destkey,
                     EasyRSA::KEYDIR
-                )              
+                )
                 begin
-                  FileUtils.chown nil, 'onboard', destkey
-                  FileUtils.chown nil, 'onboard', destcert
+                  FileUtils.chown nil, Process.gid, destkey
+                  FileUtils.chown nil, Process.gid, destcert
                   FileUtils.chmod 0640, destkey
                   FileUtils.chmod 0644, destcert
                 rescue
