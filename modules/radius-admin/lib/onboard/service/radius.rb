@@ -5,7 +5,7 @@ require 'sequel'
 class OnBoard
   module Service
     module RADIUS
-      
+
       autoload :DEFAULTS,     'onboard/service/radius/defaults'
       autoload :Accounting,   'onboard/service/radius/accounting'
       autoload :Check,        'onboard/service/radius/check'
@@ -57,7 +57,7 @@ class OnBoard
         end
 
         def db
-          @@db = db_connect unless 
+          @@db = db_connect unless
               class_variable_defined? :@@db
           return @@db
         end
@@ -67,7 +67,7 @@ class OnBoard
             :user     => conf['dbuser'],
             :password => conf['dbpass'],
             :encoding => 'utf8'
-          ) 
+          )
           @@db.extension :pagination
         end
 
@@ -82,7 +82,7 @@ class OnBoard
         end
 
         def compute_password(h)
-          RADIUS::Passwd.new(h).to_s 
+          RADIUS::Passwd.new(h).to_s
         end
       end
 
