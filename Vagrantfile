@@ -2,6 +2,9 @@
 # vi: set ft=ruby :
 
 DEBIAN_BOX = "bento/debian-9"
+WORKING_DIR = "/vagrant"
+APP_USER = "vagrant"
+PROVISIONER_ARGS = [WORKING_DIR, APP_USER]
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -62,7 +65,7 @@ Vagrant.configure("2") do |config|
     # Enable provisioning with a shell script. Additional provisioners such as
     # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
     # documentation for more information about their specific syntax and use.
-    mgy.vm.provision "shell", path: "./etc/scripts/platform/debian/setup.sh", args: ["/vagrant", "vagrant"]
+    mgy.vm.provision "shell", path: "./etc/scripts/platform/debian/setup.sh", args: PROVISIONER_ARGS
 
     # Make sure the VBox shared folder is mounted before the Margay systemd service is invoked
     VAGRANT_MOUNT_TEMPLATE = <<-EOF
@@ -89,7 +92,15 @@ EOFF
 
     # Modules
 
-    mgy.vm.provision "shell", path: "./modules/openvpn/etc/scripts/platform/debian/setup.sh", args: ["/vagrant", "vagrant"]
+    mgy.vm.provision "shell", path: "./modules/openvpn/etc/scripts/platform/debian/setup.sh", args: PROVISIONER_ARGS
+
+    # Optional modules
+
+    # Actually deploy all other AAA/Hotspot -related modules as well: chilli etc.
+    mgy.vm.provision "radius",
+        type: "shell",
+        path: "./modules/radius-admin/etc/scripts/platform/debian/setup.sh",
+        args: PROVISIONER_ARGS
 
   end
 
