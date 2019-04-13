@@ -26,6 +26,9 @@ export DEBIAN_FRONTEND=noninteractive
 
 enable_modules
 
+mysql < modules/radius-admin/doc/sysadm/examples/admin.mysql
+mysql radius < modules/radius-admin/doc/sysadm/examples/schema3.mysql
+
 systemctl stop margay
 
 su - $APP_USER -c "
