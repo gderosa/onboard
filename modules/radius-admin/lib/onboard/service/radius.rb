@@ -63,7 +63,7 @@ class OnBoard
         end
 
         def db_connect
-          @@db = Sequel.connect( "mysql://#{conf['dbhost']}/#{conf['dbname']}",
+          @@db = Sequel.connect( "mysql2://#{conf['dbhost']}/#{conf['dbname']}",
             :user     => conf['dbuser'],
             :password => conf['dbpass'],
             :encoding => 'utf8'
