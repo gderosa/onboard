@@ -68,6 +68,8 @@ cd $PROJECT_ROOT
 apt-get update
 apt-get -y upgrade
 apt-get -y install ruby ruby-bundler ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute iptables bridge-utils pciutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
+# Optional, but useful tools when ssh'ing
+apt-get -y install vim-nox mc
 
 install_conffiles
 
