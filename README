@@ -90,6 +90,10 @@ and open Web Browser (or Terminal etc.)
 The same distinction between margay and client machine holds for
 other Vagrant commands: provision, halt, suspend, destroy etc.
 
+Provision optional module groups e.g.
+
+    vagrant provision margay --provision-with radius
+
 If you install the vagrant-proxyconf plugin,
 you also set proxy environment variables if you want to use a proxy
 for downloading packages during provisioning etc.
