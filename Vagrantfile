@@ -41,7 +41,7 @@ Vagrant.configure("2") do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    mgy.vm.network "private_network", ip: "10.192.168.11", netmask: "24",
+    mgy.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "margay-net-downstream"
 
@@ -109,10 +109,9 @@ EOFF
   config.vm.define "client" do |mgyc|
     mgyc.vm.box = DEBIAN_BOX
     mgyc.vm.hostname = "mgyclient"
-    mgyc.vm.network "private_network", ip: "10.192.168.121", netmask: "24",
-          # Just a dumb IP...
-      auto_config: "false",
-          # Vagrant auto_config would mess things up here,
+    mgyc.vm.network "private_network",
+      auto_config: false,
+          # Vagrant auto_config would otherwise mess things up here,
           # modifying /etc/network/interfaces so to remove the default gw from
           # margay (ordinary DHCP or chillispot).
       virtualbox__intnet: "margay-net-downstream"
