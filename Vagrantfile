@@ -109,7 +109,7 @@ EOFF
   config.vm.define "client" do |mgyc|
     mgyc.vm.box = DEBIAN_BOX
     mgyc.vm.hostname = "mgyclient"
-    mgyc.vm.network  "private_network", ip: "10.192.168.22", netmask: "24",
+    mgyc.vm.network "private_network", type: "dhcp",
       virtualbox__intnet: "margay-net-downstream"
     mgyc.vm.provider "virtualbox" do |vb|
       vb.gui = true
@@ -123,7 +123,8 @@ EOFF
       systemctl start lightdm
       # Remove default Internet connection, it will use the second interface behind
       # margay (now that provisioning is done and software downloaded).
-      # ip route del default via 10.0.2.2 dev eth0
+      # TODO: find a robust solution!
+      ip route del default via 10.0.2.2 dev eth0
     EOF
   end
 end
