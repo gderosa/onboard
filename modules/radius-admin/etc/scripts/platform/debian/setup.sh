@@ -5,6 +5,9 @@
 PROJECT_ROOT=${1:-'.'}
 APP_USER=${2:-'onboard'}
 MODULES="radius-core radius-admin chilli hotspotlogin mail"
+FREERADIUS_CONF_NEW=$PROJECT_ROOT/modules/radius-admin/doc/sysadm/examples/etc/freeradius
+FREERADIUS_CONF_SYS=/etc/freeradius
+FREERADIUS_CONF_BAK=/etc/freeradius.before-margay
 
 cd $PROJECT_ROOT
 
@@ -22,12 +25,34 @@ enable_modules() {
     done
 }
 
+setup_freeradius() {
+    # FreeRADIUS
+    echo "Checking if FreeRADIUS configuration needs updating..."
+    if ! (diff -rq $FREERADIUS_CONF_NEW $FREERADIUS_CONF_SYS)
+    then
+        systemctl stop freeradius
+        echo "Removing obsolete backups (if present)..."
+        rm -rf $FREERADIUS_CONF_BAK
+        if [ -d $FREERADIUS_CONF_SYS ]; then
+            echo "Back up of FreeRADIUS configuration..."
+            mv $FREERADIUS_CONF_SYS $FREERADIUS_CONF_BAK
+        fi
+        echo "Installing new FreeRADIUS configuration..."
+        cp -rfa $FREERADIUS_CONF_NEW /etc/
+        chown -R freerad:freerad $FREERADIUS_CONF_SYS
+        echo "(Re)starting FreeRADIUS..."
+        systemctl start freeradius
+    fi
+}
+
 export DEBIAN_FRONTEND=noninteractive
 
 enable_modules
 
 mysql < modules/radius-admin/doc/sysadm/examples/admin.mysql
 mysql radius < modules/radius-admin/doc/sysadm/examples/schema3.mysql
+
+setup_freeradius
 
 systemctl stop margay
 
