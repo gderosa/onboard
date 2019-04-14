@@ -125,7 +125,9 @@ EOFF
       ip link set up dev eth0
       # ASSUME dhclient is the dhcp client
       if (ps aux | grep dhclient | grep eth0 | grep -v grep); then
-        if ! (ip route | grep default | grep eth0 | grep -v grep); then
+        if (ip route | grep default | grep -v grep); then
+          ip route replace default via 10.0.2.2 dev eth0
+        else
           ip route add default via 10.0.2.2 dev eth0
         fi
       else
