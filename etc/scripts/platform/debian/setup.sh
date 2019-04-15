@@ -111,9 +111,10 @@ After=network.target
 Type=simple
 User=$APP_USER
 WorkingDirectory=$PROJECT_ROOT
+Environment="APP_ENV=production"
 ExecStart=/usr/bin/env ruby onboard.rb
 Restart=on-failure
-# Other Restart options: or always, on-abort, on-failure etc
+# Other Restart options: always, on-abort, on-failure etc
 
 [Install]
 WantedBy=multi-user.target
