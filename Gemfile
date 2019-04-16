@@ -11,7 +11,7 @@ source "https://rubygems.org" do
   gem 'thin'
   gem 'locale'
   gem 'i18n_data'
-  gem 'sinatra-r18n'
+  gem 'sinatra-r18n', '~> 2'
   gem 'erubis'
   gem 'uuid'
   gem 'facets'
