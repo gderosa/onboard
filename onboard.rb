@@ -224,6 +224,3 @@ if OnBoard.web?
     OnBoard::Controller.run! :bind => '0.0.0.0'
   end
 end
-
-
-
