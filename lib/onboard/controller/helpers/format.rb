@@ -8,7 +8,7 @@ require 'onboard/extensions/sinatra/templates'
 class OnBoard
   class Controller < ::Sinatra::Base
     helpers do
-    
+
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
 
@@ -19,14 +19,14 @@ class OnBoard
         h[:formats] = @@formats
 
         # try to guess if not provided
-        h[:format]                                ||= 
-            params[:format]                       ||= 
+        h[:format]                                ||=
+            params[:format]                       ||=
             request.path_info =~ /\.(\w+$)/ && $1
 
         return multiple_choices(h) unless h[:formats].include? h[:format]
         # h[:path] and abs_path are with no extension!
-        if h[:module] 
-          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
+        if h[:module]
+          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '')
         end
         abs_path = File.absolute_path( File.join(settings.views, h[:path]) )
         case h[:format]
@@ -34,7 +34,7 @@ class OnBoard
           if h[:partial]
             layout = false
           elsif instance_variable_defined? :@layout and @layout
-            layout = @layout.to_sym 
+            layout = @layout.to_sym
                 # a mobile layout is set in lib/onboard/controller/auth.rb
                 # (if appropriate) only for /pub/ pages right now
           else

@@ -39,7 +39,7 @@ class OnBoard
             @@rpltable    ||= @@conf['user']['reply']['table'].to_sym
             @@rplcols     ||= @@conf['user']['reply']['columns'].symbolize_values
             @@perstable   ||= @@conf['user']['personal']['table'].to_sym
-            @@perscols    ||= 
+            @@perscols    ||=
                 @@conf['user']['personal']['columns'].symbolize_values
             @@termstable  ||= @@conf['terms']['table'].to_sym
             @@termsaccepttable ||=
@@ -47,9 +47,9 @@ class OnBoard
           end
 
           def setup!
-            @@conf = 
-                @@chktable  = @@chkcols   = 
-                @@rpltable  = @@rplcols   = 
+            @@conf =
+                @@chktable  = @@chkcols   =
+                @@rpltable  = @@rplcols   =
                 @@perstable = @@perscols  = nil
             setup
           end
@@ -59,7 +59,7 @@ class OnBoard
             Group.setup
 
             column      = @@conf['user']['check']['columns']['User-Name'].to_sym
-            page        = params[:page].to_i 
+            page        = params[:page].to_i
             per_page    = params[:per_page].to_i
 
             q_check     = RADIUS.db[@@chktable].select(
@@ -72,14 +72,14 @@ class OnBoard
 
             union       = (q_check | q_usergroup).group_by :username
 
-            users       = union.paginate(page, per_page).map do |h| 
+            users       = union.paginate(page, per_page).map do |h|
               h[:username].force_encoding 'utf-8'
             end
             return {
               'total_items' => union.count,
               'page'        => page,
               'per_page'    => per_page,
-              'users'       => users.map{|u| new(u)} 
+              'users'       => users.map{|u| new(u)}
             }
           end
 
@@ -92,7 +92,7 @@ class OnBoard
 
             if h[:Email]
               email = h[:Email]
-            
+
               row = RADIUS.db[@@perstable].select(
                 *Sequel.aliases(@@perscols.invert)
               ).filter(
@@ -121,7 +121,7 @@ class OnBoard
 
             # we do not use configurable column names here...
 
-            page        = params[:page].to_i 
+            page        = params[:page].to_i
             per_page    = params[:per_page].to_i
 
             # use double underscore Sequel notation for tablename.columnname
@@ -221,7 +221,7 @@ class OnBoard
 
         def retrieve_attributes_from_db
           setup
-          
+
           @check = RADIUS.db[@@chktable].select(
             *Sequel.aliases(@@chkcols.invert)
           ).where(
@@ -250,16 +250,16 @@ class OnBoard
 
         def retrieve_personal_info_from_db
           setup
-          
+
           row = RADIUS.db[@@perstable].select(
             *Sequel.aliases(@@perscols.invert)
           ).filter(
             @@perscols['User-Name'] => @name
           ).first
           if row
-            @personal = row.stringify_keys 
-          else 
-            @personal = {} 
+            @personal = row.stringify_keys
+          else
+            @personal = {}
           end
         end
         alias retrieve_personal_info retrieve_personal_info_from_db
@@ -270,7 +270,7 @@ class OnBoard
           @personal ||= {}
           retrieve_personal_info unless @personal['Id']
           list = RADIUS.db[@@termsaccepttable].select(:terms_id).filter(:userinfo_id => @personal['Id']).map{|h| h[:terms_id]}
-          @accepted_terms = Terms::Document.get_all(:id => list) 
+          @accepted_terms = Terms::Document.get_all(:id => list)
         end
         alias retrieve_accepted_terms retrieve_accepted_terms_from_db
 
@@ -284,9 +284,9 @@ class OnBoard
         def delete!
           setup
 
-	  # Because of referential integrity, accepted terms rows must be deleted first.
+	        # Because of referential integrity, accepted terms rows must be deleted first.
 
-	  # Terms & Conditions doesnt't have configurable column names...
+	        # Terms & Conditions doesnt't have configurable column names...
           RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
 
           RADIUS.db[@@chktable        ].where(@@chkcols[  'User-Name'] => @name          ).delete

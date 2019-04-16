@@ -17,9 +17,19 @@ describe 'RADIUS admin' do
   end
 
   it "creates a user" do
+    # cleanup, no matter what
+    delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     post '/services/radius/users.json',
-      '{"check":{"User-Name":"u555","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
+      '{"check":{"User-Name":"__user_test","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
       { "CONTENT_TYPE" => "application/json" }
     expect(last_response.status).to eq(201)
+ end
+
+  it "deletes a user" do
+    delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
+    expect(last_response.status).to be_between(200, 399)  # OKs or redirs
+    get '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
+    # expect(last_response.status).to eq(404)
+    puts last_response.body
   end
 end

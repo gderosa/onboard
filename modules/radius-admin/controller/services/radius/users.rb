@@ -90,7 +90,7 @@ class OnBoard
         user.retrieve_personal_info_from_db
         user.get_personal_attachment_info
       end
-      if !user.found? and !msg[:err] 
+      if !user.found? and !msg[:err]
         msg[:warn] = "User has no longer any attribute!"
       end
       format(
@@ -120,7 +120,7 @@ class OnBoard
       user.retrieve_info_from_db
       msg = handle_errors do
         if user.found?
-          if params['confirm'] =~ /on|yes|true|1/
+          if params['confirm'] =~ /on|yes|true|1/ or params[:format] == 'json'
             user.delete!
             status 303 # HTTP See Other
             headers 'Location' => "/services/radius/users.#{params[:format]}"
@@ -134,7 +134,7 @@ class OnBoard
 
       # You should not get this point if everything was ok...
 
-      # modeled on groups: is it ok? 
+      # modeled on groups: is it ok?
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/users/user',
