@@ -1,4 +1,4 @@
-ENV['APP_ENV'] = 'test'
+ENV['APP_ENV'] = 'test'  # this will also disable http auth in lib/controller/auth.rb
 
 require './onboard'  # <-- your sinatra app
 
