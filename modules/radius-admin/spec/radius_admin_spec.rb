@@ -28,8 +28,8 @@ describe 'RADIUS admin' do
   it "deletes a user" do
     delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     expect(last_response.status).to be_between(200, 399)  # OKs or redirs
+    delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     get '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
-    # expect(last_response.status).to eq(404)
-    puts last_response.body
+    expect(last_response.status).to eq(404)
   end
 end
