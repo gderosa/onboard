@@ -129,13 +129,13 @@ and therefore circumvent the captive portal (depending on the configuration).
 NEW: Testing
 
     # core only
-    rspec
+    bundle exec rspec
 
     # plus specific module
-    rspec spec modules/radius-admin/spec
+    bundle exec rspec spec modules/radius-admin/spec
 
     # plus all modules
-    rspec spec modules/*/spec
+    bundle exec rspec spec modules/*/spec
 
 It's assumed they have been basically configure to function,
 they are real e2e tests connecting to real local db  etc.
