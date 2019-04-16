@@ -1,7 +1,3 @@
-ENV['APP_ENV'] = 'test'  # this will also disable http auth in lib/controller/auth.rb
-
-require './onboard'  # <-- your sinatra app
-
 require 'rspec'
 require 'rack/test'
 
@@ -12,9 +8,9 @@ describe 'The App Root' do
     OnBoard::Controller
   end
 
-  it "responds with a 200" do
+  it "responds with landing page" do
     get '/'
     expect(last_response).to be_ok
-    #expect(last_response.body).to eq('Hello World')
+    expect(last_response.body).to include('Linux-based Networking')
   end
 end

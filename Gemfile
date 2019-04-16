@@ -24,6 +24,7 @@ source "https://rubygems.org" do
   group :test, :development do
     gem 'rspec', '~> 3.8'
     gem 'rack-test', '~> 0.6.3'
+    gem 'json_spec', '~> 1.1', '>= 1.1.5'
   end
 
   # Modules

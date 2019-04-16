@@ -125,6 +125,21 @@ and therefore circumvent the captive portal (depending on the configuration).
     vagrant plugin install vagrant-vbguest  # optional, ensure updated VBox Guest Additions in the vm
 
 
+
+NEW: Testing
+
+    # core only
+    rspec
+
+    # plus specific module
+    rspec spec modules/radius-admin/spec
+
+    # plus all modules
+    rspec spec modules/*/spec
+
+It's assumed they have been basically configure to function,
+they are real e2e tests connecting to real local db  etc.
+
 ---
 
 This Free/Open Source Software project is sponsored by

@@ -24,12 +24,16 @@ GEM
       sinatra-r18n
     i18n_data (0.7.0)
     json (1.8.3)
+    json_spec (1.1.5)
+      multi_json (~> 1.0)
+      rspec (>= 2.0, < 4.0)
     locale (2.1.1)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     mime-types (2.6.1)
+    multi_json (1.13.1)
     mustermann (1.0.3)
     numerizer (0.1.1)
     r18n-core (2.1.7)
@@ -87,6 +91,7 @@ DEPENDENCIES
   hierarchical_menu!
   hotspotlogin!
   i18n_data!
+  json_spec (~> 1.1, >= 1.1.5)!
   locale!
   mail!
   rack-test (~> 0.6.3)!
