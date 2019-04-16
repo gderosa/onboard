@@ -6,7 +6,8 @@ source "https://rubygems.org" do
   # However, they are of general use (and perhaps not too heavyweight)
   # and may be required by the core as well at some point.
   gem 'hierarchical_menu'
-  gem 'sinatra', '~>2.0'
+  gem 'sinatra'
+  gem 'rack-contrib'
   gem 'thin'
   gem 'locale'
   gem 'i18n_data'

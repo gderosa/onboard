@@ -20,5 +20,6 @@ describe 'RADIUS admin' do
     post '/services/radius/users.json',
       '{"check":{"User-Name":"u555","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
       { "CONTENT_TYPE" => "application/json" }
+    expect(last_response.status).to eq(201)
   end
 end

@@ -5,6 +5,9 @@ require 'thin'
 require 'sinatra/base'
 require 'tilt/erubis'
 
+require 'rack'
+require 'rack/contrib'
+
 require 'onboard/extensions/sinatra/base'
 require 'onboard/extensions/sinatra/templates'
 
