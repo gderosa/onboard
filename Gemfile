@@ -19,6 +19,8 @@ source "https://rubygems.org" do
   gem 'chronic_duration'
   gem 'mail'
   gem 'escape'
+
+  gem 'rspec', '~> 3.8', :group => [:test, :development]
 end
 
 Dir.foreach(MODULESDIR) do |mod|
