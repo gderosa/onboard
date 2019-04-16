@@ -36,7 +36,7 @@ class OnBoard
       class_variable_defined? :@@public_access and @@public_access.any? {|m| m === path}      end
 
     before do
-      protected! unless self.class.public_access? request.path_info
+      protected! unless self.class.public_access? request.path_info or ENV['APP_ENV'] == 'test'
 
       if request.path_info =~ %r{^/pub(/.*)?$}
         if mobile?
@@ -45,7 +45,7 @@ class OnBoard
           @layout = 'pub/layout.html'
         end
       end
-    end    
+    end
 
     # All URLs under /pub/ are publicly accessible! 
     public_access! %r{^/pub(/.*)?$} 
