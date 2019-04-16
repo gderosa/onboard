@@ -36,8 +36,8 @@ class OnBoard
 
   ROOTDIR           = File.dirname File.expand_path(__FILE__)
   DATADIR = RWDIR = (
-      ENV['ONBOARD_RWDIR'] or 
-      ENV['ONBOARD_DATADIR'] or 
+      ENV['ONBOARD_RWDIR'] or
+      ENV['ONBOARD_DATADIR'] or
       File.join(ENV['HOME'], '.onboard')
   )
   FileUtils.mkdir_p RWDIR
