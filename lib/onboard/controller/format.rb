@@ -9,7 +9,7 @@ class OnBoard
     use Rack::PostBodyContentTypeParser
 
     @@formats = %w{html json} # order matters
-    @@formats << 'rb' if development?
+    @@formats << 'rb' if development? or test?
 
   end
 end
