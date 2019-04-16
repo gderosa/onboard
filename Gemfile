@@ -1,6 +1,7 @@
 MODULESDIR = File.dirname(__FILE__) + '/modules'
 
 source "https://rubygems.org" do
+
   # A few of the below are currently only required by certain modules.
   # However, they are of general use (and perhaps not too heavyweight)
   # and may be required by the core as well at some point.
@@ -20,15 +21,20 @@ source "https://rubygems.org" do
   gem 'mail'
   gem 'escape'
 
-  gem 'rspec', '~> 3.8', :group => [:test, :development]
-end
+  group :test, :development do
+    gem 'rspec', '~> 3.8'
+    gem 'rack-test', '~> 0.6.3'
+  end
 
-Dir.foreach(MODULESDIR) do |mod|
-  next if ['..', '.'].include? mod 
-  gemfile = "#{MODULESDIR}/#{mod}/Gemfile"
-  if File.exists? gemfile
-    group mod.to_sym do
-      eval_gemfile gemfile
+  # Modules
+  Dir.foreach(MODULESDIR) do |mod|
+    next if ['..', '.'].include? mod
+    gemfile = "#{MODULESDIR}/#{mod}/Gemfile"
+    if File.exists? gemfile
+      group mod.to_sym do
+        eval_gemfile gemfile
+      end
     end
   end
+
 end

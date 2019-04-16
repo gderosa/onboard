@@ -36,6 +36,8 @@ GEM
     rack (2.0.6)
     rack-protection (2.0.5)
       rack
+    rack-test (0.6.3)
+      rack (>= 1.0)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -87,6 +89,7 @@ DEPENDENCIES
   i18n_data!
   locale!
   mail!
+  rack-test (~> 0.6.3)!
   rspec (~> 3.8)!
   rubyzip!
   sinatra (~> 2.0)!
