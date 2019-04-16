@@ -27,7 +27,10 @@ class OnBoard
     end
 
     post '/services/radius/users.:format' do
-      use_pagination_defaults
+      use_pagination_defaults # unless params
+      pp params
+      pp params[:payload]
+      pp request.body.read
       name  = params['check']['User-Name']
       user  = Service::RADIUS::User.new(name) # blank slate
       msg = handle_errors do 

@@ -15,4 +15,10 @@ describe 'RADIUS admin' do
     expect(last_response).to be_ok
     expect(last_response.body).to have_json_path("accounting/table")
   end
+
+  it "creates a user" do
+    post '/services/radius/users.json',
+      '{"check":{"User-Name":"u555","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
+      { "CONTENT_TYPE" => "application/json" }
+  end
 end
