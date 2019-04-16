@@ -4,6 +4,7 @@ require 'json_spec'
 
 describe 'RADIUS admin' do
   include Rack::Test::Methods
+  include JsonSpec::Helpers
 
   def app
     OnBoard::Controller
