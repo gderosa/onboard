@@ -27,19 +27,19 @@ describe 'RADIUS admin' do
     delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     #
     post '/services/radius/users.json', JSON.generate({
-        check: {
-          "User-Name": "__user_test",
-          "Password-Type": "SSHA1-Password",
-          "User-Password": "p"
+        'check': {
+          'User-Name': "__user_test",
+          'Password-Type': "SSHA1-Password",
+          'User-Password': "p"
         },
-        confirm: {  # TODO: make this not required on json
-          check: {
-            "User-Password": "p"
+        'confirm': {  # TODO: make this not required on json
+          'check': {
+            'User-Password': "p"
           }
         }
       }),
       {
-        "CONTENT_TYPE" => "application/json"  # Don't use symbols!
+        'CONTENT_TYPE' => "application/json"  # Don't use symbols!
       }
     puts last_response.body
     expect(last_response.status).to eq(201)
