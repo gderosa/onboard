@@ -10,6 +10,21 @@ describe 'RADIUS admin' do
     OnBoard::Controller
   end
 
+  let(:user_creation_data) do
+    {
+      'check': {
+        'User-Name': "__user_test",
+        'Password-Type': "SSHA1-Password",
+        'User-Password': "p"
+      },
+      'confirm': {  # TODO: make this not required on json
+        'check': {
+          'User-Password': "p"
+        }
+      }
+    }
+  end
+
   it "responds with db table info" do
     get '/services/radius/config.json'
     expect(last_response).to be_ok
@@ -26,21 +41,7 @@ describe 'RADIUS admin' do
     # cleanup, no matter what
     delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     #
-    post '/services/radius/users.json', JSON.generate({
-        'check': {
-          'User-Name': "__user_test",
-          'Password-Type': "SSHA1-Password",
-          'User-Password': "p"
-        },
-        'confirm': {  # TODO: make this not required on json
-          'check': {
-            'User-Password': "p"
-          }
-        }
-      }),
-      {
-        'CONTENT_TYPE' => "application/json"  # Don't use symbols!
-      }
+    post '/services/radius/users.json', JSON.generate(user_creation_data), {'CONTENT_TYPE' => "application/json"}
     expect(last_response.status).to eq(201)
  end
 
@@ -55,9 +56,7 @@ describe 'RADIUS admin' do
     # cleanup, no matter what
     delete '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
     #
-    post '/api/v1/services/radius/users',
-      '{"check":{"User-Name":"__user_test","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
-      { "CONTENT_TYPE" => "application/json" }
+    post '/services/radius/users.json', JSON.generate(user_creation_data), {'CONTENT_TYPE' => "application/json"}
     expect(last_response.status).to eq(201)
     get '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
     expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
