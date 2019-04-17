@@ -47,6 +47,8 @@ describe 'RADIUS admin' do
       '{"check":{"User-Name":"__user_test","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
       { "CONTENT_TYPE" => "application/json" }
     expect(last_response.status).to eq(201)
+    get '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
  end
 
   it "deletes a user (/api/v1)" do
