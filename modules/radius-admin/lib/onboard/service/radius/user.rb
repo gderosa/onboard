@@ -31,7 +31,7 @@ class OnBoard
 
           def setup
             # Most of the following hashes are used in various calls to
-            # Sequel::Dataset#select 
+            # Sequel::Dataset#select
 
             @@conf        ||= RADIUS.read_conf
             @@chktable    ||= @@conf['user']['check']['table'].to_sym
@@ -297,9 +297,9 @@ class OnBoard
 
         def accept_terms!(accepted_terms)
           setup
-          retrieve_personal_info_from_db unless @personal['Id'] 
+          retrieve_personal_info_from_db unless @personal['Id']
           raise(
-              Conflict, 
+              Conflict,
               %Q{There's no user named "#{@name}" in userinfo db table}
           ) unless @personal['Id']
           accepted_terms.each do |terms_id|
@@ -325,11 +325,11 @@ class OnBoard
         end
 
         def grouplist
-          @groups.map{|h| h[:"Group-Name"]}   
+          @groups.map{|h| h[:"Group-Name"]}
         end
 
         def found?
-          @check.any? || @reply.any? || @groups.any? 
+          @check.any? || @reply.any? || @groups.any?
         end
 
         def update_reply_attributes(params)
@@ -349,13 +349,13 @@ class OnBoard
             )
           end
         end
-        
+
         def update_check_attributes(params) # no passwords
           return unless  params['check'].respond_to? :each_pair
           params['check'].each_pair do |attribute, value|
             # passwords are managed by #update_passwd
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
-            # inserting User-Name attribute doesn't make sense: there's 
+            # inserting User-Name attribute doesn't make sense: there's
             # already @@chkcols['User-Name'] column
             next if attribute == 'User-Name'
             RADIUS.db[@@chktable].filter(
@@ -381,10 +381,10 @@ class OnBoard
           validate_empty_password(params)
           # params['check']['Password-Type']:
           # nil:  leave unchanged
-          # '' :  no password - e.g. group authentication  
-          unless params['check']['Password-Type'] 
+          # '' :  no password - e.g. group authentication
+          unless params['check']['Password-Type']
             params['check']['Password-Type'] = password_type
-          end 
+          end
           if params['check']['Password-Type'] =~ /\S/
             return unless params['check']['User-Password'] =~ /\S/
             # so an incorrect Password-Type would raise an exception
@@ -418,16 +418,16 @@ class OnBoard
               'check'   => {
                 'User-Password' => password
               }
-            }            
+            }
           }
           update_passwd params
         end
 
         def update_group_membership(params)
           Group.setup
-          groupnames = 
-              params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}  
-          groupnames.each{|name| Name.validate name} 
+          groupnames =
+              params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}
+          groupnames.each{|name| Name.validate name}
           oldrows = RADIUS.db[Group.maptable].filter(
             Group.mapcols['User-Name'] => @name
           ).to_a
@@ -443,13 +443,13 @@ class OnBoard
           delete = oldrows - newrows
           insert = newrows - oldrows
           delete.each{|row| RADIUS.db[Group.maptable].filter(row).delete}
-          insert.each do |row| 
+          insert.each do |row|
             RADIUS.db[Group.maptable].insert(row)
-            g = Group.new row[Group.mapcols['Group-Name']] 
+            g = Group.new row[Group.mapcols['Group-Name']]
             g.retrieve_attributes_from_db
             # g.insert_fall_through_if_not_exists
           end
-         insert_fall_through_if_not_exists 
+          insert_fall_through_if_not_exists if groupnames.any?
         end
 
         def insert_fall_through_if_not_exists
