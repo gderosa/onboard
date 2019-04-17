@@ -25,21 +25,18 @@ describe 'RADIUS admin' do
         "name": "__user_test",
         "check": [
           {
-            "Id": 1,
             "User-Name": "__user_test",
             "Attribute": "User-Name",
             "Operator": ":=",
             "Value": "__user_test"
           },
           {
-            "Id": 16,
             "User-Name": "__user_test",
             "Attribute": "SSHA1-Password",
             "Operator": ":=",
             "Value": "Yg+Zkt25hotWV4vLYXcEjGZv153BmsHJMilz0+XT15W5J4S78ieoZQ=="
           },
           {
-            "Id": 18,
             "User-Name": "__user_test",
             "Attribute": "Login-Time",
             "Operator": ":=",
@@ -48,35 +45,30 @@ describe 'RADIUS admin' do
         ],
         "reply": [
           {
-            "Id": 6,
             "User-Name": "__user_test",
             "Attribute": "Reply-Message",
             "Operator": ":=",
             "Value": "my reply msg"
           },
           {
-            "Id": 7,
             "User-Name": "__user_test",
             "Attribute": "Session-Timeout",
             "Operator": ":=",
             "Value": "7200"
           },
           {
-            "Id": 8,
             "User-Name": "__user_test",
             "Attribute": "Idle-Timeout",
             "Operator": ":=",
             "Value": "1800"
           },
           {
-            "Id": 9,
             "User-Name": "__user_test",
             "Attribute": "WISPr-Bandwidth-Max-Down",
             "Operator": ":=",
             "Value": "800000"
           },
           {
-            "Id": 10,
             "User-Name": "__user_test",
             "Attribute": "WISPr-Bandwidth-Max-Up",
             "Operator": ":=",
@@ -87,7 +79,6 @@ describe 'RADIUS admin' do
 
         ],
         "personal": {
-          "Id": 1,
           "User-Name": "__user_test",
           "First-Name": "Jonathan",
           "Last-Name": "Swift",
