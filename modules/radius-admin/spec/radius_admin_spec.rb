@@ -26,9 +26,22 @@ describe 'RADIUS admin' do
     # cleanup, no matter what
     delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     #
-    post '/services/radius/users.json',
-      '{"check":{"User-Name":"__user_test","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
-      { "CONTENT_TYPE" => "application/json" }
+    post '/services/radius/users.json', JSON.generate({
+        check: {
+          "User-Name": "__user_test",
+          "Password-Type": "SSHA1-Password",
+          "User-Password": "p"
+        },
+        confirm: {  # TODO: make this not required on json
+          check: {
+            "User-Password": "p"
+          }
+        }
+      }),
+      {
+        "CONTENT_TYPE" => "application/json"  # Don't use symbols!
+      }
+    puts last_response.body
     expect(last_response.status).to eq(201)
  end
 
