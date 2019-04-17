@@ -16,6 +16,12 @@ describe 'RADIUS admin' do
     expect(last_response.body).to have_json_path("accounting/table")
   end
 
+  it "responds with db table info (/api/v1)" do
+    get '/api/v1/services/radius/config'
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_json_path("accounting/table")
+  end
+
   it "creates a user" do
     # cleanup, no matter what
     delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
