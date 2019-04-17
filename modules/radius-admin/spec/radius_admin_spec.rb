@@ -20,13 +20,13 @@ describe 'RADIUS admin' do
   end
 
   it "responds with db table info" do
-    get '/services/radius/config.json'
+    get_json '/services/radius/config.json'
     expect(last_response).to be_ok
     expect(last_response.body).to have_json_path("accounting/table")
   end
 
   it "responds with db table info (/api/v1)" do
-    get '/api/v1/services/radius/config'
+    get_json '/api/v1/services/radius/config'
     expect(last_response).to be_ok
     expect(last_response.body).to have_json_path("accounting/table")
   end
