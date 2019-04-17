@@ -21,18 +21,17 @@ describe 'RADIUS admin' do
 
   it "creates a user" do
     # cleanup, no matter what
-    delete_json '/api/v1/services/radius/users/__user_test'
+    delete_json '/services/radius/users/__user_test.json'
     #
     post_json '/services/radius/users.json', user_creation_data
     expect(last_response.status).to eq(201)
-    get_json '/api/v1/services/radius/users/__user_test'
-    expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
  end
 
   it "deletes a user" do
-    delete_json '/api/v1/services/radius/users/__user_test'
+    delete_json '/services/radius/users/__user_test.json'
     expect(last_response.status).to be_between(200, 399)  # OKs or redirs
-    get_json '/api/v1/services/radius/users/__user_test'
+    get_json '/services/radius/users/__user_test.json'
     expect(last_response.status).to eq(404)
   end
+
 end
