@@ -26,21 +26,21 @@ describe 'RADIUS admin' do
         "check": [
           {
             "Id": 1,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "User-Name",
             "Operator": ":=",
-            "Value": "u1"
+            "Value": "__user_test"
           },
           {
             "Id": 16,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "SSHA1-Password",
             "Operator": ":=",
             "Value": "Yg+Zkt25hotWV4vLYXcEjGZv153BmsHJMilz0+XT15W5J4S78ieoZQ=="
           },
           {
             "Id": 18,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "Login-Time",
             "Operator": ":=",
             "Value": "Wk2305-0855,Sa,Su2305-1655"
@@ -49,35 +49,35 @@ describe 'RADIUS admin' do
         "reply": [
           {
             "Id": 6,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "Reply-Message",
             "Operator": ":=",
             "Value": "my reply msg"
           },
           {
             "Id": 7,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "Session-Timeout",
             "Operator": ":=",
             "Value": "7200"
           },
           {
             "Id": 8,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "Idle-Timeout",
             "Operator": ":=",
             "Value": "1800"
           },
           {
             "Id": 9,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "WISPr-Bandwidth-Max-Down",
             "Operator": ":=",
             "Value": "800000"
           },
           {
             "Id": 10,
-            "User-Name": "u1",
+            "User-Name": "__user_test",
             "Attribute": "WISPr-Bandwidth-Max-Up",
             "Operator": ":=",
             "Value": "400000"
@@ -88,7 +88,7 @@ describe 'RADIUS admin' do
         ],
         "personal": {
           "Id": 1,
-          "User-Name": "u1",
+          "User-Name": "__user_test",
           "First-Name": "Jonathan",
           "Last-Name": "Swift",
           "Email": "johnny@begood.net",
