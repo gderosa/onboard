@@ -1,10 +1,4 @@
-require 'rspec'
-require 'rack/test'
-require 'json_spec'
-
 describe 'RADIUS admin' do
-  include Rack::Test::Methods
-  include JsonSpec::Helpers
 
   def app
     OnBoard::Controller
@@ -41,7 +35,7 @@ describe 'RADIUS admin' do
     # cleanup, no matter what
     delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     #
-    post '/services/radius/users.json', JSON.generate(user_creation_data), {'CONTENT_TYPE' => "application/json"}
+    post_json '/services/radius/users.json', user_creation_data
     expect(last_response.status).to eq(201)
  end
 
@@ -56,7 +50,7 @@ describe 'RADIUS admin' do
     # cleanup, no matter what
     delete '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
     #
-    post '/services/radius/users.json', JSON.generate(user_creation_data), {'CONTENT_TYPE' => "application/json"}
+    post_json '/services/radius/users.json', user_creation_data
     expect(last_response.status).to eq(201)
     get '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
     expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
