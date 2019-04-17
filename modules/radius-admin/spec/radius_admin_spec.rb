@@ -38,4 +38,21 @@ describe 'RADIUS admin' do
     get '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
     expect(last_response.status).to eq(404)
   end
+
+  it "creates a user (/api/v1)" do
+    # cleanup, no matter what
+    delete '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    #
+    post '/api/v1/services/radius/users',
+      '{"check":{"User-Name":"__user_test","Password-Type":"SSHA1-Password","User-Password":"p"},"confirm":{"check":{"User-Password":"p"}}}',
+      { "CONTENT_TYPE" => "application/json" }
+    expect(last_response.status).to eq(201)
+ end
+
+  it "deletes a user (/api/v1)" do
+    delete '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    expect(last_response.status).to be_between(200, 399)  # OKs or redirs
+    get '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    expect(last_response.status).to eq(404)
+  end
 end
