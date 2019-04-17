@@ -41,7 +41,6 @@ describe 'RADIUS admin' do
       {
         'CONTENT_TYPE' => "application/json"  # Don't use symbols!
       }
-    puts last_response.body
     expect(last_response.status).to eq(201)
  end
 
