@@ -24,8 +24,14 @@ RSpec.configure do |config|
   include Rack::Test::Methods
   include JsonSpec::Helpers
 
+  def get_json(path)
+    get path, {'ACCEPT' => "application/json"}
+  end
   def post_json(path, data)
     post path, JSON.generate(data), {'CONTENT_TYPE' => "application/json"}
+  end
+  def delete_json(path)
+    delete path, {'ACCEPT' => "application/json"}
   end
 
   # rspec-expectations config goes here. You can use an alternate

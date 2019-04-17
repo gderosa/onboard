@@ -33,33 +33,33 @@ describe 'RADIUS admin' do
 
   it "creates a user" do
     # cleanup, no matter what
-    delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
+    delete_json '/services/radius/users/__user_test.json'
     #
     post_json '/services/radius/users.json', user_creation_data
     expect(last_response.status).to eq(201)
  end
 
   it "deletes a user" do
-    delete '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
+    delete_json '/services/radius/users/__user_test.json'
     expect(last_response.status).to be_between(200, 399)  # OKs or redirs
-    get '/services/radius/users/__user_test.json', { "ACCEPT" => "application/json" }
+    get_json '/services/radius/users/__user_test.json'
     expect(last_response.status).to eq(404)
   end
 
   it "creates a user (/api/v1)" do
     # cleanup, no matter what
-    delete '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    delete_json '/api/v1/services/radius/users/__user_test'
     #
     post_json '/services/radius/users.json', user_creation_data
     expect(last_response.status).to eq(201)
-    get '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    get_json '/api/v1/services/radius/users/__user_test'
     expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
  end
 
   it "deletes a user (/api/v1)" do
-    delete '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    delete_json '/api/v1/services/radius/users/__user_test'
     expect(last_response.status).to be_between(200, 399)  # OKs or redirs
-    get '/api/v1/services/radius/users/__user_test', { "ACCEPT" => "application/json" }
+    get_json '/api/v1/services/radius/users/__user_test'
     expect(last_response.status).to eq(404)
   end
 end
