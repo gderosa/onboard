@@ -65,7 +65,10 @@ Vagrant.configure("2") do |config|
     # Enable provisioning with a shell script. Additional provisioners such as
     # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
     # documentation for more information about their specific syntax and use.
-    mgy.vm.provision "shell", path: "./etc/scripts/platform/debian/setup.sh", args: PROVISIONER_ARGS
+    mgy.vm.provision "core",
+        type: "shell",
+        path: "./etc/scripts/platform/debian/setup.sh",
+        args: PROVISIONER_ARGS
 
     # Make sure the VBox shared folder is mounted before the Margay systemd service is invoked
     VAGRANT_MOUNT_TEMPLATE = <<-EOF
@@ -92,15 +95,22 @@ EOFF
 
     # Modules
 
-    mgy.vm.provision "shell", path: "./modules/openvpn/etc/scripts/platform/debian/setup.sh", args: PROVISIONER_ARGS
+    mgy.vm.provision "openvpn",
+        type: "shell",
+        path: "./modules/openvpn/etc/scripts/platform/debian/setup.sh",
+        args: PROVISIONER_ARGS
 
     # Optional modules
 
     # Actually deploy all other AAA/Hotspot -related modules as well: chilli etc.
+    # Not automatically run on provision, you have to explicitely call it with
+    #    vagrant provision margay --provision-with radius
+    # after the first provionins has been completed.
     mgy.vm.provision "radius",
         type: "shell",
         path: "./modules/radius-admin/etc/scripts/platform/debian/setup.sh",
-        args: PROVISIONER_ARGS
+        args: PROVISIONER_ARGS,
+        run: "never"
 
   end
 

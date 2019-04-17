@@ -15,6 +15,8 @@
 PROJECT_ROOT=${1:-'.'}
 APP_USER=${2:-'onboard'}
 
+CONFDIR=~$APP_USER/.onboard
+
 install_conffiles() {
 	install -bvC -m 644 doc/sysadm/examples/etc/dnsmasq.conf 		/etc/
 	install -bvC -m 644 doc/sysadm/examples/etc/sysctl.conf		    /etc/
@@ -35,6 +37,12 @@ bundle_without_all_opts() {
 
 disable_app_modules() {
 	for dir in $PROJECT_ROOT/modules/* ; do
+		if [ ! -d $CONFDIR ]; then
+			# If this is a fresh install (or a vagrant up after a vagrant destroy),
+			# the .enable file is likely stale; and we don't want to enable a module for which
+			# the dependencies are not installed yet.
+			rm -f $dir/.enable
+		fi
 		if [ ! -f $dir/.enable ]; then
 			file=$dir/.disable
 			touch $file
@@ -76,7 +84,7 @@ install_conffiles
 su - $APP_USER -c "
 	cd $PROJECT_ROOT
 	# Module names are also Gemfile groups
-	echo Running: bundle install $(bundle_without_all_opts) \# This may take some time...
+	echo Running: bundle install $(bundle_without_all_opts) ...
 	bundle install $(bundle_without_all_opts)
 "
 
