@@ -30,6 +30,9 @@ RSpec.configure do |config|
   def post_json(path, data)
     post path, JSON.generate(data), {'CONTENT_TYPE' => "application/json"}
   end
+  def put_json(path, data)
+    put path, JSON.generate(data), {'CONTENT_TYPE' => "application/json"}
+  end
   def delete_json(path)
     delete path, {'ACCEPT' => "application/json"}
   end

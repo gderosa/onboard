@@ -11,10 +11,109 @@ describe 'RADIUS admin' do
         'Password-Type': "SSHA1-Password",
         'User-Password': "p"
       },
-      'confirm': {  # TODO: make this not required on json
+      'confirm': {  # TODO: make this not required on json?
         'check': {
           'User-Password': "p"
         }
+      }
+    }
+  end
+
+  let(:complex_new_user_data) do
+    {
+      "user": {
+        "name": "__user_test",
+        "check": [
+          {
+            "Id": 1,
+            "User-Name": "u1",
+            "Attribute": "User-Name",
+            "Operator": ":=",
+            "Value": "u1"
+          },
+          {
+            "Id": 16,
+            "User-Name": "u1",
+            "Attribute": "SSHA1-Password",
+            "Operator": ":=",
+            "Value": "Yg+Zkt25hotWV4vLYXcEjGZv153BmsHJMilz0+XT15W5J4S78ieoZQ=="
+          },
+          {
+            "Id": 18,
+            "User-Name": "u1",
+            "Attribute": "Login-Time",
+            "Operator": ":=",
+            "Value": "Wk2305-0855,Sa,Su2305-1655"
+          }
+        ],
+        "reply": [
+          {
+            "Id": 6,
+            "User-Name": "u1",
+            "Attribute": "Reply-Message",
+            "Operator": ":=",
+            "Value": "my reply msg"
+          },
+          {
+            "Id": 7,
+            "User-Name": "u1",
+            "Attribute": "Session-Timeout",
+            "Operator": ":=",
+            "Value": "7200"
+          },
+          {
+            "Id": 8,
+            "User-Name": "u1",
+            "Attribute": "Idle-Timeout",
+            "Operator": ":=",
+            "Value": "1800"
+          },
+          {
+            "Id": 9,
+            "User-Name": "u1",
+            "Attribute": "WISPr-Bandwidth-Max-Down",
+            "Operator": ":=",
+            "Value": "800000"
+          },
+          {
+            "Id": 10,
+            "User-Name": "u1",
+            "Attribute": "WISPr-Bandwidth-Max-Up",
+            "Operator": ":=",
+            "Value": "400000"
+          }
+        ],
+        "groups": [
+
+        ],
+        "personal": {
+          "Id": 1,
+          "User-Name": "u1",
+          "First-Name": "Jonathan",
+          "Last-Name": "Swift",
+          "Email": "johnny@begood.net",
+          "Work-Phone": "+353 1 1234567",
+          "Home-Phone": "+353 1 7654321",
+          "Mobile-Phone": "+353 85 5555555",
+          "Address": "St Patrick's Cathedral",
+          "City": "Dublin",
+          "State": "",
+          "Country": nil,
+          "Postal-Code": "D08 H6X3",
+          "Notes": "A quick note.",
+          "Creation-Date": "2019-04-17 21:20:13 +0000",
+          "Update-Date": "2019-04-17 22:04:35 +0000",
+          "Birth-Date": "1977-11-30",
+          "Birth-City": "Dublin",
+          "Birth-State": "",
+          "ID-Code": "",
+          "Attachments": [
+
+          ]
+        },
+        "accepted_terms": [
+
+        ]
       }
     }
   end
@@ -23,11 +122,17 @@ describe 'RADIUS admin' do
     # cleanup, no matter what
     delete_json '/api/v1/services/radius/users/__user_test'
     #
-    post_json '/services/radius/users.json', user_creation_data
+    post_json '/api/v1/services/radius/users', user_creation_data
     expect(last_response.status).to eq(201)
     get_json '/api/v1/services/radius/users/__user_test'
     expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
- end
+  end
+
+  it "replaces user data" do
+    put_json '/api/v1/services/radius/users/__user_test', complex_new_user_data
+    expect(last_response).to be_ok
+    # puts last_response.body
+  end
 
   it "deletes a user" do
     delete_json '/api/v1/services/radius/users/__user_test'
