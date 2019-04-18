@@ -121,6 +121,7 @@ describe 'RADIUS admin' do
       }
       expect(last_response).to be_ok
       get_json '/api/v1/services/radius/groups/__new_group_test1'
+      # TODO: check that the extra user has been added
       puts last_response.body
     end
     it "has some users removed", :skip => "TODO/not implemented" do
