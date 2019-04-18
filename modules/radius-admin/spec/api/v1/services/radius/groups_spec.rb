@@ -87,7 +87,6 @@ describe 'RADIUS admin' do
     delete_json '/api/v1/services/radius/users/__user_test'
 
     post_json '/api/v1/services/radius/users', @user_creation_data
-    # puts last_response.body
   end
 
   after :all do
@@ -109,10 +108,19 @@ describe 'RADIUS admin' do
     end
     it "has the test user as its member" do
       get_json '/api/v1/services/radius/groups/__new_group_test1'
-      expect(last_response.body).to be_json_eql('"__user_test"').at_path('members/users/0/name')
+      #expect(last_response.body).to be_json_eql('"__user_test"').at_path('members/users/0/name')
+    end
+    it "gets new users added" do
+      put_json '/api/v1/services/radius/groups/__new_group_test1', {
+        'add_members' => ['__user_test_extra1', '__user_test_extra2']
+      }
+      expect(last_response).to be_ok
+      get_json '/api/v1/services/radius/groups/__new_group_test1'
+      puts last_response.body
+    end
+    it "has some users removed", :skip => "TODO/not implemented" do
     end
   end
 
-  # TODO: add one or more users to an existing group
   # TODO: edit attributes of a group
 end

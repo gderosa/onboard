@@ -26,7 +26,7 @@ class OnBoard
         :msg      => msg
       )
     end
-   
+
     post '/services/radius/groups.:format' do
       use_pagination_defaults
       name = params['check']['Group-Name']
@@ -77,7 +77,7 @@ class OnBoard
         :msg      => msg
       )
     end
-   
+
     put '/services/radius/groups/:groupid.:format' do
       use_pagination_defaults
       group = Service::RADIUS::Group.new(params[:groupid])
@@ -90,10 +90,10 @@ class OnBoard
         member_info = group.get_members(params)
         members = member_info['users']
         members.each do |member|
-          member.retrieve_attributes_from_db if 
+          member.retrieve_attributes_from_db if
               !member.check or member.check.length == 0
         end
-      end     
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups/group',
