@@ -32,6 +32,7 @@ describe 'RADIUS admin' do
     END
   end
 
+  # Used? Only here for illustrative purposes?
   let(:expected_group_endpoint_body_1) do
   <<-END
   {
@@ -65,9 +66,7 @@ describe 'RADIUS admin' do
               "Value": "yes"
             }
           ],
-          "groups": [
-
-          ],
+          "groups": [],
           "personal": null,
           "accepted_terms": null
         }
