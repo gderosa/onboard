@@ -479,7 +479,7 @@ class OnBoard
           end
           begin
             birthdate = Date.parse params['personal']['Birth-Date']
-          rescue ArgumentError
+          rescue ArgumentError, TypeError
             birthdate = Sequel::NULL
           end
           row[@@perscols['Birth-Date']] = birthdate
