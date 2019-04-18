@@ -37,16 +37,17 @@ class OnBoard
               'per_page'    => per_page
             }
           end
-  
-        
+
           def insert(params)
             setup
             i18n = params[:i18n]
-            if params['check']['User-Password'] != params['confirm']['check']['User-Password']
-              if i18n
-                raise PasswordsDoNotMatch, i18n.password.do_not_match.capitalize
-              else
-                raise PasswordsDoNotMatch, 'Passwords do not match!'
+            if params['check']['Password-Type'] and params['check']['Password-Type'].strip != ''
+              if params['check']['User-Password'] != params['confirm']['check']['User-Password']
+                if i18n
+                  raise PasswordsDoNotMatch, i18n.password.do_not_match.capitalize
+                else
+                  raise PasswordsDoNotMatch, 'Passwords do not match!'
+                end
               end
             end
             if RADIUS.db[@@table].where(
@@ -57,7 +58,7 @@ class OnBoard
                 raise UserAlreadyExists, "User '#{params['check']['User-Name']}' already exists!"
               end
             end
-            
+
             validate_empty_password(params) # raises exception if appropriate
 
             Name.validate params['check']['User-Name'], :i18n => i18n
@@ -67,8 +68,8 @@ class OnBoard
             # First, insert a dummy attribute into check table, which is
             # useful to create an attribute-less user: this may make sense
             # for a number of reasons, for example a "stub" user which will
-            # be configured later (and of course won't be authorized right 
-            # now), or for a user who will be authenicated only on a 
+            # be configured later (and of course won't be authorized right
+            # now), or for a user who will be authenicated only on a
             # per-group basis.
 
             insert_dummy_attributes(params)

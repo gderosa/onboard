@@ -174,6 +174,7 @@ describe 'RADIUS admin' do
     #
     post_json '/api/v1/services/radius/users', user_creation_data
     expect(last_response.status).to eq(201)
+    # puts last_response.body
     get_json '/api/v1/services/radius/users/__user_test'
     expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
   end

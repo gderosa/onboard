@@ -7,5 +7,5 @@ The new JSON/ReST API is under `/api/v*` e.g.
 `/api/v1/services/radius/users`, thanks to the
 helpers in `lib/onboard/controller/format.rb`.
 
-Their specs are in `../../api/v1/` etc.
-and a wider test and codumentation coverage is expected.
+Their specs are in ../api/v1/` etc.
+and a wider test and documentation coverage is expected.
