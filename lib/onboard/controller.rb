@@ -33,6 +33,12 @@ class OnBoard
     # Sinatra::Base .
     enable :method_override, :static, :show_exceptions
 
+    if test?  # https://stackoverflow.com/a/10917840
+      set :raise_errors, true
+      set :dump_errors, false
+      set :show_exceptions, false
+    end
+
     set :root, OnBoard::ROOTDIR
 
     # Sinatra::Base#static! has been overwritten to allow multiple path
