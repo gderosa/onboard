@@ -112,4 +112,7 @@ describe 'RADIUS admin' do
       expect(last_response.body).to be_json_eql('"__user_test"').at_path('members/users/0/name')
     end
   end
+
+  # TODO: add one or more users to an existing group
+  # TODO: edit attributes of a group
 end
