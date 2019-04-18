@@ -15,7 +15,7 @@ describe 'RADIUS admin' do
     }
   end
 
-  let(:expected_group_json_after_modification) do
+  let(:expected_group_membership_after_modification) do
     <<-END
     [
       {
@@ -99,7 +99,7 @@ describe 'RADIUS admin' do
   it "adds user to groups" do
     put_json '/api/v1/services/radius/users/__user_test', user_modification_data
     expect(last_response).to be_ok
-    expect(last_response.body).to be_json_eql(expected_group_json_after_modification).at_path('user/groups')
+    expect(last_response.body).to be_json_eql(expected_group_membership_after_modification).at_path('user/groups')
   end
 
   context "test group #1" do
