@@ -4,16 +4,22 @@ describe 'RADIUS admin' do
     OnBoard::Controller
   end
 
+  JsonSpec.configure do
+    exclude_keys "Id"  # , "other_key" etc.
+  end
+
+  # TODO: consider https://www.rubydoc.info/gems/sinatra/Sinatra/IndifferentHash ?
+
   let(:user_creation_data) do
     {
-      'check': {
-        'User-Name': "__user_test",
-        'Password-Type': "SSHA1-Password",
-        'User-Password': "pass"
+      'check' => {
+        'User-Name' => "__user_test",
+        'Password-Type' => "SSHA1-Password",
+        'User-Password'=> "pass"
       },
-      'confirm': {
-        'check': {
-          'User-Password': "pass"
+      'confirm' => {
+        'check' => {
+          'User-Password' => "pass"
         }
       }
     }
@@ -21,21 +27,21 @@ describe 'RADIUS admin' do
 
   let(:user_modification_data) do
     {
-      'check': {
-        'Password-Type': "SSHA1-Password",
-        'User-Password': "newpass",
-        'Auth-Type': "Reject",
-        'check[Login-Time]': "Wk2305-0855,Sa,Su2305-1655"
+      'check' => {
+        'Password-Type' => "SSHA1-Password",
+        'User-Password' => "newpass",
+        'Auth-Type' => "Reject",
+        'Login-Time' => "Wk2305-0855,Sa,Su2305-1655"
       },
-      'confirm': {
-        'check': {
-          'User-Password': "newpass"
+      'confirm' => {
+        'check' => {
+          'User-Password' => "newpass"
         }
       }
     }
   end
 
-  let(:expected_json_ater_modification) do
+  let(:expected_json_after_modification) do
     # Some details may differ e.g. password may be encrypted with a different "salt" etc.
     <<-END
     {
@@ -88,6 +94,10 @@ describe 'RADIUS admin' do
     END
   end
 
+  let(:expected_new_userdata) do
+    parse_json(expected_json_after_modification)
+  end
+
   it "creates a user" do
     # cleanup, no matter what
     delete_json '/api/v1/services/radius/users/__user_test'
@@ -101,7 +111,17 @@ describe 'RADIUS admin' do
   it "replaces user data" do
     put_json '/api/v1/services/radius/users/__user_test', user_modification_data
     expect(last_response).to be_ok
-    puts last_response.body
+    #expect(last_response.body).to be_json_eql(expected_json_after_modification)
+    #puts last_response.body
+    actual_check_attributes = parse_json last_response.body, 'user/check'
+    attributes_to_check = ['Auth-Type', 'Login-Time', 'Password-Type']
+    actual_check_attributes.each do |h|
+      attributes_to_check.each do |attribute_name|
+        if h['Attribute'] == attribute_name
+          expect(h['Value']).to eq(user_modification_data['check'][attribute_name])
+        end
+      end
+    end
   end
 
   it "deletes a user" do
