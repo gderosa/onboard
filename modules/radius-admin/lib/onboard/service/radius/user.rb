@@ -333,40 +333,20 @@ class OnBoard
         end
 
         def update_reply_attributes(params)
+          return unless params['reply'].respond_to? :each_pair
           setup
-          pp params['reply']
-          if params['reply'].respond_to? :each_pair
-            params['reply'].each_pair do |attribute, value|
-              RADIUS.db[@@rpltable].filter(
-                @@rplcols['User-Name']  => @name,
-                @@rplcols['Attribute']  => attribute
-              ).delete
-              next unless value =~ /\S/
-              RADIUS.db[@@rpltable].insert(
-                @@rplcols['User-Name']  => @name,
-                @@rplcols['Attribute']  => attribute,
-                @@rplcols['Operator']   => ':=',
-                @@rplcols['Value']      => value
-              )
-            end
-          elsif params['reply'].respond_to? :each  # Array-like, tipically via JSON API, raw attributes
-            params['reply'].each do |attribute_hash|
-              attribute = attribute_hash['Attribute']
-              value = attribute_hash['Value']
-              operator = attribute_hash['Operator']
-              # TODO: DRY?
-              RADIUS.db[@@rpltable].filter(
-                @@rplcols['User-Name']  => @name,
-                @@rplcols['Attribute']  => attribute
-              ).delete
-              next unless value =~ /\S/
-              RADIUS.db[@@rpltable].insert(
-                @@rplcols['User-Name']  => @name,
-                @@rplcols['Attribute']  => attribute,
-                @@rplcols['Operator']   => operator,
-                @@rplcols['Value']      => value
-              )
-            end
+          params['reply'].each_pair do |attribute, value|
+            RADIUS.db[@@rpltable].filter(
+              @@rplcols['User-Name']  => @name,
+              @@rplcols['Attribute']  => attribute
+            ).delete
+            next unless value =~ /\S/
+            RADIUS.db[@@rpltable].insert(
+              @@rplcols['User-Name']  => @name,
+              @@rplcols['Attribute']  => attribute,
+              @@rplcols['Operator']   => ':=',
+              @@rplcols['Value']      => value
+            )
           end
         end
 
