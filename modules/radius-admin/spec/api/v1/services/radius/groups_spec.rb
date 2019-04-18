@@ -48,6 +48,7 @@ describe 'RADIUS admin' do
 
   after :all do
     delete_json '/api/v1/services/radius/users/__user_test'
+    # Apparently "stale" groups are also removed under the hood
   end
 
 
