@@ -121,11 +121,20 @@ describe 'RADIUS admin' do
       }
       expect(last_response).to be_ok
       get_json '/api/v1/services/radius/groups/__new_group_test1'
+      expect(last_response.body).to have_json_size(3).at_path('members/users/')
       expect(last_response.body).to be_json_eql('"__user_test_extra1"').at_path('members/users/1/name')
       expect(last_response.body).to be_json_eql('"__user_test_extra2"').at_path('members/users/2/name')
-      puts last_response.body
     end
-    it "has some users removed", :skip => "TODO/not implemented" do
+    it "has some users removed" do
+      put_json '/api/v1/services/radius/groups/__new_group_test1', {
+        'remove_members' => ['__user_test_extra1']
+      }
+      puts last_response.body
+      expect(last_response).to be_ok
+      get_json '/api/v1/services/radius/groups/__new_group_test1'
+      expect(last_response.body).to have_json_size(2).at_path('members/users/')
+      expect(last_response.body).to be_json_eql('"__user_test"'       ).at_path('members/users/0/name')
+      expect(last_response.body).to be_json_eql('"__user_test_extra2"').at_path('members/users/1/name')
     end
   end
 

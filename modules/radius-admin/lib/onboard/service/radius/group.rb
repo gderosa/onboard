@@ -348,7 +348,10 @@ class OnBoard
                 end
               end
             end
-
+          elsif params['remove_members'].respond_to? :each  # Essentially, via JSON service
+            params['remove_members'].each do |member_name|
+              remove_member member_name
+            end
           else # update attributes by default
             update_passwd(params)
             update_check_attributes(params)
