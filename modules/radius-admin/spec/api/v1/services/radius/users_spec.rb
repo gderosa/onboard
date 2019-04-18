@@ -46,7 +46,9 @@ describe 'RADIUS admin' do
       },
       'personal' => {
         'First-Name' => 'George',
-        'Last-Name' => 'Boole'
+        'Last-Name' => 'Boole',
+        'Email': "george.boole@ucc.ie",
+        'Birth-Date': "1815-11-02"
       },
       'confirm' => {
         'check' => {
@@ -140,7 +142,7 @@ describe 'RADIUS admin' do
           "User-Name": "__user_test",
           "First-Name": "George",
           "Last-Name": "Boole",
-          "Email": null,
+          "Email": "george.boole@ucc.ie",
           "Work-Phone": null,
           "Home-Phone": null,
           "Mobile-Phone": null,
@@ -152,7 +154,7 @@ describe 'RADIUS admin' do
           "Notes": null,
           "Creation-Date": "2019-04-18 18:10:02 +0000",
           "Update-Date": null,
-          "Birth-Date": null,
+          "Birth-Date": "1815-11-02",
           "Birth-City": null,
           "Birth-State": null,
           "ID-Code": null,
@@ -163,7 +165,8 @@ describe 'RADIUS admin' do
     }
     END
   end
-
+  # We should fill more personal detail fields, however, they are quite obvious,
+  # optional strings.
 
   it "creates a user" do
     # cleanup, no matter what
