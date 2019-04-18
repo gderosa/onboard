@@ -122,7 +122,7 @@ describe 'RADIUS admin' do
   it "replaces user data" do
     put_json '/api/v1/services/radius/users/__user_test', complex_new_user_data
     expect(last_response).to be_ok
-    # puts last_response.body
+    puts last_response.body
   end
 
   it "deletes a user" do
