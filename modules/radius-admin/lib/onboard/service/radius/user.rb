@@ -425,8 +425,12 @@ class OnBoard
 
         def update_group_membership(params)
           Group.setup
-          groupnames =
-              params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}
+          if params['groups'].respond_to? :split
+              groupnames =
+                params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}
+          else  # Array...
+              groupnames = params['groups']
+          end
           groupnames.each{|name| Name.validate name}
           oldrows = RADIUS.db[Group.maptable].filter(
             Group.mapcols['User-Name'] => @name

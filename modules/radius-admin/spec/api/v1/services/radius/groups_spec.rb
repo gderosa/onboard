@@ -10,7 +10,7 @@ describe 'RADIUS admin' do
 
   let(:user_modification_data) do
     {
-      'groups' => "__new_group_test1, __new_group_test2",
+      'groups' => ["__new_group_test1", "__new_group_test2"],
       'update_groups' => "on"
     }
   end
@@ -129,7 +129,7 @@ describe 'RADIUS admin' do
       put_json '/api/v1/services/radius/groups/__new_group_test1', {
         'remove_members' => ['__user_test_extra1']
       }
-      puts last_response.body
+      # puts last_response.body
       expect(last_response).to be_ok
       get_json '/api/v1/services/radius/groups/__new_group_test1'
       expect(last_response.body).to have_json_size(2).at_path('members/users/')
