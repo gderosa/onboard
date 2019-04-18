@@ -176,7 +176,7 @@ describe 'RADIUS admin' do
     expect(last_response.status).to eq(201)
     # puts last_response.body
     get_json '/api/v1/services/radius/users/__user_test'
-    expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/1/User-Name")
+    expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/0/User-Name")
   end
 
   it "replaces user data" do
