@@ -33,6 +33,13 @@ describe 'RADIUS admin' do
         'Auth-Type' => "Reject",
         'Login-Time' => "Wk2305-0855,Sa,Su2305-1655"
       },
+      'reply' => {
+        'Reply-Message' => "my reply msg",
+        'Session-Timeout' => 7200,
+        'Idle-Timeout' => 1800,
+        'WISPr-Bandwidth-Max-Down' => 500000,
+        'WISPr-Bandwidth-Max-Up' => 250000
+      },
       'confirm' => {
         'check' => {
           'User-Password' => "newpass"
@@ -111,14 +118,23 @@ describe 'RADIUS admin' do
   it "replaces user data" do
     put_json '/api/v1/services/radius/users/__user_test', user_modification_data
     expect(last_response).to be_ok
-    #expect(last_response.body).to be_json_eql(expected_json_after_modification)
-    #puts last_response.body
+
     actual_check_attributes = parse_json last_response.body, 'user/check'
     attributes_to_check = ['Auth-Type', 'Login-Time', 'Password-Type']
     actual_check_attributes.each do |h|
       attributes_to_check.each do |attribute_name|
         if h['Attribute'] == attribute_name
           expect(h['Value']).to eq(user_modification_data['check'][attribute_name])
+        end
+      end
+    end
+
+    actual_reply_attributes = parse_json last_response.body, 'user/reply'
+    attributes_to_check = ['Reply-Message', 'Session-Timeout', 'Idle-Timeout', 'WISPr-Bandwidth-Max-Down', 'WISPr-Bandwidth-Max-Up']
+    actual_reply_attributes.each do |h|
+      attributes_to_check.each do |attribute_name|
+        if h['Attribute'] == attribute_name
+          expect(h['Value']).to eq(user_modification_data['reply'][attribute_name])
         end
       end
     end
