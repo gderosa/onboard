@@ -85,6 +85,8 @@ describe 'RADIUS admin' do
 
     # cleanup, no matter what
     delete_json '/api/v1/services/radius/users/__user_test'
+    delete_json '/api/v1/services/radius/users/__user_test_extra1'
+    delete_json '/api/v1/services/radius/users/__user_test_extra2'
 
     post_json '/api/v1/services/radius/users', @user_creation_data
   end
@@ -92,6 +94,9 @@ describe 'RADIUS admin' do
   after :all do
     delete_json '/api/v1/services/radius/users/__user_test'
     # Apparently "stale" groups are also removed under the hood
+
+    delete_json '/api/v1/services/radius/users/__user_test_extra1'
+    delete_json '/api/v1/services/radius/users/__user_test_extra2'
   end
 
 
@@ -108,7 +113,7 @@ describe 'RADIUS admin' do
     end
     it "has the test user as its member" do
       get_json '/api/v1/services/radius/groups/__new_group_test1'
-      #expect(last_response.body).to be_json_eql('"__user_test"').at_path('members/users/0/name')
+      expect(last_response.body).to be_json_eql('"__user_test"').at_path('members/users/0/name')
     end
     it "gets new users added" do
       put_json '/api/v1/services/radius/groups/__new_group_test1', {
