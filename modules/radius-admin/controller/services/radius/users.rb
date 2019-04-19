@@ -120,7 +120,7 @@ class OnBoard
       user.retrieve_info_from_db
       msg = handle_errors do
         if user.found?
-          if params['confirm'] =~ /on|yes|true|1/ or params[:format] == 'json'
+          if params['confirm'] =~ /on|yes|true|1/ or params[:format] == 'json'  # No "confirm" for the JSON service
             user.delete!
             status 303 # HTTP See Other
             headers 'Location' => "/services/radius/users.#{params[:format]}"
