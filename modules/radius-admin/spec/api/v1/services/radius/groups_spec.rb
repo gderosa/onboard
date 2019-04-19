@@ -22,7 +22,15 @@ describe 'RADIUS admin' do
         'Login-Time' => 'Mo-We1630-1830'
       },
       'reply' => {
-
+        'Reply-Message' => "my group reply msg",
+        # Even RADIUS attributes of numeric type must be strings
+        # (in the database, a single column `Value` hosts all data types...)
+        # We don't want to implement extra per-attr-type conversion logic,
+        # which is left to RADIUS servers and clients.
+        'Session-Timeout' => "7200",
+        'Idle-Timeout' => "1800",
+        'WISPr-Bandwidth-Max-Down' => "500000",
+        'WISPr-Bandwidth-Max-Up' => "250000"
       }
     }
   end
@@ -31,18 +39,53 @@ describe 'RADIUS admin' do
     <<-END
     [
       {
-        "Id": 1,
         "Group-Name": "__new_group_test2",
         "Attribute": "Auth-Type",
         "Operator": "+=",
         "Value": "Reject"
       },
       {
-        "Id": 2,
         "Group-Name": "__new_group_test2",
         "Attribute": "Login-Time",
         "Operator": "+=",
         "Value": "Mo-We1630-1830"
+      }
+    ]
+    END
+  end
+
+  let(:expected_reply_attrs_after_modification) do
+    <<-END
+    [
+      {
+        "Group-Name": "__new_group_test2",
+        "Attribute": "Reply-Message",
+        "Operator": "=",
+        "Value": "my group reply msg"
+      },
+      {
+        "Group-Name": "__new_group_test2",
+        "Attribute": "Session-Timeout",
+        "Operator": "=",
+        "Value": "7200"
+      },
+      {
+        "Group-Name": "__new_group_test2",
+        "Attribute": "Idle-Timeout",
+        "Operator": "=",
+        "Value": "1800"
+      },
+      {
+        "Group-Name": "__new_group_test2",
+        "Attribute": "WISPr-Bandwidth-Max-Down",
+        "Operator": "=",
+        "Value": "500000"
+      },
+      {
+        "Group-Name": "__new_group_test2",
+        "Attribute": "WISPr-Bandwidth-Max-Up",
+        "Operator": "=",
+        "Value": "250000"
       }
     ]
     END
@@ -67,46 +110,46 @@ describe 'RADIUS admin' do
 
   # Used? Only here for illustrative purposes?
   let(:expected_group_endpoint_body_1) do
-  <<-END
-  {
-    "group": {
-      "name": "__new_group_test1",
-      "check": [],
-      "reply": []
-    },
-    "members": {
-      "total_items": 1,
-      "page": 1,
-      "per_page": 10,
-      "users": [
-        {
-          "name": "__user_test",
-          "check": [
-            {
-              "Id": 313,
-              "User-Name": "__user_test",
-              "Attribute": "User-Name",
-              "Operator": ":=",
-              "Value": "__user_test"
-            }
-          ],
-          "reply": [
-            {
-              "Id": 133,
-              "User-Name": "__user_test",
-              "Attribute": "Fall-Through",
-              "Operator": "=",
-              "Value": "yes"
-            }
-          ],
-          "groups": [],
-          "personal": null,
-          "accepted_terms": null
-        }
-      ]
+    <<-END
+    {
+      "group": {
+        "name": "__new_group_test1",
+        "check": [],
+        "reply": []
+      },
+      "members": {
+        "total_items": 1,
+        "page": 1,
+        "per_page": 10,
+        "users": [
+          {
+            "name": "__user_test",
+            "check": [
+              {
+                "Id": 313,
+                "User-Name": "__user_test",
+                "Attribute": "User-Name",
+                "Operator": ":=",
+                "Value": "__user_test"
+              }
+            ],
+            "reply": [
+              {
+                "Id": 133,
+                "User-Name": "__user_test",
+                "Attribute": "Fall-Through",
+                "Operator": "=",
+                "Value": "yes"
+              }
+            ],
+            "groups": [],
+            "personal": null,
+            "accepted_terms": null
+          }
+        ]
+      }
     }
-  }
-  END
+    END
   end
 
   before :all do
@@ -176,11 +219,12 @@ describe 'RADIUS admin' do
   end
 
   context "test group #2" do
-    it "modifies check attributes" do
+    it "modifies check/reply attributes" do
       put_json '/api/v1/services/radius/groups/__new_group_test2', group_attr_modification_data
       get_json '/api/v1/services/radius/groups/__new_group_test2'
       # puts last_response.body
       expect(last_response.body).to be_json_eql(expected_check_attrs_after_modification).at_path('group/check')
+      expect(last_response.body).to be_json_eql(expected_reply_attrs_after_modification).at_path('group/reply')
     end
   end
 
