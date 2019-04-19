@@ -47,11 +47,11 @@ class OnBoard
       end
     end
 
-    # All URLs under /pub/ are publicly accessible! 
-    public_access! %r{^/pub(/.*)?$} 
-  
-    # 
-    public_access! %r{^/__sinatra__(/.*)?$} 
+    # All URLs under /pub/ are publicly accessible!
+    public_access! %r{^/pub(/.*)?$}
+
+    #
+    public_access! %r{^/__sinatra__(/.*)?$}
 
   end
 
