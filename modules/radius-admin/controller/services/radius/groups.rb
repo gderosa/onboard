@@ -31,9 +31,9 @@ class OnBoard
       use_pagination_defaults
       name = params['check']['Group-Name']
       group = Service::RADIUS::Group.new(name) # blank slate
-      msg = handle_errors do 
+      msg = handle_errors do
         Service::RADIUS::Group.insert(params)
-        group.update_reply_attributes(params) 
+        group.update_reply_attributes(params)
         group.insert_fall_through_if_not_exists
       end
       if msg[:ok] and not msg[:err]
