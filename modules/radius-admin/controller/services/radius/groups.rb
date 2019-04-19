@@ -108,13 +108,13 @@ class OnBoard
     end
 
     delete '/services/radius/groups/:groupid.:format' do
-      group = Service::RADIUS::Group.new params[:groupid] 
+      group = Service::RADIUS::Group.new params[:groupid]
       msg = handle_errors do
         if group.found?
-          if params['confirm'] =~ /on|yes|true|1/
+          if params['confirm'] =~ /on|yes|true|1/ or params[:format] == 'json'  # No "confirm" for the JSON service
             group.delete!
             status 303 # HTTP See Other
-            headers 'Location' => "/services/radius/groups.#{params[:format]}" 
+            headers 'Location' => "/services/radius/groups.#{params[:format]}"
           else
             status 204 # HTTP No Content # TODO: is this the right code?
           end

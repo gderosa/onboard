@@ -251,9 +251,11 @@ class OnBoard
         end
 
         def update_passwd(params)
-          if params['check']['Group-Password'] !=
-              params['confirm']['check']['Group-Password']
-            raise PasswordsDoNotMatch, 'Passwords do not match!'
+          if params['check']['Group-Password']
+            if params['check']['Group-Password'] !=
+                params['confirm']['check']['Group-Password']
+              raise PasswordsDoNotMatch, 'Passwords do not match!'
+            end
           end
           validate_empty_password(params)
           if params['check']['Password-Type'] =~ /\S/

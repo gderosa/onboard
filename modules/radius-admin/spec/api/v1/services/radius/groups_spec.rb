@@ -15,6 +15,39 @@ describe 'RADIUS admin' do
     }
   end
 
+  let(:group_attr_modification_data) do
+    {
+      'check' => {
+        'Auth-Type' => 'Reject',
+        'Login-Time' => 'Mo-We1630-1830'
+      },
+      'reply' => {
+
+      }
+    }
+  end
+
+  let(:expected_check_attrs_after_modification) do
+    <<-END
+    [
+      {
+        "Id": 1,
+        "Group-Name": "__new_group_test2",
+        "Attribute": "Auth-Type",
+        "Operator": "+=",
+        "Value": "Reject"
+      },
+      {
+        "Id": 2,
+        "Group-Name": "__new_group_test2",
+        "Attribute": "Login-Time",
+        "Operator": "+=",
+        "Value": "Mo-We1630-1830"
+      }
+    ]
+    END
+  end
+
   let(:expected_group_membership_after_modification) do
     <<-END
     [
@@ -87,16 +120,20 @@ describe 'RADIUS admin' do
     delete_json '/api/v1/services/radius/users/__user_test'
     delete_json '/api/v1/services/radius/users/__user_test_extra1'
     delete_json '/api/v1/services/radius/users/__user_test_extra2'
+    delete_json '/api/v1/services/radius/groups/__new_group_test1'
+    delete_json '/api/v1/services/radius/groups/__new_group_test2'
 
     post_json '/api/v1/services/radius/users', @user_creation_data
   end
 
   after :all do
     delete_json '/api/v1/services/radius/users/__user_test'
-    # Apparently "stale" groups are also removed under the hood
 
     delete_json '/api/v1/services/radius/users/__user_test_extra1'
     delete_json '/api/v1/services/radius/users/__user_test_extra2'
+
+    delete_json '/api/v1/services/radius/groups/__new_group_test1'
+    delete_json '/api/v1/services/radius/groups/__new_group_test2'
   end
 
 
@@ -135,6 +172,15 @@ describe 'RADIUS admin' do
       expect(last_response.body).to have_json_size(2).at_path('members/users/')
       expect(last_response.body).to be_json_eql('"__user_test"'       ).at_path('members/users/0/name')
       expect(last_response.body).to be_json_eql('"__user_test_extra2"').at_path('members/users/1/name')
+    end
+  end
+
+  context "test group #2" do
+    it "modifies check attributes" do
+      put_json '/api/v1/services/radius/groups/__new_group_test2', group_attr_modification_data
+      get_json '/api/v1/services/radius/groups/__new_group_test2'
+      # puts last_response.body
+      expect(last_response.body).to be_json_eql(expected_check_attrs_after_modification).at_path('group/check')
     end
   end
 

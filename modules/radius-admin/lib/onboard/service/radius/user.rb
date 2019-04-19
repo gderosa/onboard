@@ -489,7 +489,7 @@ class OnBoard
           row[@@perscols['Birth-Date']] = birthdate
           if RADIUS.db[@@perstable].filter(match).any?
             row[@@perscols['Update-Date']] = Time.now
-            RADIUS.db[@@perstable].filter(match).update(row) 
+            RADIUS.db[@@perstable].filter(match).update(row)
           else
             row[@@perscols['Update-Date']] = nil # DaloRADIUS-compatible
             row[@@perscols['Creation-Date']] = Time.now
@@ -513,7 +513,7 @@ class OnBoard
               dir = "#{UPLOADS}/#{@name}/personal"
               FileUtils.mkdir_p dir
               FileUtils.cp(
-                  attachment[:tempfile].path, 
+                  attachment[:tempfile].path,
                   File.join(dir, attachment[:filename])
               )
             end
