@@ -1,4 +1,4 @@
-describe 'RADIUS admin' do
+describe 'RADIUS admin (legacy endpoints)' do
 
   def app
     OnBoard::Controller
