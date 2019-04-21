@@ -173,7 +173,9 @@ describe 'RADIUS admin' do
     delete_json '/api/v1/services/radius/users/__user_test'
     #
     post_json '/api/v1/services/radius/users', user_creation_data
+    pp last_response.headers
     expect(last_response.status).to eq(201)
+    expect(last_response.headers['Location']).to eq('/api/v1/services/radius/users/__user_test')
     # puts last_response.body
     get_json '/api/v1/services/radius/users/__user_test'
     expect(last_response.body).to be_json_eql(%("__user_test")).at_path("user/check/0/User-Name")

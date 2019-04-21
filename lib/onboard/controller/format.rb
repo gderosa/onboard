@@ -13,13 +13,18 @@ class OnBoard
 
     # http://sinatrarb.com/intro.html @ 'Triggering Another Route'
 
+    # TODO: move to a controller/api.rb ?
+
     get %r{/api/v1/(.*)} do |subpath|
       status, headers, body = call! env.merge("PATH_INFO" => '/' + subpath + '.json')
       [status, headers, body]
     end
 
     post %r{/api/v1/(.*)} do |subpath|
-      status, headers, body = call! env.merge("PATH_INFO" => '/' + subpath + '.json')
+      status, headers, body = call! env.merge(
+        "PATH_INFO" => '/' + subpath + '.json',
+        "ORIGINAL_PATH_INFO" => request.path
+      )
       [status, headers, body]
     end
 
