@@ -216,8 +216,32 @@ paths:
 components:
   schemas:
     PaginatedUsers:
-      items:
-        $ref: '#/components/schemas/users'
+      type: object
+      required:
+        - total_items
+        - page
+        - per_page
+        - users
+      properties:
+        total_items:
+          description: total number of users
+          readOnly: true
+          type: integer
+        page:
+          description: page within pagination
+          readOnly: true
+          type: integer
+        per_page:
+          description: number of users per page
+          readOnly: true
+          type: integer
+        users:
+          description: array of User objects
+          readOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
     User:
       required:
         - id
@@ -228,12 +252,12 @@ components:
 
     NewPet:
       required:
-        - name  
+        - name
       properties:
         name:
           type: string
         tag:
-          type: string    
+          type: string
 
     Error:
       required:
