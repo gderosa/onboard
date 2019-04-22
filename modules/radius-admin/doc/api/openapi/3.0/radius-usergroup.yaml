@@ -3,6 +3,7 @@ info:
   version: 1.0
   title: Margay's FreeRADIUS user/group management API
   description: A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system.
+    User information is stored in a MySQL database.
   # termsOfService: http://swagger.io/terms/
   contact:
     name: Vemar S.A.S. Dev Team
@@ -14,48 +15,130 @@ info:
 servers:
   - url: http://localhost:4567/api/v1
 paths:
-  /pets:
+  /services/radius/users:
     get:
       tags:
-        - Endpoints
+        - Users
       description: |
-        Returns all pets from the system that the user has access to
-        Nam sed condimentum est. Maecenas tempor sagittis sapien, nec rhoncus sem sagittis sit amet. Aenean at gravida augue, ac iaculis sem. Curabitur odio lorem, ornare eget elementum nec, cursus id lectus. Duis mi turpis, pulvinar ac eros ac, tincidunt varius justo. In hac habitasse platea dictumst. Integer at adipiscing ante, a sagittis ligula. Aenean pharetra tempor ante molestie imperdiet. Vivamus id aliquam diam. Cras quis velit non tortor eleifend sagittis. Praesent at enim pharetra urna volutpat venenatis eget eget mauris. In eleifend fermentum facilisis. Praesent enim enim, gravida ac sodales sed, placerat id erat. Suspendisse lacus dolor, consectetur non augue vel, vehicula interdum libero. Morbi euismod sagittis libero sed lacinia.
-
-        Sed tempus felis lobortis leo pulvinar rutrum. Nam mattis velit nisl, eu condimentum ligula luctus nec. Phasellus semper velit eget aliquet faucibus. In a mattis elit. Phasellus vel urna viverra, condimentum lorem id, rhoncus nibh. Ut pellentesque posuere elementum. Sed a varius odio. Morbi rhoncus ligula libero, vel eleifend nunc tristique vitae. Fusce et sem dui. Aenean nec scelerisque tortor. Fusce malesuada accumsan magna vel tempus. Quisque mollis felis eu dolor tristique, sit amet auctor felis gravida. Sed libero lorem, molestie sed nisl in, accumsan tempor nisi. Fusce sollicitudin massa ut lacinia mattis. Sed vel eleifend lorem. Pellentesque vitae felis pretium, pulvinar elit eu, euismod sapien.
-      operationId: findPets
+        Returns a paginated list of all RADIUS users. A specific page or page size can
+        be requested via optional parameters e.g.<br/>
+        `GET /api/v1/services/radius/users?page=2&per_page=7`.
+      operationId: List Users
       parameters:
-        - name: tags
+        - name: page
           in: query
-          description: tags to filter by
+          description: page within pagination
           required: false
-          style: form
+          defalut: 1
           schema:
-            type: array
-            items:
-              type: string
-        - name: limit
+            type: integer
+            example: 1
+        - name: per_page
           in: query
-          description: maximum number of results to return
+          description: maximum number of results to return per page
           required: false
           schema:
             type: integer
-            format: int32
+            example: 5
+            default: 10
       responses:
         '200':
-          description: pet response
+          description: Paginated list of users
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/PaginatedUsers'
+              examples:
+                users:
+                  value:
+                    {
+                      "total_items": 1,
+                      "page": 1,
+                      "per_page": 10,
+                      "users": [
+                        {
+                          "name": "u1",
+                          "check": [
+                            {
+                              "Id": 1,
+                              "User-Name": "u1",
+                              "Attribute": "User-Name",
+                              "Operator": ":=",
+                              "Value": "u1"
+                            },
+                            {
+                              "Id": 16,
+                              "User-Name": "u1",
+                              "Attribute": "SSHA1-Password",
+                              "Operator": ":=",
+                              "Value": "Yg+Zkt25hotWV4vLYXcEjGZv153BmsHJMilz0+XT15W5J4S78ieoZQ=="
+                            },
+                            {
+                              "Id": 18,
+                              "User-Name": "u1",
+                              "Attribute": "Login-Time",
+                              "Operator": ":=",
+                              "Value": "Wk2305-0855,Sa,Su2305-1655"
+                            }
+                          ],
+                          "reply": [
+                            {
+                              "Id": 6,
+                              "User-Name": "u1",
+                              "Attribute": "Reply-Message",
+                              "Operator": ":=",
+                              "Value": "my reply msg"
+                            },
+                            {
+                              "Id": 7,
+                              "User-Name": "u1",
+                              "Attribute": "Session-Timeout",
+                              "Operator": ":=",
+                              "Value": "7200"
+                            },
+                            {
+                              "Id": 8,
+                              "User-Name": "u1",
+                              "Attribute": "Idle-Timeout",
+                              "Operator": ":=",
+                              "Value": "1800"
+                            },
+                            {
+                              "Id": 9,
+                              "User-Name": "u1",
+                              "Attribute": "WISPr-Bandwidth-Max-Down",
+                              "Operator": ":=",
+                              "Value": "800000"
+                            },
+                            {
+                              "Id": 10,
+                              "User-Name": "u1",
+                              "Attribute": "WISPr-Bandwidth-Max-Up",
+                              "Operator": ":=",
+                              "Value": "400000"
+                            },
+                            {
+                              "Id": 110,
+                              "User-Name": "u1",
+                              "Attribute": "Fall-Through",
+                              "Operator": "=",
+                              "Value": "yes"
+                            }
+                          ],
+                          "groups": [
+
+                          ],
+                          "personal": null,
+                          "accepted_terms": null
+                        }
+                      ]
+                    }
+        # default:
+        #   description: unexpected error
+        #    content:
+        #      application/json:
+        #        schema:
+        #          $ref: '#/components/schemas/Error'
     post:
       tags:
         - Endpoints
@@ -132,15 +215,16 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Pet:
-      allOf:
-        - $ref: '#/components/schemas/NewPet'
-        - required:
-          - id
-          properties:
-            id:
-              type: integer
-              format: int64
+    PaginatedUsers:
+      items:
+        $ref: '#/components/schemas/users'
+    User:
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int64
 
     NewPet:
       required:

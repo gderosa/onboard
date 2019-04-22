@@ -1521,14 +1521,23 @@ var n=this.pipeline.run(e.tokenizer(t)),r=new e.Vector,i=[],o=this._fields.reduc
           </li>
         
           <li>
-            <a href="#margay-s-freeradius-user-group-management-api-endpoints" class="toc-h1 toc-link" data-title="Endpoints">Endpoints</a>
+            <a href="#margay-s-freeradius-user-group-management-api-users" class="toc-h1 toc-link" data-title="Users">Users</a>
             
               <ul class="toc-list-h2">
                 
                   <li>
-                    <a href="#findpets" class="toc-h2 toc-link" data-title="findPets">findPets</a>
+                    <a href="#list-users" class="toc-h2 toc-link" data-title="List Users">List Users</a>
                     
                   </li>
+                
+              </ul>
+            
+          </li>
+        
+          <li>
+            <a href="#margay-s-freeradius-user-group-management-api-endpoints" class="toc-h1 toc-link" data-title="Endpoints">Endpoints</a>
+            
+              <ul class="toc-list-h2">
                 
                   <li>
                     <a href="#addpet" class="toc-h2 toc-link" data-title="addPet">addPet</a>
@@ -1555,7 +1564,12 @@ var n=this.pipeline.run(e.tokenizer(t)),r=new e.Vector,i=[],o=this._fields.reduc
               <ul class="toc-list-h2">
                 
                   <li>
-                    <a href="#tocspet" class="toc-h2 toc-link" data-title="Pet">Pet</a>
+                    <a href="#tocspaginatedusers" class="toc-h2 toc-link" data-title="PaginatedUsers">PaginatedUsers</a>
+                    
+                  </li>
+                
+                  <li>
+                    <a href="#tocsuser" class="toc-h2 toc-link" data-title="User">User</a>
                     
                   </li>
                 
@@ -1588,25 +1602,25 @@ var n=this.pipeline.run(e.tokenizer(t)),r=new e.Vector,i=[],o=this._fields.reduc
 <blockquote>
 <p>Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.</p>
 </blockquote>
-<p>A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system.</p>
+<p>A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system. User information is stored in a MySQL database.</p>
 <p>Base URLs:</p>
 <ul>
 <li><a href="http://localhost:4567/api/v1">http://localhost:4567/api/v1</a></li>
 </ul>
 <p>Email: <a href="mailto:dev@vemarsas.it">Vemar S.A.S. Dev Team</a> Web: <a href="https://github.com/vemarsas/onboard/modules/radius-admin">Vemar S.A.S. Dev Team</a>
 License: <a href="https://www.gnu.org/licenses/gpl-2.0.html">GPL 2.0</a></p>
-<h1 id="margay-s-freeradius-user-group-management-api-endpoints">Endpoints</h1>
-<h2 id="findpets">findPets</h2>
-<p><a id="opIdfindPets"></a></p>
+<h1 id="margay-s-freeradius-user-group-management-api-users">Users</h1>
+<h2 id="list-users">List Users</h2>
+<p><a id="opIdList Users"></a></p>
 <blockquote>
 <p>Code samples</p>
 </blockquote>
 <pre class="highlight tab tab-shell"><code><span class="hljs-comment"># You can also use wget</span>
-curl -X GET http://localhost:4567/api/v1/pets \
+curl -X GET http://localhost:4567/api/v1/services/radius/users \
   -H <span class="hljs-string">'Accept: application/json'</span>
 
 </code></pre>
-<pre class="highlight tab tab-http"><code><span class="hljs-keyword">GET</span> <span class="hljs-string">http://localhost:4567/api/v1/pets</span> HTTP/1.1
+<pre class="highlight tab tab-http"><code><span class="hljs-keyword">GET</span> <span class="hljs-string">http://localhost:4567/api/v1/services/radius/users</span> HTTP/1.1
 <span class="hljs-attribute">Host</span>: localhost:4567
 <span class="hljs-attribute">Accept</span>: application/json
 
@@ -1617,7 +1631,7 @@ curl -X GET http://localhost:4567/api/v1/pets \
 };
 
 $.ajax({
-  <span class="hljs-attr">url</span>: <span class="hljs-string">'http://localhost:4567/api/v1/pets'</span>,
+  <span class="hljs-attr">url</span>: <span class="hljs-string">'http://localhost:4567/api/v1/services/radius/users'</span>,
   <span class="hljs-attr">method</span>: <span class="hljs-string">'get'</span>,
 
   <span class="hljs-attr">headers</span>: headers,
@@ -1632,7 +1646,7 @@ headers = {
   <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>
 }
 
-r = requests.get(<span class="hljs-string">'http://localhost:4567/api/v1/pets'</span>, params={
+r = requests.get(<span class="hljs-string">'http://localhost:4567/api/v1/services/radius/users'</span>, params={
 
 }, headers = headers)
 
@@ -1646,7 +1660,7 @@ headers = {
   <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
 }
 
-result = RestClient.get <span class="hljs-string">'http://localhost:4567/api/v1/pets'</span>,
+result = RestClient.get <span class="hljs-string">'http://localhost:4567/api/v1/services/radius/users'</span>,
   <span class="hljs-symbol">params:</span> {
   }, <span class="hljs-symbol">headers:</span> headers
 
@@ -1668,7 +1682,7 @@ p JSON.parse(result)
     }
 
     data := bytes.NewBuffer([]<span class="hljs-keyword">byte</span>{jsonReq})
-    req, err := http.NewRequest(<span class="hljs-string">"GET"</span>, <span class="hljs-string">"http://localhost:4567/api/v1/pets"</span>, data)
+    req, err := http.NewRequest(<span class="hljs-string">"GET"</span>, <span class="hljs-string">"http://localhost:4567/api/v1/services/radius/users"</span>, data)
     req.Header = headers
 
     client := &amp;http.Client{}
@@ -1677,11 +1691,11 @@ p JSON.parse(result)
 }
 
 </code></pre>
-<p><code>GET /pets</code></p>
-<p>Returns all pets from the system that the user has access to
-Nam sed condimentum est. Maecenas tempor sagittis sapien, nec rhoncus sem sagittis sit amet. Aenean at gravida augue, ac iaculis sem. Curabitur odio lorem, ornare eget elementum nec, cursus id lectus. Duis mi turpis, pulvinar ac eros ac, tincidunt varius justo. In hac habitasse platea dictumst. Integer at adipiscing ante, a sagittis ligula. Aenean pharetra tempor ante molestie imperdiet. Vivamus id aliquam diam. Cras quis velit non tortor eleifend sagittis. Praesent at enim pharetra urna volutpat venenatis eget eget mauris. In eleifend fermentum facilisis. Praesent enim enim, gravida ac sodales sed, placerat id erat. Suspendisse lacus dolor, consectetur non augue vel, vehicula interdum libero. Morbi euismod sagittis libero sed lacinia.</p>
-<p>Sed tempus felis lobortis leo pulvinar rutrum. Nam mattis velit nisl, eu condimentum ligula luctus nec. Phasellus semper velit eget aliquet faucibus. In a mattis elit. Phasellus vel urna viverra, condimentum lorem id, rhoncus nibh. Ut pellentesque posuere elementum. Sed a varius odio. Morbi rhoncus ligula libero, vel eleifend nunc tristique vitae. Fusce et sem dui. Aenean nec scelerisque tortor. Fusce malesuada accumsan magna vel tempus. Quisque mollis felis eu dolor tristique, sit amet auctor felis gravida. Sed libero lorem, molestie sed nisl in, accumsan tempor nisi. Fusce sollicitudin massa ut lacinia mattis. Sed vel eleifend lorem. Pellentesque vitae felis pretium, pulvinar elit eu, euismod sapien.</p>
-<h3 id="findpets-parameters">Parameters</h3>
+<p><code>GET /services/radius/users</code></p>
+<p>Returns a paginated list of all RADIUS users. A specific page or page size can
+be requested via optional parameters e.g.<br />
+<code>GET /api/v1/services/radius/users?page=2&amp;per_page=7</code>.</p>
+<h3 id="list-users-parameters">Parameters</h3>
 <table>
 <thead>
 <tr>
@@ -1694,18 +1708,18 @@ Nam sed condimentum est. Maecenas tempor sagittis sapien, nec rhoncus sem sagitt
 </thead>
 <tbody>
 <tr>
-<td>tags</td>
+<td>page</td>
 <td>query</td>
-<td>array[string]</td>
+<td>integer</td>
 <td>false</td>
-<td>tags to filter by</td>
+<td>page within pagination</td>
 </tr>
 <tr>
-<td>limit</td>
+<td>per_page</td>
 <td>query</td>
-<td>integer(int32)</td>
+<td>integer</td>
 <td>false</td>
-<td>maximum number of results to return</td>
+<td>maximum number of results to return per page</td>
 </tr>
 </tbody>
 </table>
@@ -1713,17 +1727,90 @@ Nam sed condimentum est. Maecenas tempor sagittis sapien, nec rhoncus sem sagitt
 <p>Example responses</p>
 </blockquote>
 <blockquote>
-<p>200 Response</p>
+<p>Paginated list of users</p>
 </blockquote>
-<pre class="highlight tab tab-json"><code>[
-  {
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"tag"</span>: <span class="hljs-string">"string"</span>,
-    <span class="hljs-attr">"id"</span>: <span class="hljs-number">0</span>
-  }
-]
+<pre class="highlight tab tab-json"><code>{
+  <span class="hljs-attr">"total_items"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"page"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"per_page"</span>: <span class="hljs-number">10</span>,
+  <span class="hljs-attr">"users"</span>: [
+    {
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"u1"</span>,
+      <span class="hljs-attr">"check"</span>: [
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">1</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"User-Name"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"u1"</span>
+        },
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">16</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"SSHA1-Password"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"Yg+Zkt25hotWV4vLYXcEjGZv153BmsHJMilz0+XT15W5J4S78ieoZQ=="</span>
+        },
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">18</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"Login-Time"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"Wk2305-0855,Sa,Su2305-1655"</span>
+        }
+      ],
+      <span class="hljs-attr">"reply"</span>: [
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">6</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"Reply-Message"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"my reply msg"</span>
+        },
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">7</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"Session-Timeout"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"7200"</span>
+        },
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">8</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"Idle-Timeout"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"1800"</span>
+        },
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">9</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"WISPr-Bandwidth-Max-Down"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"800000"</span>
+        },
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">10</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"WISPr-Bandwidth-Max-Up"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">":="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"400000"</span>
+        },
+        {
+          <span class="hljs-attr">"Id"</span>: <span class="hljs-number">110</span>,
+          <span class="hljs-attr">"User-Name"</span>: <span class="hljs-string">"u1"</span>,
+          <span class="hljs-attr">"Attribute"</span>: <span class="hljs-string">"Fall-Through"</span>,
+          <span class="hljs-attr">"Operator"</span>: <span class="hljs-string">"="</span>,
+          <span class="hljs-attr">"Value"</span>: <span class="hljs-string">"yes"</span>
+        }
+      ],
+      <span class="hljs-attr">"groups"</span>: [],
+      <span class="hljs-attr">"personal"</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">"accepted_terms"</span>: <span class="hljs-literal">null</span>
+    }
+  ]
+}
 </code></pre>
-<h3 id="findpets-responses">Responses</h3>
+<h3 id="list-users-responses">Responses</h3>
 <table>
 <thead>
 <tr>
@@ -1737,117 +1824,27 @@ Nam sed condimentum est. Maecenas tempor sagittis sapien, nec rhoncus sem sagitt
 <tr>
 <td>200</td>
 <td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.1">OK</a></td>
-<td>pet response</td>
-<td>Inline</td>
-</tr>
-<tr>
-<td>default</td>
-<td>Default</td>
-<td>unexpected error</td>
-<td><a href="#schemaerror">Error</a></td>
-</tr>
-</tbody>
-</table>
-<h3 id="findpets-responseschema">Response Schema</h3>
-<p>Status Code <strong>200</strong></p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Required</th>
-<th>Restrictions</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><em>anonymous</em></td>
-<td>[allOf]</td>
-<td>false</td>
-<td>none</td>
-<td>none</td>
-</tr>
-</tbody>
-</table>
-<p><em>allOf</em></p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Required</th>
-<th>Restrictions</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>» <em>anonymous</em></td>
-<td>object</td>
-<td>false</td>
-<td>none</td>
-<td>none</td>
-</tr>
-<tr>
-<td>»» name</td>
-<td>string</td>
-<td>true</td>
-<td>none</td>
-<td>none</td>
-</tr>
-<tr>
-<td>»» tag</td>
-<td>string</td>
-<td>false</td>
-<td>none</td>
-<td>none</td>
-</tr>
-</tbody>
-</table>
-<p><em>and</em></p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Required</th>
-<th>Restrictions</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>» <em>anonymous</em></td>
-<td>object</td>
-<td>false</td>
-<td>none</td>
-<td>none</td>
-</tr>
-<tr>
-<td>»» id</td>
-<td>integer(int64)</td>
-<td>true</td>
-<td>none</td>
-<td>none</td>
+<td>Paginated list of users</td>
+<td><a href="#schemapaginatedusers">PaginatedUsers</a></td>
 </tr>
 </tbody>
 </table>
 <aside class="success">
 This operation does not require authentication
 </aside>
+<h1 id="margay-s-freeradius-user-group-management-api-endpoints">Endpoints</h1>
 <h2 id="addpet">addPet</h2>
 <p><a id="opIdaddPet"></a></p>
 <blockquote>
 <p>Code samples</p>
 </blockquote>
 <pre class="highlight tab tab-shell"><code><span class="hljs-comment"># You can also use wget</span>
-curl -X POST http://localhost:4567/api/v1/pets \
+curl -X POST http://localhost:4567/api/v1/services/radius/users \
   -H <span class="hljs-string">'Content-Type: application/json'</span> \
   -H <span class="hljs-string">'Accept: application/json'</span>
 
 </code></pre>
-<pre class="highlight tab tab-http"><code><span class="hljs-keyword">POST</span> <span class="hljs-string">http://localhost:4567/api/v1/pets</span> HTTP/1.1
+<pre class="highlight tab tab-http"><code><span class="hljs-keyword">POST</span> <span class="hljs-string">http://localhost:4567/api/v1/services/radius/users</span> HTTP/1.1
 <span class="hljs-attribute">Host</span>: localhost:4567
 <span class="hljs-attribute">Content-Type</span>: application/json
 <span class="hljs-attribute">Accept</span>: application/json
@@ -1860,7 +1857,7 @@ curl -X POST http://localhost:4567/api/v1/pets \
 };
 
 $.ajax({
-  <span class="hljs-attr">url</span>: <span class="hljs-string">'http://localhost:4567/api/v1/pets'</span>,
+  <span class="hljs-attr">url</span>: <span class="hljs-string">'http://localhost:4567/api/v1/services/radius/users'</span>,
   <span class="hljs-attr">method</span>: <span class="hljs-string">'post'</span>,
 
   <span class="hljs-attr">headers</span>: headers,
@@ -1876,7 +1873,7 @@ headers = {
   <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>
 }
 
-r = requests.post(<span class="hljs-string">'http://localhost:4567/api/v1/pets'</span>, params={
+r = requests.post(<span class="hljs-string">'http://localhost:4567/api/v1/services/radius/users'</span>, params={
 
 }, headers = headers)
 
@@ -1891,7 +1888,7 @@ headers = {
   <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
 }
 
-result = RestClient.post <span class="hljs-string">'http://localhost:4567/api/v1/pets'</span>,
+result = RestClient.post <span class="hljs-string">'http://localhost:4567/api/v1/services/radius/users'</span>,
   <span class="hljs-symbol">params:</span> {
   }, <span class="hljs-symbol">headers:</span> headers
 
@@ -1914,7 +1911,7 @@ p JSON.parse(result)
     }
 
     data := bytes.NewBuffer([]<span class="hljs-keyword">byte</span>{jsonReq})
-    req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, <span class="hljs-string">"http://localhost:4567/api/v1/pets"</span>, data)
+    req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, <span class="hljs-string">"http://localhost:4567/api/v1/services/radius/users"</span>, data)
     req.Header = headers
 
     client := &amp;http.Client{}
@@ -1923,7 +1920,7 @@ p JSON.parse(result)
 }
 
 </code></pre>
-<p><code>POST /pets</code></p>
+<p><code>POST /services/radius/users</code></p>
 <p>Creates a new pet in the store.  Duplicates are allowed</p>
 <blockquote>
 <p>Body parameter</p>
@@ -1958,12 +1955,11 @@ p JSON.parse(result)
 <p>Example responses</p>
 </blockquote>
 <blockquote>
-<p>200 Response</p>
+<p>default Response</p>
 </blockquote>
 <pre class="highlight tab tab-json"><code>{
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"tag"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">0</span>
+  <span class="hljs-attr">"code"</span>: <span class="hljs-number">0</span>,
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"string"</span>
 }
 </code></pre>
 <h3 id="addpet-responses">Responses</h3>
@@ -1981,7 +1977,7 @@ p JSON.parse(result)
 <td>200</td>
 <td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.1">OK</a></td>
 <td>pet response</td>
-<td><a href="#schemapet">Pet</a></td>
+<td>None</td>
 </tr>
 <tr>
 <td>default</td>
@@ -1991,6 +1987,7 @@ p JSON.parse(result)
 </tr>
 </tbody>
 </table>
+<h3 id="addpet-responseschema">Response Schema</h3>
 <aside class="success">
 This operation does not require authentication
 </aside>
@@ -2102,12 +2099,11 @@ p JSON.parse(result)
 <p>Example responses</p>
 </blockquote>
 <blockquote>
-<p>200 Response</p>
+<p>default Response</p>
 </blockquote>
 <pre class="highlight tab tab-json"><code>{
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"tag"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"id"</span>: <span class="hljs-number">0</span>
+  <span class="hljs-attr">"code"</span>: <span class="hljs-number">0</span>,
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"string"</span>
 }
 </code></pre>
 <h3 id="find-pet-by-id-responses">Responses</h3>
@@ -2125,7 +2121,7 @@ p JSON.parse(result)
 <td>200</td>
 <td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.1">OK</a></td>
 <td>pet response</td>
-<td><a href="#schemapet">Pet</a></td>
+<td>None</td>
 </tr>
 <tr>
 <td>default</td>
@@ -2135,6 +2131,7 @@ p JSON.parse(result)
 </tr>
 </tbody>
 </table>
+<h3 id="find-pet-by-id-responseschema">Response Schema</h3>
 <aside class="success">
 This operation does not require authentication
 </aside>
@@ -2282,17 +2279,21 @@ p JSON.parse(result)
 This operation does not require authentication
 </aside>
 <h1 id="schemas">Schemas</h1>
-<h2 id="tocspet">Pet</h2>
-<p><a id="schemapet"></a></p>
+<h2 id="tocspaginatedusers">PaginatedUsers</h2>
+<p><a id="schemapaginatedusers"></a></p>
+<pre class="highlight tab tab-json"><code>[]
+
+</code></pre>
+<h3 id="properties">Properties</h3>
+<p><em>None</em></p>
+<h2 id="tocsuser">User</h2>
+<p><a id="schemauser"></a></p>
 <pre class="highlight tab tab-json"><code>{
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"string"</span>,
-  <span class="hljs-attr">"tag"</span>: <span class="hljs-string">"string"</span>,
   <span class="hljs-attr">"id"</span>: <span class="hljs-number">0</span>
 }
 
 </code></pre>
 <h3 id="properties">Properties</h3>
-<p><em>allOf</em></p>
 <table>
 <thead>
 <tr>
@@ -2305,35 +2306,7 @@ This operation does not require authentication
 </thead>
 <tbody>
 <tr>
-<td><em>anonymous</em></td>
-<td><a href="#schemanewpet">NewPet</a></td>
-<td>false</td>
-<td>none</td>
-<td>none</td>
-</tr>
-</tbody>
-</table>
-<p><em>and</em></p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Required</th>
-<th>Restrictions</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><em>anonymous</em></td>
-<td>object</td>
-<td>false</td>
-<td>none</td>
-<td>none</td>
-</tr>
-<tr>
-<td>» id</td>
+<td>id</td>
 <td>integer(int64)</td>
 <td>true</td>
 <td>none</td>
