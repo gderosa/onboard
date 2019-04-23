@@ -12,30 +12,30 @@ class OnBoard
 
           # TODO: rails-like cattr_accessor's ?
           def method_missing(id, *args)
-            class_variable_get :"@@#{id}" 
+            class_variable_get :"@@#{id}"
           end
 
           def setup
-            @@conf      ||= 
+            @@conf      ||=
                 RADIUS.read_conf
-            @@chktable  ||= 
+            @@chktable  ||=
                 @@conf['group']['check']['table'].to_sym
-            @@chkcols   ||= 
+            @@chkcols   ||=
                 @@conf['group']['check']['columns'].symbolize_values
-            @@rpltable  ||= 
+            @@rpltable  ||=
                 @@conf['group']['reply']['table'].to_sym
-            @@rplcols   ||= 
+            @@rplcols   ||=
                 @@conf['group']['reply']['columns'].symbolize_values
-            @@maptable  ||= 
+            @@maptable  ||=
                 @@conf['group']['usermap']['table'].to_sym
-            @@mapcols   ||= 
+            @@mapcols   ||=
                 @@conf['group']['usermap']['columns'].symbolize_values
           end
 
           def setup!
-            @@conf = 
-                @@chktable = @@chkcols = 
-                @@rpltable = @@rplcols = 
+            @@conf =
+                @@chktable = @@chkcols =
+                @@rpltable = @@rplcols =
                 @@maptable = @@mapcols = nil
             setup
           end
@@ -44,21 +44,21 @@ class OnBoard
             page            = params[:page].to_i
             per_page        = params[:per_page].to_i
             setup
-            q_usergroup     =  
+            q_usergroup     =
                 RADIUS.db[@@maptable].select(
                     Sequel.as(@@mapcols['Group-Name'], :groupname)
-                ) 
+                )
             q_groupcheck    =
                 RADIUS.db[@@chktable].select(
                     Sequel.as(@@chkcols['Group-Name'], :groupname)
-                ) 
+                )
             q_groupreply    =
                 RADIUS.db[@@rpltable].select(
                     Sequel.as(@@rplcols['Group-Name'], :groupname)
                 )
             q_union         = q_usergroup | q_groupcheck | q_groupreply
             q_paginate      = q_union.paginate(page, per_page)
-            groupnames      = 
+            groupnames      =
                 q_paginate.group_by(:groupname).map(:groupname).map do |name|
                   name.force_encoding 'utf-8'
                 end
@@ -66,7 +66,7 @@ class OnBoard
               'total_items' => q_union.count,
               'page'        => page,
               'per_page'    => per_page,
-              'groups'      => groupnames.map{|u| new(u)} 
+              'groups'      => groupnames.map{|u| new(u)}
             }
           end
 
@@ -98,7 +98,7 @@ class OnBoard
               RADIUS.db[@@chktable].insert(
                 @@chkcols['Group-Name'] => params['check']['Group-Name'],
                 # Use '+=' operator instead of ':=', so if an attribute
-                # is already set for the specific user, it will take 
+                # is already set for the specific user, it will take
                 # precedence.
                 @@chkcols['Operator']   => '+=',
                 @@chkcols['Attribute']  => params['check']['Password-Type'],
@@ -124,7 +124,7 @@ class OnBoard
             # the insert method.
             RADIUS.db[@@chktable].insert(
               @@chkcols['Group-Name'] => params['check']['Group-Name'],
-              @@chkcols['Operator']   => ':=', 
+              @@chkcols['Operator']   => ':=',
               @@chkcols['Attribute']  => 'Group',
               @@chkcols['Value']      => params['check']['Group-Name']
             )
@@ -180,21 +180,21 @@ class OnBoard
             @@mapcols['Group-Name'] => @name
           ).order_by @@mapcols['User-Name']
           member_rows   = q_members.paginate(page, per_page)
-          member_names  = member_rows.map(@@mapcols['User-Name']).map do |s| 
+          member_names  = member_rows.map(@@mapcols['User-Name']).map do |s|
             s.force_encoding 'utf-8'
           end
           {
             'total_items' => q_members.count,
             'page'        => page,
             'per_page'    => per_page,
-            'users'       => member_names.map{|u| User.new(u)} 
+            'users'       => member_names.map{|u| User.new(u)}
           }
         end
 
         def found?
-          return true if 
-              (@check and @check.any?) or 
-              (@reply and @reply.any?) 
+          return true if
+              (@check and @check.any?) or
+              (@reply and @reply.any?)
 
           return true if RADIUS.db[@@maptable].where(
               @@mapcols['Group-Name'] => @name
@@ -212,10 +212,10 @@ class OnBoard
         end
 
         # http://wiki.freeradius.org/config/Operators
-        # ':=' operator _must_ be used for standard (non internal) check 
+        # ':=' operator _must_ be used for standard (non internal) check
         # attributes. '=' _can_ be used for someting like Auth-Type
         # or for reply attributes.
-        
+
         def update_reply_attributes(params)
           params['reply'].each_pair do |attribute, value|
             RADIUS.db[@@rpltable].filter(
@@ -231,7 +231,7 @@ class OnBoard
             )
           end
         end
-        
+
         def update_check_attributes(params) # no passwords
           params['check'].each_pair do |attribute, value|
             # passwords are managed by #update_password
@@ -251,11 +251,13 @@ class OnBoard
         end
 
         def update_passwd(params)
-          if params['check']['Group-Password'] !=
-              params['confirm']['check']['Group-Password']
-            raise PasswordsDoNotMatch, 'Passwords do not match!'
+          if params['check']['Group-Password']
+            if params['check']['Group-Password'] !=
+                params['confirm']['check']['Group-Password']
+              raise PasswordsDoNotMatch, 'Passwords do not match!'
+            end
           end
-          validate_empty_password(params) 
+          validate_empty_password(params)
           if params['check']['Password-Type'] =~ /\S/
             return unless params['check']['Group-Password'] =~ /\S/
             # so an incorrect Password-Type would raise an exception
@@ -322,10 +324,14 @@ class OnBoard
         end
 
         def update(params)
-          if params['update_members']
+          if params['add_members'] or params['update_members']
             alread_exist = []
-            new_members = 
-                params['add_members'].split(/[ ,;\r\n]+/m).reject{|s| s.empty?}
+            if params['add_members'].respond_to? :split
+              new_members =
+                  params['add_members'].split(/[ ,;\r\n]+/m).reject{|s| s.empty?}
+            else # Array-like?
+              new_members = params['add_members']
+            end
             new_members.each do |member|
               begin
                 add_member member
@@ -333,7 +339,7 @@ class OnBoard
                 alread_exist << member
               end
             end
-            if alread_exist.any? 
+            if alread_exist.any?
               raise Warning, "The folowing users are already part of group #{@name} : #{alread_exist.join(', ')}."
             end
 
@@ -344,7 +350,10 @@ class OnBoard
                 end
               end
             end
-
+          elsif params['remove_members'].respond_to? :each  # Essentially, via JSON service
+            params['remove_members'].each do |member_name|
+              remove_member member_name
+            end
           else # update attributes by default
             update_passwd(params)
             update_check_attributes(params)
@@ -370,12 +379,12 @@ class OnBoard
          # TODO: DRY - a common mudule shared with User
           case tbl
           when :check
-            row = @check.find do |h| 
+            row = @check.find do |h|
               blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
           when :reply
-            row = @reply.find do |h| 
+            row = @reply.find do |h|
               blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
@@ -395,7 +404,7 @@ class OnBoard
 
         def password_type
           row = find_attribute :check do |attrib, op, val|
-            attrib =~ /-Password$/ 
+            attrib =~ /-Password$/
           end
           row ? row[:Attribute] : nil
         end
@@ -406,7 +415,7 @@ class OnBoard
 
         def validate_empty_password(params)
           # if password type is not being changed, leaving the password
-          # fields blank simply means "leave the password unchanged". 
+          # fields blank simply means "leave the password unchanged".
           if password_type != params['check']['Password-Type']
             self.class.validate_empty_password(params)
           end

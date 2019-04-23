@@ -31,7 +31,7 @@ class OnBoard
 
           def setup
             # Most of the following hashes are used in various calls to
-            # Sequel::Dataset#select 
+            # Sequel::Dataset#select
 
             @@conf        ||= RADIUS.read_conf
             @@chktable    ||= @@conf['user']['check']['table'].to_sym
@@ -39,7 +39,7 @@ class OnBoard
             @@rpltable    ||= @@conf['user']['reply']['table'].to_sym
             @@rplcols     ||= @@conf['user']['reply']['columns'].symbolize_values
             @@perstable   ||= @@conf['user']['personal']['table'].to_sym
-            @@perscols    ||= 
+            @@perscols    ||=
                 @@conf['user']['personal']['columns'].symbolize_values
             @@termstable  ||= @@conf['terms']['table'].to_sym
             @@termsaccepttable ||=
@@ -47,9 +47,9 @@ class OnBoard
           end
 
           def setup!
-            @@conf = 
-                @@chktable  = @@chkcols   = 
-                @@rpltable  = @@rplcols   = 
+            @@conf =
+                @@chktable  = @@chkcols   =
+                @@rpltable  = @@rplcols   =
                 @@perstable = @@perscols  = nil
             setup
           end
@@ -59,7 +59,7 @@ class OnBoard
             Group.setup
 
             column      = @@conf['user']['check']['columns']['User-Name'].to_sym
-            page        = params[:page].to_i 
+            page        = params[:page].to_i
             per_page    = params[:per_page].to_i
 
             q_check     = RADIUS.db[@@chktable].select(
@@ -72,14 +72,14 @@ class OnBoard
 
             union       = (q_check | q_usergroup).group_by :username
 
-            users       = union.paginate(page, per_page).map do |h| 
+            users       = union.paginate(page, per_page).map do |h|
               h[:username].force_encoding 'utf-8'
             end
             return {
               'total_items' => union.count,
               'page'        => page,
               'per_page'    => per_page,
-              'users'       => users.map{|u| new(u)} 
+              'users'       => users.map{|u| new(u)}
             }
           end
 
@@ -92,7 +92,7 @@ class OnBoard
 
             if h[:Email]
               email = h[:Email]
-            
+
               row = RADIUS.db[@@perstable].select(
                 *Sequel.aliases(@@perscols.invert)
               ).filter(
@@ -121,7 +121,7 @@ class OnBoard
 
             # we do not use configurable column names here...
 
-            page        = params[:page].to_i 
+            page        = params[:page].to_i
             per_page    = params[:per_page].to_i
 
             # use double underscore Sequel notation for tablename.columnname
@@ -221,7 +221,7 @@ class OnBoard
 
         def retrieve_attributes_from_db
           setup
-          
+
           @check = RADIUS.db[@@chktable].select(
             *Sequel.aliases(@@chkcols.invert)
           ).where(
@@ -250,16 +250,16 @@ class OnBoard
 
         def retrieve_personal_info_from_db
           setup
-          
+
           row = RADIUS.db[@@perstable].select(
             *Sequel.aliases(@@perscols.invert)
           ).filter(
             @@perscols['User-Name'] => @name
           ).first
           if row
-            @personal = row.stringify_keys 
-          else 
-            @personal = {} 
+            @personal = row.stringify_keys
+          else
+            @personal = {}
           end
         end
         alias retrieve_personal_info retrieve_personal_info_from_db
@@ -270,7 +270,7 @@ class OnBoard
           @personal ||= {}
           retrieve_personal_info unless @personal['Id']
           list = RADIUS.db[@@termsaccepttable].select(:terms_id).filter(:userinfo_id => @personal['Id']).map{|h| h[:terms_id]}
-          @accepted_terms = Terms::Document.get_all(:id => list) 
+          @accepted_terms = Terms::Document.get_all(:id => list)
         end
         alias retrieve_accepted_terms retrieve_accepted_terms_from_db
 
@@ -284,9 +284,9 @@ class OnBoard
         def delete!
           setup
 
-	  # Because of referential integrity, accepted terms rows must be deleted first.
+	        # Because of referential integrity, accepted terms rows must be deleted first.
 
-	  # Terms & Conditions doesnt't have configurable column names...
+	        # Terms & Conditions doesnt't have configurable column names...
           RADIUS.db[@@termsaccepttable].where(:userinfo_id             => @personal['Id']).delete
 
           RADIUS.db[@@chktable        ].where(@@chkcols[  'User-Name'] => @name          ).delete
@@ -297,9 +297,9 @@ class OnBoard
 
         def accept_terms!(accepted_terms)
           setup
-          retrieve_personal_info_from_db unless @personal['Id'] 
+          retrieve_personal_info_from_db unless @personal['Id']
           raise(
-              Conflict, 
+              Conflict,
               %Q{There's no user named "#{@name}" in userinfo db table}
           ) unless @personal['Id']
           accepted_terms.each do |terms_id|
@@ -325,11 +325,11 @@ class OnBoard
         end
 
         def grouplist
-          @groups.map{|h| h[:"Group-Name"]}   
+          @groups.map{|h| h[:"Group-Name"]}
         end
 
         def found?
-          @check.any? || @reply.any? || @groups.any? 
+          @check.any? || @reply.any? || @groups.any?
         end
 
         def update_reply_attributes(params)
@@ -349,13 +349,13 @@ class OnBoard
             )
           end
         end
-        
+
         def update_check_attributes(params) # no passwords
           return unless  params['check'].respond_to? :each_pair
           params['check'].each_pair do |attribute, value|
             # passwords are managed by #update_passwd
             next if attribute =~ /-Password$/ or attribute =~ /^Password-/
-            # inserting User-Name attribute doesn't make sense: there's 
+            # inserting User-Name attribute doesn't make sense: there's
             # already @@chkcols['User-Name'] column
             next if attribute == 'User-Name'
             RADIUS.db[@@chktable].filter(
@@ -381,10 +381,10 @@ class OnBoard
           validate_empty_password(params)
           # params['check']['Password-Type']:
           # nil:  leave unchanged
-          # '' :  no password - e.g. group authentication  
-          unless params['check']['Password-Type'] 
+          # '' :  no password - e.g. group authentication
+          unless params['check']['Password-Type']
             params['check']['Password-Type'] = password_type
-          end 
+          end
           if params['check']['Password-Type'] =~ /\S/
             return unless params['check']['User-Password'] =~ /\S/
             # so an incorrect Password-Type would raise an exception
@@ -418,16 +418,20 @@ class OnBoard
               'check'   => {
                 'User-Password' => password
               }
-            }            
+            }
           }
           update_passwd params
         end
 
         def update_group_membership(params)
           Group.setup
-          groupnames = 
-              params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}  
-          groupnames.each{|name| Name.validate name} 
+          if params['groups'].respond_to? :split
+              groupnames =
+                params['groups'].split(/[ ,;\n\r]+/m).reject{|s| s.empty?}
+          else  # Array...
+              groupnames = params['groups']
+          end
+          groupnames.each{|name| Name.validate name}
           oldrows = RADIUS.db[Group.maptable].filter(
             Group.mapcols['User-Name'] => @name
           ).to_a
@@ -443,13 +447,13 @@ class OnBoard
           delete = oldrows - newrows
           insert = newrows - oldrows
           delete.each{|row| RADIUS.db[Group.maptable].filter(row).delete}
-          insert.each do |row| 
+          insert.each do |row|
             RADIUS.db[Group.maptable].insert(row)
-            g = Group.new row[Group.mapcols['Group-Name']] 
+            g = Group.new row[Group.mapcols['Group-Name']]
             g.retrieve_attributes_from_db
             # g.insert_fall_through_if_not_exists
           end
-         insert_fall_through_if_not_exists 
+          insert_fall_through_if_not_exists if groupnames.any?
         end
 
         def insert_fall_through_if_not_exists
@@ -479,13 +483,13 @@ class OnBoard
           end
           begin
             birthdate = Date.parse params['personal']['Birth-Date']
-          rescue ArgumentError
+          rescue ArgumentError, TypeError
             birthdate = Sequel::NULL
           end
           row[@@perscols['Birth-Date']] = birthdate
           if RADIUS.db[@@perstable].filter(match).any?
             row[@@perscols['Update-Date']] = Time.now
-            RADIUS.db[@@perstable].filter(match).update(row) 
+            RADIUS.db[@@perstable].filter(match).update(row)
           else
             row[@@perscols['Update-Date']] = nil # DaloRADIUS-compatible
             row[@@perscols['Creation-Date']] = Time.now
@@ -509,7 +513,7 @@ class OnBoard
               dir = "#{UPLOADS}/#{@name}/personal"
               FileUtils.mkdir_p dir
               FileUtils.cp(
-                  attachment[:tempfile].path, 
+                  attachment[:tempfile].path,
                   File.join(dir, attachment[:filename])
               )
             end

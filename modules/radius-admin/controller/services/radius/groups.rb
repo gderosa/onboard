@@ -26,14 +26,14 @@ class OnBoard
         :msg      => msg
       )
     end
-   
+
     post '/services/radius/groups.:format' do
       use_pagination_defaults
       name = params['check']['Group-Name']
       group = Service::RADIUS::Group.new(name) # blank slate
-      msg = handle_errors do 
+      msg = handle_errors do
         Service::RADIUS::Group.insert(params)
-        group.update_reply_attributes(params) 
+        group.update_reply_attributes(params)
         group.insert_fall_through_if_not_exists
       end
       if msg[:ok] and not msg[:err]
@@ -77,7 +77,7 @@ class OnBoard
         :msg      => msg
       )
     end
-   
+
     put '/services/radius/groups/:groupid.:format' do
       use_pagination_defaults
       group = Service::RADIUS::Group.new(params[:groupid])
@@ -90,10 +90,10 @@ class OnBoard
         member_info = group.get_members(params)
         members = member_info['users']
         members.each do |member|
-          member.retrieve_attributes_from_db if 
+          member.retrieve_attributes_from_db if
               !member.check or member.check.length == 0
         end
-      end     
+      end
       format(
         :module   => 'radius-admin',
         :path     => '/services/radius/groups/group',
@@ -108,13 +108,13 @@ class OnBoard
     end
 
     delete '/services/radius/groups/:groupid.:format' do
-      group = Service::RADIUS::Group.new params[:groupid] 
+      group = Service::RADIUS::Group.new params[:groupid]
       msg = handle_errors do
         if group.found?
-          if params['confirm'] =~ /on|yes|true|1/
+          if params['confirm'] =~ /on|yes|true|1/ or params[:format] == 'json'  # No "confirm" for the JSON service
             group.delete!
             status 303 # HTTP See Other
-            headers 'Location' => "/services/radius/groups.#{params[:format]}" 
+            headers 'Location' => "/services/radius/groups.#{params[:format]}"
           else
             status 204 # HTTP No Content # TODO: is this the right code?
           end

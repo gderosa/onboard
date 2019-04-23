@@ -1,11 +1,11 @@
 OnBoard -- http://dev.vemarsas.it/onboard/ .
 
 Except where otherwise stated, this work is
-Copyright 2009, 2010, 2011, 2012, 2013 
+Copyright 2009-2019
 Guido De Rosa <guido.derosa at vemarsas.it> and
 Antonello Ventre <antonello.ventre at vemarsas.it> .
 
-License: GPLv2 
+License: GPLv2
 
 Artworks from various sources are included.
 See public/*/* for details and Copyright info.
@@ -13,23 +13,22 @@ See public/*/* for details and Copyright info.
 ---
 
 A web interface to manage Linux-based networking and virtualization
-appliances. It's been developed and tested on Debian GNU/Linux and its 
-derivative for embedded systems, Voyage Linux (http://linux.voyage.hk/). 
-It should work on other distros too, altough untested right now. Feel free 
+appliances. It's been mainly developed and tested on Debian GNU/Linux.
+It should work on other distros too, altough untested right now. Feel free
 to contribute and test.
 
 ---
 
 For any web page, you may change .html extension into .json to
-get machine-readable data. 
+get machine-readable data.
 
-An .rb extension is also available for debugging purposes when in 
-Sinatra 'development' environment. 
+An .rb extension is also available for debugging purposes when in
+Sinatra 'development' environment.
 
 ---
 
 Software requirements for "core" (check individual directories under modules/
-for module-specific, additional requirements): 
+for module-specific, additional requirements):
 
 * ruby >= 2.0.0
 * sudo
@@ -38,15 +37,15 @@ for module-specific, additional requirements):
 * bridge-utils (brctl)
 * pciutils (lspci command)
 * usbutils (lsusb command)
-* dhcpcd 
+* dhcpcd
   * Also, resolvconf is recommended
 * dnsmasq >= 2.61, != 2.63
   * removed ISC-style leasefile format, which is assumed when no
     dhcp-range is provided -- and leads to troubles
   * --host-record (bugfree ;)
-* locales 
+* locales
   ## and generate (UTF8) locales for languages/countries you want to support
-* ifrename (optional) 
+* ifrename (optional)
 
 Gems:
 
@@ -59,12 +58,91 @@ documentation of individual modules to troubleshoot.
 
 --
 
-Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append 
+Please read carefully doc/sysadm/example/etc/sysctl.conf and copy and/or append
 the configuration to the Linux machine /etc/sysctl.conf file.
+
+--
+
+NEW: Automated provisioning
+
+etc/scripts/platform/*/setup.sh
+
+modules/radius-admin/etc/scripts/platform/*/setup.sh
+
+And more modules to come.
+
+For a local development environment you can use Vagrant (vagrantup.com)
+-- which will in turn call the above scripts.
+
+    vagrant up
+
+You can also start separately margay vm and client vm:
+
+    vagrant up margay
+    vagrant up client
+
+The client VM will show the VBox GUI, you will see a graphical login.
+Enter with credentials vagrant:vagrant, then right-click
+and open Web Browser (or Terminal etc.)
+
+The same distinction between margay and client machine holds for
+other Vagrant commands: provision, halt, suspend, destroy etc.
+
+Provision optional module groups e.g.
+
+    vagrant provision margay --provision-with radius
+
+Margay server will be available at
+
+    http://localhost:4567
+    https://localhost:4443
+
+
+Very optional Vagrant tweaks
+-----
+
+1.
+
+If you install the vagrant-proxyconf plugin,
+you also set proxy environment variables if you want to use a proxy
+for downloading packages during provisioning etc.
+
+See https://github.com/tmatilai/vagrant-proxyconf#environment-variables for more.
+
+Suggested values are
+
+    VAGRANT_HTTP_PROXY=http://10.0.2.2:8123
+    VAGRANT_HTTPS_PROXY=http://10.0.2.2:8123
+
+if, for example, you use polipo with default config
+(10.0.2.2 is the default gateway for vbox NAT interface in the vm).
+
+Beware this may conflict with capitive portal in the client, as browsers will then use the proxy
+and therefore circumvent the captive portal (depending on the configuration).
+
+2.
+
+    vagrant plugin install vagrant-vbguest  # optional, ensure updated VBox Guest Additions in the vm
+
+
+
+NEW: Testing
+
+    # core only
+    bundle exec rspec
+
+    # plus specific module
+    bundle exec rspec spec modules/radius-admin/spec
+
+    # plus all modules
+    bundle exec rspec spec modules/*/spec
+
+It's assumed they have been basically configure to function,
+they are real e2e tests connecting to real local db  etc.
 
 ---
 
-This Free/Open Source Software project is sponsored by 
-VEMAR sas, Paterno (PZ), Italy -- http://www.vemarsas.it/ 
+This Free/Open Source Software project is sponsored by
+VEMAR sas, Paterno (PZ), Italy -- http://www.vemarsas.it/
 
 

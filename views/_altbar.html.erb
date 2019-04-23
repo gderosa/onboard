@@ -3,14 +3,14 @@
 %>
 
       <div id="altbar"> <!-- alternate formats -->
-        <% if request.path_info =~ /^(.*)\.(\w+)$/ 
-          path = $1 
-          current_format = $2 
+        <% if request.path_info =~ /^(.*)\.(\w+)$/
+          path = $1
+          current_format = $2
           valid_formats = (formats - [current_format]).select do |fmt|
             routed? "#{path}.#{fmt}"
           end
-          
-          valid_formats.each do |fmt| 
+
+          valid_formats.each do |fmt|
             href = "#{path}.#{fmt}"
             href << "?#{request.query_string}" if
                 request.query_string and request.query_string.length > 0
@@ -19,7 +19,7 @@
               <%= fmt %>
             </a>
             <% unless fmt == formats.last %>
-              | 
+              |
             <% end %>
           <% end %>
         <% end %>

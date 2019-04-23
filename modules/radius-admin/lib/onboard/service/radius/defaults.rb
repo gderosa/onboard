@@ -81,8 +81,8 @@ class OnBoard
             'columns'               => {
               'Id'                    => 'id',
 
-              'User-Name'             => 'username', 
-                # not really a RADIUS attribute, just for naming consistency...  
+              'User-Name'             => 'username',
+                # not really a RADIUS attribute, just for naming consistency...
 
               'Attribute'             => 'attribute',
               'Operator'              => 'op',
@@ -94,9 +94,9 @@ class OnBoard
             'table'                 => 'radreply',
             'columns'               => {
               'Id'                    => 'id',
-              
-              'User-Name'             => 'username', 
-                # not really a RADIUS attribute, just for naming consistency...  
+
+              'User-Name'             => 'username',
+                # not really a RADIUS attribute, just for naming consistency...
 
               'Attribute'             => 'attribute',
               'Operator'              => 'op',
@@ -112,8 +112,8 @@ class OnBoard
             'columns'               => {
               'Id'                    => 'id',
 
-              'Group-Name'            => 'groupname', 
-                # not really a RADIUS attribute, just for naming consistency...  
+              'Group-Name'            => 'groupname',
+                # not really a RADIUS attribute, just for naming consistency...
 
               'Attribute'             => 'attribute',
               'Operator'              => 'op',
@@ -125,9 +125,9 @@ class OnBoard
             'table'                 => 'radgroupreply',
             'columns'               => {
               'Id'                    => 'id',
-              
-              'Group-Name'            => 'groupname', 
-                # not really a RADIUS attribute, just for naming consistency...  
+
+              'Group-Name'            => 'groupname',
+                # not really a RADIUS attribute, just for naming consistency...
 
               'Attribute'             => 'attribute',
               'Operator'              => 'op',
@@ -144,7 +144,6 @@ class OnBoard
             },
           },
         },
- 
 
       }
     end

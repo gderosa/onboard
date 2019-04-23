@@ -8,7 +8,7 @@ require 'onboard/extensions/sinatra/templates'
 class OnBoard
   class Controller < ::Sinatra::Base
     helpers do
-    
+
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
 
@@ -19,14 +19,14 @@ class OnBoard
         h[:formats] = @@formats
 
         # try to guess if not provided
-        h[:format]                                ||= 
-            params[:format]                       ||= 
+        h[:format]                                ||=
+            params[:format]                       ||=
             request.path_info =~ /\.(\w+$)/ && $1
 
         return multiple_choices(h) unless h[:formats].include? h[:format]
         # h[:path] and abs_path are with no extension!
-        if h[:module] 
-          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
+        if h[:module]
+          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '')
         end
         abs_path = File.absolute_path( File.join(settings.views, h[:path]) )
         case h[:format]
@@ -34,13 +34,13 @@ class OnBoard
           if h[:partial]
             layout = false
           elsif instance_variable_defined? :@layout and @layout
-            layout = @layout.to_sym 
+            layout = @layout.to_sym
                 # a mobile layout is set in lib/onboard/controller/auth.rb
                 # (if appropriate) only for /pub/ pages right now
           else
             layout = :"layout.html" # TODO? mobile layout for admin (non /pub/ ) pages?
           end
-          
+
           content_type 'text/html', :charset => 'utf-8' unless h[:partial]
 
           erubis_template = (h[:path] + '.html').to_sym
@@ -50,20 +50,20 @@ class OnBoard
             # p erubis_template if abs_path =~ /_form_style/ # DEBUG
           end
 
-          # "Sinatra::Templates#erubis is deprecated and will be removed, 
-          # use #erb instead. If you have Erubis installed, it will be used 
+          # "Sinatra::Templates#erubis is deprecated and will be removed,
+          # use #erb instead. If you have Erubis installed, it will be used
           # automatically"
           return erb(
             erubis_template,
             :layout   => layout,
             :locals   => {
-              :objects  => h[:objects], 
-              :icondir  => IconDir, 
+              :objects  => h[:objects],
+              :icondir  => IconDir,
               :iconsize => IconSize,
               :msg      => h[:msg],
               :title    => h[:title],
               :formats  => (h[:formats] || @@formats),
-            }.merge(h[:locals] || {}) , 
+            }.merge(h[:locals] || {}) ,
           )
 
         when 'json', 'yaml'
@@ -84,15 +84,15 @@ class OnBoard
             stderr                = h[:msg][:stderr].to_s
             x_headers['X-Err']    = err.gsub("\n", "\\n")     if err    =~ /\S/
             x_headers['X-Stderr'] = stderr.gsub("\n", "\\n")  if stderr =~ /\S/
-            headers x_headers                                            
+            headers x_headers
           end
 
-          return h[:objects].to_(h[:format]) 
+          return h[:objects].to_(h[:format])
 
         when 'rb' # development check already done
           #if options.environment == :development
             content_type 'text/x-ruby'
-            return h[:objects].pretty_inspect 
+            return h[:objects].pretty_inspect
           #else
           #  multiple_choices(h)
           #end
@@ -102,7 +102,7 @@ class OnBoard
           else
             multiple_choices(h)
           end
-        end  
+        end
       end
 
       def partial(h)

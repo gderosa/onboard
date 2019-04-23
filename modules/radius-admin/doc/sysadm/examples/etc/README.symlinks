@@ -1,0 +1,1 @@
+On a Windows devel host, symlinks under git may be a problem? Replace them with copies?

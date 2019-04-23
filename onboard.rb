@@ -36,8 +36,8 @@ class OnBoard
 
   ROOTDIR           = File.dirname File.expand_path(__FILE__)
   DATADIR = RWDIR = (
-      ENV['ONBOARD_RWDIR'] or 
-      ENV['ONBOARD_DATADIR'] or 
+      ENV['ONBOARD_RWDIR'] or
+      ENV['ONBOARD_DATADIR'] or
       File.join(ENV['HOME'], '.onboard')
   )
   FileUtils.mkdir_p RWDIR
@@ -53,23 +53,23 @@ class OnBoard
   VARRUN              ||= '/var/run/onboard'
 
   VARLIB              ||= File.join RWDIR, 'var/lib'
- 
+
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
   # NOTE: we are re-defining a constant!
   # ...really, it should not be a constant... :-(
   # TODO TODO TODO ...
   LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log')
-  
+
   LOGGER.formatter = proc { |severity, datetime, progname, msg|
     "#{datetime} #{severity}: #{msg}\n"
   }
 
   LOGGER.level = Logger::INFO
-  LOGGER.level = Logger::DEBUG if 
+  LOGGER.level = Logger::DEBUG if
       $0 == __FILE__ and not
       ENV['ONBOARD_ENVIRONMENT'] =~ /production/i
       # this is required because there is no Sinatra environment until
-      # controller.rb is loaded (where OnBoard::Controller inherits 
+      # controller.rb is loaded (where OnBoard::Controller inherits
       # from Sinatra::Base)
 
   MENU_ROOT = Menu::MenuNode.new('ROOT', {
@@ -100,7 +100,7 @@ class OnBoard
 
   def self.prepare
     system "sudo mkdir -p #{VARRUN}"
-    system "sudo chown onboard #{VARRUN}"
+    system "sudo chown #{Process.uid} #{VARRUN}"
 
     # modules
     Dir.foreach(ROOTDIR + '/modules') do |dir|
@@ -116,7 +116,7 @@ class OnBoard
         else
           STDERR.puts "Warning: Couldn't load modules/#{dir}/load.rb: Skipped!"
         end
-      end 
+      end
     end
 
     # After the modules, 'cause we want to know, among other things,
@@ -125,16 +125,16 @@ class OnBoard
     if web?
       require 'onboard/controller/helpers'
       require 'onboard/controller'
-      
+
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
     end
 
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
-    if ARGV.include? '--restore' 
-      restore_scripts = 
+    if ARGV.include? '--restore'
+      restore_scripts =
           Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           #+
-          #Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
+          #Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb')
       Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
         next if File.exists? "#{module_dir}/.disable"
         restore_scripts += Dir.glob("#{module_dir}/etc/restore/[0-9][0-9]*.rb")
@@ -153,15 +153,15 @@ class OnBoard
 
           LOGGER.error "loading #{script}: #{exception.inspect}"
           backtrace_str = "Exception backtrace follows:"
-          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          exception.backtrace.each{|line| backtrace_str << "\n" << line}
           LOGGER.error backtrace_str
         end
       end
     end
     # TODO: DRY DRY DRY
-    if ARGV.include? '--shutdown' 
-      shutdown_scripts = 
-          Dir.glob(ROOTDIR + '/etc/shutdown/[0-9][0-9]*.rb')           
+    if ARGV.include? '--shutdown'
+      shutdown_scripts =
+          Dir.glob(ROOTDIR + '/etc/shutdown/[0-9][0-9]*.rb')
       Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
         next if File.exists? "#{module_dir}/.disable"
         shutdown_scripts += Dir.glob("#{module_dir}/etc/shutdown/[0-9][0-9]*.rb")
@@ -179,7 +179,7 @@ class OnBoard
 
           LOGGER.error "loading #{script}: #{exception.inspect}"
           backtrace_str = "Exception backtrace follows:"
-          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          exception.backtrace.each{|line| backtrace_str << "\n" << line}
           LOGGER.error backtrace_str
         end
       end
@@ -194,7 +194,7 @@ class OnBoard
     # modules
     Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
       next if File.exists? "#{module_dir}/.disable"
-      Dir.glob("#{module_dir}/etc/save/*.rb").each do |script| 
+      Dir.glob("#{module_dir}/etc/save/*.rb").each do |script|
         print "loading: #{script}... " and STDOUT.flush
         load script and puts ' OK'
       end
@@ -218,12 +218,7 @@ end
 OnBoard.prepare
 
 if OnBoard.web?
-  #require 'onboard/controller'
-  #require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run! :bind => '0.0.0.0'
   end
 end
-
-
-
