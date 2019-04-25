@@ -1,15 +1,9 @@
 A web interface to manage Linux-based networking and virtualization
-appliances. It's been mainly developed and tested on Debian GNU/Linux.
-It should work on other distros too, altough untested and with no
-automated deployment provided.
+appliances. 
 
-## Multiple choices (in the ReST/HTTP sense)
+This is the the web interface for _Margay_ devices by Vemar S.A.S.
 
-For any web page, you may change `.html` extension into `.json to
-get machine-readable data.
-
-An `.rb` extension is also available for debugging purposes when in
-Sinatra `development` environment.
+It's been mainly developed and tested on Debian GNU/Linux.
 
 ## Installation
 
@@ -44,11 +38,6 @@ The same distinction between margay and client machine holds for
 other Vagrant commands: provision, halt, suspend, destroy etc.
 (see documentation on the Vagrant website).
 
-Margay server will be available at
-
-* http://localhost:4567
-* https://localhost:4443
-
 #### Very optional Vagrant tweaks
 
 ##### Proxy
@@ -76,6 +65,21 @@ and therefore circumvent the captive portal (depending on the configuration).
 ```
 vagrant plugin install vagrant-vbguest  # optional, ensure updated VBox Guest Additions in the vm
 ```
+
+## After installation
+
+Margay server will be available at
+
+* http://localhost:4567
+* https://localhost:4443
+
+## Multiple choices (in the ReST/HTTP sense)
+
+For any web page, you may change `.html` extension into `.json to
+get machine-readable data.
+
+An `.rb` extension is also available for debugging purposes when in
+Sinatra `development` environment.
 
 ## Testing
 
