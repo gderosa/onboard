@@ -3,19 +3,6 @@ appliances. It's been mainly developed and tested on Debian GNU/Linux.
 It should work on other distros too, altough untested and with no
 automated deployment provided.
 
-## Copying
-
-Except where otherwise stated, this work is
-Copyright 2009-2019
-Guido De Rosa <guido.derosa at vemarsas.it> and
-Antonello Ventre <antonello.ventre at vemarsas.it> .
-
-License: GPLv2
-
-Artworks from various sources are included.
-See public/*/* for details and Copyright info.
-
-
 ## Multiple choices (in the ReST/HTTP sense)
 
 For any web page, you may change `.html` extension into `.json to
@@ -105,3 +92,15 @@ bundle exec rspec spec modules/*/spec
 
 It's assumed they have been basically configured to function,
 they are real e2e tests connecting to real local db  etc.
+
+## Copying
+
+Except where otherwise stated, this work is
+Copyright 2009-2019
+Guido De Rosa <guido.derosa at vemarsas.it> and
+Antonello Ventre <antonello.ventre at vemarsas.it> .
+
+License: GPLv2
+
+Artworks from various sources are included.
+See public/*/* for details and Copyright info.
