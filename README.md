@@ -18,16 +18,16 @@ You can install Vagrant -- https://www.vagrantup.com/.
 Then run
 
 ```bash
-    vagrant up
+vagrant up
 ```
 
 You can also start separately margay vm and client vm:
 
 ```bash
-    vagrant up margay
+vagrant up margay
 ```
 ```bash
-    vagrant up client
+vagrant up client
 ```
 
 The client VM will show the VBox GUI, you will see a graphical login.
