@@ -137,7 +137,7 @@ NEW: Testing
     # plus all modules
     bundle exec rspec spec modules/*/spec
 
-It's assumed they have been basically configure to function,
+It's assumed they have been basically configured to function,
 they are real e2e tests connecting to real local db  etc.
 
 ---
