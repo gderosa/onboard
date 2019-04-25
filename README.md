@@ -38,6 +38,14 @@ The same distinction between margay and client machine holds for
 other Vagrant commands: provision, halt, suspend, destroy etc.
 (see documentation on the Vagrant website).
 
+#### Hotspot/RADIUS module
+
+Enable with (from the host):
+
+```
+vagrant provision margay --provision-with radius
+```
+
 #### Very optional Vagrant tweaks
 
 ##### Proxy
