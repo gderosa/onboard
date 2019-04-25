@@ -1,7 +1,7 @@
 A web interface to manage Linux-based networking and virtualization
 appliances. 
 
-This is the the web interface for _Margay_ devices by Vemar S.A.S.
+This is the the web interface for the _Margay_ series of devices by Vemar S.A.S.
 
 It's been mainly developed and tested on Debian GNU/Linux.
 
@@ -73,6 +73,8 @@ Margay server will be available at
 * http://localhost:4567
 * https://localhost:4443
 
+The default credentials are `admin`:`admin`.
+
 ## Multiple choices (in the ReST/HTTP sense)
 
 For any web page, you may change `.html` extension into `.json to
@@ -107,4 +109,4 @@ Antonello Ventre <antonello.ventre at vemarsas.it> .
 License: GPLv2
 
 Artworks from various sources are included.
-See public/*/* for details and Copyright info.
+See `public/*/*` for details and Copyright info.
