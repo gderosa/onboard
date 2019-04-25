@@ -1,7 +1,7 @@
-A web interface to manage Linux-based networking and virtualization
+A web interface to manage Linux-based network and virtualization
 appliances. 
 
-This is the the web interface for the _Margay_ series of devices by Vemar S.A.S.
+This is the web interface for the _Margay_ series of devices by Vemar S.A.S.
 
 It's been mainly developed and tested on Debian GNU/Linux.
 
@@ -104,7 +104,7 @@ they are real e2e tests connecting to real local db  etc.
 Except where otherwise stated, this work is
 Copyright 2009-2019
 Guido De Rosa <guido.derosa at vemarsas.it> and
-Antonello Ventre <antonello.ventre at vemarsas.it> .
+Antonello Ventre <antonello.ventre at vemarsas.it>.
 
 License: GPLv2
 
