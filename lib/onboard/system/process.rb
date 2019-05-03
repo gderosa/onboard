@@ -11,6 +11,17 @@ class OnBoard
             return false
           end
         end
+        #
+        # method_missing ?
+        #
+        # Do not break compat with code that believes they are calling Ruby core
+        # instead of OnBoard::System::Process .
+        def uid
+          ::Process.uid
+        end
+        def gid
+          ::Process.gid
+        end
       end
 
       attr_reader :pid, :cwd, :exe, :cmdline, :env
