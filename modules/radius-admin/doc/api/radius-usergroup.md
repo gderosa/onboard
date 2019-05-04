@@ -8,6 +8,7 @@
     - [Parameters](#parameters)
     - [Example response](#example-response)
   - [Create User](#create-user)
+    - [Example request body](#example-request-body)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -144,4 +145,34 @@ Accept: application/json
 
 ```
 
-Creates a new pet in the store.  TODO
+Creates a new RADIUS user.
+
+### Example request body
+
+```json
+{
+  "check": {
+    "User-Name": "georgeboole",
+    "Password-Type": "SSHA1-Password",
+    "User-Password": "the_password"
+  },
+  "confirm": {
+    "check": {
+      "User-Password": "the_password"
+    }
+  },
+  "reply": {
+    "Reply-Message": "my reply msg",
+    "Session-Timeout": "7200",
+    "Idle-Timeout": "1800",
+    "WISPr-Bandwidth-Max-Down": "500000",
+    "WISPr-Bandwidth-Max-Up": "250000"
+  },
+  "personal" => {
+    "First-Name" => "George",
+    "Last-Name" => "Boole",
+    "Email": "george.boole@domain",
+    "Birth-Date": "1815-11-02"
+  }
+}
+```

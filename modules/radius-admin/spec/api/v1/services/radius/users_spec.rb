@@ -59,7 +59,7 @@ describe 'RADIUS admin' do
   end
 
 
-  # Only "personal" data are used of this, RADIUS attrs are amtched against user_modification_data,
+  # Only "personal" data are used of this, RADIUS attrs are matched against user_modification_data,
   # after a data rearrangement/reshape to make RADIUS idiosyncrasies and our (sensible?) key/values
   # meet.
   let(:expected_json_after_modification) do
