@@ -11,7 +11,7 @@
     - [Example request body](#example-request-body)
     - [Parameters](#parameters-1)
       - [`check` attributes](#check-attributes)
-      - [`confirm`](#confirm)
+      - [`confirm` attributes](#confirm-attributes)
       - [`reply` attributes](#reply-attributes)
       - [`personal` information](#personal-information)
 
@@ -197,8 +197,30 @@ The main properties are:
 
 #### `check` attributes
 
-#### `confirm`
+|Name                     |In   |Type   |Required |Description                                                                      |
+|---                      |---  |---    |---      |---                                                                              |
+|`check` . `User-name`    |body |string |true     |RADIUS username                                                                  |
+|`check` . `Password-Type`|body |string |true     |Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`|
+|`check` . `User-Password`|body |string |true     |The user password                                                                |
+|`check` . `Auth-Type`    |body |string |false    |Only set if user must be always accepted (`Accept`) or rejected (`Reject`)       |
+|`check` . `Login-Time`   |body |string |false    |The time span a user may login to the system, more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file)|
+
+#### `confirm` attributes
+
+|Name                                 |In   |Type   |Required |Description                                                                      |
+|---                                  |---  |---    |---      |---                                                                              |
+|`confirm` . `check` . `User-Password`|body |string |true     |Value MUST be the same as `check` . `User-Password`                              |
 
 #### `reply` attributes
 
+|Name     |In   |Type   |Required |Description                                  |
+|---      |---  |---    |---      |---                                          |
+|page     |query|integer|false    |page within pagination                       |
+|per_page |query|integer|false    |maximum number of results to return per page |
+
 #### `personal` information
+
+|Name     |In   |Type   |Required |Description                                  |
+|---      |---  |---    |---      |---                                          |
+|page     |query|integer|false    |page within pagination                       |
+|per_page |query|integer|false    |maximum number of results to return per page |
