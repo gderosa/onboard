@@ -9,6 +9,11 @@
     - [Example response](#example-response)
   - [Create User](#create-user)
     - [Example request body](#example-request-body)
+    - [Parameters](#parameters-1)
+      - [`check` attributes](#check-attributes)
+      - [`confirm`](#confirm)
+      - [`reply` attributes](#reply-attributes)
+      - [`personal` information](#personal-information)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -176,3 +181,24 @@ Creates a new RADIUS user.
   }
 }
 ```
+
+### Parameters
+
+The JSON object sent with the request has four main properties,
+each of them has their sub-properties, some are required, some are not.
+The example above include all mandatory sub-properties and *some* optional ones.
+
+The main properties are:
+
+* `check`: RADIUS Check Attributes
+* `confirm`: Currently only used as a redundancy check for `check` -> `User-Password`
+* `reply`: RADIUS Reply Attributes
+* `personal`: non-RADIUS information, used to store personal user information for hotspot management; they are all optional
+
+#### `check` attributes
+
+#### `confirm`
+
+#### `reply` attributes
+
+#### `personal` information
