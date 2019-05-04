@@ -4,7 +4,7 @@ A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay sys
 
 Base URLs:
 
-* http://localhost:4567/api/v1
+* http://localhost:4567/api/v1/services/radius
 
 ## List Users
 
@@ -111,13 +111,6 @@ be requested via optional parameters e.g.<br/>
 }
 ```
 
-<h3 id="list-users-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Paginated list of users|[PaginatedUsers](#schemapaginatedusers)|
-
-
 ## Create User
 
 ```http
@@ -127,7 +120,5 @@ Content-Type: application/json
 Accept: application/json
 
 ```
-
-`POST /services/radius/users`
 
 Creates a new pet in the store.  TODO
