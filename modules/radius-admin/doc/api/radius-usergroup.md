@@ -197,13 +197,13 @@ The main properties are:
 
 #### `check` attributes
 
-|Name                     |In   |Type   |Required |Description                                                                      |
-|---                      |---  |---    |---      |---                                                                              |
-|"check" . "User&#8209;name"    |body |string |true     |RADIUS username                                                                  |
-|"check" . "Password&#8209;Type"|body |string |true     |Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
-|"check" . "User&#8209;Password"|body |string |true     |The user password.                                                               |
-|"check" . "Auth&#8209;Type"    |body |string |false    |Only set if user must be always accepted (`Accept`) or rejected (`Reject`).       |
-|"check" . "Login&#8209;Time"   |body |string |false    |The time span a user may login to the system, more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
+|Parent |Name           |In   |Type   |Required |Description                                                                      |
+|---    |---            |---  |---    |---      |---                                                                              |
+|"check"|"User-Name"    |body |string |true     |RADIUS username                                                                  |
+|"check"|"Password-Type"|body |string |true     |Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
+|"check"|"User-Password"|body |string |true     |The user password.|
+|"check"|"Auth-Type"    |body |string |false    |Only set if user must be always accepted (`Accept`) or rejected (`Reject`).       |
+|"check"|"Login-Time"   |body |string |false    |The time span a user may login to the system, more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
 
 #### `confirm` attributes
 
