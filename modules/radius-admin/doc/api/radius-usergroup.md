@@ -3,6 +3,7 @@
 **Table of Contents**  <!--*generated with [DocToc](https://github.com/thlorenz/doctoc)*-->
 
 - [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
+  - [Authentication](#authentication)
   - [List Users](#list-users)
     - [Parameters](#parameters)
     - [Example response](#example-response)
@@ -17,6 +18,16 @@ A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay sys
 Base URLs:
 
 * http://localhost:4567/api/v1/services/radius
+* https://localhost/api/v1/services/radius
+
+## Authentication
+
+Unless otherwise noted, use [Basic HTTP Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication)
+at each request. The default user is `admin`, password `admin`. Of course, the administrator
+is advised to change this in production.
+
+For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<password> <URL>`
+&mdash; or `curl -u <username> <URL>` and enter the password when prompted.
 
 ## List Users
 
