@@ -12,7 +12,7 @@
 
 # echo $* # DEBUG
 
-PROJECT_ROOT=${1:-'.'}
+PROJECT_ROOT=${1:-`pwd`}
 APP_USER=${2:-'onboard'}
 
 CONFDIR=~$APP_USER/.onboard

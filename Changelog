@@ -1,3 +1,9 @@
+2019.04
+
+* Support FreeRADIUS 3
+* Provisioning: Vagrant and bare-Debian (see also https://github.com/vemarsas/margay)
+* JSON/ReST: allowing POST / PUT in JSON format too (instead of form-encoded only).
+
 2015.07
 
 * Use Bundler
