@@ -79,7 +79,8 @@ vagrant plugin install vagrant-vbguest  # optional, ensure updated VBox Guest Ad
 Margay server will be available at
 
 * http://localhost:4567
-* https://localhost (if you're using Vagrant, use port 4443 for HTTPS from the host machine)
+* https://localhost 
+  * *or https://localhost:4443 (from the host) if you're using Vagrant*
 
 The default credentials are `admin`:`admin`.
 
