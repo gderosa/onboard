@@ -9,7 +9,7 @@
     - [Example response](#example-response)
   - [Create User](#create-user)
     - [Example request body](#example-request-body)
-    - [Parameters](#parameters-1)
+    - [Request body properties](#request-body-properties)
       - [`check` attributes](#check-attributes)
       - [`confirm` attributes](#confirm-attributes)
       - [`reply` attributes](#reply-attributes)
@@ -49,7 +49,7 @@ be requested via optional parameters e.g.<br/>
 `GET /api/v1/services/radius/users?page=2&per_page=7`.
 
 ### Parameters
-
+<!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
 |Name       |In   |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |"page"     |query|integer|false    |Page within pagination.                      |
@@ -182,7 +182,7 @@ Creates a new RADIUS user.
 }
 ```
 
-### Parameters
+### Request body properties
 
 The JSON object sent with the request has four main properties,
 each of them has their sub-properties, some are required, some are not.
@@ -195,31 +195,37 @@ The main properties are:
 * `reply`: RADIUS Reply Attributes
 * `personal`: non-RADIUS information, used to store personal user information for hotspot management; they are all optional
 
+Please note most values (e.g. Idle-Timeout), that are semantically numbers,
+are actually encoded as strings (what reported in the tables below is not a mistake).
+This is because of the way those data are stored in the RADIUS database,
+and this API does not attempt to hide that. Therefore, values will need to be quoted,
+e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
+
 #### `check` attributes
 
-|Parent |Name           |In   |Type   |Required |Description                                                                      |
-|---    |---            |---  |---    |---      |---                                                                              |
-|"check"|"User-Name"    |body |string |true     |RADIUS username                                                                  |
-|"check"|"Password-Type"|body |string |true     |Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
-|"check"|"User-Password"|body |string |true     |The user password.|
-|"check"|"Auth-Type"    |body |string |false    |Only set if user must be always accepted (`Accept`) or rejected (`Reject`).       |
-|"check"|"Login-Time"   |body |string |false    |The time span a user may login to the system, more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
+|Parent |Name           |Type   |Required |Description                                                                      |
+|---    |---            |---    |---      |---                                                                              |
+|"check"|"User-Name"    |string |true     |RADIUS username                                                                  |
+|"check"|"Password-Type"|string |true     |Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
+|"check"|"User-Password"|string |true     |The user password.|
+|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) or rejected (`Reject`).       |
+|"check"|"Login-Time"   |string |false    |The time span a user may login to the system, more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
 
 #### `confirm` attributes
 
-|Name                                 |In   |Type   |Required |Description                                                                      |
-|---                                  |---  |---    |---      |---                                                                              |
-|"confirm" . "check" . "User&#8209;Password"|body |string |true     |The value MUST be the same as "check" . "User&#8209;Password"|
+|Parent           |Name                   |Type   |Required |Description                                                                      |
+|---              |---                    |---    |---      |---                                                                              |
+|"confirm"."check"|"User&#8209;Password"  |string |true     |The value MUST be the same as "check" . "User&#8209;Password"|
 
 #### `reply` attributes
 
-|Name                     |In   |Type   |Required |Description                                                                      |
-|---                      |---  |---    |---      |---                                                                              |
-|"reply" . "Reply&#8209;Message"    |body |string |false     |A message after login, generally displayed by captive portal popups etc.|
-|"reply" . "Session&#8209;Timeout"|body |string |false     |Max connection time (seconds).|
-|"reply" . "Idle&#8209;Timeout"|body |string |false     |Max inactivity time (seconds).|
-|"reply" . "WISPr&#8209;Bandwidth&#8209;Max&#8209;Down"    |body |string |false    |Max Downstream bandwidth (bits/sec).|
-|"reply" . "WISPr&#8209;Bandwidth&#8209;Max&#8209;Up"   |body |string |false    |Max Upstream bandwidth (bits/sec).|
+|Parent |Name                       |Type   |Required |Description|
+|---    |---                        |---    |---      |---|
+|"reply"|"Reply-Message"            |string |false    |A post-login message, generally displayed by captive portal popups etc.|
+|"reply"|"Session-Timeout"          |string |false    |Max connection time (seconds).|
+|"reply"|"Idle-Timeout"             |string |false    |Max inactivity time (seconds).|
+|"reply"|"WISPr-Bandwidth-Max-Down" |string |false    |Max Downstream bandwidth (bits/sec).|
+|"reply"|"WISPr-Bandwidth-Max-Up"   |string |false    |Max Upstream bandwidth (bits/sec).|
 
 #### `personal` information
 
