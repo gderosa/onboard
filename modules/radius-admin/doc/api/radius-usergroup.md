@@ -199,7 +199,7 @@ The main properties are:
 
 |Name                     |In   |Type   |Required |Description                                                                      |
 |---                      |---  |---    |---      |---                                                                              |
-|"check" . "User-name"    |body |string |true     |RADIUS username                                                                  |
+|"check" . "User&#8209;name"    |body |string |true     |RADIUS username                                                                  |
 |"check" . "Password&#8209;Type"|body |string |true     |Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`|
 |"check" . "User&#8209;Password"|body |string |true     |The user password                                                                |
 |"check" . "Auth&#8209;Type"    |body |string |false    |Only set if user must be always accepted (`Accept`) or rejected (`Reject`)       |
