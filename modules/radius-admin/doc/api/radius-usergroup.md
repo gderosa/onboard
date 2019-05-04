@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  <!--*generated with [DocToc](https://github.com/thlorenz/doctoc)*-->
+
+- [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
+  - [List Users](#list-users)
+    - [Parameters](#parameters)
+    - [Example response](#example-response)
+  - [Create User](#create-user)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Margay's FreeRADIUS user/group management API v1
 
 A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system. User information is stored in a MySQL database.
@@ -21,10 +33,10 @@ be requested via optional parameters e.g.<br/>
 
 ### Parameters
 
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|page|query|integer|false|page within pagination|
-|per_page|query|integer|false|maximum number of results to return per page|
+|Name     |In   |Type   |Required |Description                                  |
+|---      |---  |---    |---      |---                                          |
+|page     |query|integer|false    |page within pagination                       |
+|per_page |query|integer|false    |maximum number of results to return per page |
 
 ### Example response
 
