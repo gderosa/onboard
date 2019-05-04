@@ -168,9 +168,9 @@ Creates a new RADIUS user.
     "WISPr-Bandwidth-Max-Down": "500000",
     "WISPr-Bandwidth-Max-Up": "250000"
   },
-  "personal" => {
-    "First-Name" => "George",
-    "Last-Name" => "Boole",
+  "personal": {
+    "First-Name": "George",
+    "Last-Name": "Boole",
     "Email": "george.boole@domain",
     "Birth-Date": "1815-11-02"
   }
