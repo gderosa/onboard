@@ -213,10 +213,13 @@ The main properties are:
 
 #### `reply` attributes
 
-|Name     |In   |Type   |Required |Description                                  |
-|---      |---  |---    |---      |---                                          |
-|page     |query|integer|false    |page within pagination                       |
-|per_page |query|integer|false    |maximum number of results to return per page |
+|Name                     |In   |Type   |Required |Description                                                                      |
+|---                      |---  |---    |---      |---                                                                              |
+|"reply" . "Reply&#8209;Message"    |body |string |false     |A message after login, generally displayed by captive portal popups etc.|
+|"reply" . "Session&#8209;Timeout"|body |string |false     |Max connection time (seconds).|
+|"reply" . "Idle&#8209;Timeout"|body |string |false     |Max inactivity time (seconds).|
+|"reply" . "WISPr&#8209;Bandwidth&#8209;Max&#8209;Down"    |body |string |false    |Max Downstream bandwidth (bits/sec).|
+|"reply" . "WISPr&#8209;Bandwidth&#8209;Max&#8209;Up"   |body |string |false    |Max Upstream bandwidth (bits/sec).|
 
 #### `personal` information
 
