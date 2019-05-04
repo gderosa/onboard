@@ -206,10 +206,10 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 |Parent |Name           |Type   |Required |Description                                                                      |
 |---    |---            |---    |---      |---                                                                              |
 |"check"|"User-Name"    |string |true     |RADIUS username                                                                  |
-|"check"|"Password-Type"|string |true     |Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
+|"check"|"Password-Type"|string |true     |Any of `SSHA1-Password` (recommended), <br/> `SHA1-Password`, `SMD5-Password`, `MD5-Password`, <br/> `Crypt-Password`, `Cleartext-Password`.|
 |"check"|"User-Password"|string |true     |The user password.|
-|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) or rejected (`Reject`).       |
-|"check"|"Login-Time"   |string |false    |The time span a user may login to the system, more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
+|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) <br/> or rejected (`Reject`).       |
+|"check"|"Login-Time"   |string |false    |The time span a user may login to the system, <br/> more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
 
 #### `confirm` attributes
 
@@ -221,7 +221,7 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 
 |Parent |Name                       |Type   |Required |Description|
 |---    |---                        |---    |---      |---|
-|"reply"|"Reply-Message"            |string |false    |A post-login message, generally displayed by captive portal popups etc.|
+|"reply"|"Reply-Message"            |string |false    |A post-login message, generally displayed <br/> by captive portal popups etc.|
 |"reply"|"Session-Timeout"          |string |false    |Max connection time (seconds).|
 |"reply"|"Idle-Timeout"             |string |false    |Max inactivity time (seconds).|
 |"reply"|"WISPr-Bandwidth-Max-Down" |string |false    |Max Downstream bandwidth (bits/sec).|
