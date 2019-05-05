@@ -28,13 +28,22 @@
     - [Example request body](#example-request-body-1)
     - [Request body properties](#request-body-properties-1)
   - [Add/Remove Users to a Group (PUT)](#addremove-users-to-a-group-put)
-  - [List Groups (GET)](#list-groups-get)
-  - [GET info about a Group](#get-info-about-a-group)
     - [Parameters](#parameters-4)
+    - [Request body | properties](#request-body--properties)
+  - [List Groups (GET)](#list-groups-get)
+    - [Parameters](#parameters-5)
+    - [(Example) response body](#example-response-body)
+  - [GET info about a Group](#get-info-about-a-group)
+    - [Parameters](#parameters-6)
     - [Response body and example](#response-body-and-example)
   - [Replace check/reply attributes of a Group (PUT)](#replace-checkreply-attributes-of-a-group-put)
+    - [Parameters](#parameters-7)
+    - [Request body | properties](#request-body--properties-1)
   - [Create a Group (POST)](#create-a-group-post)
+    - [Example request body](#example-request-body-2)
+    - [Request body properties](#request-body-properties-2)
   - [DELETE a Group](#delete-a-group)
+    - [Parameters](#parameters-8)
   - [Notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -466,9 +475,21 @@ but the request body is different.
 
 ## Add/Remove Users to a Group (PUT)
 
+### Parameters
+
+TODO.
+
+### Request body | properties
+
 TODO.
 
 ## List Groups (GET)
+
+### Parameters
+
+TODO.
+
+### (Example) response body
 
 TODO.
 
@@ -561,13 +582,29 @@ then the group ones will be enforced by a [NAS](http://deployingradius.com/book/
 
 ## Replace check/reply attributes of a Group (PUT)
 
+### Parameters
+
+TODO.
+
+### Request body | properties
+
 TODO.
 
 ## Create a Group (POST)
 
+### Example request body
+
+TODO.
+
+### Request body properties
+
 TODO.
 
 ## DELETE a Group
+
+TODO.
+
+### Parameters
 
 TODO.
 
