@@ -56,8 +56,8 @@ be requested via optional parameters e.g.<br/>
 <!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
 |Name       |In   |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
-|"page"     |query|integer|false    |Page within pagination.                      |
-|"per_page" |query|integer|false    |Maximum number of results to return per page.|
+|page       |query|integer|false    |Page within pagination.                      |
+|per_page   |query|integer|false    |Maximum number of results to return per page.|
 
 ### Example response
 
