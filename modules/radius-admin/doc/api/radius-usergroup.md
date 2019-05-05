@@ -487,8 +487,9 @@ RADIUS groups have *Check* and *Reply* attributes exactly like users, although t
 Consequently, the values of "`check`" and "`reply`" have respectively the same shape and semantics
 of "`user`"->"`check`" and "`user`"->"`reply`" as seen in [Get A User](#get-a-user).
 
-The other top-level property is "`members`". Its values is an object with exactly the same shape
-as the value of "`users`" in [List Users](#list-users-get), and it's paginated in the same way
+The other top-level property is "`members`". Its values is an object with exactly the same
+shape of what returned by
+[List Users](#list-users-get), and it's paginated in the same way
 &mdash;except, of course, it only includes users belonging to the given RADIUS group.
 
 In the following example, for the group "`g2`", a
