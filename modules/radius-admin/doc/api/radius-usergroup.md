@@ -409,6 +409,9 @@ Host: localhost:4567
 Accept: application/json
 ```
 
+Pagination on the list of member users is also available e.g.
+GET `/api/v1/services/radius/groups/:groupname?page=2&per_page=15`.
+
 ### Parameters
 <!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
 |Name       |In ([*](#noa3)) |Type   |Required |Description                                      |
@@ -420,8 +423,6 @@ Accept: application/json
 ### Example response body
 
 The example below is partially truncated.
-
-
 
 ```javascript
 {
