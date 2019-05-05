@@ -2,11 +2,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents** (<sup>[&loz;](#ndtoc)</sup>)
 
-- [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
+- [MARGAY'S FREERADIUS USER/GROUP MANAGEMENT API V1](#margays-freeradius-usergroup-management-api-v1)
+- [Preliminary info](#preliminary-info)
   - [Base URLs](#base-urls)
   - [Authentication](#authentication)
   - [General introduction on RADIUS attributes and data shapes](#general-introduction-on-radius-attributes-and-data-shapes)
-  - [PART I. USERS](#part-i-users)
+- [Part I. Users](#part-i-users)
   - [List Users (GET)](#list-users-get)
     - [Parameters](#parameters)
     - [Example response body](#example-response-body)
@@ -28,7 +29,7 @@
   - [Add/Remove User to Groups (PUT)](#addremove-user-to-groups-put)
     - [Example request body](#example-request-body-1)
     - [Request body properties](#request-body-properties-1)
-  - [PART II. GROUPS](#part-ii-groups)
+- [Part II. Groups](#part-ii-groups)
   - [Add/Remove Users to a Group (PUT)](#addremove-users-to-a-group-put)
     - [Parameters](#parameters-4)
     - [Request body | properties](#request-body--properties)
@@ -46,13 +47,15 @@
     - [Request body properties](#request-body-properties-2)
   - [DELETE a Group](#delete-a-group)
     - [Parameters](#parameters-8)
-  - [NOTES](#notes)
+- [*Notes*](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Margay's FreeRADIUS user/group management API v1
+# MARGAY'S FREERADIUS USER/GROUP MANAGEMENT API V1
 
 A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system. User information is stored in a MySQL database.
+
+# Preliminary info
 
 ## Base URLs
 
@@ -72,9 +75,7 @@ For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<passwo
 
 TODO
 
----
-
-## PART I. USERS
+# Part I. Users
 
 ## List Users (GET)
 
@@ -479,9 +480,7 @@ but the request body is different.
 |"update_groups"|string |true     |MUST be "`on`".                                                                  |
 |"groups"       |array  |true     |Array of groups the user should be a member of.                                  |
 
----
-
-## PART II. GROUPS
+# Part II. Groups
 
 ## Add/Remove Users to a Group (PUT)
 
@@ -618,9 +617,7 @@ TODO.
 
 TODO.
 
----
-
-## NOTES
+# *Notes*
 
 (*) <a name="noa3"></a> Although this document is only partially based on the OpenAPI 3.0 specification, the "In" column in a Parameter table follows the parameter-type classification in https://swagger.io/docs/specification/describing-parameters/#types.
 
