@@ -423,6 +423,16 @@ GET `/api/v1/services/radius/groups/:groupname?page=2&per_page=15`.
 ### Example response body
 
 The example below is partially truncated.
+Several properties and RADIUS attributes are similar to
+those found in [List Users (GET)](#list-users-get) and [Get A User](#get-a-user).
+
+There is a "`group`" property, with a subproperty "`name`" whose value is the RADIUS group name.
+Other subproperties of "`group`" are "`check`" and "`reply`".
+RADIUS groups have *Check* and *Reply* attributes exactly like users, although they are all optional.
+
+The other top-level property is "`members`". Its values is an object with exactly the same shape
+as the value of "`users`" in [List Users (GET)](#list-users-get), and it's paginated in the same way
+&mdash;except, of course, it only includes users belonging to the given RADIUS group.
 
 ```javascript
 {
