@@ -64,7 +64,7 @@ be requested via optional parameters e.g.<br/>
 
 ### Example response body
 
-```json
+```javascript
 {
   "total_items": 1,
   "page": 1,
@@ -192,7 +192,7 @@ one element of the array "`users`" in [List Users](#list-users).
 
 For example:
 
-```json
+```javascript
 {
   "user": {
     "name": "georgeboole",
@@ -232,7 +232,7 @@ Creates a new RADIUS user.
 
 ### Example request body
 
-```json
+```javascript
 {
   "check": {
     "User-Name": "georgeboole",
