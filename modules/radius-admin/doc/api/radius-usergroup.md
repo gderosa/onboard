@@ -40,12 +40,12 @@
   - [GET info about a Group](#get-info-about-a-group)
     - [Parameters](#parameters-6)
     - [Response body and example](#response-body-and-example)
-  - [Replace check/reply attributes of a Group (PUT)](#replace-checkreply-attributes-of-a-group-put)
-    - [Parameters](#parameters-7)
-    - [Request body | properties](#request-body--properties)
   - [Create a Group (POST)](#create-a-group-post)
     - [Example request body](#example-request-body-2)
     - [Request body properties](#request-body-properties-3)
+  - [Change attributes of a Group (PUT)](#change-attributes-of-a-group-put)
+    - [Parameters](#parameters-7)
+    - [Request body | properties](#request-body--properties)
   - [DELETE a Group](#delete-a-group)
     - [Parameters](#parameters-8)
 - [*Notes*](#notes)
@@ -669,16 +669,6 @@ then the group ones will be enforced by a [NAS](http://deployingradius.com/book/
         // ...
 ```
 
-## Replace check/reply attributes of a Group (PUT)
-
-### Parameters
-
-TODO.
-
-### Request body | properties
-
-TODO.
-
 ## Create a Group (POST)
 
 ### Example request body
@@ -686,6 +676,16 @@ TODO.
 TODO.
 
 ### Request body properties
+
+TODO.
+
+## Change attributes of a Group (PUT)
+
+### Parameters
+
+TODO.
+
+### Request body | properties
 
 TODO.
 
