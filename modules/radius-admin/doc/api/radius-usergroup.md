@@ -228,8 +228,20 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 |"reply"|"WISPr-Bandwidth-Max-Up"   |string |false    |Max Upstream bandwidth (bits/sec).|
 
 #### `personal` information
-
-|Name     |In   |Type   |Required |Description                                  |
-|---      |---  |---    |---      |---                                          |
-|page     |query|integer|false    |page within pagination                       |
-|per_page |query|integer|false    |maximum number of results to return per page |
+|Parent     |Name                       |Type   |Required |Description / Info<br/>(if not obvious)|
+|---        |---                        |---    |---      |---|
+|"personal" |"First-Name"               |string |false    ||
+|"personal" |"Last-Name"                |string |false    ||
+|"personal" |"Email"                    |string |false    ||
+|"personal" |"Birth-Date"               |string |false    |Format: "YYYY-MM-DD" .|
+|"personal" |"Birth-City"               |string |false    ||
+|"personal" |"Birth-State"              |string |false    |U.S. state, or province, county etc. in other countries.|
+|"personal" |"Address"                  |string |false    ||
+|"personal" |"City"                     |string |false    ||
+|"personal" |"State"                    |string |false    |U.S. state, or province, county etc. in other countries.|
+|"personal" |"Postal-Code"              |string |false    ||
+|"personal" |"Work-Phone"               |string |false    ||
+|"personal" |"Home-Phone"               |string |false    ||
+|"personal" |"Mobile-Phone"             |string |false    ||
+|"personal" |"ID-Code"                  |string |false    |e.g. Tax code, PPSN, SSN etc.|
+|"personal" |"Notes"                    |string |false    |Optional notes, possibly multi-line.|
