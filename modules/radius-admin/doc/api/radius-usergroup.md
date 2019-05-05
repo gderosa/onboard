@@ -32,7 +32,8 @@
 - [Part II. Groups](#part-ii-groups)
   - [Add/Remove Users to a Group (PUT)](#addremove-users-to-a-group-put)
     - [Parameters](#parameters-4)
-    - [Request body | properties](#request-body--properties)
+    - [Example request bodies](#example-request-bodies)
+    - [Request body properties](#request-body-properties-2)
   - [List Groups (GET)](#list-groups-get)
     - [Parameters](#parameters-5)
     - [(Example) response body](#example-response-body)
@@ -41,10 +42,10 @@
     - [Response body and example](#response-body-and-example)
   - [Replace check/reply attributes of a Group (PUT)](#replace-checkreply-attributes-of-a-group-put)
     - [Parameters](#parameters-7)
-    - [Request body | properties](#request-body--properties-1)
+    - [Request body | properties](#request-body--properties)
   - [Create a Group (POST)](#create-a-group-post)
     - [Example request body](#example-request-body-2)
-    - [Request body properties](#request-body-properties-2)
+    - [Request body properties](#request-body-properties-3)
   - [DELETE a Group](#delete-a-group)
     - [Parameters](#parameters-8)
 - [*Notes*](#notes)
@@ -484,13 +485,57 @@ but the request body is different.
 
 ## Add/Remove Users to a Group (PUT)
 
+[Previously](#addremove-user-to-groups-put), we have seen how to add and/or remove
+a *single* user to/from one or more groups, by changing the list of gropus she belongs to.
+Suppose you want to add a hundred of users to a group, the endpoint
+[Add/Remove User to Groups (PUT)](#addremove-user-to-groups-put)
+should be called a hundred times, which is unpractical.
+This endpoint, instead of adding one user to many groups,
+adds many users to one group, thus covering the other use case.
+(The same goes for removal).
+
+```http
+PUT http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
+Host: localhost:4567
+Content-Type: application/json
+Accept: application/json
+```
+
 ### Parameters
+<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In ([*](#noa3))  |Type   |Required |Description|
+|---        |---              |---    |---      |---|
+|groupname  |path             |string |true     |RADIUS group name.|
 
-TODO.
+### Example request bodies
 
-### Request body | properties
+```javascript
+{
+  "add_members": [
+    "user1",
+    "user2"
+  ]
+}
+```
 
-TODO.
+```javascript
+{
+  "remove_members": [
+    "user3",
+    "user4"
+  ]
+}
+```
+
+### Request body properties
+
+These properties are not all required, but at least one should be present.
+
+|Name             |Type   |Required |Description|
+|---              |---    |---      |---|
+|"add_members"    |array  |false    |Array of usernames (strings) to be removed from the group.|
+|"remove_members" |array  |false    |Array of usernames (strings) to be added to the group.|
+
 
 ## List Groups (GET)
 
