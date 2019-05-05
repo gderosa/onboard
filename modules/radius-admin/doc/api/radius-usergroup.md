@@ -491,15 +491,36 @@ The other top-level property is "`members`". Its values is an object with exactl
 as the value of "`users`" in [List Users](#list-users-get), and it's paginated in the same way
 &mdash;except, of course, it only includes users belonging to the given RADIUS group.
 
+In the following example, for the group "`g2`", a
+[`Login-Time`](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file)
+limit
+was set as
+from Monday to Friday (`Wk`) from 9:30 AM to 6 PM and Saturday from 10 AM to 2 PM.
+Moreover, the upstream bandwidth was limited to 250 kb/s.
+If such attributes are not set fot he user,
+then the group ones will be enforced by a [NAS](http://deployingradius.com/book/concepts/nas.html).
+
 ```javascript
 {
   "group": {
     "name": "g2",
     "check": [
-      // ...
+      {
+        "Id": 18,
+        "Group-Name": "g2",
+        "Attribute": "Login-Time",
+        "Operator": ":=",
+        "Value": "Wk0930-1800,Sa1000-14000"
+      }
     ],
     "reply": [
-      // ...
+      {
+        "Id": 10,
+        "Group-Name": "g2",
+        "Attribute": "WISPr-Bandwidth-Max-Up",
+        "Operator": ":=",
+        "Value": "250000"
+      }
     ]
   },
   "members": {
