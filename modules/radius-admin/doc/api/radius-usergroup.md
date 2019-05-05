@@ -7,7 +7,10 @@
   - [Authentication](#authentication)
   - [List Users](#list-users)
     - [Parameters](#parameters)
-    - [Example response](#example-response)
+    - [Example response body](#example-response-body)
+  - [Get User](#get-user)
+    - [Parameters](#parameters-1)
+    - [Response body](#response-body)
   - [Create User](#create-user)
     - [Example request body](#example-request-body)
     - [Request body properties](#request-body-properties)
@@ -16,7 +19,7 @@
       - [`reply` attributes](#reply-attributes)
       - [`personal` information](#personal-information)
   - [Modify User](#modify-user)
-    - [Parameters](#parameters-1)
+    - [Parameters](#parameters-2)
     - [Request body](#request-body)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -59,7 +62,7 @@ be requested via optional parameters e.g.<br/>
 |page       |query|integer|false    |Page within pagination.                      |
 |per_page   |query|integer|false    |Maximum number of results to return per page.|
 
-### Example response
+### Example response body
 
 ```json
 {
@@ -163,6 +166,56 @@ be requested via optional parameters e.g.<br/>
       "accepted_terms": null
     }
   ]
+}
+```
+
+## Get User
+
+Retrieve information about a particular user, identified by username.
+
+```http
+GET http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
+Host: localhost:4567
+Accept: application/json
+```
+
+### Parameters
+<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In   |Type   |Required |Description                                  |
+|---        |---  |---    |---      |---                                          |
+|username   |path |string |true     |RADIUS username.                             |
+
+### Response body
+
+An object with just one property, "`user`", whose value is of the same shape of
+one element of the array "`users`" in [List Users](#list-users).
+
+For example:
+
+```json
+{
+  "user": {
+    "name": "georgeboole",
+    "check": [
+      {
+        "Id": 1,
+        "User-Name": "georgeboole",
+        "Attribute": "User-Name",
+        "Operator": ":=",
+        "Value": "georgeboole"
+      },
+      // etc. etc., see List Users
+    ],
+    "reply": [
+      // ...
+    ],
+    "personal": [
+      // ...
+    ],
+    "accepted_terms": [
+      //
+    ]
+  }
 }
 ```
 
