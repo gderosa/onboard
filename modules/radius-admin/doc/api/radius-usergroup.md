@@ -26,6 +26,7 @@
   - [Add/Remove User to Groups (PUT)](#addremove-user-to-groups-put)
     - [Example request body](#example-request-body-1)
     - [Request body properties](#request-body-properties-1)
+  - [Notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -186,7 +187,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In   |Type   |Required |Description                                  |
+|Name       |In ([*](#note1)) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -343,7 +344,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In   |Type   |Required |Description                                  |
+|Name       |In ([*](#note1)) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -363,7 +364,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In   |Type   |Required |Description                                  |
+|Name       |In ([*](#note1)) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
