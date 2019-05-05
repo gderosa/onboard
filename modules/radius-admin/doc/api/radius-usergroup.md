@@ -66,7 +66,7 @@ be requested via optional parameters e.g.<br/>
 
 ### Parameters
 <!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In (<sup>[*](#noa3)</sup>)  |Type   |Required |Description                                  |
+|Name       |In ([*](#noa3))  |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |page       |query|integer|false    |Page within pagination.                      |
 |per_page   |query|integer|false    |Maximum number of results to return per page.|
@@ -190,7 +190,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                  |
+|Name       |In ([*](#noa3)) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -347,7 +347,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                  |
+|Name       |In ([*](#noa3)) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -367,7 +367,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                  |
+|Name       |In ([*](#noa3)) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -411,7 +411,7 @@ Accept: application/json
 
 ### Parameters
 <!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                      |
+|Name       |In ([*](#noa3)) |Type   |Required |Description                                      |
 |---        |---              |---    |---      |---                                              |
 |groupname  |path             |string |true     |RADIUS group name.                               |
 |page       |query            |integer|false    |List of members is paginated: page No. to show.  |
@@ -454,4 +454,4 @@ The example below is partially truncated.
 
 (*) <a name="noa3"></a> Although this document is only partially based on the OpenAPI 3.0 specification, the "In" column in a Parameter table follows the parameter-type classification in https://swagger.io/docs/specification/describing-parameters/#types.
 
-(&loz;) <a name="ndtoc"></a> Table of Contents generated with [DocToc](https://github.com/thlorenz/doctoc).
+(<sup>&loz;</sup>) <a name="ndtoc"></a> Table of Contents generated with [DocToc](https://github.com/thlorenz/doctoc).
