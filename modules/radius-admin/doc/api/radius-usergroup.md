@@ -274,14 +274,14 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 ## Modify User
 
 ```http
-PUT http://localhost:4567/api/v1/services/radius/users/{username} HTTP/1.1
+PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
 Host: localhost:4567
 Content-Type: application/json
 Accept: application/json
 ```
 
 ### Parameters
-<!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
 |Name       |In   |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
