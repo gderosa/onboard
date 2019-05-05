@@ -64,25 +64,25 @@ be requested via optional parameters e.g.<br/>
   "per_page": 10,
   "users": [
     {
-      "name": "u1",
+      "name": "georgeboole",
       "check": [
         {
           "Id": 1,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "User-Name",
           "Operator": ":=",
-          "Value": "u1"
+          "Value": "georgeboole"
         },
         {
           "Id": 16,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "SSHA1-Password",
           "Operator": ":=",
           "Value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=="
         },
         {
           "Id": 18,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "Login-Time",
           "Operator": ":=",
           "Value": "Wk2305-0855,Sa,Su2305-1655"
@@ -91,42 +91,42 @@ be requested via optional parameters e.g.<br/>
       "reply": [
         {
           "Id": 6,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "Reply-Message",
           "Operator": ":=",
           "Value": "my reply msg"
         },
         {
           "Id": 7,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "Session-Timeout",
           "Operator": ":=",
           "Value": "7200"
         },
         {
           "Id": 8,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "Idle-Timeout",
           "Operator": ":=",
           "Value": "1800"
         },
         {
           "Id": 9,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "WISPr-Bandwidth-Max-Down",
           "Operator": ":=",
           "Value": "800000"
         },
         {
           "Id": 10,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "WISPr-Bandwidth-Max-Up",
           "Operator": ":=",
           "Value": "400000"
         },
         {
           "Id": 110,
-          "User-Name": "u1",
+          "User-Name": "georgeboole",
           "Attribute": "Fall-Through",
           "Operator": "=",
           "Value": "yes"
