@@ -288,4 +288,4 @@ Accept: application/json
 
 ### Request body
 
-Same as in [Create User](#create-user), except you can't modify the username.
+Same as in [Create User](#create-user), except you can't modify the username, and all properties are optional.
