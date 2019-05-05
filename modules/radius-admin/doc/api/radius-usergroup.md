@@ -28,7 +28,7 @@
     - [Request body properties](#request-body-properties-1)
   - [GET info about a Group](#get-info-about-a-group)
     - [Parameters](#parameters-4)
-    - [Example response body](#example-response-body-1)
+    - [Response body and example](#response-body-and-example)
   - [Notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -474,11 +474,11 @@ GET `/api/v1/services/radius/groups/:groupname?page=2&per_page=15`.
 |page       |query            |integer|false    |List of members is paginated: page No. to show.  |
 |per_page   |query            |integer|false    |List of members is paginated: page size.         |
 
-### Example response body
+### Response body and example
 
 The example below is partially truncated.
-Several properties and RADIUS attributes are similar to
-those found for *users* ([List Users](#list-users-get) and [Get A User](#get-a-user)).
+Several properties and RADIUS attributes for *groups*
+are similar to those found for *users* ([List Users](#list-users-get) and [Get A User](#get-a-user)).
 
 There is a "`group`" top-level property, with a subproperty "`name`" whose value is the RADIUS group name.
 
