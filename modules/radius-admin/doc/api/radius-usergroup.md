@@ -26,6 +26,9 @@
   - [Add/Remove User to Groups (PUT)](#addremove-user-to-groups-put)
     - [Example request body](#example-request-body-1)
     - [Request body properties](#request-body-properties-1)
+  - [GET info about a Group](#get-info-about-a-group)
+    - [Parameters](#parameters-4)
+    - [Example response body](#example-response-body-1)
   - [Notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -395,6 +398,53 @@ but the request body is different.
 |---            |---    |---      |---                                                                              |
 |"update_groups"|string |true     |MUST be "`on`".                                                                  |
 |"groups"       |array  |true     |Array of groups the user should be a member of.                                  |
+
+## GET info about a Group
+
+Retrieve information about a particular group, identified by group name.
+
+```http
+GET http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
+Host: localhost:4567
+Accept: application/json
+```
+
+### Parameters
+<!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In ([*](#note1)) |Type   |Required |Description                                      |
+|---        |---              |---    |---      |---                                              |
+|groupname  |path             |string |true     |RADIUS group name.                               |
+|page       |query            |integer|false    |List of members is paginated: page No. to show.  |
+|per_page   |query            |integer|false    |List of members is paginated: page size.         |
+
+### Example response body
+
+```javascript
+{
+  "group": {
+    "name": "g2",
+    "check": [
+      // ...
+    ],
+    "reply": [
+      // ...
+    ]
+  },
+  "members": {
+    "total_items": 1,
+    "page": 1,
+    "per_page": 10,
+    "users": [
+      {
+        "name": "u1",
+        "check": [
+          // ...
+        ],
+        "reply": [
+          // ...
+        ],
+        // ...
+```
 
 ## Notes
 
