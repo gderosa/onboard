@@ -14,6 +14,9 @@
       - [`confirm` attributes](#confirm-attributes)
       - [`reply` attributes](#reply-attributes)
       - [`personal` information](#personal-information)
+  - [Modify User](#modify-user)
+    - [Parameters](#parameters-1)
+    - [Request body](#request-body)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -169,7 +172,6 @@ POST http://localhost:4567/api/v1/services/radius/users HTTP/1.1
 Host: localhost:4567
 Content-Type: application/json
 Accept: application/json
-
 ```
 
 Creates a new RADIUS user.
@@ -267,3 +269,22 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 |"personal" |"Mobile-Phone"             |string |false    ||
 |"personal" |"ID-Code"                  |string |false    |e.g. Tax code, PPSN, SSN etc.|
 |"personal" |"Notes"                    |string |false    |Optional notes, possibly multi-line.|
+
+## Modify User
+
+```http
+PUT http://localhost:4567/api/v1/services/radius/users/{username} HTTP/1.1
+Host: localhost:4567
+Content-Type: application/json
+Accept: application/json
+```
+
+### Parameters
+<!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In   |Type   |Required |Description                                  |
+|---        |---  |---    |---      |---                                          |
+|username   |path |string |true     |RADIUS username.                             |
+
+### Request body
+
+Same as in [Create User](#create-user), except you can't modify the username.
