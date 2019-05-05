@@ -3,6 +3,7 @@
 **Table of Contents**  <!--*generated with [DocToc](https://github.com/thlorenz/doctoc)*-->
 
 - [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
+  - [Base URLs](#base-urls)
   - [Authentication](#authentication)
   - [List Users](#list-users)
     - [Parameters](#parameters)
@@ -24,7 +25,7 @@
 
 A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system. User information is stored in a MySQL database.
 
-Base URLs:
+## Base URLs
 
 * http://localhost:4567/api/v1/services/radius
 * https://localhost/api/v1/services/radius
