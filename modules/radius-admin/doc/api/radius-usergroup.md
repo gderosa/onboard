@@ -36,7 +36,7 @@
     - [Request body properties](#request-body-properties-2)
   - [List Groups (GET)](#list-groups-get)
     - [Parameters](#parameters-5)
-    - [(Example) response body](#example-response-body)
+    - [Example response body](#example-response-body-1)
   - [GET info about a Group](#get-info-about-a-group)
     - [Parameters](#parameters-6)
     - [Response body and example](#response-body-and-example)
@@ -84,7 +84,6 @@ TODO
 GET http://localhost:4567/api/v1/services/radius/users HTTP/1.1
 Host: localhost:4567
 Accept: application/json
-
 ```
 
 Returns a paginated list of all RADIUS users. A specific page or page size can
@@ -539,13 +538,49 @@ These properties are not all required, but at least one should be present.
 
 ## List Groups (GET)
 
+```http
+GET http://localhost:4567/api/v1/services/radius/groups HTTP/1.1
+Host: localhost:4567
+Accept: application/json
+```
+
 ### Parameters
 
-TODO.
+Pagination query parameters e.g.`?page=n&per_page=m` : same as [List Users (GET)](#list-users-get).
 
-### (Example) response body
+### Example response body
 
-TODO.
+It's similar to [List Users (GET)](#list-users-get), both in terms of pagination
+and "`check`" and "`reply`" arrays of RADIUS attributes.
+See [List Users (GET)](#list-users-get) for a more detailed example.
+
+```javascript
+{
+  "total_items": 2,
+  "page": 1,
+  "per_page": 10,
+  "groups": [
+    {
+      "name": "group_A",
+      "check": [
+        // ...
+      ],
+      "reply": [
+        // ...
+      ]
+    },
+    {
+      "name": "group_B",
+      "check": [
+        // ...
+      ],
+      "reply": [
+        // ...
+      ]
+    }
+  ]
+}
+```
 
 ## GET info about a Group
 
