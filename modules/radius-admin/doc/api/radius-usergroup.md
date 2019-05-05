@@ -1,6 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  <!--*generated with [DocToc](https://github.com/thlorenz/doctoc)*-->
+**Table of Contents** (<sup>[&loz;](#ndtoc)</sup>)
 
 - [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
   - [Base URLs](#base-urls)
@@ -66,7 +66,7 @@ be requested via optional parameters e.g.<br/>
 
 ### Parameters
 <!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#note1))  |Type   |Required |Description                                  |
+|Name       |In (<sup>[*](#noa3)</sup>)  |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |page       |query|integer|false    |Page within pagination.                      |
 |per_page   |query|integer|false    |Maximum number of results to return per page.|
@@ -190,7 +190,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#note1)) |Type   |Required |Description                                  |
+|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -347,7 +347,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#note1)) |Type   |Required |Description                                  |
+|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -367,7 +367,7 @@ Accept: application/json
 
 ### Parameters
 <!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#note1)) |Type   |Required |Description                                  |
+|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
@@ -411,13 +411,17 @@ Accept: application/json
 
 ### Parameters
 <!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#note1)) |Type   |Required |Description                                      |
+|Name       |In (<sup>[*](#noa3)</sup>) |Type   |Required |Description                                      |
 |---        |---              |---    |---      |---                                              |
 |groupname  |path             |string |true     |RADIUS group name.                               |
 |page       |query            |integer|false    |List of members is paginated: page No. to show.  |
 |per_page   |query            |integer|false    |List of members is paginated: page size.         |
 
 ### Example response body
+
+The example below is partially truncated.
+
+
 
 ```javascript
 {
@@ -448,4 +452,6 @@ Accept: application/json
 
 ## Notes
 
-(*) <a name="note1"></a> Although this document is only partially based on the OpenAPI 3.0 specification, the "In" column in a Parameter table follows the parameter-type classification in https://swagger.io/docs/specification/describing-parameters/#types.
+(*) <a name="noa3"></a> Although this document is only partially based on the OpenAPI 3.0 specification, the "In" column in a Parameter table follows the parameter-type classification in https://swagger.io/docs/specification/describing-parameters/#types.
+
+(&loz;) <a name="ndtoc"></a> Table of Contents generated with [DocToc](https://github.com/thlorenz/doctoc).
