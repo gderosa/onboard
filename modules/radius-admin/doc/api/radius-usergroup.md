@@ -5,22 +5,24 @@
 - [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
   - [Base URLs](#base-urls)
   - [Authentication](#authentication)
-  - [List Users](#list-users)
+  - [List Users (GET)](#list-users-get)
     - [Parameters](#parameters)
     - [Example response body](#example-response-body)
-  - [Get User](#get-user)
+  - [GET a User](#get-a-user)
     - [Parameters](#parameters-1)
     - [Response body](#response-body)
-  - [Create User](#create-user)
+  - [Create a User (POST)](#create-a-user-post)
     - [Example request body](#example-request-body)
     - [Request body properties](#request-body-properties)
       - [`check` attributes](#check-attributes)
       - [`confirm` attributes](#confirm-attributes)
       - [`reply` attributes](#reply-attributes)
       - [`personal` information](#personal-information)
-  - [Modify User](#modify-user)
+  - [Modify a User / replace data (PUT)](#modify-a-user--replace-data-put)
     - [Parameters](#parameters-2)
     - [Request body](#request-body)
+  - [DELETE a User](#delete-a-user)
+    - [Parameters](#parameters-3)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -42,7 +44,7 @@ is advised to change this in production.
 For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<password> <URL>`
 &mdash; or `curl -u <username> <URL>` and enter the password when prompted.
 
-## List Users
+## List Users (GET)
 
 ```http
 GET http://localhost:4567/api/v1/services/radius/users HTTP/1.1
@@ -169,7 +171,7 @@ be requested via optional parameters e.g.<br/>
 }
 ```
 
-## Get User
+## GET a User
 
 Retrieve information about a particular user, identified by username.
 
@@ -219,7 +221,7 @@ For example:
 }
 ```
 
-## Create User
+## Create a User (POST)
 
 ```http
 POST http://localhost:4567/api/v1/services/radius/users HTTP/1.1
@@ -324,7 +326,7 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 |"personal" |"ID-Code"                  |string |false    |e.g. Tax code, PPSN, SSN etc.|
 |"personal" |"Notes"                    |string |false    |Optional notes, possibly multi-line.|
 
-## Modify User
+## Modify a User / replace data (PUT)
 
 ```http
 PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
@@ -341,4 +343,20 @@ Accept: application/json
 
 ### Request body
 
-Same as in [Create User](#create-user), except you can't modify the username, and all properties are optional.
+Same as in [Create User](#create-user), except you can't modify the username.
+
+## DELETE a User
+
+Delete a RADIUS user record.
+
+```http
+DELETE http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
+Host: localhost:4567
+Accept: application/json
+```
+
+### Parameters
+<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In   |Type   |Required |Description                                  |
+|---        |---  |---    |---      |---                                          |
+|username   |path |string |true     |RADIUS username.                             |
