@@ -395,8 +395,6 @@ but the request body is different.
 |"update_groups"|string |true     |MUST be "`on`".                                                                  |
 |"groups"       |array  |true     |Array of groups the user should be a member of.                                  |
 
----
-
 ## Notes
 
 1. <a name="note1"></a> Although this document is only partially based on the OpenAPI 3.0 specification, the "In" columns follows the parameter-type classification in https://swagger.io/docs/specification/describing-parameters/#types.
