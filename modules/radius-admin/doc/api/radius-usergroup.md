@@ -424,7 +424,7 @@ GET `/api/v1/services/radius/groups/:groupname?page=2&per_page=15`.
 
 The example below is partially truncated.
 Several properties and RADIUS attributes are similar to
-those found for *users* ([List Users (GET)](#list-users-get) and [Get A User](#get-a-user)).
+those found for *users* ([List Users](#list-users-get) and [Get A User](#get-a-user)).
 
 There is a "`group`" top-level property, with a subproperty "`name`" whose value is the RADIUS group name.
 
@@ -434,7 +434,7 @@ Consequently, the values of "`check`" and "`reply`" have respectively the same s
 of "`user`"."`check`" and "`user`"."`reply`" as seen in [Get A User](#get-a-user).
 
 The other top-level property is "`members`". Its values is an object with exactly the same shape
-as the value of "`users`" in [List Users (GET)](#list-users-get), and it's paginated in the same way
+as the value of "`users`" in [List Users](#list-users-get), and it's paginated in the same way
 &mdash;except, of course, it only includes users belonging to the given RADIUS group.
 
 ```javascript
