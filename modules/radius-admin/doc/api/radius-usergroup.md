@@ -398,4 +398,4 @@ but the request body is different.
 
 ## Notes
 
-(*) <a name="note1"></a> Although this document is only partially based on the OpenAPI 3.0 specification, the "In" columns follows the parameter-type classification in https://swagger.io/docs/specification/describing-parameters/#types.
+(*) <a name="note1"></a> Although this document is only partially based on the OpenAPI 3.0 specification, the "In" column in a Parameter table follows the parameter-type classification in https://swagger.io/docs/specification/describing-parameters/#types.
