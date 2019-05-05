@@ -431,7 +431,7 @@ There is a "`group`" top-level property, with a subproperty "`name`" whose value
 Other subproperties of "`group`" are "`check`" and "`reply`".
 RADIUS groups have *Check* and *Reply* attributes exactly like users, although they are all optional.
 Consequently, the values of "`check`" and "`reply`" have respectively the same shape and semantics
-of "`user`"."`check`" and "`user`"."`reply`" as seen in [Get A User](#get-a-user).
+of "`user`"->"`check`" and "`user`"->"`reply`" as seen in [Get A User](#get-a-user).
 
 The other top-level property is "`members`". Its values is an object with exactly the same shape
 as the value of "`users`" in [List Users](#list-users-get), and it's paginated in the same way
