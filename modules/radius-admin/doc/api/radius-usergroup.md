@@ -133,7 +133,29 @@ be requested via optional parameters e.g.<br/>
         }
       ],
       "groups": [],
-      "personal": null,
+      "personal": {
+        "Id": 2,
+        "User-Name": "__user_test",
+        "First-Name": "George",
+        "Last-Name": "Boole",
+        "Email": "george.boole@ucc.ie",
+        "Work-Phone": null,
+        "Home-Phone": null,
+        "Mobile-Phone": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "Postal-Code": null,
+        "Notes": null,
+        "Creation-Date": "2019-04-18 18:10:02 +0000",
+        "Update-Date": null,
+        "Birth-Date": "1815-11-02",
+        "Birth-City": null,
+        "Birth-State": null,
+        "ID-Code": null,
+        "Attachments": []
+      },
       "accepted_terms": null
     }
   ]
