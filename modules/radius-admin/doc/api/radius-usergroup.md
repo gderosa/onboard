@@ -5,6 +5,7 @@
 - [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
   - [Base URLs](#base-urls)
   - [Authentication](#authentication)
+  - [General introduction on RADIUS attributes and data shapes](#general-introduction-on-radius-attributes-and-data-shapes)
   - [List Users (GET)](#list-users-get)
     - [Parameters](#parameters)
     - [Example response body](#example-response-body)
@@ -26,9 +27,14 @@
   - [Add/Remove User to Groups (PUT)](#addremove-user-to-groups-put)
     - [Example request body](#example-request-body-1)
     - [Request body properties](#request-body-properties-1)
+  - [Add/Remove Users to a Group (PUT)](#addremove-users-to-a-group-put)
+  - [List Groups (GET)](#list-groups-get)
   - [GET info about a Group](#get-info-about-a-group)
     - [Parameters](#parameters-4)
     - [Response body and example](#response-body-and-example)
+  - [Replace check/reply attributes of a Group (PUT)](#replace-checkreply-attributes-of-a-group-put)
+  - [Create a Group (POST)](#create-a-group-post)
+  - [DELETE a Group](#delete-a-group)
   - [Notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -50,6 +56,10 @@ is advised to change this in production.
 
 For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<password> <URL>`
 &mdash; or `curl -u <username> <URL>` and enter the password when prompted.
+
+## General introduction on RADIUS attributes and data shapes
+
+TODO
 
 ## List Users (GET)
 
@@ -425,6 +435,7 @@ Accept: application/json
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
 
+
 ## Add/Remove User to Groups (PUT)
 
 ```http
@@ -452,6 +463,14 @@ but the request body is different.
 |---            |---    |---      |---                                                                              |
 |"update_groups"|string |true     |MUST be "`on`".                                                                  |
 |"groups"       |array  |true     |Array of groups the user should be a member of.                                  |
+
+## Add/Remove Users to a Group (PUT)
+
+TODO.
+
+## List Groups (GET)
+
+TODO.
 
 ## GET info about a Group
 
@@ -539,6 +558,18 @@ then the group ones will be enforced by a [NAS](http://deployingradius.com/book/
         ],
         // ...
 ```
+
+## Replace check/reply attributes of a Group (PUT)
+
+TODO.
+
+## Create a Group (POST)
+
+TODO.
+
+## DELETE a Group
+
+TODO.
 
 ## Notes
 
