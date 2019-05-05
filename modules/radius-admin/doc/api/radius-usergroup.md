@@ -23,6 +23,9 @@
     - [Request body](#request-body)
   - [DELETE a User](#delete-a-user)
     - [Parameters](#parameters-3)
+  - [Add/Remove User to Groups (PUT)](#addremove-user-to-groups-put)
+    - [Example request body](#example-request-body-1)
+    - [Request body properties](#request-body-properties-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -211,6 +214,9 @@ For example:
     "reply": [
       // ...
     ],
+    "groups": [
+      // ...
+    ],
     "personal": [
       // ...
     ],
@@ -360,3 +366,31 @@ Accept: application/json
 |Name       |In   |Type   |Required |Description                                  |
 |---        |---  |---    |---      |---                                          |
 |username   |path |string |true     |RADIUS username.                             |
+
+## Add/Remove User to Groups (PUT)
+
+```http
+PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
+Host: localhost:4567
+Content-Type: application/json
+Accept: application/json
+```
+
+It's the same verb, URL and params as in [Modify a User](#modify-a-user--replace-data-put),
+but the request body is different.
+
+### Example request body
+
+```javascript
+{
+  "update_groups": "on",
+  "groups": ["group_A", "group_B"]
+}
+```
+
+### Request body properties
+
+|Name           |Type   |Required |Description                                                                      |
+|---            |---    |---      |---                                                                              |
+|"update_groups"|string |true     |MUST be "`on`".                                                                  |
+|"groups"       |array  |true     |Array of groups the user should be a member of.                                  |
