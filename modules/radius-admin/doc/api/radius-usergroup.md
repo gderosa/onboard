@@ -197,7 +197,7 @@ Accept: application/json
 ### Response body
 
 An object with just one property, "`user`", whose value is of the same shape of
-one element of the array "`users`" in [List Users](#list-users).
+one element of the array "`users`" in [List Users](#list-users-get).
 
 For example:
 
