@@ -138,10 +138,10 @@ be requested via optional parameters e.g.<br/>
       "groups": [],
       "personal": {
         "Id": 2,
-        "User-Name": "__user_test",
+        "User-Name": "georgeboole",
         "First-Name": "George",
         "Last-Name": "Boole",
-        "Email": "george.boole@ucc.ie",
+        "Email": "george.boole@domain",
         "Work-Phone": null,
         "Home-Phone": null,
         "Mobile-Phone": null,
