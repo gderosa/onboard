@@ -41,13 +41,9 @@
     - [Parameters](#parameters-6)
     - [Response body and example](#response-body-and-example)
   - [Create a Group (POST)](#create-a-group-post)
-    - [Example request body](#example-request-body-2)
-    - [Request body properties](#request-body-properties-3)
   - [Change attributes of a Group (PUT)](#change-attributes-of-a-group-put)
-    - [Parameters](#parameters-7)
-    - [Request body | properties](#request-body--properties)
   - [DELETE a Group](#delete-a-group)
-    - [Parameters](#parameters-8)
+    - [Parameters](#parameters-7)
 - [*Notes*](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -671,23 +667,30 @@ then the group ones will be enforced by a [NAS](http://deployingradius.com/book/
 
 ## Create a Group (POST)
 
-### Example request body
+```http
+POST http://localhost:4567/api/v1/services/radius/groups HTTP/1.1
+Host: localhost:4567
+Content-Type: application/json
+Accept: application/json
+```
 
-TODO.
-
-### Request body properties
-
-TODO.
+It's similar to [Create a User (POST)](#create-a-user-post), except:
+* replace `User-` with `Group-` in all relevant property names
+* there is no "`personal`" information
 
 ## Change attributes of a Group (PUT)
 
-### Parameters
+```http
+PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
+Host: localhost:4567
+Content-Type: application/json
+Accept: application/json
+```
 
-TODO.
+It's similar to [Modify a User / replace data (PUT)](#modify-a-user--replace-data-put), except:
+* replace `User-` with `Group-` in all relevant property names
+* there is no "`personal`" information
 
-### Request body | properties
-
-TODO.
 
 ## DELETE a Group
 
