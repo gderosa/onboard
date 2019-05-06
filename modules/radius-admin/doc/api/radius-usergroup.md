@@ -104,7 +104,7 @@ attributes may generally refer to an user and/or to a group.
 |---            |---                                                                              |
 |"User-Name"    |RADIUS username                                                                  |
 |"Group-Name"   |RADIUS group name                                                                |
-|"Password-Type"|Any of `SSHA1-Password` (recommended), <br/> `SHA1-Password`, `SMD5-Password`, `MD5-Password`, <br/> `Crypt-Password`, `Cleartext-Password`.|
+|"Password-Type"|Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
 |"User-Password"|The user password.|
 |"Auth-Type"    |Sould generaly not be set unless user must be always accepted (`Accept`) or rejected (`Reject`).|
 |"Login-Time"   |The time span a user may login to the system, more info [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
@@ -112,9 +112,9 @@ attributes may generally refer to an user and/or to a group.
 
 ### Reply Attributes
 
-|Name                       |Description|
+|Name                       |Description and possible values|
 |---                        |---|
-|"Reply-Message"            |A post-login message, generally displayed <br/> by captive portal popups etc.|
+|"Reply-Message"            |A post-login message, generally displayed by captive portal popups etc.|
 |"Session-Timeout"          |Max connection time (seconds).|
 |"Idle-Timeout"             |Max inactivity time (seconds).|
 |"WISPr-Bandwidth-Max-Down" |Max Downstream bandwidth (bits/sec).|
