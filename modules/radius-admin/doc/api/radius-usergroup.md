@@ -6,7 +6,9 @@
 - [Preliminary info](#preliminary-info)
   - [Base URLs](#base-urls)
   - [Authentication](#authentication)
-  - [General introduction on RADIUS attributes and data shapes](#general-introduction-on-radius-attributes-and-data-shapes)
+  - [RADIUS items overview](#radius-items-overview)
+    - [Check Attributes](#check-attributes)
+    - [Reply Attributes](#reply-attributes)
 - [Part I. Users](#part-i-users)
   - [List Users (GET)](#list-users-get)
     - [Parameters](#parameters)
@@ -70,9 +72,53 @@ is advised to change this in production.
 For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<password> <URL>`
 &mdash; or `curl -u <username> <URL>` and enter the password when prompted.
 
-## General introduction on RADIUS attributes and data shapes
+## RADIUS items overview
 
-TODO
+This document assumes
+[a basic grasp of AAA/RADIUS concepts](https://freeradius.org/documentation/):
+user, groups, attributes; or at least an intuition of them once they
+are listed and briefly described, and
+a basic understanding of the purposes of network
+Authentication Authorization and Accouting.
+
+`users` and `groups` keywords will appear, for example,
+as part of URLs, and there will be path parameters
+such as `:username` and `:groupname`.
+
+RADIUS attribute names such as `Login-Time` or `User-Password` etc.
+will appear as JSON properties in various data shapes
+within this guide.
+
+"`check`" and "`reply`" will also appear as JSON properties in various
+payloads, as they indicate a general classification of RADIUS attributes.
+
+This web service manages *some* attributes in particular, which are believed
+useful for most use cases.
+
+Except those explicitly starting with `User-` or `Group-`,
+attributes may generally refer to an user and/or to a group.
+
+### Check Attributes
+
+|Name           |Description and possible values|
+|---            |---                                                                              |
+|"User-Name"    |RADIUS username                                                                  |
+|"Group-Name"   |RADIUS group name                                                                |
+|"Password-Type"|Any of `SSHA1-Password` (recommended), <br/> `SHA1-Password`, `SMD5-Password`, `MD5-Password`, <br/> `Crypt-Password`, `Cleartext-Password`.|
+|"User-Password"|The user password.|
+|"Auth-Type"    |Sould generaly not be set unless user must be always accepted (`Accept`) or rejected (`Reject`).|
+|"Login-Time"   |The time span a user may login to the system, more info [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
+
+
+### Reply Attributes
+
+|Name                       |Description|
+|---                        |---|
+|"Reply-Message"            |A post-login message, generally displayed <br/> by captive portal popups etc.|
+|"Session-Timeout"          |Max connection time (seconds).|
+|"Idle-Timeout"             |Max inactivity time (seconds).|
+|"WISPr-Bandwidth-Max-Down" |Max Downstream bandwidth (bits/sec).|
+|"WISPr-Bandwidth-Max-Up"   |Max Upstream bandwidth (bits/sec).|
 
 # Part I. Users
 
