@@ -697,10 +697,11 @@ Accept: application/json
 
 ### Request body
 
-It's similar to [Create User (POST)](#create-a-user-post), except:
+It's similar to [Create User (POST)](#create-a-user-post), with check and reply atributes, except:
 * replace `User-` with `Group-` in all relevant properties in the request body
 * there is no "`personal`" information
 * you can't modify the `Group-Name`
+* setting a `Group-Password` is not necessary
 
 ## DELETE a Group
 
