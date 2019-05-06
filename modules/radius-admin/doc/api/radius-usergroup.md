@@ -675,30 +675,39 @@ Accept: application/json
 ```
 
 It's similar to [Create a User (POST)](#create-a-user-post), except:
-* replace `User-` with `Group-` in all relevant property names
+* replace `User-` with `Group-` in all relevant property names of the request body
 * there is no "`personal`" information
 
 ## Change attributes of a Group (PUT)
 
 ```http
-PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
+PUT http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
 Host: localhost:4567
 Content-Type: application/json
 Accept: application/json
 ```
 
 It's similar to [Modify a User / replace data (PUT)](#modify-a-user--replace-data-put), except:
-* replace `User-` with `Group-` in all relevant property names
+* in the URL above, there is `groups/:groupname` instead of `users/:username`
+* replace `User-` with `Group-` in all relevant properties in the request body
 * there is no "`personal`" information
 
 
 ## DELETE a Group
 
-TODO.
+Delete a RADIUS group.
+
+```http
+DELETE http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
+Host: localhost:4567
+Accept: application/json
+```
 
 ### Parameters
-
-TODO.
+<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In ([*](#noa3))|Type   |Required |Description|
+|---        |---            |---    |---      |---|
+|groupname  |path           |string |true     |RADIUS group name.|
 
 # *Notes*
 
