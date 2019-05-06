@@ -126,7 +126,7 @@ attributes may generally refer to an user and/or to a group.
 
 ```http
 GET http://localhost:4567/api/v1/services/radius/users HTTP/1.1
-Host: localhost:4567
+
 Accept: application/json
 ```
 
@@ -254,7 +254,7 @@ Retrieve information about a particular user, identified by username.
 
 ```http
 GET http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
-Host: localhost:4567
+
 Accept: application/json
 ```
 
@@ -359,7 +359,7 @@ For example:
 
 ```http
 POST http://localhost:4567/api/v1/services/radius/users HTTP/1.1
-Host: localhost:4567
+
 Content-Type: application/json
 Accept: application/json
 ```
@@ -465,7 +465,7 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 
 ```http
 PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
-Host: localhost:4567
+
 Content-Type: application/json
 Accept: application/json
 ```
@@ -486,7 +486,7 @@ Delete a RADIUS user record.
 
 ```http
 DELETE http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
-Host: localhost:4567
+
 Accept: application/json
 ```
 
@@ -501,7 +501,7 @@ Accept: application/json
 
 ```http
 PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
-Host: localhost:4567
+
 Content-Type: application/json
 Accept: application/json
 ```
@@ -540,7 +540,7 @@ adds many users to one group, thus covering the other use case.
 
 ```http
 PUT http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
-Host: localhost:4567
+
 Content-Type: application/json
 Accept: application/json
 ```
@@ -585,7 +585,7 @@ These properties are not all required, but at least one should be present.
 
 ```http
 GET http://localhost:4567/api/v1/services/radius/groups HTTP/1.1
-Host: localhost:4567
+
 Accept: application/json
 ```
 
@@ -633,7 +633,7 @@ Retrieve information about a particular group, identified by group name.
 
 ```http
 GET http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
-Host: localhost:4567
+
 Accept: application/json
 ```
 
@@ -718,7 +718,7 @@ then the group ones will be enforced by a [NAS](http://deployingradius.com/book/
 
 ```http
 POST http://localhost:4567/api/v1/services/radius/groups HTTP/1.1
-Host: localhost:4567
+
 Content-Type: application/json
 Accept: application/json
 ```
@@ -731,7 +731,7 @@ It's similar to [Create a User (POST)](#create-a-user-post), except:
 
 ```http
 PUT http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
-Host: localhost:4567
+
 Content-Type: application/json
 Accept: application/json
 ```
@@ -756,7 +756,7 @@ Delete a RADIUS group.
 
 ```http
 DELETE http://localhost:4567/api/v1/services/radius/groups/:groupname HTTP/1.1
-Host: localhost:4567
+
 Accept: application/json
 ```
 
