@@ -100,7 +100,7 @@ base URL is available at `/api/v1/`.
 At the moment, only the RADIUS user/group endpoint is formally
 tested and documented ([here](modules/radius-admin/doc/api/)).
 
-As a convnience, if you are working with e.g. the endpoint
+As a convenience, if you are working with e.g. the endpoint
 `/api/v1/services/radius`, you can be redirected to the documentation
 by GET-ting `/api/v1/services/radius/doc`.
 
