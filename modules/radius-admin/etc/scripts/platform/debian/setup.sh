@@ -49,6 +49,9 @@ export DEBIAN_FRONTEND=noninteractive
 
 enable_modules
 
+# WARNING: this relies on mysql root localhost with no password!
+# WARNING: (of course  allowed from local Unix root user only - unix socket)
+# TODO: handle when this assumption is not met?
 mysql < modules/radius-admin/doc/sysadm/examples/admin.mysql
 mysql radius < modules/radius-admin/doc/sysadm/examples/schema3.mysql
 
