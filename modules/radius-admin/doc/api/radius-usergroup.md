@@ -42,8 +42,10 @@
     - [Response body and example](#response-body-and-example)
   - [Create a Group (POST)](#create-a-group-post)
   - [Change attributes of a Group (PUT)](#change-attributes-of-a-group-put)
-  - [DELETE a Group](#delete-a-group)
     - [Parameters](#parameters-7)
+    - [Request body](#request-body-1)
+  - [DELETE a Group](#delete-a-group)
+    - [Parameters](#parameters-8)
 - [*Notes*](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -429,7 +431,7 @@ Accept: application/json
 
 ### Request body
 
-Same as in [Create User](#create-a-user-post), except you can't modify the username.
+Same as in [Create User (POST)](#create-a-user-post), except you can't modify the username.
 
 ## DELETE a User
 
@@ -687,11 +689,18 @@ Content-Type: application/json
 Accept: application/json
 ```
 
-It's similar to [Modify a User / replace data (PUT)](#modify-a-user--replace-data-put), except:
-* in the URL above, there is `groups/:groupname` instead of `users/:username`
+### Parameters
+<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In ([*](#noa3))  |Type   |Required |Description|
+|---        |---              |---    |---      |---|
+|groupname  |path             |string |true     |RADIUS group name.|
+
+### Request body
+
+It's similar to [Create User (POST)](#create-a-user-post), except:
 * replace `User-` with `Group-` in all relevant properties in the request body
 * there is no "`personal`" information
-
+* you can't modify the `Group-Name`
 
 ## DELETE a Group
 
