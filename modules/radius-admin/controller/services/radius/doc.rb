@@ -5,7 +5,7 @@ class OnBoard
 
     # Intended mainly as /api/v1/services/radius/doc
     get '/services/radius/doc.json' do
-      redirect 'https://github.com/vemarsas/onboard/blob/radius-api-doc/modules/radius-admin/doc/api/radius-usergroup.md'
+      redirect 'https://github.com/vemarsas/onboard/blob/margay/modules/radius-admin/doc/api/radius-usergroup.md'
     end
 
   end
