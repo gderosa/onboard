@@ -320,6 +320,7 @@ Accept: application/json
 
 Creates a new RADIUS user.
 
+<a name="create-user-example-body"></a>
 ### Example request body
 
 ```javascript
@@ -697,11 +698,11 @@ Accept: application/json
 
 ### Request body
 
-It's similar to [Create User (POST)](#create-a-user-post), with check and reply atributes, except:
+It's similar to [Create User (POST)](#create-user-example-body), with check and reply atributes, except:
 * replace `User-` with `Group-` in all relevant properties in the request body
 * there is no "`personal`" information
 * you can't modify the `Group-Name`
-* setting a `Group-Password` is not necessary
+* setting a `Group-Password` (and "`confirm`") is not necessary
 
 ## DELETE a Group
 
