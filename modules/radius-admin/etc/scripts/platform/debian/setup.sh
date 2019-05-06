@@ -2,7 +2,7 @@
 
 # TODO: DRY
 
-PROJECT_ROOT=${1:-'.'}
+PROJECT_ROOT=${1:-`pwd`}
 APP_USER=${2:-'onboard'}
 MODULES="radius-core radius-admin chilli hotspotlogin mail"
 FREERADIUS_CONF_NEW=$PROJECT_ROOT/modules/radius-admin/doc/sysadm/examples/etc/freeradius
@@ -15,7 +15,11 @@ cd $PROJECT_ROOT
 apt-get -y install freeradius freeradius-mysql mysql-server ruby-sequel ruby-mysql2 diffutils \
     libjson-c3 libssl1.1 iptables haserl adduser  # dependencies of the self-built coova-chilli deb package
 
-dpkg -i modules/chilli/blobs/deb/coova-chilli_1.4_amd64.deb  # This will of course vary for Rasbperry PI...
+# --force-confnew will overwrite (without prompting) files in /etc/defalt and similar.
+# This should be safe. Custom configs are all in our very own .onboard dir!
+
+dpkg -i --force-confnew modules/chilli/blobs/deb/coova-chilli_1.4_amd64.deb
+    # This will of course vary for Rasbperry PI...
 
 enable_modules() {
     for module in $MODULES; do
@@ -49,6 +53,9 @@ export DEBIAN_FRONTEND=noninteractive
 
 enable_modules
 
+# WARNING: this relies on mysql root localhost with no password!
+# WARNING: (of course  allowed from local Unix root user only - unix socket)
+# TODO: handle when this assumption is not met?
 mysql < modules/radius-admin/doc/sysadm/examples/admin.mysql
 mysql radius < modules/radius-admin/doc/sysadm/examples/schema3.mysql
 
