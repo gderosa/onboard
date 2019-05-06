@@ -626,7 +626,7 @@ limit
 was set as
 from Monday to Friday (`Wk`) from 9:30 AM to 6 PM and Saturday from 10 AM to 2 PM.
 Moreover, the upstream bandwidth was limited to 250 kb/s.
-If such attributes are not set fot he user,
+If such attributes are not set for he user,
 then the group ones will be enforced by a [NAS](http://deployingradius.com/book/concepts/nas.html).
 
 ```javascript
