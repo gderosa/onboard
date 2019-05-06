@@ -1,5 +1,5 @@
 A web interface to manage Linux-based network and virtualization
-appliances. 
+appliances.
 
 This is the web interface for the _Margay_ series of devices by Vemar S.A.S.
 
@@ -79,17 +79,30 @@ vagrant plugin install vagrant-vbguest  # optional, ensure updated VBox Guest Ad
 Margay server will be available at
 
 * http://localhost:4567
-* https://localhost:4443
+* https://localhost 
+  * *or https://localhost:4443 (from the host) if you're using Vagrant*
 
 The default credentials are `admin`:`admin`.
 
 ## Multiple choices (in the ReST/HTTP sense)
 
-For any web page, you may change `.html` extension into `.json to
+For any web page, you may change `.html` extension into `.json` to
 get machine-readable data.
 
 An `.rb` extension is also available for debugging purposes when in
 Sinatra `development` environment.
+
+### ReSTful JSON API endpoints and documentation
+
+Besides URLs like e.g. `/services/radius/users.json`, a dedicated
+base URL is available at `/api/v1/`.
+
+At the moment, only the RADIUS user/group endpoint is formally
+tested and documented ([here](modules/radius-admin/doc/api/)).
+
+As a convnience, if you are working with e.g. the endpoint
+`/api/v1/services/radius`, you can be redirected to the documentation
+by GET-ting `/api/v1/services/radius/doc`.
 
 ## Testing
 
