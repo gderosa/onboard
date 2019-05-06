@@ -2,14 +2,14 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents** (<sup>[&loz;](#ndtoc)</sup>)
 
-- [MARGAY'S FREERADIUS USER/GROUP MANAGEMENT API V1](#margays-freeradius-usergroup-management-api-v1)
-- [Preliminary info](#preliminary-info)
+- [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
+- [*Preliminary info*](#preliminary-info)
   - [Base URLs](#base-urls)
   - [Authentication](#authentication)
   - [RADIUS items overview](#radius-items-overview)
     - [Check Attributes](#check-attributes)
     - [Reply Attributes](#reply-attributes)
-- [Part I. Users](#part-i-users)
+- [*Part I. Users*](#part-i-users)
   - [List Users (GET)](#list-users-get)
     - [Parameters](#parameters)
     - [Example response body](#example-response-body)
@@ -31,7 +31,7 @@
   - [Add/Remove User to Groups (PUT)](#addremove-user-to-groups-put)
     - [Example request body](#example-request-body-1)
     - [Request body properties](#request-body-properties-1)
-- [Part II. Groups](#part-ii-groups)
+- [*Part II. Groups*](#part-ii-groups)
   - [Add/Remove Users to a Group (PUT)](#addremove-users-to-a-group-put)
     - [Parameters](#parameters-4)
     - [Example request bodies](#example-request-bodies)
@@ -56,7 +56,7 @@
 
 A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system. User information is stored in a MySQL database.
 
-# Preliminary info
+# *Preliminary info*
 
 ## Base URLs
 
@@ -120,7 +120,7 @@ attributes may generally refer to an user and/or to a group.
 |"WISPr-Bandwidth-Max-Down" |Max Downstream bandwidth (bits/sec).|
 |"WISPr-Bandwidth-Max-Up"   |Max Upstream bandwidth (bits/sec).|
 
-# Part I. Users
+# *Part I. Users*
 
 ## List Users (GET)
 
@@ -525,7 +525,7 @@ but the request body is different.
 |"update_groups"|string |true     |MUST be "`on`".                                                                  |
 |"groups"       |array  |true     |Array of groups the user should be a member of.                                  |
 
-# Part II. Groups
+# *Part II. Groups*
 
 ## Add/Remove Users to a Group (PUT)
 
