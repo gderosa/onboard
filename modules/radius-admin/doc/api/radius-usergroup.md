@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents** (<sup>[&loz;](#ndtoc)</sup>)
 
-- [Margay's FreeRADIUS user/group management API v1](#margays-freeradius-usergroup-management-api-v1)
+- [**Margay's FreeRADIUS user/group management API v1**](#margays-freeradius-usergroup-management-api-v1)
 - [*Preliminary info*](#preliminary-info)
   - [Base URLs](#base-urls)
   - [Authentication](#authentication)
@@ -52,7 +52,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# MARGAY'S FREERADIUS USER/GROUP MANAGEMENT API V1
+# **Margay's FreeRADIUS user/group management API v1**
 
 A ReSTful API to manage users and groups on a FreeRADIUS server, in a Margay system. User information is stored in a MySQL database.
 
