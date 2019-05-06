@@ -106,7 +106,7 @@ attributes may generally refer to an user and/or to a group.
 |"Group-Name"   |RADIUS group name                                                                |
 |"Password-Type"|Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, <br/> `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
 |"User-Password"|The user password.|
-|"Auth-Type"    |Sould generaly not be set unless user must be always accepted (`Accept`) or rejected (`Reject`).|
+|"Auth-Type"    |Sould generaly not be set, unless user must be always accepted (`Accept`) or rejected (`Reject`).|
 |"Login-Time"   |The time span a user may login to the system, more info [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
 
 
