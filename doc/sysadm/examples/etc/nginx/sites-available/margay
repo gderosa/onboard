@@ -56,12 +56,26 @@ server {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
 		try_files $uri $uri/ =404;
-		
+
 		# Reverse proxy to Sinatra
 		location / {
 		    proxy_pass http://localhost:4567/;
+
+			# https://linuxize.com/post/nginx-reverse-proxy/
+
+			proxy_http_version  1.1;
+			proxy_cache_bypass  $http_upgrade;
+
+			proxy_set_header Upgrade           $http_upgrade;
+			proxy_set_header Connection        "upgrade";
+			proxy_set_header Host              $host;
+			proxy_set_header X-Real-IP         $remote_addr;
+			proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+			proxy_set_header X-Forwarded-Proto $scheme;
+			proxy_set_header X-Forwarded-Host  $host;
+			proxy_set_header X-Forwarded-Port  $server_port;
 		}
-		
+
 	}
 
 	# deny access to .htaccess files, if Apache's document root
