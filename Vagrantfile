@@ -105,10 +105,17 @@ EOFF
     # Actually deploy all other AAA/Hotspot -related modules as well: chilli etc.
     # Not automatically run on provision, you have to explicitely call it with
     #    vagrant provision margay --provision-with radius
-    # after the first provionins has been completed.
+    # after the first provision has been completed.
     mgy.vm.provision "radius",
         type: "shell",
         path: "./modules/radius-admin/etc/scripts/platform/debian/setup.sh",
+        args: PROVISIONER_ARGS,
+        run: "never"
+
+    # Similarly, for qemu/virt (also enable the jQQueryFileTree module)
+    mgy.vm.provision "virt",
+        type: "shell",
+        path: "./modules/qemu/etc/scripts/platform/debian/setup.sh",
         args: PROVISIONER_ARGS,
         run: "never"
 
