@@ -75,11 +75,14 @@ cd $PROJECT_ROOT
 
 apt-get update
 apt-get -y upgrade
-apt-get -y install ruby ruby-bundler ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute iptables bridge-utils pciutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
+apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute iptables bridge-utils pciutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
 # Optional, but useful tools when ssh'ing
 apt-get -y install vim-nox mc
 
 install_conffiles
+
+# Let's not use the old Debian one...
+gem install --no-rdoc --no-ri  -v '~> 2' bundler
 
 su - $APP_USER -c "
 	cd $PROJECT_ROOT
@@ -101,13 +104,14 @@ disable_dhcpcd_master
 sysctl --load=/etc/sysctl.conf
 sysctl --load=$PROJECT_ROOT/doc/sysadm/examples/etc/sysctl.conf
 
-# Disable the legacy SysV service, now "margay"
-if ( systemctl list-units --all | grep onboard ); then
+# Disable the legacy SysV service, now "margay".
+# Use "onboard.service", not simply "onboard", to not confuse with mere user login session...
+if ( systemctl list-units --all | grep onboard.service ); then
 	# Stop if running
-	if ( systemctl status onboard ); then
-		systemctl stop onboard
+	if ( systemctl status onboard.service ); then
+		systemctl stop onboard.service
 	fi
-	systemctl disable onboard
+	systemctl disable onboard.service
 fi
 
 cat > /etc/systemd/system/margay.service <<EOF
