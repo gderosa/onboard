@@ -46,11 +46,11 @@ Enable with (from the host):
 vagrant provision margay --provision-with radius
 ```
 
-#### TODO: QEMU/virt module
+#### QEMU/virt module
 
-We're about to have the setup script for this (real hardware),
-so a Vagrant `--provision-with` will be added too (and verified) at some point.
-Feel free to look into `modules/qemu/etc/scripts/[...]/setup.sh` in the near future.
+```
+vagrant provision margay --provision-with virt
+```
 
 #### Very optional Vagrant tweaks
 
