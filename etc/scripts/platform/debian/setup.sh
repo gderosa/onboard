@@ -104,13 +104,14 @@ disable_dhcpcd_master
 sysctl --load=/etc/sysctl.conf
 sysctl --load=$PROJECT_ROOT/doc/sysadm/examples/etc/sysctl.conf
 
-# Disable the legacy SysV service, now "margay"
-if ( systemctl list-units --all | grep onboard ); then
+# Disable the legacy SysV service, now "margay".
+# Use "onboard.service", not simply "onboard", to not confuse with mere user login session...
+if ( systemctl list-units --all | grep onboard.service ); then
 	# Stop if running
-	if ( systemctl status onboard ); then
-		systemctl stop onboard
+	if ( systemctl status onboard.service ); then
+		systemctl stop onboard.service
 	fi
-	systemctl disable onboard
+	systemctl disable onboard.service
 fi
 
 cat > /etc/systemd/system/margay.service <<EOF
