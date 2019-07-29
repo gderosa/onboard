@@ -125,6 +125,7 @@ User=$APP_USER
 WorkingDirectory=$PROJECT_ROOT
 Environment="APP_ENV=production"
 ExecStart=/usr/bin/env ruby onboard.rb
+SyslogIdentifier=margay
 Restart=on-failure
 # Other Restart options: always, on-abort, on-failure etc
 
@@ -143,6 +144,7 @@ User=$APP_USER
 WorkingDirectory=$PROJECT_ROOT
 ExecStart=/usr/bin/env ruby onboard.rb --restore --no-web
 ExecStop=/usr/bin/env ruby onboard.rb --shutdown --no-web
+SyslogIdentifier=margay-persist
 RemainAfterExit=true
 StandardOutput=journal
 
