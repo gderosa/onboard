@@ -91,8 +91,7 @@ su - $APP_USER -c "
 	bundle install $(bundle_without_all_opts)
 "
 
-modprobe nf_conntrack_ipv4
-modprobe nf_conntrack_ipv6
+modprobe nf_conntrack
 service procps restart
 
 disable_app_modules
