@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-DEBIAN_BOX = "bento/debian-9"
+DEBIAN_BOX = "bento/debian-10"
 WORKING_DIR = "/vagrant"
 APP_USER = "vagrant"
 PROVISIONER_ARGS = [WORKING_DIR, APP_USER]
