@@ -71,14 +71,9 @@ VAGRANT_HTTPS_PROXY=http://10.0.2.2:8123
 if, for example, you use polipo with default config
 (10.0.2.2 is the default gateway for vbox NAT interface in the vm).
 
-Beware this may conflict with capitive portal in the client, as browsers will then use the proxy
+Beware this may conflict with captive portal in the client, as browsers will then use the proxy
 and therefore circumvent the captive portal (depending on the configuration).
 
-##### Keeping Guest Additions updated
-
-```
-vagrant plugin install vagrant-vbguest  # optional, ensure updated VBox Guest Additions in the vm
-```
 
 ## After installation
 
