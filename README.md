@@ -74,7 +74,6 @@ if, for example, you use polipo with default config
 Beware this may conflict with captive portal in the client, as browsers will then use the proxy
 and therefore circumvent the captive portal (depending on the configuration).
 
-
 ## After installation
 
 Margay server will be available at

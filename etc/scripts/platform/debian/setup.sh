@@ -159,4 +159,6 @@ systemctl start margay
 systemctl enable margay-persist
 systemctl start margay-persist  # Also resume dnsmasq after reconfig, it's not optional!
 
+cd $PROJECT_ROOT  # Apparently needed...
+
 setup_nginx
