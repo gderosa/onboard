@@ -15,7 +15,7 @@ cd $PROJECT_ROOT
 apt-get -y install freeradius freeradius-mysql mysql-server ruby-sequel ruby-mysql2 diffutils \
     libjson-c3 libssl1.1 iptables haserl adduser  # dependencies of the self-built coova-chilli deb package
 
-# --force-confnew will overwrite (without prompting) files in /etc/defalt and similar.
+# --force-confnew will overwrite (without prompting) files in /etc/default and similar.
 # This should be safe. Custom configs are all in our very own .onboard dir!
 
 dpkg -i --force-confnew modules/chilli/blobs/deb/coova-chilli_1.4_amd64.deb
