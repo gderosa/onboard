@@ -12,6 +12,8 @@ enable_onboard_modules() {
 
 apt-get -yq install hostapd
 
+# The system(d) service is "masked" by default, which is okay for us ;)
+
 enable_onboard_modules
 
 # Maybe it won't need any specific extra gem
