@@ -52,6 +52,14 @@ vagrant provision margay --provision-with radius
 vagrant provision margay --provision-with virt
 ```
 
+#### Wireless Access Point module
+
+You can enable this to test/develop capabilities of editing `hostapd` configs,
+but there's no emulation of wifi networks currently.
+```
+vagrant provision margay --provision-with ap
+```
+
 #### Very optional Vagrant tweaks
 
 ##### Proxy
