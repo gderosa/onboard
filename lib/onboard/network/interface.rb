@@ -373,7 +373,12 @@ class OnBoard
           @vendor =lspci_by_id[@pciid][:vendor]
           @model = lspci_by_id[@pciid][:model]
         elsif @type == 'ether' # ether ifaces w/o pciid are likely tun/tap etc.
-          @type = 'virtual'
+          # Lack pf PCI id does not imply device is not physical (it may be USB or other bus type etc.)
+          # So make sure it does not have a physical device symlink
+          # (https://unix.stackexchange.com/a/40562)
+          unless File.exists? "/sys/class/net/#{@name}/device"
+            @type = 'virtual'
+          end
         end
         if @type == 'P-t-P'
           @ipassign = {:method => :pointopoint}
