@@ -63,28 +63,28 @@ class OnBoard
           (iface.mac ? iface.name : "zzz_#{iface.name}")
       	]
       end
-    
+
       # Class methods.
 
       class << self
-        
+
         def getAll
           @@all_layer2 = getAll_layer2()
-          @@all_layer3 = all_layer3(@@all_layer2) 
+          @@all_layer3 = all_layer3(@@all_layer2)
           ary = []
           ary += @@all_layer3
           @@all_layer2.each do |netif|
-            ary << netif unless ary.detect {|x| x.name == netif.name} 
+            ary << netif unless ary.detect {|x| x.name == netif.name}
           end
           return @@all = ary
         end
         alias get_all getAll # A bit of Ruby style... :-P
-        
+
         def getAll_layer3
-          return all_layer3(getAll_layer2()) 
+          return all_layer3(getAll_layer2())
         end
-        
-        def getAll_layer2 
+
+        def getAll_layer2
 
           ary = []
           netif_h = nil
@@ -92,7 +92,7 @@ class OnBoard
           `ip addr show`.each_line do |line|
             # TODO: take advantage of /master ([^: ]+)/          HERE--> vv   ???
             if line =~ /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+).*state ([^: ]+)/
-            # It might useful to know earlier which bridge the interface 
+            # It might useful to know earlier which bridge the interface
             # belongs to (if it's part of a bridge, of course :).
 
               if netif_h                    # from the previous "parsing cycle"
@@ -105,10 +105,10 @@ class OnBoard
                 :misc       => $3.split(','), # es. %w{BROADCAST MULTICAST UP}
                 :mtu        => $4,
                 :qdisc      => $5,
-                :state      => $6 
+                :state      => $6
               }
               #puts netif_h[:name] # DEBUG
-              if netif_h[:state] == "UNKNOWN" 
+              if netif_h[:state] == "UNKNOWN"
                 if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
                 else
@@ -116,7 +116,7 @@ class OnBoard
                   unless File.readable? carrier_file
                     LOGGER.debug "waiting for #{carrier_file} ... "
                     begin
-                      Timeout.timeout(6) do 
+                      Timeout.timeout(6) do
                         until File.readable? carrier_file do
                           sleep 0.3
                         end
@@ -127,8 +127,8 @@ class OnBoard
                   end
                   if File.readable? carrier_file
                     carrier = File.read(carrier_file).strip
-                    netif_h[:state] = 
-                      case carrier 
+                    netif_h[:state] =
+                      case carrier
                       when '0'
                         "NO-CARRIER"
                       when '1'
@@ -144,20 +144,20 @@ class OnBoard
               end
               if netif_h[:misc].include? "UP" or netif_h[:state] == "UP"
                 netif_h[:active] = true
-              else 
+              else
                 netif_h[:active] = false
               end
             else
               # puts line # DEBUG
             end
-            if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})?/ 
+            if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})?/
               netif_h[:type]  = $1
               netif_h[:mac]   = MAC.new $2 if $2
             end
-            if line =~ /inet6? ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i 
+            if line =~ /inet6? ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i
               # prepare the array of IP(v4/v6) addresses, if not present
               netif_h[:ip] = [] unless netif_h[:ip].respond_to? :<<
-              netif_h[:ip] << IP.new( 
+              netif_h[:ip] << IP.new(
                 :addr       => $1,
                 :prefixlen  => $2, # do not convert to_i
                 :scope      => $3
@@ -171,12 +171,12 @@ class OnBoard
                 :peer       => IP.new(
                   :addr       => $2,
                   :prefixlen  => $3,
-                  :scope      => $4  
+                  :scope      => $4
                 )
               )
             end
 
-            netif_h[:type] = "P-t-P" if netif_h[:misc].include? "POINTOPOINT" 
+            netif_h[:type] = "P-t-P" if netif_h[:misc].include? "POINTOPOINT"
 
           end
           ary << self.new(netif_h) if netif_h # fill in the last element
@@ -186,7 +186,7 @@ class OnBoard
               pid             = $1
               cmd             = $2
               args            = $4.strip
-              ifaces = ary.select do |i| 
+              ifaces = ary.select do |i|
                 args == i.name              or  # is        "eth0"
                 args =~ /\s#{i.name}$/      or  # ends as   " eth0"
                 args =~ /\s\-\w#{i.name}$/  or  # ends as   " -ieth0"
@@ -205,32 +205,32 @@ class OnBoard
                 :args           => args
               }
             end
-          end   
-          
+          end
+
           return @@all_layer2 = ary
         end
 
         def all_layer3(all_layer2=@@all_layer2)
           ary = []
-          bridges, nonbridges = all_layer2.partition {|x| x.is_bridge?} 
+          bridges, nonbridges = all_layer2.partition {|x| x.is_bridge?}
 
           (nonbridges.select {|x| x.type == 'wi-fi'}).each do |wifi|
             wifi.wifi_properties = {} unless wifi.wifi_properties
-            # Prefer pciid over MAC addr to determine whether two 
+            # Prefer pciid over MAC addr to determine whether two
             # interfaces have the same underlying hardware
             wifi.wifi_properties['master'] = nonbridges.detect do |x|
-              x.pciid == wifi.pciid and 
+              x.pciid == wifi.pciid and
               x.pciid =~ /\S/ and
               x.type == 'ieee802.11'
             end
           end
 
-          ary += nonbridges.reject do |x| 
+          ary += nonbridges.reject do |x|
             ['ieee802.11'].include? x.type or
             x.bridged_to # "bridged to anyone"
           end
           ary += bridges.map do |x|
-            # create Bridge objects using generic Interface objects as templates 
+            # create Bridge objects using generic Interface objects as templates
             br = OnBoard::Network::Bridge.new(x)
             # if one of the children interfaces is configured via DHCP, then
             # consider the bridge itself configured via DHCP and grab all the info
@@ -238,20 +238,20 @@ class OnBoard
               br.members.each do |member_name|
                 # NOTE: assumption: no more than ONE bridged iface has a dhcp (etc.)
                 # client running.
-                member = all_layer2.detect {|i| i.name == member_name} 
+                member = all_layer2.detect {|i| i.name == member_name}
                 if member and member.ipassign[:method] != :static
                   br.ipassign = member.ipassign
-                  break 
+                  break
                 end
               end
-            end 
+            end
             br
           end
           return ary
         end
 
         def all_layer2
-          begin 
+          begin
             if [ nil, false, [] ].include? @@all_layer2
               @@all_layer2 = getAll_layer2
             end
@@ -276,7 +276,7 @@ class OnBoard
 
           if opt_h[:saved_interfaces]
             saved_ifaces = opt_h[:saved_interfaces]
-          else 
+          else
 	          begin
               File.open(
                   OnBoard::CONFDIR + '/network/interfaces.yml', 'r') do |f|
@@ -314,23 +314,23 @@ class OnBoard
               to_remove = current_iface.members - saved_iface.members_saved
               # Bridge.brctl was meant to get HTTP POST/PUT params,
               # hence its strange syntax.
-              to_add.each do |member_if| 
+              to_add.each do |member_if|
                 Bridge.brctl({
                     'addif' => {
                         current_iface.name => {member_if => true}
-                    } 
+                    }
                 })
               end
-              to_remove.each do |member_if| 
+              to_remove.each do |member_if|
                 Bridge.brctl({
                     'delif' => {
                         current_iface.name => {member_if => true}
-                    } 
+                    }
                 })
-              end             
+              end
             end
             if saved_iface.active
-              if saved_iface.ipassign[:method] == :static and 
+              if saved_iface.ipassign[:method] == :static and
                   current_iface.ipassign[:method] == :dhcp
                 current_iface.stop_dhcp_client
               elsif current_iface.ipassign[:method] == :static and
@@ -344,14 +344,14 @@ class OnBoard
           current_ifaces = getAll
           saved_ifaces.each do |saved_iface|
             current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
-            next unless current_iface # avoid NoMethodError if iface no longer 
-                # exists       
+            next unless current_iface # avoid NoMethodError if iface no longer
+                # exists
             if saved_iface.ipassign[:method] == :static
               current_iface.assign_static_ips saved_iface.ip
             end
           end
         end
-      
+
 
       end
 
@@ -365,10 +365,10 @@ class OnBoard
       def initialize(hash)
         %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
           eval "@#{property} = hash[:#{property}]"
-        end        
+        end
         set_pciid_from_sysfs
         lspci_by_id = OnBoard::Hardware::LSPCI.by_id
-        if @pciid 
+        if @pciid
           @desc = lspci_by_id[@pciid][:desc]
           @vendor =lspci_by_id[@pciid][:vendor]
           @model = lspci_by_id[@pciid][:model]
@@ -376,13 +376,13 @@ class OnBoard
           @type = 'virtual'
         end
         if @type == 'P-t-P'
-          @ipassign = {:method => :pointopoint} 
+          @ipassign = {:method => :pointopoint}
         elsif @type == 'ieee802.11' # wireless 'masters' don't get IP
-           @ipassign = {:method => :none} 
+           @ipassign = {:method => :none}
         elsif [nil, false, '', 0].include? @ipassign
           @ipassign = {:method => :static}
         end
-        if @type == 'ether' and ( 
+        if @type == 'ether' and (
             File.exists? "/sys/class/net/#{@name}/phy80211" or
             File.exists? "/sys/class/net/#{@name}/wireless")
           @type = 'wi-fi'
@@ -400,7 +400,7 @@ class OnBoard
           return true
         else
           return false
-        end    
+        end
       end
 
       def bridge?; self.is_bridge?; end
@@ -427,7 +427,7 @@ class OnBoard
           if @ipassign[:method] == :static and h['ipassign']['method'] == 'dhcp'
             start_dhcp_client
           elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'static'
-            stop_dhcp_client h['ipassign']['pid'] 
+            stop_dhcp_client h['ipassign']['pid']
             assign_static_ips h['ip']
           elsif
               @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
@@ -441,12 +441,12 @@ class OnBoard
         end
         if @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
             assign_static_ips h['ip']
-        end 
+        end
         # if was dhcp and shall be dhcp... simply do nothing :-)
       end
 
       def has_ip?(ipobj)
-          @ip ? (@ip.detect {|x| x == ipobj}) : nil 
+          @ip ? (@ip.detect {|x| x == ipobj}) : nil
       end
 
       def ip_addr_add(ip)
@@ -461,17 +461,17 @@ class OnBoard
 
       def ip_link_set_up
         return false if not [:static, :dhcp].include? @ipassign[:method]
-        Command.run "ip link set #{@name} up", :sudo 
+        Command.run "ip link set #{@name} up", :sudo
       end
 
       def ip_link_set_down
         return false if not [:static, :dhcp].include? @ipassign[:method]
-        Command.run "ip link set #{@name} down", :sudo 
+        Command.run "ip link set #{@name} down", :sudo
       end
 
       def flush_ip
         return false if not [:static, :dhcp].include? @ipassign[:method]
-        Command.run("ip addr flush dev #{@name}", :sudo) if 
+        Command.run("ip addr flush dev #{@name}", :sudo) if
             @ip.respond_to? :[] and @ip.length > 0
       end
       alias ip_addr_flush flush_ip
@@ -500,14 +500,14 @@ class OnBoard
                          nil
                        end
         return unless ipStringHash
-        oldIPs = ip() ? ip() : [] 
+        oldIPs = ip() ? ip() : []
         newIPs = []
-        ipStringHash.each_value do |ipString|  
+        ipStringHash.each_value do |ipString|
           begin
-            newIPs << self.class::IP.new(ipString) 
+            newIPs << self.class::IP.new(ipString)
           rescue ArgumentError
           end
-        end   
+        end
         oldIPs.each do |oldip|
           unless newIPs.find {|newip| newip == oldip}
             ip_addr_del(oldip)
@@ -541,7 +541,7 @@ class OnBoard
           'method'      => @ipassign[:method].to_s,
           'pid'         => @ipassign[:pid].to_i,
           'cmd'         => @ipassign[:cmd],
-          'args'        => @ipassign[:args] 
+          'args'        => @ipassign[:args]
         }
         h['wifi_properties'] = @wifi_properties
         return h
@@ -550,15 +550,15 @@ class OnBoard
 
       def to_json(*a); to_h.to_json(*a); end
       # def to_yaml(*a); to_h.to_yaml(*a); end # save as object
-     
+
       private
 
       def set_pciid_from_sysfs
         ["/sys/class/net/#@name", "/sys/class/net/#@name/device"].each do |path|
           if File.symlink? path
-            if File.readlink(path) =~ 
-                /devices\/pci....:..\/.*:(..:..\..)/ 
-                # matches something like: 
+            if File.readlink(path) =~
+                /devices\/pci....:..\/.*:(..:..\..)/
+                # matches something like:
                 # ../../devices/pci0000:00/0000:00:1e.0/0000:02:0e.0/ssb0:0/net/eth0
                 # capturing "02:0e.0"                        ^^^^^^^
               @pciid = $1
