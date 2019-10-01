@@ -151,7 +151,7 @@ class OnBoard
               # puts line # DEBUG
             end
             if netif_h and line =~ /link\/(\S+) (([0-9a-f]{2}:){5}[0-9a-f]{2})?/
-              netif_h[:type]  = $1
+              netif_h[:type]  = $1  # This is where 'ether' is set as the @type, pretty much by default in most cases.
               netif_h[:mac]   = MAC.new $2 if $2
             end
             if line =~ /inet6? ([0-9a-f\.:]+)\/(\d{1,3}).*scope (\S+)/i
