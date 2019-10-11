@@ -385,7 +385,9 @@ class OnBoard
             @modalias =~ /^usb:v([0-9A-F]+)p([0-9A-F]+)/
             @vendor_id = $1
             @model_id = $2
-            pp Hardware::LSUSB.all.to_a
+            lsusb = Hardware::LSUSB.new :vendor_id => @vendor_id, :model_id => @model_id
+            @vendor = lsusb.vendor
+            @model = lsusb.model
           end
         elsif @type == 'ether'
           @type = 'virtual'  # virtual ethernet, tap etc.

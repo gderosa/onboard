@@ -89,8 +89,19 @@ class OnBoard
 
       end
 
+      attr_reader :vendor, :model
+
       def initialize(h)
         @data = h
+        if @data[:vendor_id] and @data[:model_id]
+          `lsusb -d #{@data[:vendor_id]}:#{@data[:model_id]} -v`.each_line do |line|
+            if line =~ /^\s+idVendor\s+0x#{@data[:vendor_id]}\s+(.*)/
+              @vendor = $1
+            elsif line =~ /^\s+idProduct\s+0x#{@data[:model_id]}\s+(.*)/
+              @model = $1
+            end
+          end
+        end
       end
 
       def method_missing(id, *args, &blk)
