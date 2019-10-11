@@ -357,7 +357,7 @@ class OnBoard
 
       # Instance methods and attributes.
 
-      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :vendor, :model, :desc, :pciid
+      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid
       attr_accessor :ipassign, :type, :wifi_properties
 
       include OnBoard::System
@@ -366,20 +366,25 @@ class OnBoard
         %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
           eval "@#{property} = hash[:#{property}]"
         end
-        set_pciid_from_sysfs
-        lspci_by_id = OnBoard::Hardware::LSPCI.by_id
-        if @pciid
-          @desc = lspci_by_id[@pciid][:desc]
-          @vendor =lspci_by_id[@pciid][:vendor]
-          @model = lspci_by_id[@pciid][:model]
-        elsif @type == 'ether' # ether ifaces w/o pciid are likely tun/tap etc.
-          # Lack pf PCI id does not imply device is not physical (it may be USB or other bus type etc.)
-          # So make sure it does not have a physical device symlink
-          # (https://unix.stackexchange.com/a/40562)
-          unless File.exists? "/sys/class/net/#{@name}/device"
-            @type = 'virtual'
+
+        ### HW detection new code
+        if File.exists? "/sys/class/net/#{@name}/device"
+          @modalias = File.read "/sys/class/net/#{@name}/device/modalias"
+          @modalias =~ /^(\w+):/
+          @bus = $1
+          if @bus == 'pci'
+            set_pciid_from_sysfs
+            lspci_by_id = OnBoard::Hardware::LSPCI.by_id
+            if @pciid
+              @desc = lspci_by_id[@pciid][:desc]
+              @vendor =lspci_by_id[@pciid][:vendor]
+              @model = lspci_by_id[@pciid][:model]
+            end
           end
+        elsif @type == 'ether'
+          @type = 'virtual'  # virtual ethernet, tap etc.
         end
+
         if @type == 'P-t-P'
           @ipassign = {:method => :pointopoint}
         elsif @type == 'ieee802.11' # wireless 'masters' don't get IP
@@ -387,6 +392,7 @@ class OnBoard
         elsif [nil, false, '', 0].include? @ipassign
           @ipassign = {:method => :static}
         end
+
         if @type == 'ether' and (
             File.exists? "/sys/class/net/#{@name}/phy80211" or
             File.exists? "/sys/class/net/#{@name}/wireless")
