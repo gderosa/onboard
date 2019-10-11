@@ -162,3 +162,6 @@ systemctl start margay-persist  # Also resume dnsmasq after reconfig, it's not o
 cd $PROJECT_ROOT  # Apparently needed...
 
 setup_nginx
+
+# Remove packages conflicting with rou DHCP management
+dpkg -l | egrep '^i.\s+wicd-daemon' && apt-get -y remove wicd-daemon
