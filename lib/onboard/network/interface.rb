@@ -5,6 +5,7 @@ require 'onboard/network/interface/mac'
 require 'onboard/network/interface/ip'
 require 'onboard/network/bridge'
 require 'onboard/hardware/lspci'
+require 'onboard/hardware/lsusb'
 require 'onboard/extensions/array.rb'
 
 class OnBoard
@@ -367,7 +368,7 @@ class OnBoard
           eval "@#{property} = hash[:#{property}]"
         end
 
-        ### HW detection new code
+        ### HW detection
         if File.exists? "/sys/class/net/#{@name}/device"
           @modalias = File.read "/sys/class/net/#{@name}/device/modalias"
           @modalias =~ /^(\w+):/
@@ -380,6 +381,11 @@ class OnBoard
               @vendor =lspci_by_id[@pciid][:vendor]
               @model = lspci_by_id[@pciid][:model]
             end
+          elsif @bus == 'usb'
+            @modalias =~ /^usb:v([0-9A-F]+)p([0-9A-F]+)/
+            @vendor_id = $1
+            @model_id = $2
+            pp Hardware::LSUSB.all.to_a
           end
         elsif @type == 'ether'
           @type = 'virtual'  # virtual ethernet, tap etc.
