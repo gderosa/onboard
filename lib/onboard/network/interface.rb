@@ -383,8 +383,8 @@ class OnBoard
             end
           elsif @bus == 'usb'
             @modalias =~ /^usb:v([0-9A-F]+)p([0-9A-F]+)/
-            @vendor_id = $1
-            @model_id = $2
+            @vendor_id = $1.downcase
+            @model_id = $2.downcase
             lsusb = Hardware::LSUSB.new :vendor_id => @vendor_id, :model_id => @model_id
             @vendor = lsusb.vendor
             @model = lsusb.model
