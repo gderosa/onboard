@@ -34,6 +34,10 @@ class OnBoard
           :preferred_order  => 1,
           :human_readable   => 'Ethernet'
         },
+        'ether:usbmodem'       => {
+          :preferred_order  => 1.5,
+          :human_readable   => 'Ethernet (USB Modem)'
+        },
         'wi-fi'       => {
           :preferred_order  => 2,
           :human_readable   => 'Wireless IEEE 802.11'
@@ -407,10 +411,15 @@ class OnBoard
           @ipassign = {:method => :static}
         end
 
-        if @type == 'ether' and (
+        if @type == 'ether'
+          if (
             File.exists? "/sys/class/net/#{@name}/phy80211" or
-            File.exists? "/sys/class/net/#{@name}/wireless")
-          @type = 'wi-fi'
+            File.exists? "/sys/class/net/#{@name}/wireless"
+          )
+            @type = 'wi-fi'
+          elsif File.basename(File.readlink "/sys/class/net/#{@name}/device/driver") == 'cdc_ether'
+            @type = 'ether:usbmodem'
+          end
         end
       end
 
