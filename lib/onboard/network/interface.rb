@@ -418,6 +418,8 @@ class OnBoard
           )
             @type = 'wi-fi'
           elsif File.basename(File.readlink "/sys/class/net/#{@name}/device/driver") == 'cdc_ether'
+            # TODO: add other drivers?
+            # NOTE: used so far for "HiLink" Huawei mobile modems
             @type = 'ether:usbmodem'
           end
         end
