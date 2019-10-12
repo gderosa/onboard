@@ -6,6 +6,7 @@ require 'onboard/network/interface/ip'
 require 'onboard/network/bridge'
 require 'onboard/hardware/lspci'
 require 'onboard/hardware/lsusb'
+require 'onboard/hardware/sdio'
 require 'onboard/extensions/array.rb'
 
 class OnBoard
@@ -388,6 +389,8 @@ class OnBoard
             lsusb = Hardware::LSUSB.new :vendor_id => @vendor_id, :model_id => @model_id
             @vendor = lsusb.vendor
             @model = lsusb.model
+          elsif @bus == 'sdio'
+            Hardware::SDIO::vendormodel_from_ids '', ''
           end
         elsif @type == 'ether'
           @type = 'virtual'  # virtual ethernet, tap etc.
