@@ -5,12 +5,25 @@ class OnBoard
       DATAFILE = File.join(OnBoard::ROOTDIR, 'share/hardware/sdio.ids')
 
       class << self
+
         def vendormodel_from_ids(vendor_id, model_id)
+          vendor = nil
+          model = nil
           File.readlines(DATAFILE).each do |line|
-            next if line =~ /^\s*#/
-            puts line
+            line.sub! /\s+#.*$/, ''
+            if vendor
+              if line =~ /^\s+#{model_id}\s+(.*)/i
+                model = $1.strip
+              end
+            else
+              if line =~ /^#{vendor_id}\s+(.*)/i
+                vendor = $1.strip
+              end
+            end
           end
+          return vendor, model
         end
+
       end
 
     end

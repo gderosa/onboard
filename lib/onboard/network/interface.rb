@@ -390,7 +390,10 @@ class OnBoard
             @vendor = lsusb.vendor
             @model = lsusb.model
           elsif @bus == 'sdio'
-            Hardware::SDIO::vendormodel_from_ids '', ''
+            @modalias =~ /^sdio:.*v([0-9A-F]+).*d([0-9A-F]+)/
+            @vendor_id = $1.downcase
+            @model_id = $2.downcase
+            @vendor, @model = Hardware::SDIO::vendormodel_from_ids @vendor_id, @model_id
           end
         elsif @type == 'ether'
           @type = 'virtual'  # virtual ethernet, tap etc.
@@ -548,7 +551,7 @@ class OnBoard
 
       def to_h
         h = {}
-        %w{name misc qdisc state type vendor model}.each do |property|
+        %w{name misc qdisc state type vendor model bus}.each do |property|
           h[property] = eval "@#{property}" if eval "@#{property}"
         end
         h['active']   = @active   # may be true or false
