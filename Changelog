@@ -1,3 +1,9 @@
+2019.10
+
+* Fix Hardware detection for network interfaces on Raspberry (and potentially other systems)
+* Remove Wicd daemon from deployment (caused issues on DHCP client functionality)
+* Implicitly connects to 3G/4G "as Ethernet" with HiLink modems
+
 2019.04
 
 * Support FreeRADIUS 3

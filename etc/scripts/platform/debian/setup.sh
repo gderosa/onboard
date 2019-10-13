@@ -75,7 +75,7 @@ cd $PROJECT_ROOT
 
 apt-get update
 apt-get -y upgrade
-apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
+apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils usbutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
 # Optional, but useful tools when ssh'ing
 apt-get -y install vim-nox mc
 
@@ -162,3 +162,6 @@ systemctl start margay-persist  # Also resume dnsmasq after reconfig, it's not o
 cd $PROJECT_ROOT  # Apparently needed...
 
 setup_nginx
+
+# Remove packages conflicting with rou DHCP management
+dpkg -l | egrep '^i.\s+wicd-daemon' && apt-get -y remove wicd-daemon
