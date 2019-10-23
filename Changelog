@@ -1,3 +1,7 @@
+2019.10.01
+
+* Install / config usb-modeswitch for Huawei Hilink modems
+
 2019.10
 
 * Fix Hardware detection for network interfaces on Raspberry (and potentially other systems)
