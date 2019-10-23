@@ -18,54 +18,58 @@ APP_USER=${2:-'onboard'}
 CONFDIR=~$APP_USER/.onboard
 
 install_conffiles() {
-	install -bvC -m 644 doc/sysadm/examples/etc/dnsmasq.conf 		/etc/
-	install -bvC -m 644 doc/sysadm/examples/etc/sysctl.conf		    /etc/
+    # See README file in doc/sysadm/examples/ .
+    install -bvC -m 644 doc/sysadm/examples/etc/dnsmasq.conf            /etc/
+    install -bvC -m 644 doc/sysadm/examples/etc/sysctl.conf             /etc/
+
+    install -bvC -m 644 doc/sysadm/examples/etc/usb_modeswitch.conf     /etc/
+    install -bvC -m 644 doc/sysadm/examples/etc/usb_modeswitch.d/*:*    /etc/usb_modeswitch.d/
 }
 
 bundle_without_all_opts() {
-	# Avoid --without (empty)
-	without_opt=''
-	groups=''
-	for mod in `ls $PROJECT_ROOT/modules` ; do
-		if [ -f $PROJECT_ROOT/modules/$mod/Gemfile ]; then
-			without_opt='--without'
-			groups="$groups $mod"
-		fi
-	done
-	echo "$without_opt $groups" | xargs
+    # Avoid --without (empty)
+    without_opt=''
+    groups=''
+    for mod in `ls $PROJECT_ROOT/modules` ; do
+        if [ -f $PROJECT_ROOT/modules/$mod/Gemfile ]; then
+            without_opt='--without'
+            groups="$groups $mod"
+        fi
+    done
+    echo "$without_opt $groups" | xargs
 }
 
 disable_app_modules() {
-	for dir in $PROJECT_ROOT/modules/* ; do
-		if [ ! -d $CONFDIR ]; then
-			# If this is a fresh install (or a vagrant up after a vagrant destroy),
-			# the .enable file is likely stale; and we don't want to enable a module for which
-			# the dependencies are not installed yet.
-			rm -f $dir/.enable
-		fi
-		if [ ! -f $dir/.enable ]; then
-			file=$dir/.disable
-			touch $file
-			chown $APP_USER $file
-		fi
-	done
+    for dir in $PROJECT_ROOT/modules/* ; do
+        if [ ! -d $CONFDIR ]; then
+            # If this is a fresh install (or a vagrant up after a vagrant destroy),
+            # the .enable file is likely stale; and we don't want to enable a module for which
+            # the dependencies are not installed yet.
+            rm -f $dir/.enable
+        fi
+        if [ ! -f $dir/.enable ]; then
+            file=$dir/.disable
+            touch $file
+            chown $APP_USER $file
+        fi
+    done
 }
 
 disable_dhcpcd_master() {
-	# Even if no interface is configured with dhcp in /etc/network/interfaces,
-	# dhcpcd is a system(d) service, that starts as just "dhcpcd" (master mode)
-	# which is incompatible with onboard detection and control.
-	if (systemctl status dhcpcd > /dev/null); then
-		systemctl disable dhcpcd
-	fi
+    # Even if no interface is configured with dhcp in /etc/network/interfaces,
+    # dhcpcd is a system(d) service, that starts as just "dhcpcd" (master mode)
+    # which is incompatible with onboard detection and control.
+    if (systemctl status dhcpcd > /dev/null); then
+        systemctl disable dhcpcd
+    fi
 }
 
 setup_nginx() {
-	apt-get -y install nginx-light ssl-cert
-	rm -fv /etc/nginx/sites-enabled/default  # just a symlink
-	install -bvC -m 644 doc/sysadm/examples/etc/nginx/sites-available/margay /etc/nginx/sites-available/
-	ln -svf ../sites-available/margay /etc/nginx/sites-enabled/
-	systemctl reload nginx
+    apt-get -y install nginx-light ssl-cert
+    rm -fv /etc/nginx/sites-enabled/default  # just a symlink
+    install -bvC -m 644 doc/sysadm/examples/etc/nginx/sites-available/margay /etc/nginx/sites-available/
+    ln -svf ../sites-available/margay /etc/nginx/sites-enabled/
+    systemctl reload nginx
 }
 
 
@@ -75,7 +79,7 @@ cd $PROJECT_ROOT
 
 apt-get update
 apt-get -y upgrade
-apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils usbutils dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
+apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
 # Optional, but useful tools when ssh'ing
 apt-get -y install vim-nox mc
 
@@ -85,10 +89,10 @@ install_conffiles
 gem install --no-rdoc --no-ri  -v '~> 2' bundler
 
 su - $APP_USER -c "
-	cd $PROJECT_ROOT
-	# Module names are also Gemfile groups
-	echo Running: bundle install $(bundle_without_all_opts) ...
-	bundle install $(bundle_without_all_opts)
+    cd $PROJECT_ROOT
+    # Module names are also Gemfile groups
+    echo Running: bundle install $(bundle_without_all_opts) ...
+    bundle install $(bundle_without_all_opts)
 "
 
 modprobe nf_conntrack
@@ -106,11 +110,11 @@ sysctl --load=$PROJECT_ROOT/doc/sysadm/examples/etc/sysctl.conf
 # Disable the legacy SysV service, now "margay".
 # Use "onboard.service", not simply "onboard", to not confuse with mere user login session...
 if ( systemctl list-units --all | grep onboard.service ); then
-	# Stop if running
-	if ( systemctl status onboard.service ); then
-		systemctl stop onboard.service
-	fi
-	systemctl disable onboard.service
+    # Stop if running
+    if ( systemctl status onboard.service ); then
+        systemctl stop onboard.service
+    fi
+    systemctl disable onboard.service
 fi
 
 cat > /etc/systemd/system/margay.service <<EOF
