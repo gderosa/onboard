@@ -1,0 +1,5 @@
+sdio.ids was taken from Systemd:
+
+https://github.com/systemd/systemd/blob/349176ae6c095725ddc11599dd03c7f16a5bb099/hwdb.d/sdio.ids
+
+systemd is licenced under the LGPL 2.1, see https://github.com/systemd/ for more info.
