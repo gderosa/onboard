@@ -18,6 +18,7 @@ APP_USER=${2:-'onboard'}
 CONFDIR=~$APP_USER/.onboard
 
 install_conffiles() {
+    # See README file in doc/sysadm/examples/ .
     install -bvC -m 644 doc/sysadm/examples/etc/dnsmasq.conf            /etc/
     install -bvC -m 644 doc/sysadm/examples/etc/sysctl.conf             /etc/
 
