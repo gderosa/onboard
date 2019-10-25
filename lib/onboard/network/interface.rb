@@ -359,6 +359,7 @@ class OnBoard
             if saved_iface.ipassign[:method] == :static
               current_iface.assign_static_ips saved_iface.ip
             end
+            current_iface.set_preferred_metric saved_iface.preferred_metric if saved_iface.preferred_metric
           end
         end
 
@@ -461,6 +462,7 @@ class OnBoard
       def is_bridged?; bridged_to; end
 
       def set_preferred_metric(_preferred_metric)
+        # TODO: use tmpfs?
         metrics_dir = OnBoard::CONFDIR + '/network/interfaces/preferred_metrics/new'
         metric_file = metrics_dir + '/' + @name
         @preferred_metric = _preferred_metric
