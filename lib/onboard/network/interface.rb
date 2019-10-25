@@ -1,5 +1,6 @@
 require 'timeout'
 require 'yaml'
+require 'fileutils'
 
 require 'onboard/network/interface/mac'
 require 'onboard/network/interface/ip'
@@ -57,7 +58,7 @@ class OnBoard
       }
 
       # sort by muliple criteria
-# http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
+      # http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
       #
       # in practice, you are sorting an Enumerable made up of Arrays
 
@@ -81,6 +82,9 @@ class OnBoard
           ary += @@all_layer3
           @@all_layer2.each do |netif|
             ary << netif unless ary.detect {|x| x.name == netif.name}
+          end
+          @@all_layer3.each do |netif|
+            netif.get_preferred_metric!
           end
           return @@all = ary
         end
@@ -363,7 +367,7 @@ class OnBoard
 
       # Instance methods and attributes.
 
-      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid
+      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
       attr_accessor :ipassign, :type, :wifi_properties
 
       include OnBoard::System
@@ -456,7 +460,38 @@ class OnBoard
 
       def is_bridged?; bridged_to; end
 
+      def set_preferred_metric(_preferred_metric)
+        metrics_dir = OnBoard::CONFDIR + '/network/interfaces/preferred_metrics/new'
+        metric_file = metrics_dir + '/' + @name
+        @preferred_metric = _preferred_metric
+        FileUtils.mkdir_p metrics_dir
+        File.open(metric_file, 'w') do |f|
+          f.write @preferred_metric.to_s
+        end
+      end
+
+      def get_preferred_metric!
+        # gets from file but set in the object!
+        metrics_dir = OnBoard::CONFDIR + '/network/interfaces/preferred_metrics/new'
+        metric_file = metrics_dir + '/' + @name
+        if File.exists? metric_file
+          File.open(metric_file, 'r') do |f|
+            metric_data = f.read
+            if metric_data =~ /\d/
+              @preferred_metric = metric_data.to_i
+            else
+              @preferred_metric = metric_data.to_s 
+            end
+          end
+        end
+      end
+
       def modify_from_HTTP_request(h)
+
+        if h['preferred_metric']
+          set_preferred_metric h['preferred_metric']
+        end
+
         if h['active'] =~ /on|yes|1/
           #Command.run "ip link set #{@name} up", :sudo unless @active # DRY!
           ip_link_set_up unless @active

@@ -3,7 +3,7 @@
   require "onboard/extensions/string"
   require "onboard/network/interface"
 %>
-  <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method Preferred\ Metric Vendor/Model Bus} %>
+  <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method Preferred<br/>Metric Vendor/Model Bus} %>
   <% colspans = [1, 2, 1, 1, 1, 1, 1, 1, 1, 1] %>
   <form method="post"> 
     <input type="hidden" name="_method" value="put"/>
