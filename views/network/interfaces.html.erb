@@ -30,11 +30,24 @@
 <% end %>
 
 <div class="warn">
-Please note: changes to interface routing <span class="th-like">Metric</span>s will only be effective
+<p>On <span class="th-like">Preferred Metric</span>, please note:
+changes to interface routing metrics will only be effective
 the next time
-IP configuration is negotiated via DHCP, or the next time
-a <a href="routing/tables/main.html">static route</a> is added or replaced.
-Check to <a href="routing/tables/main.html">routing table</a> to see the actual metrics
-(optionally, you may want to check routing tables <a href="routing/tables/main.html">other than the main one</a>
-if <a href="routing/rules.html">policy routing</a> is used).
+IP configuration is negotiated via DHCP,
+or possibly other auto configuration mechanisms.
+
+<p>For statically configured interfaces, the <span class="th-like">Preferred Metric</span>
+is simply a <em>default</em> value that will be used when adding or replacing
+<a href="routing/tables/main.html">static&nbsp;routes</a> [*].
+
+<p>Please refer to the <a href="routing/tables/main.html">main routing table</a>
+page
+to see the route metrics currently in effect [*].
+
+<hr>
+
+<p class="footnote">[*]
+If <a href="routing/rules.html">policy routing</a> is used,
+<a href="routing/tables/main.html">routing tables other than the main one</a>
+may need to be considered too.
 </div>
