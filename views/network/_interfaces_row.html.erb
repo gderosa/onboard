@@ -125,6 +125,7 @@
                 <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
               <% end %>
             </td> 
+            <td>the preferred metric</td>
             <td>
               <% 
                 str = ''
