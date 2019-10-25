@@ -17,9 +17,9 @@ class OnBoard
       # Constants
 
       DHCPC_ATTEMPTS = [
-        lambda{|ifname| System::Command.send_command  "dhcpcd5  -b  -p  #{ifname}", :sudo},
-        lambda{|ifname| System::Command.send_command  "dhcpcd   -b  -p  #{ifname}", :sudo},
-        lambda{|ifname| System::Command.bgexec        "dhcpcd       -p  #{ifname}", :sudo},
+        lambda{|ifname, metric_switch| System::Command.send_command  "dhcpcd5  -b  -p  #{metric_switch} #{ifname}", :sudo},
+        lambda{|ifname, metric_switch| System::Command.send_command  "dhcpcd   -b  -p  #{metric_switch} #{ifname}", :sudo},
+        lambda{|ifname, metric_switch| System::Command.bgexec        "dhcpcd       -p  #{metric_switch} #{ifname}", :sudo},
       ]
 
       TYPES = {
@@ -549,10 +549,17 @@ class OnBoard
       end
       alias ip_addr_flush flush_ip
 
+      def dhcpcd_metric_switch
+        if @preferred_metric =~ /\d/
+          return "-m #{@preferred_metric}"
+        end
+        return ''
+      end
+
       def start_dhcp_client
         success = nil
         DHCPC_ATTEMPTS.each do |lmbda|
-          success = lmbda.call @name
+          success = lmbda.call @name, dhcpcd_metric_switch
           break if success
         end
         sleep(0.1) # horrible
