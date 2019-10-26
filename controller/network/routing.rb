@@ -121,7 +121,7 @@ class OnBoard::Controller
     if params['name']
       name = params['name'].strip.gsub(' ', '_') 
       #
-      # One may just want to chenge the comment...
+      # One may just want to change the comment...
       #
       #if names.include? name 
       #  status 409 # HTTP Conflict!

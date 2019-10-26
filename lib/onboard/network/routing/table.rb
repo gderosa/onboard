@@ -5,6 +5,7 @@ require 'onboard/extensions/ipaddr'
 require 'onboard/system/command'
 require 'onboard/network/routing/constants'
 require 'onboard/network/routing/route'
+require 'onboard/network/interface'
 
 
 class OnBoard
@@ -208,7 +209,32 @@ class OnBoard
           end
           str << "via #{params['gw']} "   if params['gw']   =~ /[\da-f:]/i
           str << "dev #{params['dev']} "  if params['dev']  =~ /\S/
+
+          # set metric
+          metric = nil
+          if params['metric'] =~ /\d/
+            metric = params['metric']
+          else
+            ifname = nil
+            if params['dev'] =~ /\S/
+              ifname = params['dev']
+            elsif params['gw']   =~ /[\da-f:]/i
+              route_line = `ip route get #{params['gw']} | grep dev`
+              if route_line =~ /dev\s+(\S+)/
+                ifname = $1
+              end
+            end
+            if ifname
+              iface = Network::Interface.new :name => ifname
+              iface.get_preferred_metric!
+              metric = iface.preferred_metric
+            end
+          end
+          str << "metric #{metric} " if metric
+          # end set metric
+
           str << "proto static "
+
           table = self.get(params['table'])
           result = table.ip_route_add(str.strip, :try)
           if not result[:ok] 
