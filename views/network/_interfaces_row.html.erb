@@ -125,8 +125,8 @@
                 <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
               <% end %>
               <% if netif.ipassign[:method] == :dhcp%>
-                <div style="display:inline-block; margin-left:0.4em;">
-                  <span style="vertical-align:bottom">+Renew</span><input type="checkbox" name="netifs[<%= netif.name %>][ipassign][renew]">
+                <div style="display:inline-block; text-align:right; white-space:nowrap; padding-left:1ex">
+                  <span style="vertical-align:bottom">+Renew</span><input type="checkbox" title="Force renewal of the DHCP lease (this includes setting the Preferred Metric for the interface)" name="netifs[<%= netif.name %>][ipassign][renew]">
                 </div>
               <% end %>
             </td> 
