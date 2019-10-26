@@ -117,7 +117,6 @@ class OnBoard
                 :qdisc      => $5,
                 :state      => $6
               }
-              #puts netif_h[:name] # DEBUG
               if netif_h[:state] == "UNKNOWN"
                 if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
@@ -340,11 +339,12 @@ class OnBoard
               end
             end
             if saved_iface.active
-              if saved_iface.ipassign[:method] == :static and
-                  current_iface.ipassign[:method] == :dhcp
+              # Stop dhcp if saved as static, restart anyway if saved as dhcp.
+              # Restarting/refreshing dhcp client is needed, among other things, to set route metrics.
+              if current_iface.ipassign[:method] == :dhcp
                 current_iface.stop_dhcp_client
-              elsif current_iface.ipassign[:method] == :static and
-                  saved_iface.ipassign[:method] == :dhcp
+              end
+              if saved_iface.ipassign[:method] == :dhcp
                 current_iface.start_dhcp_client
               end
             end
@@ -554,7 +554,7 @@ class OnBoard
       alias ip_addr_flush flush_ip
 
       def dhcpcd_metric_switch
-        if @preferred_metric =~ /\d/
+        if @preferred_metric.is_a? Integer or @preferred_metric =~ /\d/
           return "-m #{@preferred_metric}"
         end
         return ''
