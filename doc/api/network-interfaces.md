@@ -72,180 +72,23 @@ is advised to change this in production.
 For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<password> <URL>`
 &mdash; or `curl -u <username> <URL>` and enter the password when prompted.
 
-## RADIUS items overview
 
-This document assumes
-[a basic grasp of AAA/RADIUS concepts](https://freeradius.org/documentation/):
-user, groups, attributes; or at least an intuition of them once they
-are listed and briefly described, and
-a basic understanding of the purposes of network
-Authentication Authorization and Accouting.
+# *Network Interfaces*
 
-`users` and `groups` keywords will appear, for example,
-as part of URLs, and there will be path parameters
-such as `:username` and `:groupname`.
-
-RADIUS attribute names such as `Login-Time` or `User-Password` etc.
-will appear as JSON properties in various data shapes
-within this guide.
-
-"`check`" and "`reply`" will also appear as JSON properties in various
-payloads, as they indicate a general classification of RADIUS attributes.
-
-This web service manages *some* attributes in particular, which are believed
-useful for most use cases.
-
-Except those explicitly starting with `User-` or `Group-`,
-attributes may generally refer to an user and/or to a group.
-
-### Check Attributes
-
-|Name           |Description and possible values|
-|---            |---                                                                              |
-|"User-Name"    |RADIUS username                                                                  |
-|"Group-Name"   |RADIUS group name                                                                |
-|"Password-Type"|Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, <br/> `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
-|"User-Password"|The user password.|
-|"Auth-Type"    |Sould generaly not be set, unless user must be always accepted (`Accept`) <br/> or rejected (`Reject`).|
-|"Login-Time"   |The time span a user may login to the system, more info [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
-
-
-### Reply Attributes
-
-|Name                       |Description and possible values|
-|---                        |---|
-|"Reply-Message"            |A post-login message, generally displayed by captive portal popups etc.|
-|"Session-Timeout"          |Max connection time (seconds).|
-|"Idle-Timeout"             |Max inactivity time (seconds).|
-|"WISPr-Bandwidth-Max-Down" |Max Downstream bandwidth (bits/sec).|
-|"WISPr-Bandwidth-Max-Up"   |Max Upstream bandwidth (bits/sec).|
-
-# *Part I. Users*
-
-## List Users (GET)
+## List Network Interfaces (GET)
 
 ```http
-GET http://localhost:4567/api/v1/services/radius/users HTTP/1.1
+GET http://localhost:4567/api/v1/network/interfaces HTTP/1.1
 
 Accept: application/json
 ```
 
-Returns a paginated list of all RADIUS users. A specific page or page size can
-be requested via optional parameters e.g.<br/>
-`GET /api/v1/services/radius/users?page=2&per_page=7`.
-
-### Parameters
-<!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#noa3))  |Type   |Required |Description                                  |
-|---        |---  |---    |---      |---                                          |
-|page       |query|integer|false    |Page within pagination.                      |
-|per_page   |query|integer|false    |Maximum number of results to return per page.|
+Returns the list of all network interfaces, with their IP addresses and other information.
 
 ### Example response body
 
 ```javascript
-{
-  "total_items": 1,
-  "page": 1,
-  "per_page": 10,
-  "users": [
-    {
-      "name": "georgeboole",
-      "check": [
-        {
-          "Id": 1,
-          "User-Name": "georgeboole",
-          "Attribute": "User-Name",
-          "Operator": ":=",
-          "Value": "georgeboole"
-        },
-        {
-          "Id": 16,
-          "User-Name": "georgeboole",
-          "Attribute": "SSHA1-Password",
-          "Operator": ":=",
-          "Value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=="
-        },
-        {
-          "Id": 18,
-          "User-Name": "georgeboole",
-          "Attribute": "Login-Time",
-          "Operator": ":=",
-          "Value": "Wk2305-0855,Sa,Su2305-1655"
-        }
-      ],
-      "reply": [
-        {
-          "Id": 6,
-          "User-Name": "georgeboole",
-          "Attribute": "Reply-Message",
-          "Operator": ":=",
-          "Value": "my reply msg"
-        },
-        {
-          "Id": 7,
-          "User-Name": "georgeboole",
-          "Attribute": "Session-Timeout",
-          "Operator": ":=",
-          "Value": "7200"
-        },
-        {
-          "Id": 8,
-          "User-Name": "georgeboole",
-          "Attribute": "Idle-Timeout",
-          "Operator": ":=",
-          "Value": "1800"
-        },
-        {
-          "Id": 9,
-          "User-Name": "georgeboole",
-          "Attribute": "WISPr-Bandwidth-Max-Down",
-          "Operator": ":=",
-          "Value": "800000"
-        },
-        {
-          "Id": 10,
-          "User-Name": "georgeboole",
-          "Attribute": "WISPr-Bandwidth-Max-Up",
-          "Operator": ":=",
-          "Value": "400000"
-        },
-        {
-          "Id": 110,
-          "User-Name": "georgeboole",
-          "Attribute": "Fall-Through",
-          "Operator": "=",
-          "Value": "yes"
-        }
-      ],
-      "groups": [],
-      "personal": {
-        "Id": 2,
-        "User-Name": "georgeboole",
-        "First-Name": "George",
-        "Last-Name": "Boole",
-        "Email": "george.boole@domain",
-        "Work-Phone": null,
-        "Home-Phone": null,
-        "Mobile-Phone": null,
-        "Address": null,
-        "City": null,
-        "State": null,
-        "Country": null,
-        "Postal-Code": null,
-        "Notes": null,
-        "Creation-Date": "2019-04-18 18:10:02 +0000",
-        "Update-Date": null,
-        "Birth-Date": "1815-11-02",
-        "Birth-City": null,
-        "Birth-State": null,
-        "ID-Code": null,
-        "Attachments": []
-      },
-      "accepted_terms": null
-    }
-  ]
-}
+
 ```
 
 ## GET a User
