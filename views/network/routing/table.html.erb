@@ -16,8 +16,8 @@
 <h2><%= title %></h2>
 
 <% 
-  fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Static?} 
-  colspans   =   [1, 1, 1, 1, 1,  1, 1]
+  fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Static? Metric} 
+  colspans   =   [1, 1, 1, 1, 1,  1, 1, 1]
 %>
 
 <% 
@@ -106,6 +106,9 @@
         </td>
         <td style="text-align: center;">
           <%= yes_no_icon(route.static?, :print_no) %>
+        </td>
+        <td style="text-align: right; padding-right: 1em">
+          <%= route.metric %>
         </td>
       </form>
     </tr>

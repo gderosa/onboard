@@ -151,7 +151,7 @@ class OnBoard
               :gw         => $5,
               :dev        => $7,
               :proto      => $11,
-              :metric     => $13,
+              :metric     => $13,  # buggy, parse again below
               :mtu        => $15,
               :advmss     => $17,
               :error      => $19,
@@ -163,7 +163,9 @@ class OnBoard
                 line.sub(/^(#{rttypes})/, '').gsub(/(table|proto) \S+/, '')
             h[:rawline] = rawline
           end
-          #pp h
+          if line =~ /\smetric\s+(\d+)/
+            h[:metric] = $1.to_i
+          end
           return Route.new h
         end
 
