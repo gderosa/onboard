@@ -502,10 +502,15 @@ class OnBoard
           elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'static'
             stop_dhcp_client h['ipassign']['pid']
             assign_static_ips h['ip']
+          elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'dhcp'
+            if ['on', true].include? h['ipassign']['renew']
+              stop_dhcp_client h['ipassign']['pid']
+              start_dhcp_client
+            end
           elsif
               @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
             assign_static_ips h['ip']
-          end # if was dhcp and shall be dhcp... simply do nothing :-)
+          end
         elsif @active
           stop_dhcp_client h['ipassign']['pid'] if h['ipassign']['pid'] =~ /\d+/
           #flush_ip
@@ -515,7 +520,6 @@ class OnBoard
         if @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
             assign_static_ips h['ip']
         end
-        # if was dhcp and shall be dhcp... simply do nothing :-)
       end
 
       def has_ip?(ipobj)
