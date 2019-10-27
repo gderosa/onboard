@@ -249,237 +249,57 @@ Returns the list of all network interfaces, with their IP addresses and other in
 ]
 ```
 
-## GET a User
-
-Retrieve information about a particular user, identified by username.
+## Modify Network Interface config (PUT)
 
 ```http
-GET http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
-
-Accept: application/json
-```
-
-### Parameters
-<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#noa3)) |Type   |Required |Description                                  |
-|---        |---  |---    |---      |---                                          |
-|username   |path |string |true     |RADIUS username.                             |
-
-### Response body
-
-An object with just one property, "`user`", whose value is of the same shape of
-one element of the array "`users`" in [List Users](#list-users-get).
-
-For example:
-
-```javascript
-{
-  "user": {
-    "name": "georgeboole",
-    "check": [
-      {
-        "Id": 1,
-        "User-Name": "georgeboole",
-        "Attribute": "User-Name",
-        "Operator": ":=",
-        "Value": "georgeboole"
-      },
-      {
-        "Id": 16,
-        "User-Name": "georgeboole",
-        "Attribute": "SSHA1-Password",
-        "Operator": ":=",
-        "Value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=="
-      },
-      {
-        "Id": 18,
-        "User-Name": "georgeboole",
-        "Attribute": "Login-Time",
-        "Operator": ":=",
-        "Value": "Wk2305-0855,Sa,Su2305-1655"
-      }
-    ],
-    "reply": [
-      {
-        "Id": 6,
-        "User-Name": "georgeboole",
-        "Attribute": "Reply-Message",
-        "Operator": ":=",
-        "Value": "my reply msg"
-      },
-      {
-        "Id": 7,
-        "User-Name": "georgeboole",
-        "Attribute": "Session-Timeout",
-        "Operator": ":=",
-        "Value": "7200"
-      },
-      {
-        "Id": 8,
-        "User-Name": "georgeboole",
-        "Attribute": "Idle-Timeout",
-        "Operator": ":=",
-        "Value": "1800"
-      },
-      {
-        "Id": 9,
-        "User-Name": "georgeboole",
-        "Attribute": "WISPr-Bandwidth-Max-Down",
-        "Operator": ":=",
-        "Value": "800000"
-      },
-      {
-        "Id": 10,
-        "User-Name": "georgeboole",
-        "Attribute": "WISPr-Bandwidth-Max-Up",
-        "Operator": ":=",
-        "Value": "400000"
-      },
-      {
-        "Id": 110,
-        "User-Name": "georgeboole",
-        "Attribute": "Fall-Through",
-        "Operator": "=",
-        "Value": "yes"
-      }
-    ],
-    "groups": [
-      // ...
-    ],
-    "personal": [
-      // ...
-    ],
-    "accepted_terms": [
-      //
-    ]
-  }
-}
-```
-
-## Create a User (POST)
-
-```http
-POST http://localhost:4567/api/v1/services/radius/users HTTP/1.1
+PUT http://localhost:4567/api/v1/network/interfaces HTTP/1.1
 
 Content-Type: application/json
 Accept: application/json
 ```
 
-Creates a new RADIUS user.
-
-<a name="create-user-example-body"></a>
-### Example request body
+### Example Request body
 
 ```javascript
 {
-  "check": {
-    "User-Name": "georgeboole",
-    "Password-Type": "SSHA1-Password",
-    "User-Password": "the_password"
-  },
-  "confirm": {
-    "check": {
-      "User-Password": "the_password"
+  "netifs": {
+    "eth0": {
+      "active": "on",
+      "ip": {
+        "0": "192.168.177.4/24",
+        "1": "fe80::ba27:ebff:fe61:dd6b/64",
+        "2": "[add new]"
+      },
+      "ipassign": {
+        "method": "dhcp",
+      },
+      "preferred_metric": ""
+    },
+    "eth1": {
+      "active": "on",
+      "ip": {
+        "0": "192.168.1.100/24",
+        "1": "fe80::92cc:a2cb:f069:501d/64"
+      },
+      "ipassign": {
+        "method": "dhcp",
+        "renew": true
+      },
+      "preferred_metric": "100"
+    },
+    "wlan0": {
+      "active": false,
+      "ipassign": {
+        "method": "static",
+        "pid": "",
+        "cmd": "",
+        "args": ""
+      },
+      "preferred_metric": ""
     }
-  },
-  "reply": {
-    "Reply-Message": "my reply msg",
-    "Session-Timeout": "7200",
-    "Idle-Timeout": "1800",
-    "WISPr-Bandwidth-Max-Down": "500000",
-    "WISPr-Bandwidth-Max-Up": "250000"
-  },
-  "personal": {
-    "First-Name": "George",
-    "Last-Name": "Boole",
-    "Email": "george.boole@domain",
-    "Birth-Date": "1815-11-02"
   }
 }
 ```
-
-### Request body properties
-
-The JSON object sent with the request has four main properties,
-each of them has their sub-properties, some are required, some are not.
-The example above include all mandatory sub-properties and *some* optional ones.
-
-The main properties are:
-
-* `check`: RADIUS Check Attributes
-* `confirm`: Currently only used as a redundancy check for `check` -> `User-Password`
-* `reply`: RADIUS Reply Attributes
-* `personal`: non-RADIUS information, used to store personal user information for hotspot management; they are all optional
-
-Please note most values (e.g. Idle-Timeout), that are semantically numbers,
-are actually encoded as strings (what reported in the tables below is not a mistake).
-This is because of the way those data are stored in the RADIUS database,
-and this API does not attempt to hide that. Therefore, values will need to be quoted,
-e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
-
-#### `check` attributes
-
-|Parent |Name           |Type   |Required |Description                                                                      |
-|---    |---            |---    |---      |---                                                                              |
-|"check"|"User-Name"    |string |true     |RADIUS username                                                                  |
-|"check"|"Password-Type"|string |true     |Any of `SSHA1-Password` (recommended), <br/> `SHA1-Password`, `SMD5-Password`, `MD5-Password`, <br/> `Crypt-Password`, `Cleartext-Password`.|
-|"check"|"User-Password"|string |true     |The user password.|
-|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) <br/> or rejected (`Reject`).       |
-|"check"|"Login-Time"   |string |false    |The time span a user may login to the system, <br/> more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
-
-#### `confirm` attributes
-
-|Parent           |Name                   |Type   |Required |Description                                                                      |
-|---              |---                    |---    |---      |---                                                                              |
-|"confirm"."check"|"User&#8209;Password"  |string |true     |The value MUST be the same as "check" . "User&#8209;Password"|
-
-#### `reply` attributes
-
-|Parent |Name                       |Type   |Required |Description|
-|---    |---                        |---    |---      |---|
-|"reply"|"Reply-Message"            |string |false    |A post-login message, generally displayed <br/> by captive portal popups etc.|
-|"reply"|"Session-Timeout"          |string |false    |Max connection time (seconds).|
-|"reply"|"Idle-Timeout"             |string |false    |Max inactivity time (seconds).|
-|"reply"|"WISPr-Bandwidth-Max-Down" |string |false    |Max Downstream bandwidth (bits/sec).|
-|"reply"|"WISPr-Bandwidth-Max-Up"   |string |false    |Max Upstream bandwidth (bits/sec).|
-
-#### `personal` information
-|Parent     |Name                       |Type   |Required |Description / Info<br/>(if not obvious)|
-|---        |---                        |---    |---      |---|
-|"personal" |"First-Name"               |string |false    ||
-|"personal" |"Last-Name"                |string |false    ||
-|"personal" |"Email"                    |string |false    ||
-|"personal" |"Birth-Date"               |string |false    |Format: "YYYY-MM-DD" .|
-|"personal" |"Birth-City"               |string |false    ||
-|"personal" |"Birth-State"              |string |false    |U.S. state, or province, county etc. in other countries.|
-|"personal" |"Address"                  |string |false    ||
-|"personal" |"City"                     |string |false    ||
-|"personal" |"State"                    |string |false    |U.S. state, or province, county etc. in other countries.|
-|"personal" |"Postal-Code"              |string |false    ||
-|"personal" |"Work-Phone"               |string |false    ||
-|"personal" |"Home-Phone"               |string |false    ||
-|"personal" |"Mobile-Phone"             |string |false    ||
-|"personal" |"ID-Code"                  |string |false    |e.g. Tax code, PPSN, SSN etc.|
-|"personal" |"Notes"                    |string |false    |Optional notes, possibly multi-line.|
-
-## Modify a User / replace data (PUT)
-
-```http
-PUT http://localhost:4567/api/v1/services/radius/users/:username HTTP/1.1
-
-Content-Type: application/json
-Accept: application/json
-```
-
-### Parameters
-<!-- for "In", we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
-|Name       |In ([*](#noa3)) |Type   |Required |Description                                  |
-|---        |---  |---    |---      |---                                          |
-|username   |path |string |true     |RADIUS username.                             |
-
-### Request body
-
-Same as in [Create User (POST)](#create-a-user-post), except you can't modify the username.
 
 ## DELETE a User
 
