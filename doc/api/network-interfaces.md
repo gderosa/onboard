@@ -85,10 +85,168 @@ Accept: application/json
 
 Returns the list of all network interfaces, with their IP addresses and other information.
 
+### Parameters
+<!-- we try to follow this classification, as possible: https://swagger.io/docs/specification/describing-parameters/ -->
+|Name       |In   |Type   |Required |Description                                                      |
+|---        |---  |---    |---      |---                                                              |
+|view       |query|string |false    |`view=all` also shows loopbacks, IPv6 link-local addresses etc.  |
+
 ### Example response body
 
 ```javascript
-
+[
+  {
+    "name": "lo",
+    "misc": [
+      "LOOPBACK",
+      "UP",
+      "LOWER_UP"
+    ],
+    "qdisc": "noqueue",
+    "state": "UP",
+    "type": "loopback",
+    "active": true,
+    "n": 1,
+    "mtu": 65536,
+    "mac": "00:00:00:00:00:00",
+    "ip": [
+      {
+        "addr": "127.0.0.1",
+        "prefixlen": 8,
+        "scope": "host",
+        "af": "inet"
+      },
+      {
+        "addr": "fe80::8dce:da54:d396:c959",
+        "prefixlen": 64,
+        "scope": "link",
+        "af": "inet6"
+      },
+      {
+        "addr": "::1",
+        "prefixlen": 128,
+        "scope": "host",
+        "af": "inet6"
+      }
+    ],
+    "ipassign": {
+      "method": "static",
+      "pid": 0,
+      "cmd": null,
+      "args": null
+    },
+    "wifi_properties": null
+  },
+  {
+    "name": "eth0",
+    "misc": [
+      "BROADCAST",
+      "MULTICAST",
+      "UP",
+      "LOWER_UP"
+    ],
+    "qdisc": "pfifo_fast",
+    "state": "UP",
+    "type": "ether",
+    "vendor": "Standard Microsystems Corp.",
+    "model": "",
+    "bus": "usb",
+    "active": true,
+    "n": 2,
+    "mtu": 1500,
+    "mac": "b8:27:eb:61:dd:6b",
+    "ip": [
+      {
+        "addr": "192.168.177.4",
+        "prefixlen": 24,
+        "scope": "global",
+        "af": "inet"
+      },
+      {
+        "addr": "fe80::ba27:ebff:fe61:dd6b",
+        "prefixlen": 64,
+        "scope": "link",
+        "af": "inet6"
+      }
+    ],
+    "ipassign": {
+      "method": "static",
+      "pid": 0,
+      "cmd": null,
+      "args": null
+    },
+    "wifi_properties": null
+  },
+  {
+    "name": "eth1",
+    "misc": [
+      "BROADCAST",
+      "MULTICAST",
+      "UP",
+      "LOWER_UP"
+    ],
+    "qdisc": "pfifo_fast",
+    "state": "UP",
+    "type": "ether:usbmodem",
+    "vendor": "Huawei Technologies Co., Ltd.",
+    "model": "E353/E3131",
+    "bus": "usb",
+    "active": true,
+    "n": 4,
+    "mtu": 1500,
+    "mac": "58:2c:80:13:92:63",
+    "ip": [
+      {
+        "addr": "192.168.1.100",
+        "prefixlen": 24,
+        "scope": "global",
+        "af": "inet"
+      },
+      {
+        "addr": "fe80::92cc:a2cb:f069:501d",
+        "prefixlen": 64,
+        "scope": "link",
+        "af": "inet6"
+      }
+    ],
+    "ipassign": {
+      "method": "dhcp",
+      "pid": 11135,
+      "cmd": "dhcpcd5",
+      "args": "-b -p -m 2001 eth1"
+    },
+    "wifi_properties": null
+  },
+  {
+    "name": "wlan0",
+    "misc": [
+      "NO-CARRIER",
+      "BROADCAST",
+      "MULTICAST",
+      "UP"
+    ],
+    "qdisc": "pfifo_fast",
+    "state": "NO-CARRIER",
+    "type": "wi-fi",
+    "vendor": "Broadcom Corp.",
+    "model": "BCM43438 combo WLAN and Bluetooth Low Energy (BLE)",
+    "bus": "sdio",
+    "active": true,
+    "n": 3,
+    "mtu": 1500,
+    "mac": "b8:27:eb:34:88:3e",
+    "ip": null,
+    "ipassign": {
+      "method": "static",
+      "pid": 0,
+      "cmd": null,
+      "args": null
+    },
+    "wifi_properties": {
+      "master": null
+    }
+  }
+]
 ```
 
 ## GET a User
