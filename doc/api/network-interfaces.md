@@ -272,7 +272,7 @@ The below example:
 {
   "netifs": {
     "eth0": {
-      "active": "on",
+      "active": true,
       "ip": [
         "192.168.177.4/24",
         "fe80::ba27:ebff:fe61:dd6b/64"
@@ -283,7 +283,7 @@ The below example:
       "preferred_metric": ""
     },
     "eth1": {
-      "active": "on",
+      "active": true,
       "ip": [
         "192.168.1.100/24",
         "fe80::92cc:a2cb:f069:501d/64",
@@ -314,7 +314,7 @@ the DHCP client.
 {
   "netifs": {
     "eth0": {
-      "active": "on",
+      "active": true,
       "ip": [
         "192.168.177.4/24",
         "fe80::ba27:ebff:fe61:dd6b/64"

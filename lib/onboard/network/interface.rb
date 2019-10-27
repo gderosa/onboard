@@ -494,8 +494,9 @@ class OnBoard
           set_preferred_metric h['preferred_metric']
         end
 
-        if h['active'] =~ /on|yes|1/
-          #Command.run "ip link set #{@name} up", :sudo unless @active # DRY!
+        # Works with "on" from HTML form and true (boolean) from JSON clients
+        # (No one uses "off" or any other "truthy no's").
+        if ['on', true].include? h['active']
           ip_link_set_up unless @active
           if @ipassign[:method] == :static and h['ipassign']['method'] == 'dhcp'
             start_dhcp_client
