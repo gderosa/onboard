@@ -178,10 +178,20 @@ class OnBoard
         #
         # Just a wrapper around OnBoard::Network::Interface#assign_static_ip, 
         # which was designed to get form data, not saved marshaled objects.
+        #
+        # Also, we consider the JSON client,
+        # which is "ReSTfully happy" to send ["1.1.1.1/1", "2.2.2.2/2"]
+        # rather than {"0": "1.1.1.1/1", "1": "2.2.2.2/2"}.
         def self.ary_to_StringHash(ipary)
           h = {}
           ipary.each_with_index do |ip_obj, ip_idx|
-            h[ip_idx.to_s] = ip_obj.addr.to_s + '/' + ip_obj.prefixlen.to_s
+            ip_fulladdr_str = case ip_obj
+            when String
+              ip_obj
+            else
+              ip_obj.addr.to_s + '/' + ip_obj.prefixlen.to_s
+            end
+            h[ip_idx.to_s] = ip_fulladdr_str
           end
           return h
         end
