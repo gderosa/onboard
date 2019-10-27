@@ -570,7 +570,9 @@ class OnBoard
         return success
       end
 
-      def stop_dhcp_client(pid=@ipassign[:pid])
+      def stop_dhcp_client(pid=nil)
+        # Sometimes it's actually called with a nil arg, so just setting a default is not enough
+        pid = @ipassign[:pid] unless pid and pid != 0
         Command.run "kill #{pid}", :sudo # apparently dhcpcd --release #{@name} is useless...
       end
 
