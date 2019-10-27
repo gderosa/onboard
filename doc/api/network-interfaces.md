@@ -315,10 +315,6 @@ the DHCP client.
   "netifs": {
     "eth0": {
       "active": true,
-      "ip": [
-        "192.168.177.4/24",
-        "fe80::ba27:ebff:fe61:dd6b/64"
-      ],
       "ipassign": {
         "method": "dhcp",
         "renew": true
