@@ -260,42 +260,70 @@ Accept: application/json
 
 ### Example Request body
 
+The below example:
+
+* Turns `eth0` into DHCP.
+* Set the preferred metric for `eth0` to "empty" i.e. system defaults will be used.
+* Kills the DHCP client for `eth1` (by setting `"ipassign": {"method": "static"}`)
+* Set the preferred metric for `eth1` to `100`.
+* Brings the wireless interface `wlan0` down.
+
 ```javascript
 {
   "netifs": {
     "eth0": {
       "active": "on",
-      "ip": {
-        "0": "192.168.177.4/24",
-        "1": "fe80::ba27:ebff:fe61:dd6b/64",
-        "2": "[add new]"
-      },
+      "ip": [
+        "192.168.177.4/24",
+        "fe80::ba27:ebff:fe61:dd6b/64"
+      ],
       "ipassign": {
-        "method": "dhcp",
+        "method": "dhcp"
       },
       "preferred_metric": ""
     },
     "eth1": {
       "active": "on",
-      "ip": {
-        "0": "192.168.1.100/24",
-        "1": "fe80::92cc:a2cb:f069:501d/64"
-      },
+      "ip": [
+        "192.168.1.100/24",
+        "fe80::92cc:a2cb:f069:501d/64",
+        "66.66.66.66/26"
+      ],
       "ipassign": {
-        "method": "dhcp",
-        "renew": true
+        "method": "static"
       },
       "preferred_metric": "100"
     },
     "wlan0": {
       "active": false,
       "ipassign": {
-        "method": "static",
-        "pid": "",
-        "cmd": "",
-        "args": ""
+        "method": "static"
       },
       "preferred_metric": ""
+    }
+  }
+}
+```
+
+Another example: `eth0` will remain managed by DHCP,
+but we change the preferred metric for the interface to `200`,
+and enforce the new metric immediately by restarting (`"ipassign": {"renew": true}`)
+the DHCP client.
+
+```javascript
+{
+  "netifs": {
+    "eth0": {
+      "active": "on",
+      "ip": [
+        "192.168.177.4/24",
+        "fe80::ba27:ebff:fe61:dd6b/64"
+      ],
+      "ipassign": {
+        "method": "dhcp",
+        "renew": true
+      },
+      "preferred_metric": 200
     }
   }
 }
