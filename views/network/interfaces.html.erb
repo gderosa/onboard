@@ -30,17 +30,19 @@
 <% end %>
 
 <div class="warn">
-<p>Please note interface route <span class="th-like">Metric</span>s
+<p>Please note <span class="th-like">Preferred Metric</span>s
 will only be effective
-the next time
-IP configuration is negotiated via DHCP
-(or other auto configuration mechanisms).
-
-<p>For statically configured interfaces, the <span class="th-like">Preferred Metric</span>
-is simply a <em>default</em> value that will be used when adding or replacing
-<a href="routing/tables/main.html">static&nbsp;routes</a> [*].
-
-<p>Please refer to the <a href="routing/tables/main.html">main routing table page</a>
+the next time:
+<ul>
+  <li>IP configuration is negotiated via DHCP
+    (check the <span class="th-like">Renew</span><input type="checkbox" disabled/> box
+    before <span class="btn-like">Submit!</span>-ing); or
+  <li>For statically configured interfaces,
+    a <a href="routing/tables/main.html">static&nbsp;route</a>[*] is
+    added or replaced.
+</ul>
+<p>This is because, internally, metrics are fundamentally per-route, not per-interface.
+<p>Please refer to the <a href="routing/tables/main.html">main routing table  </a>
 to see the route metrics currently in effect [*].
 
 <hr>

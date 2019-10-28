@@ -3,8 +3,8 @@
   require "onboard/extensions/string"
   require "onboard/network/interface"
 %>
-  <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method Preferred<br/>Metric Vendor/Model Bus} %>
-  <% colspans = [1, 2, 1, 1, 1, 1, 1, 1, 1, 1] %>
+  <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method/Renew Preferred<br/>Metric Vendor/Model Bus} %>
+  <% colspans = [1, 2, 1, 1, 1, 1, 2, 1, 1, 1,] %>
   <form method="post"> 
     <input type="hidden" name="_method" value="put"/>
     <table>
@@ -29,7 +29,7 @@
         %>
       </tbody>
     </table>
-    <button type="submit">Change</button>
+    <button type="submit">Submit!</button>
     (<a href="<%= request.fullpath %>">Refresh</a>)
     <% showhide = 
       'loopback, raw ieee802.11 interfaces and IPv6 link-local addresses' %>

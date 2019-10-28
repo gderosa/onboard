@@ -124,12 +124,12 @@
               <% %w{pid cmd args}.each do |what| %>
                 <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
               <% end %>
+            </td>
+            <td style="text-align: center">
               <% if netif.ipassign[:method] == :dhcp%>
-                <div style="display:inline-block; text-align:right; white-space:nowrap; padding-left:1ex">
-                  <span style="vertical-align:bottom">+Renew</span><input type="checkbox" title="Force renewal of the DHCP lease (this includes setting the Preferred Metric for the interface)" name="netifs[<%= netif.name %>][ipassign][renew]">
-                </div>
+                <input type="checkbox" title="Force renewal of the DHCP lease (this includes setting the Preferred Metric for the interface)" name="netifs[<%= netif.name %>][ipassign][renew]">
               <% end %>
-            </td> 
+            </td>
             <td style="text-align:center;">
               <input class="rwtext" type="text" size="6" name="netifs[<%= netif.name %>][preferred_metric]" value="<%= netif.preferred_metric %>"/>
             </td>
