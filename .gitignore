@@ -3,3 +3,7 @@
 .disable
 .bundle/
 .vagrant/
+
+# MacOS
+*.DS_Store
+._*
