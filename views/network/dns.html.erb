@@ -1,10 +1,10 @@
-<% 
+<%
   hostname    = OnBoard::System::Hostname.hostname
   domainname  = OnBoard::System::Hostname.domainname
 %>
 
 <h2 style="margin-bottom:0;">DNS</h2>
-<p style="margin-top:0; padding-top:0;" class="optinfo">Based on 
+<p style="margin-top:0; padding-top:0;" class="optinfo">Based on
 <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html">Dnsmasq</a>.</p>
 
   <%=
@@ -26,9 +26,9 @@
   <%= hostname    || tag(tag_none, '(none)', :if => !hostname)    %><%#
 %>.<%#
 %><%= domainname  || tag(tag_none, '(none)', :if => !domainname)  %>
-</span> 
+</span>
 [<a target="_blank" href="../system/hostname.html">change</a>]
-  
+
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <h3>Name servers</h3>
@@ -46,19 +46,19 @@
             <input type="text" readonly class="rotext" value="<%= ns %>"/>
           </td>
           <td>
-            <em>got automatically (from an upstream router, etc.)</em> 
+            <em>got automatically (from an upstream router, etc.)</em>
           </td>
         </tr>
       <% end %>
       <% [0, 1, 2].each do |nsh_i| %>
-        <% 
-          nsh = objects.data['conf']['dns']['nameservers'][nsh_i] 
-          nsh = {'ip' => '', 'comment' => ''} unless nsh       
+        <%
+          nsh = objects.data['conf']['dns']['nameservers'][nsh_i]
+          nsh = {'ip' => '', 'comment' => ''} unless nsh
         %>
         <tr>
           <td>
             <% if nsh['port'] %>
-              <input type="text" class="rwtext" name="nameservers[][ip]" value="<%= nsh['ip'] %>#<%= nsh['port'] %>"/> 
+              <input type="text" class="rwtext" name="nameservers[][ip]" value="<%= nsh['ip'] %>#<%= nsh['port'] %>"/>
             <% else %>
               <input type="text" class="rwtext" name="nameservers[][ip]" value="<%= nsh['ip'] %>"/>
             <% end %>
@@ -67,7 +67,7 @@
             <input type="text" size="48" class="humantext" name="nameservers[][comment]" value="<%= nsh['comment'] %>"/>
           </td>
         </tr>
-      <% end %> 
+      <% end %>
     </tbody>
   </table>
 <!--

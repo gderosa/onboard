@@ -1,6 +1,6 @@
-<% 
+<%
   # bridges.html.erb -- Modeled on interfaces.html.erb
- 
+
   require 'rack/utils'
   require "onboard/extensions/string"
   require "onboard/network/interface"
@@ -8,7 +8,7 @@
 
   <h2>Network bridges</h2>
 
-<%= 
+<%=
   erubis(
     :"/_messages.html",
     {
@@ -23,7 +23,7 @@
 
   <% fieldnames = %w{Bridge Interfaces Active/State MTU MAC\ Address IP\ Addresses Method} %>
   <% colspans = [1, 1, 2, 1, 1, 1, 1, 1] %>
-  <form method="post"> 
+  <form method="post">
     <input type="hidden" name="_method" value="put"/>
     <table>
      <thead>
@@ -35,9 +35,9 @@
         <% end %>
       </tr>
      <tbody>
-      <% 
+      <%
         objects.each do |netif| # TODO: block argument sould be called 'bridge'
-      %> 
+      %>
         <tr>
           <td>
             <div>
@@ -81,14 +81,14 @@
                   <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
                 <% end %>
               <% end %>
-            <% end %>  
+            <% end %>
             <% if netif.ipassign[:method] == :static and netif.active %>
               <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
             <% end %>
             <% if netif.ipassign[:method] == :dhcp and netif.ipassign[:cmd] =~ /\S+/ and not some_ip_printed %>
               <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
             <% end %>
-          </td>       
+          </td>
           <td>
             <select name="netifs[<%= netif.name %>][ipassign][method]">
               <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
@@ -97,7 +97,7 @@
             <% %w{pid cmd args}.each do |what| %>
               <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
             <% end %>
-          </td> 
+          </td>
         </tr>
       <% end %>
     </table>
@@ -105,7 +105,7 @@
     (<a href="<%= request.fullpath %>">Refresh</a>)
     <% showhide = 'IPv6 link-local addresses' %>
     <% if params['view'] == 'all' %>
-      (<a title="Hide <%= showhide %>" 
+      (<a title="Hide <%= showhide %>"
         href="<%= request.path_info %>">Compact view</a>)
     <% else %>
       (<a title="Show <%= showhide %>"

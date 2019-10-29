@@ -1,4 +1,4 @@
-<% 
+<%
   user    = objects['user']
 %>
 <%= message_partial(msg) %>
@@ -13,7 +13,7 @@
 
 <h2><%= i18n.radius.user.user.capitalize %>: <%= user.name %></h2>
 
-<%= 
+<%=
   partial(
     :module => 'radius-admin',
     :path   => '/pub/services/radius/users/_form_edit',

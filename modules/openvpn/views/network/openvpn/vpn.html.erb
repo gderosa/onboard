@@ -42,7 +42,7 @@
 <h3>Running/Configured VPNs</h3>
 <table>
   <thead>
-    <%= 
+    <%=
       format(
         :module   => 'openvpn',
         :partial  => true,
@@ -54,7 +54,7 @@
       )
     %>
   </thead>
-  <tbody> 
+  <tbody>
     <% objects.each_with_index do |vpn, vpn_i| %>
       <%=
         format(
@@ -73,7 +73,7 @@
 </table>
 
 <h3>Create new VPN (client mode)</h3>
-<form method="POST"> 
+<form method="POST">
   <table>
     <thead>
       <tr>
@@ -96,7 +96,7 @@
         <th rowspan="2">
           <div style="text-align:center" class="optinfo">(TAP only)</div>
         </th>
-        <th rowspan="2">Demand Server-type Certificate for the Server?</th> 
+        <th rowspan="2">Demand Server-type Certificate for the Server?</th>
         <th rowspan="2">LZO Compression?</th>
       </tr>
       <tr>
@@ -166,7 +166,7 @@
           <%= ifname_form_field %>
         </td>
         <td rowspan="<%= rowspan %>">
-          <%= 
+          <%=
             format(
               :module => 'openvpn',
               :partial => true,
@@ -179,7 +179,7 @@
           <select name="bridge_to" style="width:7.5em">
           <option></option>
           <% bridges.each do |br| %>
-            <option value="<%= br.name %>"><%= br.name %></option>    
+            <option value="<%= br.name %>"><%= br.name %></option>
           <% end %>
           </select>
         </td>
@@ -211,7 +211,7 @@
       <tr> <!-- a row to add more servers -->
         <td></td><td></td><td></td>
         <td colspan="3" style="text-align:center; font-style:italic;" title="For redundancy / failover (order matters)">
-          (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>) 
+          (<a href="?failover=<%= params['failover'] ? (params['failover'].to_i * 2) : 2 %>">more servers</a>)
         </td>
         <td></td><td></td><td></td><td></td><td></td>
       </tr>
@@ -256,8 +256,8 @@
         </td>
         <td>
           <select name="cert">
-            <% 
-              selected = ssl['certs'].select do |k,v| 
+            <%
+              selected = ssl['certs'].select do |k,v|
                 v['private_key'] and !v['cert']['is_ca']
               end
               good, bad = selected.partition_hash {|k,v| v['cert']['is_server']}
@@ -299,11 +299,11 @@
         <td>
           <input type="text" class="rwtext" name="local_address" size="15"/>
         </td>
-        <td style="text-align:center;"> 
+        <td style="text-align:center;">
           <input type="text" class="rwtext" name="port" size="5" maxlength="5" value="1194"/>
         </td>
         <td>
-          <input style="width:15ex" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/> 
+          <input style="width:15ex" title="Suggestion shown is a random IPv4 private network, which should avoid conflicts" type="text" class="rwtext" name="server_net" value="<%= IPAddr.random('10.0.0.0/8').mask(24) %>/24"/>
           <!-- <input style="width: 100%;" type="text" class="rwtext" name="server_net"/> -->
         </td>
         <td><%= ifname_form_field %></td>

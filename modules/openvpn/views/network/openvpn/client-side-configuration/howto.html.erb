@@ -1,12 +1,12 @@
-<% 
+<%
   # require 'rack/utils'
 
-  vpn = objects[:vpn]     # the vpn server instance (an Hash) 
-  certs = objects[:certs] # another Hash (of Hashes) (keys are SSL CN-s) 
+  vpn = objects[:vpn]     # the vpn server instance (an Hash)
+  certs = objects[:certs] # another Hash (of Hashes) (keys are SSL CN-s)
 
   get_params = request.GET
 
-  no_os_msg = 
+  no_os_msg =
     'You did not provide a valid operating system family name for your client.'
 
 %>
@@ -15,15 +15,15 @@
 
 <h3>Install OpenVPN</h3>
 <% if params['os'] == 'windows' %>
-  <p>If you haven&rsquo;t done it already, go the 
+  <p>If you haven&rsquo;t done it already, go the
   <a href="http://openvpn.net/index.php/open-source/downloads.html">
     OpenVPN download page</a>, download the Windows Installer and run it.</a>
 <% elsif params['os'] ==  'unix' %>
   <p>Your Linux distro, BSD flavour etc., most probably provides
   an <span class="product-name">OpenVPN</span> pre-compiled software package.
   Chek your OS documentation.</p>
-  <p>If you wish to compile <span class="product-name">OpenVPN</span> 
-  by yourself, download the source package from the 
+  <p>If you wish to compile <span class="product-name">OpenVPN</span>
+  by yourself, download the source package from the
   <a href="http://openvpn.net/index.php/open-source/downloads.html">
     OpenVPN download page</a> and read <a href="http://openvpn.net/index.php/open-source/documentation/install.html">this</a>.</p>
 <% else %>
@@ -37,7 +37,7 @@
   when 'unix'       then 'tar.gz'
   else                   'zip'
   end
-  #download_href = request.fullpath.sub /\/\w+\.html/, ".#{archive_extension}" 
+  #download_href = request.fullpath.sub /\/\w+\.html/, ".#{archive_extension}"
 %>
 <table>
   <thead>
@@ -49,23 +49,23 @@
   </thead>
   <tbody>
     <% certs.each_value do |value| %>
-      <% 
-        cert                  = value['cert'] 
+      <%
+        cert                  = value['cert']
         cn                    = cert['subject']['CN']
-        subject_html_info     = 
+        subject_html_info     =
             ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
-                cert['subject'] )  
+                cert['subject'] )
 
-        #new_get_params = get_params.merge('cn' => cn) 
+        #new_get_params = get_params.merge('cn' => cn)
         #query_string = ::Rack::Utils.build_query new_get_params
-        href = 
+        href =
           "files/#{cn}.#{archive_extension}?#{request.query_string}"
       %>
       <tr>
         <td style="text-align:center; padding:0.4em;"><a class="img" href="<%= href %>"><img style="vertical-align:middle; " alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
         <td><%== cert['subject']['CN'] %></td>
         <td>
-          <%= 
+          <%=
             ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
                 cert['subject'] )
           %>
@@ -80,27 +80,27 @@
 <% if params['os'] == 'windows' %>
   <p>Unpack the above archive into your Desktop or other temporary directory
   of your choice.</p>
-  <p>Identify the OpenVPN config file by the OpenVPN icon 
-  <img 
-    alt="OpenVPN icon" 
-    style="height:1.2em;" 
+  <p>Identify the OpenVPN config file by the OpenVPN icon
+  <img
+    alt="OpenVPN icon"
+    style="height:1.2em;"
     src="/icons/openvpn/openvpn_icon.png"/>
   or the <kbd>.ovpn</kbd> extension.</p>
   <p>Right-click &rarr; <em>Start OpenVPN on this config file</em>.</p>
 
-  <p>Now you should be able to ping the remote virtual IP 
-  <kbd><%= vpn.data['virtual_address'] %></kbd>. 
-  If you have any problem try reading 
+  <p>Now you should be able to ping the remote virtual IP
+  <kbd><%= vpn.data['virtual_address'] %></kbd>.
+  If you have any problem try reading
   <a href="http://openvpn.net/index.php/open-source/documentation/install.html?start=1">this</a> or
   <a href="http://openvpn.net/index.php/open-source/faq.html#catid79">this</a>.
   </p>
 <% elsif params['os'] == 'unix' %>
   <p>Unpack the above archive somewhere and issue (typically as root):
   <blockquote><pre class="code">openvpn client.conf</pre></blockquote>
-  where <code>client.conf</code> shall be replaced by the actual 
+  where <code>client.conf</code> shall be replaced by the actual
   <code>.conf</code> filename you&rsquo;ll find in the archive.
   </p>
-  <p>Now you should be able to ping the remote virtual IP 
+  <p>Now you should be able to ping the remote virtual IP
   <kbd><%= vpn.data['virtual_address'] %></kbd>.</p>
 <% else %>
   <p class="error"><%= no_os_msg %></p>
@@ -108,8 +108,8 @@
 
 <h3>Deploy!</h3>
 <% if params['os'] == 'windows' %>
-  <p>Move all configuration and ssl files extracted from the 
-  <kbd>.<%= archive_extension %></kbd> archive into 
+  <p>Move all configuration and ssl files extracted from the
+  <kbd>.<%= archive_extension %></kbd> archive into
   <kbd>\Program Files\OpenVPN\config</kbd>
   </p>
 
@@ -121,7 +121,7 @@
   <p>More info <a href="http://openvpn.net/index.php/open-source/documentation/install.html?start=1#running_as_windows_service">here</a>.</p>
 
 <% elsif params['os'] == 'unix' %>
-  <p>Move all the files from the archive into the sistem-wide 
+  <p>Move all the files from the archive into the sistem-wide
   <em class="product-name">OpenVPN</em>
   configuration directory, which is tipically <code>/etc/openvpn</code> .</p>
   <p>Services setup may vary among Operating Systems and Distributions; check

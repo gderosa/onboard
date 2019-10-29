@@ -28,11 +28,11 @@
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
-  <table id="hostdomainname"> 
+  <table id="hostdomainname">
     <thead>
       <tr>
         <th colspan="2" id="hostname_h">Host</th>
-        <th colspan="2" id="domainname_h">Domain</th> 
+        <th colspan="2" id="domainname_h">Domain</th>
       </tr>
     </thead>
     <tbody>
@@ -46,12 +46,12 @@
         </td>
       </tbody>
     </table>
-  <button type="submit">Change!</button>  
+  <button type="submit">Change!</button>
 </form>
 
 <% if hostname.all_fqdns.any? and not hostname.fqdn.match_dns? %>
   <div class="warn">
-    A DNS reverse query for the IP addresses configured on 
+    A DNS reverse query for the IP addresses configured on
     <a href="../network/interfaces.html">network interfaces</a> gives:
     <ul>
       <% hostname.all_fqdns.each do |fqdn_| %>

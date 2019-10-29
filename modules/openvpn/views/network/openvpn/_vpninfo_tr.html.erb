@@ -13,7 +13,7 @@ locals automatically provided by format() helper:
 
 %>
 
-<% 
+<%
   show_actions_column ||= false # just to avoid NameError
 %>
 
@@ -29,8 +29,8 @@ locals automatically provided by format() helper:
       <tr <%= 'class="lowlight"' unless vpn.data['running'] %>>
 
         <% if show_actions_column == true %> <%# by default show buttons %>
-          
-          <!-- START/STOP/EDIT/DELETE BUTTONS -->  
+
+          <!-- START/STOP/EDIT/DELETE BUTTONS -->
           <td rowspan="<%= rowspan %>" style="text-align:center;">
             <form method="POST">
               <input type="hidden" name="_method" value="put"/>
@@ -50,12 +50,12 @@ locals automatically provided by format() helper:
           <td rowspan="<%= rowspan %>">
             <form method="GET" action="openvpn/vpn/<%= vpnid %>.html">
                 <!-- not a real form, just an hyperlink  -->
-              <button type="submit"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button> 
+              <button type="submit"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="View/Edit details"/></button>
             </form>
           </td>
 
           <td rowspan="<%= rowspan %>">
-            <% 
+            <%
               if vpn.data['running']
                 str = 'Stop the VPN and remove from the list'
               else
@@ -78,14 +78,14 @@ locals automatically provided by format() helper:
         <% end %> <%# if show_actions_column %>
 
         <td rowspan="<%= rowspan %>">
-          <%= 
+          <%=
             if vpn.data['dev-type'] == 'tun'
               "Point-to-Point"
             elsif vpn.data['dev-type'] == 'tap'
               "Virtual Ethernet"
             end
           %>
-          <%= 
+          <%=
             if vpn.data['client']
               "Client"
             elsif vpn.data['server']
@@ -93,7 +93,7 @@ locals automatically provided by format() helper:
             end
           %>
         </td>
-        <% 
+        <%
           cssclass = ""
           cssclass2 = ""
           text = ""
@@ -122,7 +122,7 @@ locals automatically provided by format() helper:
 
         <td><%= vpn.data['local'] or '<div class="lowlight" style="text-align:center;"> * </div>' %></td>
         <td rowspan="<%= rowspan %>"> <!-- *local* port -->
-          <%= 
+          <%=
             if vpn.data['port']
               vpn.data['port']
             else
@@ -130,7 +130,7 @@ locals automatically provided by format() helper:
             end
           %>
         </td>
-        <td> 
+        <td>
           <%=
             if vpn.data['remote'] and vpn.data['remote'][0]['address']
               vpn.data['remote'][0]['address']
@@ -139,7 +139,7 @@ locals automatically provided by format() helper:
             end
           %>
         </td>
-        <td> 
+        <td>
           <%=
             if vpn.data['remote'] and vpn.data['remote'][0]['port']
               vpn.data['remote'][0]['port']
@@ -148,28 +148,28 @@ locals automatically provided by format() helper:
             end
           %>
         </td>
-        <td style="font-variant: small-caps;"><%= 
+        <td style="font-variant: small-caps;"><%=
           begin
             vpn.data['remote'][0]['proto']
           rescue
             vpn.data['proto']
           end
         %></td>
-        <% 
+        <%
           cssclass = ''; cssclass2 = ''; text = ''; errortext = ''
           if vpn.data['dev-type'] == 'tap' or vpn.data['dev'] =~ /^tap/
             if vpn.data['virtual_addresses'].respond_to? :select
               text = (
-                vpn.data['virtual_addresses'].select do |x| 
+                vpn.data['virtual_addresses'].select do |x|
                   x.scope == 'global'
                 end
               ).map{|y| "#{y.addr}/#{y.prefixlen}"}
             end
-          elsif vpn.data['client'] and vpn.data['client'].respond_to? :[] 
+          elsif vpn.data['client'] and vpn.data['client'].respond_to? :[]
             if vpn.data['client']['Virtual Address'] and
                 vpn.data['client']['Virtual Address'] =~ /\S/
               text = vpn.data['client']['Virtual Address']
-            elsif vpn.data['client']['management_interface_err'] 
+            elsif vpn.data['client']['management_interface_err']
               cssclass = 'error'; cssclass2 = 'lowlight'
               text = vpn.data['client']['management_interface_err']
               errortext = 'Management Interface error: '
@@ -199,12 +199,12 @@ locals automatically provided by format() helper:
           </span>
         </td>
         <td rowspan="<%= rowspan %>">
-          <%= 
+          <%=
             str = ''
             vpn.data['routes'].each do |route|
-                            
-              addr      = route['dest']['addr'] 
-              prefixlen = route['dest']['prefixlen'] 
+
+              addr      = route['dest']['addr']
+              prefixlen = route['dest']['prefixlen']
               af        = route['dest']['af']
               if route['gw']
                 gw        = route['gw']['addr']
@@ -217,14 +217,14 @@ locals automatically provided by format() helper:
               str << '<div>'
               str       << addr
 
-              unless  (af=='inet'   and prefixlen==32) or 
+              unless  (af=='inet'   and prefixlen==32) or
                       (af=='inet6'  and prefixlen==128)
                 str << '/'
                 str << prefixlen.to_s
               end
               # str << "<span class=\"lowlight\"> (via #{gw}) </span>" unless %w{0.0.0.0 ::}.include? gw # it wastes space...
-              str << '</div> ' 
-            end 
+              str << '</div> '
+            end
             str
           %>
         </td>

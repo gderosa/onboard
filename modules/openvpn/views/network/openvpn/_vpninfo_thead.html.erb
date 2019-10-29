@@ -1,12 +1,12 @@
-<%# 
+<%#
   locals:
-    actions: 
+    actions:
     common_name_description:
     show_actions_column: boolean or an alternate String
 %>
 
-<% 
-  show_actions_column     ||= '' 
+<%
+  show_actions_column     ||= ''
   common_name_description ||= ''
 
   if show_actions_column == true
@@ -28,7 +28,7 @@
         Real
       </th>
       <th colspan="3">
-        Virtual 
+        Virtual
       </th>
       <th rowspan="3">LZO<br/>Compression?</th>
     </tr>
@@ -37,8 +37,8 @@
         Local
       </th>
       <th colspan="2">
-        Remote 
-      </th>     
+        Remote
+      </th>
       <th rowspan="2">
         Protocol
       </th>
@@ -47,7 +47,7 @@
       </th>
       <th rowspan="2">
         Destinations
-      </th>     
+      </th>
       <th rowspan="2">
         Device
       </th>

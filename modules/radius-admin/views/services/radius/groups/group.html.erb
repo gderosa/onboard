@@ -1,7 +1,7 @@
-<% 
+<%
   group   = objects['group']
   conf    = objects['conf']
-  members = objects['members'] 
+  members = objects['members']
 %>
 <%= message_partial(msg) %>
 <%=
@@ -15,7 +15,7 @@
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
-  <%= 
+  <%=
     partial(
       :module => 'radius-admin',
       :path   => 'services/radius/groups/_members',
@@ -30,7 +30,7 @@
   <h3>Add members</h3>
   <p>
   Comma-separated list, e.g. <code>user1, user2, user3</code> . Or one
-  per line.</p> 
+  per line.</p>
   <p>You may
   also add non existing users, which will be configured later (of course,
   they will NOT be authorized to access the network until then).
@@ -42,7 +42,7 @@
 
 <div style="height:2em;"> <!-- separator --> </div>
 
-<%= 
+<%=
   partial(
     :module => 'radius-admin',
     :path   => 'services/radius/groups/_form_edit', # edit attributes

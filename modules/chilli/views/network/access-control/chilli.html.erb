@@ -1,4 +1,4 @@
-<% 
+<%
   require 'onboard/network/access-control/chilli'
 
   new_default_chilli = OnBoard::Network::AccessControl::Chilli.new(
@@ -73,7 +73,7 @@
         <td style="text-align: center;">
           <!-- not a real form, just a link -->
           <form method="GET" action="chilli/<%= chilli.conf['dhcpif'] %>.html">
-            <button type="submit" title="View<% if chilli.managed? %>/Edit<% end %> Configuration"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="Configuration"/></button> 
+            <button type="submit" title="View<% if chilli.managed? %>/Edit<% end %> Configuration"><img style="border:0;" src="<%= icondir + '/' + iconsize + '/actions/system-run.png'%>" alt="Configuration"/></button>
           </form>
         </td>
         <td style="text-align: center;">
