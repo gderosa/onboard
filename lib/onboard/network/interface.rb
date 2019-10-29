@@ -489,15 +489,20 @@ class OnBoard
       end
 
       def modify_from_HTTP_request(h)
-
         if h['preferred_metric']
           set_preferred_metric h['preferred_metric']
         end
 
-        # Works with "on" from HTML form and true (boolean) from JSON clients
-        # (No one uses "off" or any other "truthy no's").
         if ['on', true].include? h['active']
           ip_link_set_up unless @active
+        elsif @active
+          if h['ipassign'].respond_to? :[] and h['ipassign']['pid'] =~ /\d+/
+            stop_dhcp_client h['ipassign']['pid']
+          end
+          ip_link_set_down
+        end
+
+        if h['ipassign'].respond_to? :[]
           if @ipassign[:method] == :static and h['ipassign']['method'] == 'dhcp'
             start_dhcp_client
           elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'static'
@@ -508,18 +513,9 @@ class OnBoard
               stop_dhcp_client h['ipassign']['pid']
               start_dhcp_client
             end
-          elsif
-              @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
+          elsif @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
             assign_static_ips h['ip']
           end
-        elsif @active
-          stop_dhcp_client h['ipassign']['pid'] if h['ipassign']['pid'] =~ /\d+/
-          #flush_ip
-          #Command.run "ip link set #{@name} down", :sudo # DRY!
-          ip_link_set_down
-        end
-        if @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
-            assign_static_ips h['ip']
         end
       end
 
