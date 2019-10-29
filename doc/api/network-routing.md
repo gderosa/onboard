@@ -215,6 +215,42 @@ Returns the list of all the IP routes in the `main` table.
 }
 ```
 
+## Add a Route to the `main` table (PUT)
+
+_Using the PUT method to __add__ a route is un-ReSTful. This is for historical reasons._
+
+### Example request body
+
+```javascript
+{
+  "ip": "2.2.2.0",
+  "prefixlen": "24",
+  "dev": "eth1",
+  "gw": "1.1.1.2",
+  "metric": "1"
+}
+```
+
+For a *default* gateway, use `"0.0.0.0"` or `"::"` as `"ip"` (respectively IPv4 and IPv6)
+and `"0"` or `0` as `"prefixlen"`.
+
+`"dev"` and `"gw"` cannot be both empty or `null` or absent.
+
+`"metric"` is optional.
+If absent, defaults from [Network Interfaces](network-interfaces.md) will be used.
+
+### Errors
+
+`4xx` status codes will be returned in response of invalid data.
+
+For example, if the gateway address (`"gw"`) is invalid for the interface,
+`400` will be returned as status code, with body e.g.:
+
+```javascript
+
+```
+
+
 ## Delete a Route from the `main` table (PUT)
 
 ```http

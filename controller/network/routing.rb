@@ -141,9 +141,9 @@ class OnBoard::Controller
     elsif params['ip_route_del']
       # 'default' might be ambiguous, 0.0.0.0/0 or ::/0 ? So, specifying
       # the address family (af) is required.
-      pp params  # DEBUG
       msg = table.ip_route_del params['ip_route_del'], :af => params['af']
     else
+      pp params  # DEBUG
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params
     end
     unless msg[:ok] # TODO: always sure the error is client-side?
