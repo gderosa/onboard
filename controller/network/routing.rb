@@ -140,7 +140,8 @@ class OnBoard::Controller
       end
     elsif params['ip_route_del']
       # 'default' might be ambiguous, 0.0.0.0/0 or ::/0 ? So, specifying
-      # the address family (af) is required. 
+      # the address family (af) is required.
+      pp params  # DEBUG
       msg = table.ip_route_del params['ip_route_del'], :af => params['af']
     else
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params

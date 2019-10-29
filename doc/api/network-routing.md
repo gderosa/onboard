@@ -9,7 +9,7 @@
 - [*IP routes*](#ip-routes)
   - [List Routes (Main routing table) (GET)](#list-routes-main-routing-table-get)
     - [Example response body](#example-response-body)
-  - [Modify Network Interface config (PUT)](#modify-network-interface-config-put)
+  - [Delete a Route from the `main` table (PUT)](#delete-a-route-from-the-main-table-put)
     - [Example Request body](#example-request-body)
 - [*Notes*](#notes)
 
@@ -38,7 +38,7 @@ For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<passwo
 
 # *IP routes*
 
-## List Routes (Main routing table) (GET)
+## List Routes (`main` routing table) (GET)
 
 ```http
 GET http://localhost:4567/api/v1/network/routing/tables/main HTTP/1.1
@@ -215,86 +215,34 @@ Returns the list of all the IP routes in the `main` table.
 }
 ```
 
-## Modify Network Interface config (PUT)
+## Delete a Route from the `main` table (PUT)
 
 ```http
-PUT http://localhost:4567/api/v1/network/interfaces HTTP/1.1
+PUT http://localhost:4567/api/v1/network/routing/tables/main HTTP/1.1
 
 Content-Type: application/json
 Accept: application/json
 ```
 
+Using the PUT method for *deleting* a route may seem un-ReSTful,
+however, the URL refers to the routing table, not a single route.
+Also, engineering identifying URLs for each route may be
+open to ambiguities and not straightforward.
+
 ### Example Request body
 
-The below example:
-
-* Requests to configure `eth0` with DHCP.
-* Set the preferred metric for `eth0` to "empty" i.e. system defaults will be used.
-* Kills the DHCP client for `eth1` by setting `"ipassign": {"method": "static"}`.
-* Sets the `"ip"[]` addresses for `eth1`.
-* Set the preferred metric for `eth1` to `100`.
-* Brings the wireless interface `wlan0` down.
-
-Please note, if you want to set the `"ip"` addresses explicitly,
-the assignment `"method"` MUST be set to `"static"`,
-otherwise the requested IP addresses will be ignored.
-
 ```javascript
 {
-  "netifs": {
-    "eth0": {
-      "active": true,
-      "ip": [
-        "192.168.177.4/24",
-        "fe80::ba27:ebff:fe61:dd6b/64"
-      ],
-      "ipassign": {
-        "method": "dhcp"
-      },
-      "preferred_metric": ""
-    },
-    "eth1": {
-      "active": true,
-      "ip": [
-        "192.168.1.100/24",
-        "fe80::92cc:a2cb:f069:501d/64",
-        "66.66.66.66/26"
-      ],
-      "ipassign": {
-        "method": "static"
-      },
-      "preferred_metric": "100"
-    },
-    "wlan0": {
-      "active": false,
-      "ipassign": {
-        "method": "static"
-      },
-      "preferred_metric": ""
-    }
-  }
+ "ip_route_del": "2.2.2.2 dev eth1  scope link metric 204",
+ "af": "inet"
 }
 ```
 
-Another example: `eth0` will remain managed by DHCP,
-but we change the preferred metric for the interface to `200`,
-and enforce the new metric immediately by restarting (`"ipassign": {"renew": true}`)
-the DHCP client.
+The value of the `"ip_route_del"` identifies the IP route to be deleted. The string is taken
+from the `"rawline"` property from the `GET` endpoint.
 
-```javascript
-{
-  "netifs": {
-    "eth0": {
-      "active": true,
-      "ipassign": {
-        "method": "dhcp",
-        "renew": true
-      },
-      "preferred_metric": 200
-    }
-  }
-}
-```
+`"af"` is the <em>**a**ddress **f**amily</em> and can be `"inet"` for IPv4 or `"inet6"` for IPv6.
+It MUST me specified, particulary to avoid ambiguity when the destination is `default`.
 
 # *Notes*
 
