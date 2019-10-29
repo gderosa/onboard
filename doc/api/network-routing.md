@@ -14,6 +14,7 @@
     - [Errors](#errors)
   - [Delete a Route from the `main` table (PUT)](#delete-a-route-from-the-main-table-put)
     - [Example Request body](#example-request-body)
+- [*Routing tables other than `main` (Policy Routing)*](#routing-tables-other-than-main-policy-routing)
 - [*Notes*](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -292,6 +293,21 @@ from the `"rawline"` property from the `GET` endpoint.
 
 `"af"` is the <em>**a**ddress **f**amily</em> and can be `"inet"` for IPv4 or `"inet6"` for IPv6.
 It MUST me specified, particulary to avoid ambiguity when the destination is `default`.
+
+# *Routing tables other than `main` (Policy Routing)*
+
+This is an
+[advanced](https://lartc.org/)
+[topic](https://lartc.org/howto/lartc.rpdb.html).
+
+At the moment, we don't have a urgent use case for *programmatic access* to this feature.
+API documentation (and appropriate, related QA) may be added at some point
+in future, though.
+Meanwhile, the functionality is fully available to Network Administrators
+via **web UI**.
+
+<img alt="policyrouting-rules" src="img/policyrouting-rules.png" width="40%"/>
+<img alt="policyrouting-tables" src="img/policyrouting-tables.png" width="40%"/>
 
 # *Notes*
 
