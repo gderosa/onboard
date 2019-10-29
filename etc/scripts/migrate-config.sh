@@ -4,7 +4,7 @@
 # to existent directories in order to customize this script's behavior;
 # ONBOARD_HOME will be unused in such case.
 
-ONBOARD_HOME=/home/onboard 
+ONBOARD_HOME=/home/onboard
 
 if [ ! -d "$ONBOARD_ROOTDIR" ] ; then
 	ONBOARD_ROOTDIR=$ONBOARD_HOME/onboard
@@ -18,9 +18,9 @@ mkdir -vp "$ONBOARD_DATADIR/etc/"
 # Check if durectories exist and they are not symlink
 
 if [ -d "$ONBOARD_ROOTDIR/etc/config" ]; then
-	if [ ! -h "$ONBOARD_ROOTDIR/etc/config" ]; then 
+	if [ ! -h "$ONBOARD_ROOTDIR/etc/config" ]; then
 		mv -fv \
-			$ONBOARD_ROOTDIR/etc/config $ONBOARD_DATADIR/etc/ 
+			$ONBOARD_ROOTDIR/etc/config $ONBOARD_DATADIR/etc/
 		ln -sfv $ONBOARD_DATADIR/etc/config $ONBOARD_ROOTDIR/etc/config
 	fi
 fi
