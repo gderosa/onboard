@@ -45,7 +45,7 @@
 * OpenVPN: bridge persistence
 
 * Dnsmasq: fix: get rid of --local-services from Debain script
-	* it caused problems when serving QEMU guests, not being 
+	* it caused problems when serving QEMU guests, not being
 	recognized as local
 
 2014.05
@@ -60,7 +60,7 @@
 
 * AAA: doc improvements (Thanks to Francesco Tripiciano - www.fusiontec.it)
 
-* QEMU: 
+* QEMU:
 	* Advanced configuration tab: Run as root and Edit cmdline
 	* Host serial ports support
 	* doc fixes
@@ -112,7 +112,7 @@
 
 * AAA/RADIUS/HOTSPOT:
 	* Login-Time support
-	* Sequel / db fixes: 
+	* Sequel / db fixes:
 		* use Sequel.like
 		* referential integrity on User#delete!
 	* (r)doc fixes
@@ -138,14 +138,14 @@
 	* supports -vga (closes #110)
 
 * Policy Routing:
-	* restore rule 0: 
+	* restore rule 0:
 		so a possible, scheduled ./restore.sh or similar could
 		recover from a disastrous ``local'' table removal
-	
-* Init: 
+
+* Init:
 	* ensure that /etc/init.d/onboard stop has been completed before halting the machine
 
-* Design: OnBoard::Error now inherits from StandardError, 
+* Design: OnBoard::Error now inherits from StandardError,
 	so a default rescue would catch it
 
 * DansGuardian: move maxuploadsize to filter group
@@ -156,18 +156,18 @@
 
 2013.05.02
 
-* [Coova]Chilli: 
+* [Coova]Chilli:
 	* allow static IPs
 	* do not show spurious records only due to forking
 	* json fixes
 
-* QEMU: 
+* QEMU:
 	* prepare pci passthrough: fix 'type' vs 'driver' in config file
 	* disable USB 3 (breaks snapshots):
 		* reported at: http://bugs.launchpad.net/qemu/+bug/1185888
 	* fix monitor parsing for qemu 1.5
 
-* DHCP client: 
+* DHCP client:
 	* fix dhcp detection
 	* dhcpcd5
 	* --persistent (try to not loose connection setting to static)
@@ -191,7 +191,7 @@
 
 2013.05
 
-* QEMU: 
+* QEMU:
 	* USB and PCI Pass-Through
 		* supports pci-assign and VFIO and all USB versions
 	* GlusterFS and distributed storage native support
@@ -217,10 +217,10 @@
 
 2013.03.03
 
-* QEMU/KVM: 
+* QEMU/KVM:
 	* (ui) JS autorefresh (single VM page only)
 		* actually use the JSON API from JS refresh code (only :vmid/running.json)
-		* load HTML snippets elsewhere (no iframes) 
+		* load HTML snippets elsewhere (no iframes)
 	* (ui, minor) slightly enlarge screenshot
 	* (system) further socket permission fixes
 	* (config) more robustness on invalid .yml files
@@ -231,7 +231,7 @@
 	* (client side wizard) fix template path
 
 * cross-module fixes:
-	* work-around conflict (Facets vs Sequel on Hash#|) 
+	* work-around conflict (Facets vs Sequel on Hash#|)
 		* involves radius-admin and qemu
 
 * core:
@@ -243,7 +243,7 @@
 
 2013.03.02
 
-* openvpn: push a deliberately high route metric 
+* openvpn: push a deliberately high route metric
 	* you can push-route your entire office LAN with no conflicts when you are
 	  at the office itself
 
@@ -308,7 +308,7 @@
 
 * QEMU improvements
 	* -smp
-	* SPICE may be disabled 
+	* SPICE may be disabled
 	* edit vm, replace disk image with a new one
 	* allow diskless vm (avoid NoMethodError)
 
@@ -347,7 +347,7 @@
 
 * fix String 'smart encoding' by removing useless over-engineering...
 	* avoid unacceptable time-consuming loops on low-end machines (mainly when
-	viewing/editing DansGuardian weighted phrase lists) 
+	viewing/editing DansGuardian weighted phrase lists)
 
 2011.08.03
 
@@ -426,7 +426,7 @@ openvpn --local
 
 * HotSpotLogin fixes:
 	* "Your Org. Name" field (aka --custom-headline)
-	* prevent logo image caching by browsers, via ?nocache=<unique-id> 
+	* prevent logo image caching by browsers, via ?nocache=<unique-id>
 
 2010.11.01
 
@@ -457,7 +457,7 @@ openvpn --local
 
 2010.10
 
-* OpenVPN: push routes to "All Clients" 
+* OpenVPN: push routes to "All Clients"
 
 * OpenVPN: code re-arrangement
 
@@ -477,14 +477,14 @@ openvpn --local
 
 2010.07
 
-* OpenVPN 
-	* Virtual Ethernets (TAP), allowing IPv6 and bridging 
+* OpenVPN
+	* Virtual Ethernets (TAP), allowing IPv6 and bridging
 	* TAP configured persistently like normal ethernets
 
 2010.06
 
-* Policy routing based on: 
-	* source address 
+* Policy routing based on:
+	* source address
 	* input interface
 	* input bridge port
 	* QoS classification (via netfilter packet mangling)

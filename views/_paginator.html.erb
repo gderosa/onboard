@@ -1,4 +1,4 @@
-<% 
+<%
 # variables:
 #   page
 #   per_page
@@ -16,7 +16,7 @@ pages = ( total_items.to_f / per_page.to_f ).ceil
       <% if page.to_i == page_n %>
         <%= page_n %>
       <% else %>
-        <a href="?<%= query_string_merge('page' => page_n) %>"><%= page_n %></a> 
+        <a href="?<%= query_string_merge('page' => page_n) %>"><%= page_n %></a>
       <% end %>
     <% end %>
   </div>

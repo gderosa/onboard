@@ -2,10 +2,10 @@
 <% if msg and msg.kind_of? Hash %>
   <% if status == 202 and msg[:ok] and not (msg[:info] =~ /\S/) %>
     <div class="info">
-      Your request has been queued. You may check <a href="">this</a> 
+      Your request has been queued. You may check <a href="">this</a>
       or other pages later
-      to get updated informations. A look at the 
-      <a href="/system/logs.html">system logs</a> may be helpful too. 
+      to get updated informations. A look at the
+      <a href="/system/logs.html">system logs</a> may be helpful too.
     </div>
   <% end %>
   <% if msg[:ok] and msg[:info] =~ /\S/ %>
@@ -21,8 +21,8 @@
       </div>
     <% elsif msg[:log] %>
       <div class="error">
-        Something went wrong. 
-<a href="/system/logs/<%= Rack::Utils.escape msg[:log] %>.html">Check the log</a> 
+        Something went wrong.
+<a href="/system/logs/<%= Rack::Utils.escape msg[:log] %>.html">Check the log</a>
         for more details.
       </div>
     <% elsif msg[:err_html] =~ /\S/ %>

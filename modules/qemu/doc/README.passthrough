@@ -1,14 +1,14 @@
-Qemu needs to have read-write access to certain devices and some system 
+Qemu needs to have read-write access to certain devices and some system
 resources, including special files under /dev and possibly /proc
 and /sys to allow host hardware pass-through.
 
 Normally it starts as root, open devices, then drop privileges.
 
 This usually works, while retaining security; but to allow hot(un)plugging
-of e.g. an usb-to-serial adapter it's necessary to maintain those 
+of e.g. an usb-to-serial adapter it's necessary to maintain those
 privileges, i.e. keep running as root.
 
-Alternatives - to provide a reasonable compromise between functionality 
+Alternatives - to provide a reasonable compromise between functionality
 and security - are under investigation: Unix groups? chroot?
 
 In conclusion, sometimes you might need to check the "Run as root" box

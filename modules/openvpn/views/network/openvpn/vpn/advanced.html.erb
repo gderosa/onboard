@@ -1,9 +1,9 @@
-<% 
+<%
   require 'onboard/system/log'
   require 'onboard/network/openvpn/convert'
 
   vpn = objects
-  log = OnBoard::System::Log.new({'path' => vpn.logfile}) 
+  log = OnBoard::System::Log.new({'path' => vpn.logfile})
 %>
 <style type="text/css">
   table tr td {
@@ -12,10 +12,10 @@
 </style>
 
 <h2>VPN <%= "##{vpn.data['human_index']}" if vpn.data['human_index'] %> details<% if vpn.data['server'] %> (server)<% end %></h2>
-<!-- 
+<!--
   As usual, maybe we are not strictly ReSTful, but we find it convenient
-  to PUT/GET the whole set of configured clients, instead of 
-  POST/DELETE/PUT/GET single ones. Moreover, HTML doesn't allow nested 
+  to PUT/GET the whole set of configured clients, instead of
+  POST/DELETE/PUT/GET single ones. Moreover, HTML doesn't allow nested
   forms.
 
   This doesn't scale, but it it's unlikely that an OpenVPN server connects
@@ -38,7 +38,7 @@
             <th>Client&rsquo;s &ldquo;Common Name&rdquo;</th>
             <th>
               Route networks
-              <div class="optinfo">  
+              <div class="optinfo">
                 <p>
                   List of networks, one per line, which are behind the client and
                   you want to make securely accessible through the VPN.
@@ -50,7 +50,7 @@
             </th>
             <th>
               Push routes
-              <div class="optinfo">  
+              <div class="optinfo">
                 <p>
                   List of networks, one per line, which are behind this server
                   and you want to make securely accessible from the client.
@@ -74,8 +74,8 @@
           <tr>
             <td><strong>All clients</strong></td>
             <td></td>
-            <% 
-              text = vpn.data['push'] ? 
+            <%
+              text = vpn.data['push'] ?
                 OnBoard::Network::OpenVPN::Convert.routes2textarea(vpn.data['push']['routes']) :
                 ''
             %>
@@ -97,16 +97,16 @@
                   # end
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['iroutes'])
                 %>
-                <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea> 
+                <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
               </td>
               <td>
-                <% 
+                <%
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['push']['routes'])
                 %>
                 <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
               </td>
               <td style="text-align: center;">
-                <input type="checkbox" name="clients[][delete]"/> 
+                <input type="checkbox" name="clients[][delete]"/>
               </td>
             </tr>
           <% end %>
@@ -117,7 +117,7 @@
               <input title='Add a new client&rsquo;s "Common Name" ' name="clients[][CN]" type="text" class="rwtext"/>
             </td>
             <td>
-              <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea> 
+              <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea>
             </td>
             <td>
               <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea>

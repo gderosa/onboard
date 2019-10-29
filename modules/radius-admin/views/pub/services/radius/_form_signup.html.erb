@@ -3,7 +3,7 @@
 
   template_params                     ||= {}
   template_params['check']            ||= {}
-  template_params['personal']         ||= {}  
+  template_params['personal']         ||= {}
   template_params['terms']            ||= {}
   template_params['terms']['accept']  ||= {}
 
@@ -18,22 +18,22 @@
         <td>
           <div class="input-container">
             <% if user %>
-              <input 
-                  type="text" 
-                  readonly 
-                  name="check[User-Name]" 
+              <input
+                  type="text"
+                  readonly
+                  name="check[User-Name]"
                   value="<%= user.name %>">
             <% else %>
-              <input 
-                  type="text" 
-                  name="check[User-Name]" 
+              <input
+                  type="text"
+                  name="check[User-Name]"
                   value="<%= template_params['check']['User-Name'] %>"/>
             <% end %>
           </div>
         </td>
       </tr>
     </tbody>
-  </table>  
+  </table>
   <h4><%= i18n.personal.info.capitalize %></h4>
   <%=
     partial(
@@ -61,8 +61,8 @@
       partial(
         :module => 'radius-admin',
         :path   => 'pub/services/radius/_form_signup_terms',
-        :locals => {:terms => terms, :template_params  => template_params}  
-      ) 
+        :locals => {:terms => terms, :template_params  => template_params}
+      )
     %>
   <% end %>
   <div style="text-align:center;">

@@ -1,10 +1,10 @@
 This module include code from the Radiustar project, with some
-modifications by Guido De Rosa (guido.derosa at vemarsas dot it). 
+modifications by Guido De Rosa (guido.derosa at vemarsas dot it).
 
-Specifically, lib/radiustar.rb file and the whole content of 
+Specifically, lib/radiustar.rb file and the whole content of
 lib/radiustar/ directory come from that project.
 
-Radiustar is Copyright (C) 2010 PJ Davis, released under the 
+Radiustar is Copyright (C) 2010 PJ Davis, released under the
 CC0 1.0 Universal license.
 
 Radiustar web pages are located at:

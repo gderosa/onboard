@@ -1,17 +1,17 @@
 <h2>Certificate</h2>
 <% if msg[:ok] %>
   <p>Certificate has been successfully uploaded.</p>
-<% else %> 
+<% else %>
   <div class="error" style="padding: 0.4em;">
     <% if msg[:err_html] =~ /\S/ %>
       <p><%= msg[:err_html] %></p>
     <% else %>
-      <% if msg[:err].kind_of? OpenSSL::X509::CertificateError %> 
+      <% if msg[:err].kind_of? OpenSSL::X509::CertificateError %>
         Invalid certificate. <em>OpenSSL</em> reported: <span style="margin-left:1ex;">&ldquo;<code><%= html_escape msg[:err] %></code>&rdquo;.</span>
       <% elsif msg[:err].kind_of? ::OnBoard::Crypto::SSL::ArgumentError %>
-        Cerificate error: 
+        Cerificate error:
           <code style="margin-left:1ex;"><%= html_escape msg[:err] %></code>.
-      <% else %> 
+      <% else %>
         <pre><%= html_escape msg[:err] %></pre>
       <% end %>
     <% end %>

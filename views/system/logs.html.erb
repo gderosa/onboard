@@ -18,7 +18,7 @@
 <% elsif objects.is_a? OnBoard::System::Log %>
   <% log = objects %>
   <h2>Log: <%= log.data['meta']['path'] %></h2>
-  <%= 
-      erubis(:"system/_log.html", :layout => false, :locals => {:log => log})  
+  <%=
+      erubis(:"system/_log.html", :layout => false, :locals => {:log => log})
   %>
 <% end %>

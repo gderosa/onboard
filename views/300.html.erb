@@ -1,4 +1,4 @@
-<% 
+<%
   paths = formats.map do |fmt|
     request.path_info.sub(/\.\w+$/, ".#{fmt}")
   end

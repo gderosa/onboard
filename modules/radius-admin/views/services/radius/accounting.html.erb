@@ -8,9 +8,9 @@
   per_page      = objects['per_page']     || params[:per_page]  || 1
 
 %>
-<% 
+<%
   if rows[0]
-    columns = rows[0].keys 
+    columns = rows[0].keys
   else
     columns = ['no info available yet']
   end
@@ -43,7 +43,7 @@
   </tbody>
 </table>
 
-<%= 
+<%=
   erubis(
     :"_paginator.html",
     :layout => false,

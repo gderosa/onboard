@@ -2,7 +2,7 @@ Beware. Silent chilli failures may happen when/with:
 
 * wrong uamsecret (solution: a "smarter" login page?)
 
-* non-existent socket directory(ies) (solution: creation in Chilli#start, DONE) 
+* non-existent socket directory(ies) (solution: creation in Chilli#start, DONE)
 
 
 

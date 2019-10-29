@@ -24,7 +24,7 @@
       <td style="text-align:right; padding-right:1ex;">
         <% if row[:accept_count] > 0 %><a href="users/by_terms/<%= row[:id] %>.html"><% end %>
           <%= row[:accept_count] %> user<%= 's' if row[:accept_count] != 1 %>
-        <% if row[:accept_count] > 0 %></a><% end %> 
+        <% if row[:accept_count] > 0 %></a><% end %>
       </td>
       <td style="text-align:center">
         <form method="POST" action="terms/<%= row[:id] %>.html">
@@ -39,7 +39,7 @@
 <h3>Create a new document</h3>
 <form method="POST">
   <%= partial(
-    :module => 'radius-admin', 
+    :module => 'radius-admin',
     :path => 'services/radius/terms/_form',
     :locals => {:button_label => 'Create!'}
   ) %>

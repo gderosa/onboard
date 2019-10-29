@@ -1,10 +1,10 @@
-<% 
+<%
   require 'onboard/network/routing'
   require 'onboard/network/qos/diffserv'
 
-  all_tables      = OnBoard::Network::Routing::Table.getAllIDs 
-  all_interfaces  = OnBoard::Network::Interface.getAll 
-  all_rules       = objects 
+  all_tables      = OnBoard::Network::Routing::Table.getAllIDs
+  all_interfaces  = OnBoard::Network::Interface.getAll
+  all_rules       = objects
 
 %>
 
@@ -17,7 +17,7 @@
 <h2><%= title %></h2>
 
 
-<%= 
+<%=
   erubis(
     :"_messages.html",
     {
@@ -44,9 +44,9 @@
           :show_delete_checkbox => true
         }
       }
-    )    
+    )
   %>
-  <button type="submit">Change</button> 
+  <button type="submit">Change</button>
 </form>
 
 <h3>Add a new rule</h3>
@@ -67,11 +67,11 @@
               :to     => 'all',
               :fwmark => nil,
               :table  => 'main'
-            } ) 
+            } )
           ]
         }
       }
-    )    
+    )
   %>
   <button type="submit">Add</button>
 </form>

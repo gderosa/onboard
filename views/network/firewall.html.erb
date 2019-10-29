@@ -1,4 +1,4 @@
-<% 
+<%
   require 'pp'
 
   require 'onboard/network/interface'
@@ -51,19 +51,19 @@
             <input type="hidden" name="_method" value="put"/>
             <input type="hidden" name="chain" value="<%= chain.name %>"/>
             <input type="hidden" name="rulenum" value="<%= rule[0] %>"/>
-            <% 
+            <%
             # rule is an Array of fields, the first (rule[0]) represents
-            # rulenum according to iptables conventions (starts from 1) 
-            # 
+            # rulenum according to iptables conventions (starts from 1)
+            #
             # Other "fields" come directly from iptables -L -v -n
-            # 
+            #
             # chain.rules is the Array of such arrays
-            #    
-            # It is: rule_idx = rule[0] - 1    
+            #
+            # It is: rule_idx = rule[0] - 1
             %>
             <input type="hidden" name="rulespec" value="<%== chain.rulespecs[rule_idx] %>"/>
             <%
-            # we cannot use rulenum to move up/down a rule; we have to delete 
+            # we cannot use rulenum to move up/down a rule; we have to delete
             # it, then recreate in a different position, so we need the full
             # rule specification
             %>
@@ -73,7 +73,7 @@
             <td>
               <button type="submit" name="del_rule" title="Remove"><img src="<%= icondir + '/16x16/actions/remove.png'%>" alt="Remove" title="Remove"/></button>
             </td>
-            <% 
+            <%
               # First[last] rule cannot be moved up[down] :
               # disable buttons accordingly
             %>
@@ -82,7 +82,7 @@
             </td>
             <td>
               <button <%= 'disabled' if rule[0] == chain.rules.length %> type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
-            </td>           
+            </td>
             <% rule[1..-2].each do |value| %>
               <td><%= value %></td>
             <% end %>
@@ -104,7 +104,7 @@
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
 
-  <% 
+  <%
     all_interfaces.each do |netif|
       if netif.bridged_to
         %>
@@ -128,7 +128,7 @@
         </th>
         <th>
           Action
-        </th>  
+        </th>
         <th>
           Comment
         </th>
@@ -161,7 +161,7 @@
           </select>
         </td>
         <td>
-          <input type="text" name="comment" class="humantext"/> 
+          <input type="text" name="comment" class="humantext"/>
         </td>
       </tr>
     </tbody>
@@ -189,7 +189,7 @@
         </th>
         <th>
           Destination Port/Interval
-        </th>     
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -207,28 +207,28 @@
           </select>
         </td>
         <td>
-          <%= 
+          <%=
             erubis(
               :"network/_interface_chooser.html",
               {
                 :layout => false,
                 :locals => {
                   :select_name    => "input_iface",
-                  :all_interfaces => all_interfaces 
+                  :all_interfaces => all_interfaces
                 }
               }
             )
           %>
         </td>
         <td>
-          <%= 
+          <%=
             erubis(
               :"network/_interface_chooser.html",
               {
                 :layout => false,
                 :locals => {
                   :select_name    => "output_iface",
-                  :all_interfaces => all_interfaces 
+                  :all_interfaces => all_interfaces
                 }
               }
             )
@@ -260,7 +260,7 @@
     <tbody>
       <tr>
         <td>
-          <select multiple name="state[]" 
+          <select multiple name="state[]"
               title="Hold CTRL key to select multiple options">
             <option value="NEW">NEW</option>
             <option value="ESTABLISHED">ESTABLISHED</option>

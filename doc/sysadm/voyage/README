@@ -1,8 +1,8 @@
 On Voyage Linux and other distros optimized for embededd systems, the root
 filesysem is mounted read-only. File that need write acces may be put
-in a RAM filesystem, persistence may be achieved adding dirs to 
+in a RAM filesystem, persistence may be achieved adding dirs to
 VOYAGE_SYNC_DIRS in /etc/default/voyage-util .
 
 Otherwise, you may have /var on a different, writable partition (maybe on
-an additional hard disk). File in /etc that need to be writeable may be 
+an additional hard disk). File in /etc that need to be writeable may be
 turned into symlinks to, say, /var/etc/some/file.conf .

@@ -6,8 +6,8 @@
       the file.
     <% else %>
       Only the last <%= log.class::Tail_n.to_s %> lines were shown. Click
-      <a href="/system/logs/<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download 
-      the whole file. 
+      <a href="/system/logs/<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download
+      the whole file.
     <% end %>
     </p>
 <% else %>

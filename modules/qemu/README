@@ -18,10 +18,10 @@ THIS HAS BEEN DISABLED, MAYBE WILL BE RE-ENABLED SOON?
 		Now, USB disk/pendrive support is enabled. If you want to *boot* from
 		such a device:
 
-		  * you need a recent qemu-kvm release (and related/included BIOSes): 
+		  * you need a recent qemu-kvm release (and related/included BIOSes):
 		    * fine: qemu-kvm-1.2.0 compiled from source;
 		    * bad:  qemu-kvm-1.0   from Ubuntu package;
-		  * you must use the boot menu (press F12) and choose the USB device; 
+		  * you must use the boot menu (press F12) and choose the USB device;
 		  * you might have to *wait* a bit, after bootloader screen (for example
 		    with a Debian installer image).
 
@@ -33,7 +33,7 @@ it's not actually used: TAPs are created on demand by qemu-kvm itself,
 but may be useful nonethless).
 
 attr: could be useful for distributed filesystems to store images: namely GlusterFS
-(there are plans to integrate); see 
+(there are plans to integrate); see
 http://community.gluster.org/q/how-do-i-reuse-a-brick-after-deleting-the-volume-it-was-formerly-part-of/
 
 
@@ -52,13 +52,13 @@ gem install uuid rmagick cronedit chronic_duration
 To avoid mouse pointer mismatches, a client with capture/release is
 strongly suggested, such as Vinagre on Unix or [see below] on Windows.
 
-Alternetively, you can use SPICE (by RedHat Inc.), which is a more 
-advanced protocol. There are clients for Unix and Windows, with 
+Alternetively, you can use SPICE (by RedHat Inc.), which is a more
+advanced protocol. There are clients for Unix and Windows, with
 capture/release (they also support VNC):
 
 http://spice-space.org/download.html .
 
-By default, guests get a QXL paravirtual Video card: it's VGA and VESA 
+By default, guests get a QXL paravirtual Video card: it's VGA and VESA
 compatible but if you install guest drivers (from the link above, for
 example) you'll get optimal performance especially via SPICE.
 
