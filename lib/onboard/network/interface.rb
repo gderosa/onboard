@@ -488,17 +488,17 @@ class OnBoard
         end
       end
 
-      def modify_from_HTTP_request(h)
+      def modify_from_HTTP_request(h, opts={})
         if h['preferred_metric']
           set_preferred_metric h['preferred_metric']
         end
 
-        if ['on', true].include? h['active']
+        if h['active']
           ip_link_set_up unless @active
-        elsif @active
-          if h['ipassign'].respond_to? :[] and h['ipassign']['pid'] =~ /\d+/
-            stop_dhcp_client h['ipassign']['pid']
-          end
+        elsif @active and (h['active'] == false or not opts[:safe_updown])
+          # In browser context, a checkbox param ^^ is simply absent (null/nil) for "unchecked".
+          # In (JSON) API context, we want h['active'] to be false explicitly, before bringing a network interface down!
+          # See also controller/network/interfaces.rb
           ip_link_set_down
         end
 
