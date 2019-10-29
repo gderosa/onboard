@@ -13,7 +13,7 @@ class OnBoard
           CONFFILE  = CONFFILE  unless const_defined? :CONFFILE
 
           include Configurable
-          
+
         end
       end
     end

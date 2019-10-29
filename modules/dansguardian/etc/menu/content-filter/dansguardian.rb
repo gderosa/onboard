@@ -15,7 +15,7 @@ class OnBoard
     :href     => '/content-filter/dansguardian',
     :name     => 'Main',
     :n        => 1,
-    :children => lambda {|arg| false} 
+    :children => lambda {|arg| false}
   })
 
   MENU_ROOT.add_path('/content-filter/dg/authplugins', {
@@ -27,7 +27,7 @@ class OnBoard
   MENU_ROOT.add_path('/content-filter/dg/fg', {
     :href => '/content-filter/dansguardian/filtergroups',
     :name => 'Filter Groups',
-    :desc => 
+    :desc =>
         'You may configure different filtering rules for each group of users',
     :n    => 2
   })

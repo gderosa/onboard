@@ -7,7 +7,7 @@ class OnBoard
         class << self
 
           def config_file(id)
-            "#{DG.root}/authplugins/#{id}.conf" 
+            "#{DG.root}/authplugins/#{id}.conf"
           end
 
         end

@@ -11,7 +11,7 @@ class OnBoard
         :path     => '/services/radius/signup',
         :title    => "End-user sign up",
         :format   => params[:format],
-        :locals   => {:configuration => Service::RADIUS::Signup.get_config} 
+        :locals   => {:configuration => Service::RADIUS::Signup.get_config}
       )
     end
 

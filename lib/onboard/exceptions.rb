@@ -3,27 +3,27 @@
 # HTTP headers might be a way).
 
 class OnBoard
-  
-  # This is the case where multiple inheritance 
+
+  # This is the case where multiple inheritance
   # would've been proven useful...
   module Exception
   end
 
   class Error         < ::StandardError;
     include Exception
-  end  
+  end
 
   # TODO: use catch and throw
   class Warning       < ::Exception;
     include Exception
   end
-  
+
   # an useful alias
   RuntimeError        = Error
 
   class ServerError   < Error;            end
   class BadRequest    < Error;            end
-  class Conflict      < Error;            end 
+  class Conflict      < Error;            end
   class Unauthorized  < Error;            end
 
   InternalServerError = ServerError
@@ -43,7 +43,7 @@ class OnBoard
         return 500
       else
         raise ::RuntimeError, "unhandled exception: #{self}"
-      end        
+      end
     end
   end
 

@@ -14,55 +14,55 @@ class OnBoard
         autoload :Recovery, 'onboard/service/radius/passwd/recovery'
 
         ENCRYPT = {
-          'Cleartext-Password'  => 
+          'Cleartext-Password'  =>
               lambda{|cleartxt| cleartxt},
 
-          'Crypt-Password'      => 
-              lambda{|cleartxt| cleartxt.salted_crypt}, 
+          'Crypt-Password'      =>
+              lambda{|cleartxt| cleartxt.salted_crypt},
 
-          'MD5-Password'        => 
+          'MD5-Password'        =>
               lambda{|cleartxt| Digest::MD5.hexdigest cleartxt},
 
-          'SMD5-Password'       => 
+          'SMD5-Password'       =>
               lambda{|cleartxt| Digest::MD5.salted_hexdigest cleartxt},
 
-          'SHA1-Password'       => 
+          'SHA1-Password'       =>
               lambda{|cleartxt| Digest::SHA1.base64digest cleartxt},
 
-          'SSHA1-Password'      => 
+          'SSHA1-Password'      =>
               lambda{|cleartxt| Digest::SHA1.salted_base64digest cleartxt},
         }
 
         TYPES = ENCRYPT.keys
 
         CHECK = {
-          'Cleartext-Password'  => 
+          'Cleartext-Password'  =>
               lambda{|cleartxt, stored| cleartxt == stored},
 
-          'Crypt-Password'      => 
-              lambda do |cleartxt, stored| 
+          'Crypt-Password'      =>
+              lambda do |cleartxt, stored|
                 # salt is at the beginning, as opposed to MD5 and SHA1
                 salt = stored[0..1]
                 cleartxt.crypt(salt) == stored
-              end, 
+              end,
 
-          'MD5-Password'        => 
-              lambda do |cleartxt, stored| 
+          'MD5-Password'        =>
+              lambda do |cleartxt, stored|
                 Digest::MD5.hexdigest(cleartxt) == stored
               end,
 
-          'SMD5-Password'       => 
-              lambda do |cleartxt, stored| 
-                salt = stored.hex2bin[Digest::MD5.digest_length..-1] 
+          'SMD5-Password'       =>
+              lambda do |cleartxt, stored|
+                salt = stored.hex2bin[Digest::MD5.digest_length..-1]
                 Digest::MD5.salted_hexdigest(cleartxt, salt) == stored
               end,
 
-          'SHA1-Password'       => 
-              lambda do |cleartxt, stored| 
+          'SHA1-Password'       =>
+              lambda do |cleartxt, stored|
                 Digest::SHA1.base64digest(cleartxt) == stored
               end,
 
-          'SSHA1-Password'      => 
+          'SSHA1-Password'      =>
               lambda do |cleartxt, stored|
                 salt = Base64.decode64(stored)[Digest::SHA1.digest_length..-1]
                 Digest::SHA1.salted_base64digest(cleartxt, salt) == stored
@@ -74,7 +74,7 @@ class OnBoard
         class UnknownType < ArgumentError; end
 
         class << self
-          
+
           #   Password.recovery(:email => 'user@domain.com')
           def recovery(h)
             user = User.find :Email => h[:email]
@@ -102,11 +102,11 @@ class OnBoard
               LOGGER.error "Hotspot password recovery: no user has email <#{h[:email]}>"
               @last_time_passed_to_deliver_recovery         ||= {}
               @last_time_passed_to_deliver_recovery[:mail]  ||= 0.8
-              sleep [@last_time_passed_to_deliver_recovery[:mail], 2.5].min 
+              sleep [@last_time_passed_to_deliver_recovery[:mail], 2.5].min
                   # Fake some time has passed to send the email...
                   # NOTE: This would be unnecessary if we use(d) an asynchronous way:
                   # sendmail, localhost 25, or Thread's...
-                  # TODO? get rid of this crap...? 
+                  # TODO? get rid of this crap...?
             end
           end
 
@@ -134,7 +134,7 @@ class OnBoard
         def check(encrypted)
           return nil unless (@cleartext && encrypted)
           check_type
-          CHECK[@type].call(@cleartext, encrypted) 
+          CHECK[@type].call(@cleartext, encrypted)
         end
 
         def check_type

@@ -11,9 +11,9 @@ rescue Errno::ENOENT
   saved_configuration_version = [0, 0, 0]
 end
 
-if 
+if
     Dir.exists? OnBoard::CONFDIR              and # No config? Do not upgrade ;)
-    saved_configuration_version <   [2010, 8] and 
+    saved_configuration_version <   [2010, 8] and
     current_version             >=  [2010, 8]
 
   print "\nNOTE: Upgrading configuration to version #{OnBoard::VERSION} ... "
@@ -21,9 +21,9 @@ if
   cmd = "#{OnBoard::ROOTDIR}/etc/scripts/migrate-config.sh"
   OnBoard::System::Command.run cmd
 
-  load File.join OnBoard::ROOTDIR, '/etc/save/version.rb' 
+  load File.join OnBoard::ROOTDIR, '/etc/save/version.rb'
 end
-    
+
 
 
 

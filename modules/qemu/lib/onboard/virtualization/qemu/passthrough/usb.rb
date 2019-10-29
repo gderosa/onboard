@@ -5,7 +5,7 @@ class OnBoard
         class USB
 
           attr_reader :dev
-          
+
           # lsusbdev is a OnBoard::Hardware::LSUSB
           def initialize(lsusbdev)
             @dev = lsusbdev
@@ -41,7 +41,7 @@ class OnBoard
             nil
           end
 
-        end 
+        end
       end
     end
   end

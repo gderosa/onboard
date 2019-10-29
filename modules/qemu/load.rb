@@ -6,7 +6,7 @@ class OnBoard
 
       ROOTDIR   = File.dirname(__FILE__)
       CONFDIR   = File.join OnBoard::CONFDIR, 'virtualization/qemu'
-      
+
       FileUtils.mkdir_p CONFDIR
       $LOAD_PATH.unshift  ROOTDIR + '/lib'
       if OnBoard.web?
@@ -16,6 +16,6 @@ class OnBoard
 
     end
   end
-  V12n = Virtualization 
+  V12n = Virtualization
 end
 

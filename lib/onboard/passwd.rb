@@ -5,7 +5,7 @@ require 'onboard/extensions/string' # patched String#== is important here!
 
 class OnBoard
   # This refers to the Web UI password(s?).
-  # For Unix login passwords look at the OnBoard::System::User namespace. 
+  # For Unix login passwords look at the OnBoard::System::User namespace.
   module Passwd
     # Currently, just one user: admin .
     PASSWD_DIR = OnBoard::CONFDIR + '/self/passwd'
@@ -27,7 +27,7 @@ class OnBoard
         passwd == DEFAULT_ADMIN_PASSWD
       end
     end
-    
+
     # An alias, until other users will exist
     def self.check_admin_pass(passwd)
       self.check_pass(passwd)

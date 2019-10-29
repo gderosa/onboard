@@ -2,7 +2,7 @@ require 'onboard/extensions/string'
 
 class File
   def self.valid_encodings(path)
-=begin    
+=begin
     ascii_only_found = false
     valid_encs = Encoding.list
     File.foreach path do |line|
@@ -17,7 +17,7 @@ class File
         end
       end
       # Restrict the subset
-      valid_encs = line.valid_encodings(valid_encs) 
+      valid_encs = line.valid_encodings(valid_encs)
     end
     valid_encs
 =end

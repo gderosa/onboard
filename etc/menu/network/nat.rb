@@ -3,6 +3,6 @@ class OnBoard
     #:href => '/network/nat',
     :name => 'NAT',
     :desc => 'Network Address Translation',
-    :n    => 0 
+    :n    => 0
   })
 end

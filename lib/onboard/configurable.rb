@@ -5,11 +5,11 @@ class OnBoard
   module Configurable
 
     # http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/
-    
+
     def self.included(base)
       base.extend(ClassMethods)
     end
-        
+
     module ClassMethods
 
       def get
@@ -25,7 +25,7 @@ class OnBoard
     attr_reader :data
 
     def initialize(h)
-      @data = h.recursively_stringify_keys 
+      @data = h.recursively_stringify_keys
     end
 
     def save
@@ -56,6 +56,6 @@ class OnBoard
         @data[metid.to_s]
       end
     end
-      
+
   end
 end

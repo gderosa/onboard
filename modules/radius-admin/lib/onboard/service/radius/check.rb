@@ -98,7 +98,7 @@ class OnBoard
           def insert_dummy_attributes(params)
             # In fact, there's no need to explicitly insert 'User-Name',
             # because there's already a @@columns['User-Name'] column.
-            # For the rationale of this method, read comments inside 
+            # For the rationale of this method, read comments inside
             # the insert method.
             RADIUS.db[@@table].insert(
               @@columns['User-Name']  => params['check']['User-Name'],
@@ -111,7 +111,7 @@ class OnBoard
           # Accept empty passwords only with Auth-Type == Reject or Accept.
           # Raise an exception otherwise.
           def validate_empty_password(params)
-            i18n = params[:i18n] # params mixes http/form and non-http/form 
+            i18n = params[:i18n] # params mixes http/form and non-http/form
             if  ['', nil].include? params['check']['User-Password'] and
                 ['', nil].include? params['check']['Auth-Type']     and not
                 ['', nil].include? params['check']['Password-Type']
@@ -122,11 +122,11 @@ class OnBoard
               end
             end
           end
-          
+
 
         end
 
       end
     end
   end
-end 
+end

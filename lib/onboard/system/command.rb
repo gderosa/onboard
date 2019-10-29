@@ -35,7 +35,7 @@ class OnBoard
         end
         Thread.new do
           # very basic heuristic to interpret stderr output as warning or error
-          begin  
+          begin
             stderr.each_line do |line|
               level = :warn
               level = :error if line =~ /err(orr|[^a-z])/i
@@ -50,7 +50,7 @@ class OnBoard
           end
           stdin.close
           stdout.close
-          stderr.close 
+          stderr.close
         end
         at_exit {
           if wait_thr.alive?
@@ -82,7 +82,7 @@ class OnBoard
         if wait_thr.value != 0
           msg[:ok] = false
           msg[:status] = wait_thr.value.exitstatus
-          # if we know how to safely handle an error, treat errors as 
+          # if we know how to safely handle an error, treat errors as
           # something smaller
           error_as = :error
           errmsg = "Command failed: #{cmd_do} # (#{wait_thr.value})"
@@ -101,18 +101,18 @@ class OnBoard
             LOGGER.info line if line =~ /\S/
           end
         else
-          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: #{cmd_do}"  
+          LOGGER.method(DEFAULT_LOG_LEVEL).call "Command success: #{cmd_do}"
         end
         stdin.close
         stdout.close
         stderr.close
-        if !msg[:ok] and !opts.include?(:try) 
+        if !msg[:ok] and !opts.include?(:try)
           if opts.include?(:raise_exception)
             raise RuntimeError, msg[:err]
-          elsif opts.include?(:raise_Conflict) 
+          elsif opts.include?(:raise_Conflict)
             raise Conflict, msg[:err] + "\n" + msg[:stderr]
           elsif opts.include?(:raise_BadRequest)
-            raise BadRequest, msg[:err] + "\n" + msg[:stderr] 
+            raise BadRequest, msg[:err] + "\n" + msg[:stderr]
           end
         end
         return msg

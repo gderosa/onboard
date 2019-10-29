@@ -22,10 +22,10 @@ class OnBoard
           @type         = h[:type]
           @options      = h[:options] # list, may include Hashes?
         end
-    
+
         def writable?
           system "sudo touch #{@mount_point} > /dev/null 2>&1"
-        end  
+        end
 
         def readonly?
           not writable?
@@ -35,14 +35,14 @@ class OnBoard
           raise Errno::EROFS unless writable?
         end
 
-        def remount!(*opts) 
-          optstr = ( %w{remount} + opts.map{|x| x.to_s} ).join(',') 
+        def remount!(*opts)
+          optstr = ( %w{remount} + opts.map{|x| x.to_s} ).join(',')
           Command.send_command "mount #{@mount_point} -o #{optstr}", :sudo
         end
         alias remount remount!
 
       end
-  
+
     end
   end
 end

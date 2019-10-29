@@ -47,7 +47,7 @@ class OnBoard
             params['disk'][idx]['path'] = \
                 OnBoard::Virtualization::QEMU::Img.relative_path created_disk_image
           end
-          
+
           # If image file comes from form text input / browsing (not creation)
           if hd['path'] =~ /\S/
             params['disk'][idx]['file'] ||=

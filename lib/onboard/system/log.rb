@@ -6,16 +6,16 @@ class OnBoard
 
       # badly designed class, too much hashes...
       # 'id' is not really an id, just a shortcut. We're moving to
-      # a path-based identification, and now h['id'] may also be nil 
-      
+      # a path-based identification, and now h['id'] may also be nil
+
       class << self
 
         def set_defaults!
-        
+
           # TODO: do not hardcode
           @logs ||= [
             {
-              'path'    => OnBoard::LOGFILE_PATH, 
+              'path'    => OnBoard::LOGFILE_PATH,
               'id'      => OnBoard::LOGFILE_BASENAME,
               'desc'    => "Main log",
               'category'=> 'main'
@@ -32,7 +32,7 @@ class OnBoard
               'id'      => "syslog",
               'desc'    => "Main system log",
               'category'=> 'os'
-            },  
+            },
             {
               'path'    => "/var/log/daemon.log",
               'id'      => "daemon.log",
@@ -40,15 +40,15 @@ class OnBoard
               'htmldesc'=> "&ldquo;daemon&rdquo; log",
               'category'=> 'os'
             }
-          ] 
+          ]
 
           @categories ||= {
             'main'      => "Main logs",
             'os'        => "OS logs"
-          } 
+          }
 
         end
-  
+
         def sanitize!
           file_needs_update = false
           new = []
@@ -80,14 +80,14 @@ class OnBoard
         def categories
           @categories
         end
-      
+
         def data
-          {'logs' => @logs, 'categories' => @categories} 
+          {'logs' => @logs, 'categories' => @categories}
         end
 
         def register(new_h)
           # "create or replace"
-          @logs.each_with_index do |old_h, i| 
+          @logs.each_with_index do |old_h, i|
             if old_h['path'] == new_h['path']
               @logs[i] = new_h
               return
@@ -118,7 +118,7 @@ class OnBoard
             h = YAML.load File.read DATAFILE
             @categories         ||= {}
             @categories.update      h['categories']
-            @logs               ||= [] 
+            @logs               ||= []
             @logs               |=  h['logs']
           end
         end
@@ -135,12 +135,12 @@ class OnBoard
         # DONE: Do not show the whole file to not bloat the web browser
         # TODO: Open the "File" class and add a "tail" method ?
         # NOTE: File::Tail gem is not what we want, since it displays the
-        #   file as it grows (and presumably never returns...) 
+        #   file as it grows (and presumably never returns...)
         return {
-          'meta'        => @meta, 
+          'meta'        => @meta,
           'content_uri' => "/system/logs/#{@meta['id']}.raw",
-          'tail'        => tail() 
-        }  
+          'tail'        => tail()
+        }
       end
 
       alias to_h data
@@ -155,12 +155,12 @@ class OnBoard
         if File.readable? @meta['path']
           return `tail -n #{n} #{@meta['path']}`
         else
-          return `sudo tail -n #{n} #{@meta['path']}` 
+          return `sudo tail -n #{n} #{@meta['path']}`
         end
       end
 
       # It doesn't make much sense to embed the content of a whole log file
-      # into JSON, YAML or HTML; a human or a machine may go to 
+      # into JSON, YAML or HTML; a human or a machine may go to
       # data['content_uri'] and simply download it
 
     end

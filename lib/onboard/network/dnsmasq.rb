@@ -27,7 +27,7 @@ class OnBoard
 
       def self.save
         Dir.glob "#{CONFDIR_CURRENT}/#{CONFFILES_GLOB}" do |path|
-          FileUtils.copy path, CONFDIR 
+          FileUtils.copy path, CONFDIR
         end
       end
 
@@ -56,7 +56,7 @@ class OnBoard
           need_restart = true
         end
         #CONFFILES.each do |file|
-        Dir.glob "#{DEFAULTS_CONFDIR}/#{CONFFILES_GLOB}" do |path| 
+        Dir.glob "#{DEFAULTS_CONFDIR}/#{CONFFILES_GLOB}" do |path|
           basename = File.basename path
           unless File.exists? File.join CONFDIR_CURRENT, basename
             FileUtils.copy "#{DEFAULTS_CONFDIR}/#{basename}", CONFDIR_CURRENT
@@ -64,12 +64,12 @@ class OnBoard
           end
         end
         if need_restart
-          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR_CURRENT}"  
+          OnBoard::PLATFORM::restart_dnsmasq  "#{CONFDIR_CURRENT}"
         end
       end
 
       def self.validate_dhcp_range(dhcp_range_params)
-        return {:ignore => true} if 
+        return {:ignore => true} if
             dhcp_range_params['delete'] =~ /on|yes|true|1/i
 
         %w{ipstart ipend}.each do |what|
@@ -104,7 +104,7 @@ class OnBoard
             :err => "Invalid IP address: #{dhcp_host_params['ip']}"
           }
         end
-        
+
         return {:ok => true}
       end
 
@@ -131,7 +131,7 @@ class OnBoard
           'leases'      => [],
           'resolvconf'  => {  # tipically obtained via DHCP (appliance may be DHCP client on the external/WAN interface, and DHCP server on the internal/LAN interface)
             'file'        => '/etc/resolv.conf',
-            'nameservers' => []  
+            'nameservers' => []
           }
         }
       end
@@ -151,7 +151,7 @@ class OnBoard
               redo # remove comments like # # # # (multiple '#')
             end
             line.strip!
-            # The following regexes are too 'rigid' to parse conf file 
+            # The following regexes are too 'rigid' to parse conf file
             # not written by ourselves, but should be ok for our needs.
             if line =~ /dhcp-range=([^,]+),([^,]+),([^,]+)/
               @data['conf']['dhcp']['ranges'] << {
@@ -182,12 +182,12 @@ class OnBoard
               redo # remove comments like # # # # (multiple '#')
             end
             line.strip!
-            # The following regexes are too 'rigid' to parse conf file 
+            # The following regexes are too 'rigid' to parse conf file
             # not written by ourselves, but should be ok for our needs.
             if line =~ /dhcp-leasefile=(\S+)/ # TODO? handle filepath w/ spaces?
               dhcp_leasefile = $1
               break
-            end   
+            end
           end
         end
         if File.readable? dhcp_leasefile
@@ -203,7 +203,7 @@ class OnBoard
               end
             end
           end
-        end  
+        end
       end
 
       # Repeat Yourself :-P # TODO's ?
@@ -213,7 +213,7 @@ class OnBoard
           file.each_line do |line|
             next if line =~ /^\s*#/
             line.strip!
-            # The following regexes are too 'rigid' to parse conf file 
+            # The following regexes are too 'rigid' to parse conf file
             # not written by ourselves, but should be ok for our needs.
             case line
             when /^\s*server\s*=\s*([^,\s#]+)\s*#\s?(.*)$/
@@ -252,7 +252,7 @@ class OnBoard
         return unless pid and pid > 0
         if File.read("/proc/#{pid}/cmdline") =~ /-r\0([^\0]+)/
           @data['resolvconf']['file'] = $1
-        end         
+        end
         File.open @data['resolvconf']['file'] do |file|
           file.each_line do |line|
             if line =~ /^\s*nameserver\s+(\S+)/
@@ -262,11 +262,11 @@ class OnBoard
         end
       end
 
-      def write_dhcp_conf_from_HTTP_request(params) 
+      def write_dhcp_conf_from_HTTP_request(params)
         str = banner + "\n"
         params['ranges'].each_value do |range|
           msg = self.class.validate_dhcp_range(range)
-          return msg if msg[:err] 
+          return msg if msg[:err]
           unless msg[:ignore]
             str << 'dhcp-range='
             str <<  range['ipstart']  << ',' <<
@@ -276,7 +276,7 @@ class OnBoard
         end
         params['hosts'].each_value do |host| # fixed host
           host['mac'].gsub! '-', ':' # normalize: 00-aa-bb-ff-23-45 -> 00:aa:bb:ff:23:45
-          msg = self.class.validate_dhcp_host(host) 
+          msg = self.class.validate_dhcp_host(host)
           return msg if msg[:err]
           unless msg[:ignore]
             str <<  'dhcp-host='
@@ -288,11 +288,11 @@ class OnBoard
         FileUtils.mkdir(CONFDIR + '/new') unless Dir.exists?(CONFDIR + '/new')
         FileUtils.copy(
           CONFDIR + '/new/dhcp.conf', CONFDIR + '/new/dhcp.conf~'
-        ) if File.exists?(CONFDIR + '/new/dhcp.conf')            
+        ) if File.exists?(CONFDIR + '/new/dhcp.conf')
         File.open(CONFDIR + '/new/dhcp.conf',  'w') do |file|
           file.write str
         end
-        return {:ok => true} 
+        return {:ok => true}
       end
 
 
@@ -309,24 +309,24 @@ class OnBoard
               explicit_port = true
             end
             next if not \
-                OnBoard::Network::Interface::IP::valid_address? ns['ip']  
+                OnBoard::Network::Interface::IP::valid_address? ns['ip']
             if explicit_port
               str << "server=#{ns['ip']}##{ns['port']} # #{ns['comment']}\n"
             else
-              str << "server=#{ns['ip']} # #{ns['comment']}\n" 
+              str << "server=#{ns['ip']} # #{ns['comment']}\n"
             end
           end
         end
 
         # TODO: DRY: move some of this to write_local_domain(domain)
-        
+
         params['searchdomain'] = System::Hostname.domainname \
             unless params['searchdomain'] =~ /\S/
 
         if params['searchdomain'].respond_to? :strip!
           params['searchdomain'].strip!
           if params['searchdomain'] =~ /^[a-z0-9\.\-]+$/i
-            str_domains_self << "domain=#{params['searchdomain']}\n" 
+            str_domains_self << "domain=#{params['searchdomain']}\n"
           end
         end
 
@@ -342,9 +342,9 @@ class OnBoard
         unless File.exists? CONFDIR + '/new'
           FileUtils.mkdir_p CONFDIR + '/new'
         end
-        
+
         { # TODO: DRY: move some of this to write_local_domain(domain)
-          'dns.conf' => str, 
+          'dns.conf' => str,
           'domains.self.conf' => str_domains_self
         }.each_pair do |filename, content|
           next if filename == 'dns.conf' and not params['nameservers']
@@ -352,14 +352,14 @@ class OnBoard
             File.exists? CONFDIR + "/new/#{filename}"
           File.open(CONFDIR + "/new/#{filename}",  'w') do |file|
             file.write content
-          end 
+          end
         end
-        return {:ok => true} 
+        return {:ok => true}
       end
 
       def write_local_domain(domain)
         return if not domain
-        filepath = CONFDIR + '/new/domains.self.conf' 
+        filepath = CONFDIR + '/new/domains.self.conf'
         FileUtils.copy filepath, filepath + '~' if File.exists? filepath
         File.open(filepath, 'w') do |f|
           f.puts banner
@@ -382,7 +382,7 @@ class OnBoard
           next unless name =~ /^[\w\-\.]+$/
           ip    = domain['ip']
           valid_ip = OnBoard::Network::Interface::IP::valid_address? ip
-          if blocked.include? name 
+          if blocked.include? name
             lines |= ["address=/#{name}/0.0.0.0"]
             lines |= ["address=/#{name}/::"]
           elsif valid_ip
@@ -401,18 +401,18 @@ class OnBoard
         File.open(dns_conf_file,  'w') do |file|
           lines.each{|line| file.puts line}
         end
-        return {:ok => true} 
+        return {:ok => true}
       end
 
       def banner
-        "# Generated by #{self.class.name}" 
+        "# Generated by #{self.class.name}"
       end
 
       def write_host_records(h)
         file = "#{CONFDIR_CURRENT}/host_records.#{h[:table]}.conf"
         File.open file, 'w' do |f|
           f.puts banner
-          if  Dnsmasq.version                                             and 
+          if  Dnsmasq.version                                             and
               Dnsmasq.version >= Dnsmasq::REQUIRED_VERSION[:host_record]  and
               Dnsmasq.version != Dnsmasq::BAD_VERSION[:host_record]
             h[:records].each do |r|
@@ -424,9 +424,9 @@ class OnBoard
           end
         end
       end
-      
+
       def blocked?(domain)
-        ips = @data['conf']['dns']['domains'][domain]            
+        ips = @data['conf']['dns']['domains'][domain]
         ips.length > 0 and (ips - ['0.0.0.0', '::']  == [])
       end
 

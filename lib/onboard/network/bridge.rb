@@ -21,23 +21,23 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
       end
       ['addif', 'delif'].each do |command|
         h[command].each_pair do |bridgename, ifh|
-          ifh.each_pair do |ifname, value| 
-            Command.run "brctl #{command} #{bridgename} #{ifname}", :sudo if 
+          ifh.each_pair do |ifname, value|
+            Command.run "brctl #{command} #{bridgename} #{ifname}", :sudo if
                 value and not [0, "0", "no", "false", "off"].include? value
           end
         end if h.respond_to? :[] and h[command].respond_to? :each_pair
-      end  
+      end
       if h.respond_to? :[] and h['addbr']
-        substitution = h['addbr'].sub! /\s.*$/, '' 
-            # truncate anything after a space (if any), to avoid command 
+        substitution = h['addbr'].sub! /\s.*$/, ''
+            # truncate anything after a space (if any), to avoid command
             # injection
-        if substitution 
+        if substitution
           msg[:warn] = 'Bridge name has been truncated'
         end
         unless h['addbr'] =~ /\S/
           return {:ok => false, :err => 'No valid bridge name!'}
         end
-        msg.merge! Command.run "brctl addbr #{h['addbr']}", :sudo 
+        msg.merge! Command.run "brctl addbr #{h['addbr']}", :sudo
         if msg[:ok]
           msg.merge! Command.run "ip link set #{h['addbr']} up", :sudo
         end
@@ -69,7 +69,7 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
   # *current* mmebers
   def members
     if Dir.exists? @bridgeifdir
-      @members = 
+      @members =
           Dir.entries(@bridgeifdir).reject{|x| x =~ /^\./} # remove '.' and '..'
     else
       @members = []
@@ -112,7 +112,7 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
   private
 
   def member_netifs
-    OnBoard::Network::Interface.all_layer2.select do |netif| 
+    OnBoard::Network::Interface.all_layer2.select do |netif|
       netif.bridged_to == @name
     end
   end

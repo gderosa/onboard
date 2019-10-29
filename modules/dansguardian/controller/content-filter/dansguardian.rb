@@ -19,7 +19,7 @@ class OnBoard
     end
 
     put '/content-filter/dansguardian.:format' do
-      msg = {}  
+      msg = {}
       dg = ContentFilter::DG.new
       dg.get_status
       if params['start'] or params['stop'] or params['restart']

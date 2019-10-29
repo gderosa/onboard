@@ -19,12 +19,12 @@ class OnBoard
 
       def drive_icon(drive, *attributes)
         defaults = {:img => true}
-        h     = defaults.update( attributes[0] || {} ) 
+        h     = defaults.update( attributes[0] || {} )
         title = h[:title]     || h['name']  || ''
         alt   = title         || ''
         image = case drive.to_sym
                 when :hard_disk, :hard_drive, :hd, :disk
-                  "#{IconDir}/#{IconSize}/devices/drive-harddisk.png"     
+                  "#{IconDir}/#{IconSize}/devices/drive-harddisk.png"
                 when :optical, :cdrom, :cd, :dvd, :blueray
                   "#{IconDir}/#{IconSize}/devices/drive-optical.png"
                 when :eject
@@ -33,7 +33,7 @@ class OnBoard
                   raise ArgumentError, "Invalid drive category: #{drive}"
                 end
         if h[:img]
-          return %Q{<img class="drive" src="#{image}" title="#{title}"/>} 
+          return %Q{<img class="drive" src="#{image}" title="#{title}"/>}
         else
           return image
         end
@@ -72,21 +72,21 @@ class OnBoard
 
 
       def action_button(action, *attributes)
-        h = attributes[0] || {} 
+        h = attributes[0] || {}
         type = h[:type] || case action
         when :config
           'button'
-        else 
+        else
           'submit'
         end
-        name = h[:name] || action.to_s 
+        name = h[:name] || action.to_s
         value = h[:value] || name
         disabled = h[:disabled] ? 'disabled' : ''
         title_str =  h[:title] || name.capitalize
         alt = h[:alt] || title_str
         title = (!h[:disabled] or h[:title_always]) ? title_str : ''
         image = action_icon_path action
-        return %Q{<button id="#{h[:id]}" type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img id="#{h[:imgid]}" src="#{image}" alt="#{alt}"/></button>} 
+        return %Q{<button id="#{h[:id]}" type="#{type}" name="#{name}" value="#{value}" #{disabled} title="#{title}"><img id="#{h[:imgid]}" src="#{image}" alt="#{alt}"/></button>}
       end
 
       def mandatory_mark
@@ -95,11 +95,11 @@ class OnBoard
 
       # tag('<span class="wonderful"', %Q{
       #   your stuff here...
-      # }, :if => my_variable == expected_value) 
+      # }, :if => my_variable == expected_value)
       def tag(tag_spec='span class="none"', inner_html='', opts={:if=>true})
         tag =   tag_spec.split.first
         str =   ''
-        str <<  "<#{tag_spec}>" if opts[:if] 
+        str <<  "<#{tag_spec}>" if opts[:if]
         str <<  inner_html
         str <<  "</#{tag}>"     if opts[:if]
       end

@@ -24,7 +24,7 @@ class OnBoard
 
         # Mutual exclusion for threads creating Diffie-Hellman parameters
         def dh_mutex(n)
-          @@dh_mutexes[n] = Mutex.new unless @@dh_mutexes[n] 
+          @@dh_mutexes[n] = Mutex.new unless @@dh_mutexes[n]
           return @@dh_mutexes[n]
         end
 
@@ -57,17 +57,17 @@ class OnBoard
             }
           }
           opt_h = opt_h_default.deep_merge opt_h
-          opt_h[:crls][:dir] ||= opt_h[:certs][:dir] 
-          
+          opt_h[:crls][:dir] ||= opt_h[:certs][:dir]
+
           h = {} # return value
 
           # sugar
           certdir = opt_h[:certs][:dir]
           certext = opt_h[:certs][:ext]
           keydir  = opt_h[:keys][:dir]
-          keyext  = opt_h[:keys][:ext] 
+          keyext  = opt_h[:keys][:ext]
           crldir  = opt_h[:crls][:dir]
-          crlext  = opt_h[:crls][:ext] 
+          crlext  = opt_h[:crls][:ext]
 
           Dir.glob "#{certdir}/*.#{certext}" do |certfile|
             name = File.basename(certfile).sub(/\.#{certext}$/, '')
@@ -78,27 +78,27 @@ class OnBoard
               signed_by_our_CA = certobj.verify(@@our_CA.public_key) if
                   @@our_CA.respond_to? :public_key
               h[name] = {
-                  'cert'              => certobj.to_h, 
+                  'cert'              => certobj.to_h,
                   'private_key'       => false,
                   'signed_by_our_CA'  => signed_by_our_CA
               }
             rescue OpenSSL::X509::CertificateError
-              h[name] = {'cert' => {'err' => $!}} 
+              h[name] = {'cert' => {'err' => $!}}
             end
 
             # CRL:
-            # very simple match by filename, no OpenSSL check 
-            # (was made at file upload... somewhat :-P) 
+            # very simple match by filename, no OpenSSL check
+            # (was made at file upload... somewhat :-P)
             if File.readable? "#{crldir}/#{name}.#{crlext}"
               h[name]['crl'] = "#{name}.#{crlext}"
             end
-            
-            if File.exists? keyfile 
+
+            if File.exists? keyfile
               begin
                 if certobj.check_private_key(
-                    OpenSSL::PKey::RSA.new(File.read keyfile) 
+                    OpenSSL::PKey::RSA.new(File.read keyfile)
                 )
-                  h[name]['private_key'] = {'ok' => true} 
+                  h[name]['private_key'] = {'ok' => true}
                 else
                   h[name]['private_key'] = {
                     'ok'  => false,
@@ -121,20 +121,20 @@ class OnBoard
           n = nil
           #@@dh_mutexes.each_pair do |n, mutex|
           #  if mutex.locked?
-          #    dh_h["dh#{n}.pem"] = {'being_created' => true, 'size' => n} 
+          #    dh_h["dh#{n}.pem"] = {'being_created' => true, 'size' => n}
           #  end
           #end
           KEY_SIZES.each do |n|
             dh_file = "dh#{n}.pem"
-            dh_file_fullpath = File.join(DIR, dh_file) 
+            dh_file_fullpath = File.join(DIR, dh_file)
             dh_h[dh_file] = {} unless dh_h[dh_file]
             if @@dh_mutexes[n] and @@dh_mutexes[n].respond_to? :locked?
-              dh_h[dh_file]['being_created'] = @@dh_mutexes[n].locked? 
+              dh_h[dh_file]['being_created'] = @@dh_mutexes[n].locked?
             else
               dh_h[dh_file]['being_created'] = false
             end
             begin
-              dh_h[dh_file]['size'] = 
+              dh_h[dh_file]['size'] =
                   dh(dh_file_fullpath).params['p'].to_i.to_s(2).length
             rescue NoMethodError
               dh_h[dh_file]['err'] = 'no valid data'
@@ -143,13 +143,13 @@ class OnBoard
           return dh_h
         end
 
-        def dh(n_or_file) 
+        def dh(n_or_file)
           dh_ = nil
           begin
             if n_or_file.kind_of? Numeric or n_or_file.to_i > 0
               dh_ = OpenSSL::PKey::DH.new(
                   File.read(DIR + '/dh' + n_or_file.to_s + '.pem')
-              ) 
+              )
             else
               dh_ = OpenSSL::PKey::DH.new(File.read(n_or_file))
             end
@@ -159,7 +159,7 @@ class OnBoard
 
           if n_or_file.kind_of? Numeric or n_or_file.to_i > 0
             if dh_.params['p'].to_i.to_s(2).length != n_or_file.to_i
-              # TODO: a less convoluted way to check the bit length/size of 
+              # TODO: a less convoluted way to check the bit length/size of
               #  Diffie Hellman params?
               return false
             end

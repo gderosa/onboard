@@ -12,7 +12,7 @@ class OnBoard
         not_found unless document
       rescue Sequel::Error
         status 500
-        msg = {:ok => false, :err => $!} 
+        msg = {:ok => false, :err => $!}
       end
       format(
         :module   => 'radius-admin',

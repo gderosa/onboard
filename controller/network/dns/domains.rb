@@ -22,12 +22,12 @@ class OnBoard
     put "/network/dns/domains.:format" do
       dnsmasq = OnBoard::Network::Dnsmasq.new
       msg = dnsmasq.write_domains_conf_from_HTTP_request(params)
-      if msg[:err]  
-        status 409 
+      if msg[:err]
+        status 409
       else
         OnBoard::PLATFORM::restart_dnsmasq(OnBoard::Network::Dnsmasq::CONFDIR + '/new')
       end
-      
+
       # read updated conf
       dnsmasq = OnBoard::Network::Dnsmasq.new
       dnsmasq.parse_dns_conf(

@@ -16,7 +16,7 @@ class OnBoard
 
       def parse
         @@out.each_line do |line|
-          line =~ /^(..:..\..) "([^"]+)" "([^"]+)" "([^"]+)"/ 
+          line =~ /^(..:..\..) "([^"]+)" "([^"]+)" "([^"]+)"/
             @@by_id[$1] = {
               :desc   => $2,
               :vendor => $3,

@@ -25,7 +25,7 @@ class OnBoard
                     n.content                                   and (
                       n.content[:href]      ==  request.path_info or
                       n.content[:children]  === request.path_info and
-                      n                     !=  node # exclude itself 
+                      n                     !=  node # exclude itself
                     )
                   end
             end
