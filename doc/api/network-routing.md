@@ -9,7 +9,7 @@
 - [*IP routes*](#ip-routes)
   - [List Routes (`main` routing table) (GET)](#list-routes-main-routing-table-get)
     - [Example response body](#example-response-body)
-  - [Add a Route to the `main` table (PUT)](#add-a-route-to-the-main-table-put)
+  - [Add a Route to the `main` table (POST)](#add-a-route-to-the-main-table-post)
     - [Example request body](#example-request-body)
     - [Errors](#errors)
   - [Delete a Route from the `main` table (PUT)](#delete-a-route-from-the-main-table-put)
@@ -218,9 +218,13 @@ Returns the list of all the IP routes in the `main` table.
 }
 ```
 
-## Add a Route to the `main` table (PUT)
+## Add a Route to the `main` table (POST)
 
-_Using the PUT method to __add__ a route is un-ReSTful. This is for historical reasons._
+```http
+POST http://localhost:4567/api/v1/network/routing/tables/main HTTP/1.1
+
+Accept: application/json
+```
 
 ### Example request body
 
