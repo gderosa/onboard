@@ -247,7 +247,13 @@ For example, if the gateway address (`"gw"`) is invalid for the interface,
 `400` will be returned as status code, with body e.g.:
 
 ```javascript
-
+{
+  "ok": false,
+  "cmd": "ip route add 2.2.2.0/24 via 99.1.1.2 dev eth1 metric 1 proto static table 254",
+  "status": 2,
+  "stdout": "",
+  "stderr": "Error: Nexthop has invalid gateway.\n"
+}
 ```
 
 

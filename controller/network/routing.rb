@@ -143,7 +143,6 @@ class OnBoard::Controller
       # the address family (af) is required.
       msg = table.ip_route_del params['ip_route_del'], :af => params['af']
     else
-      pp params  # DEBUG
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params
     end
     unless msg[:ok] # TODO: always sure the error is client-side?

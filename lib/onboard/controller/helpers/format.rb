@@ -87,7 +87,11 @@ class OnBoard
             headers x_headers
           end
 
-          return h[:objects].to_(h[:format])
+          if h[:msg][:ok] == false 
+            return h[:msg].to_(h[:format])
+          else
+            return h[:objects].to_(h[:format])
+          end
 
         when 'rb' # development check already done
           #if options.environment == :development
