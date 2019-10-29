@@ -11,13 +11,13 @@ class OnBoard
         def self.HTTP_POST_data_invalid?(params)
           return "Invalid key size."        unless params['key_size'] =~ /^\d+$/
           return "Invalid expiry."          unless params['days']     =~ /^\d+$/
-          return "Invalid Country code."    unless params['C']        =~ 
+          return "Invalid Country code."    unless params['C']        =~
               /^[A-Z][A-Z]$/i
           return "Missing province/state."  unless params['ST']       =~ /\S/
           return "Missing city name"        unless params['L']        =~ /\S/
           return "Missing Organization Name" \
                                             unless params['O']        =~ /\S/
-          return "Missing Common Name"      unless params['CN']       =~ /\S/ 
+          return "Missing Common Name"      unless params['CN']       =~ /\S/
           return "Invalid email address"    unless (
               params['emailAddress'] =~ /^[\w_\-\.]+@[\w_\-\.]+[^_\-]$/i )
           return false
@@ -32,7 +32,7 @@ class OnBoard
           %w{index.txt serial}.each do |file|
             path = File.join KEYDIR, file
             unless File.exists? path
-              File.new(path, 'w') 
+              File.new(path, 'w')
             end
           end
           serfile = File.join KEYDIR, 'serial'
@@ -51,7 +51,7 @@ class OnBoard
               :err => 'A certificate with the same Common Name already exists!'
             }
           else
-            msg = System::Command.run <<EOF 
+            msg = System::Command.run <<EOF
 cd #{SCRIPTDIR}
 export KEY_DIR=#{EasyRSA::KEYDIR}
 . ./vars
@@ -65,9 +65,9 @@ export KEY_CITY="#{params['L']}"
 export KEY_ORG="#{params['O']}"
 export KEY_OU="#{params['OU']}"
 export KEY_EMAIL="#{params['emailAddress']}"
-./pkitool #{'--server' if params['type'] == 'server'} "#{params['CN']}" 
+./pkitool #{'--server' if params['type'] == 'server'} "#{params['CN']}"
 EOF
-            if msg[:ok] 
+            if msg[:ok]
               destcert = "#{SSL::CERTDIR}/#{params['CN']}.crt"
               destkey = "#{SSL::KEYDIR}/#{params['CN']}.key"
               begin

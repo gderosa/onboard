@@ -35,7 +35,7 @@ class OnBoard
 =begin
         def guess(what=:hostname, opts={:via=>:all_fqdns})
           fqdn_h = {:hostname => nil, :domainname => nil}
-          
+
           case opts[:via]
           when :all_fqdns
             `hostname --all-fqdns`.split.each do |fqdn|
@@ -48,7 +48,7 @@ class OnBoard
               end
             end
           end
-          
+
           case what
           when :fqdn
             fqdn_h[:hostname] + '.' + fqdn_h[:domainname]
@@ -58,7 +58,7 @@ class OnBoard
         end
 =end
 
-        # Make a dns reverse query on machine network interface primary 
+        # Make a dns reverse query on machine network interface primary
         # addresses
         # # TODO: timeout, cache ...
         def all_fqdns
@@ -86,13 +86,13 @@ class OnBoard
           if arg.respond_to? :strip
             hostname_ = arg
           else
-            hostname_, domainname_ = arg[:hostname], arg[:domainname] 
+            hostname_, domainname_ = arg[:hostname], arg[:domainname]
           end
           Command.send_command "hostname #{hostname_.strip}", :sudo     if hostname_
           File.open( CONFFILE_DOMAIN, 'w' ){ |f| f.write domainname_ }  if domainname_
         end
 
-        # Act like the hostname Unix command 
+        # Act like the hostname Unix command
         def hostname(name=nil)
           name ? set(name) : get
         end
@@ -102,7 +102,7 @@ class OnBoard
         end
 
         def hostname=(n);   set :hostname => n;   end
-        
+
         def domainname=(n); set :domainname => n; end
 
         def fqdn(*opts)
@@ -110,7 +110,7 @@ class OnBoard
             raise NoDomainName  unless domainname
             raise NoHostName    unless hostname
           end
-          answer = "#{hostname}.#{domainname}" 
+          answer = "#{hostname}.#{domainname}"
           class << answer
             def match_dns?
               Hostname.fqdn_match_dns?
@@ -118,7 +118,7 @@ class OnBoard
           end
           answer
         end
-        
+
         def to_s
           hostname
         end
@@ -144,32 +144,32 @@ map{|iface| iface.ip}.flatten.compact.map{|ip| ip.addr}.select{|addr| addr.priva
           addresses.each do |addr|
             if addr === '127.0.0.1' and hostname != 'localhost'
               records <<  {
-                :addr       => addr, 
-                :name       => 'localhost' 
+                :addr       => addr,
+                :name       => 'localhost'
               }
               records <<  {
                 :addr       => addr,
-                :name       => "localhost.#{domainname}" 
+                :name       => "localhost.#{domainname}"
               } if domainname
             end
             records << {
-              :addr       => addr, 
-              :name       => fqdn   
+              :addr       => addr,
+              :name       => fqdn
             } if hostname and domainname
             records << {
               :addr       => addr,
               :name       => hostname
             } if hostname
           end
-          # Relying on --addn-hosts leads to permission issues: 
+          # Relying on --addn-hosts leads to permission issues:
           # --addn-hosts file is read *after* dnsmasq has lost root privileges
           #
-          # An approach based on --interface-name is problematic as well, 
+          # An approach based on --interface-name is problematic as well,
           # 'cause --localise-queries behavior doesn't apply.
           #
-          # So: an approach based on --host-record is chosen. Limitation: 
+          # So: an approach based on --host-record is chosen. Limitation:
           # if ip addresses change, Dnsmasq#write_host_records need to be called
-          # again (and dnsmasq daemon restarted again...) 
+          # again (and dnsmasq daemon restarted again...)
           dnsmasq.write_host_records :records => records, :table => :self
           dnsmasq.write_local_domain domainname if domainname
           dnsmasq.restart unless opts.include? :no_restart

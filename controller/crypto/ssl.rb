@@ -2,7 +2,7 @@ autoload :FileUtils,  'fileutils'
 autoload :OpenSSL,    'onboard/extensions/openssl'
 
 class OnBoard
-  class Controller  
+  class Controller
 
     get '/crypto/ssl/ca/ca.crt' do
       # decode it, for better human readability (but it's still a valid cert.)
@@ -17,9 +17,9 @@ class OnBoard
       if File.exists? certfile
         c = ::OpenSSL::X509::Certificate.new(File.read(certfile))
         if c.ca?
-          content_type "application/x-x509-ca-cert" 
+          content_type "application/x-x509-ca-cert"
         else
-          content_type "application/x-x509-cert" 
+          content_type "application/x-x509-cert"
               # What is the correct MIME-type for an X509 cert. which is NOT
               # a CA?
         end
@@ -52,7 +52,7 @@ class OnBoard
         not_found
       end
     end
-   
+
     get '/crypto/ssl/certs/private/:name.key' do
       keyfile = "#{Crypto::SSL::KEYDIR}/#{params[:name]}.key"
       if File.exists? keyfile
@@ -68,7 +68,7 @@ class OnBoard
     post '/crypto/ssl/certs.:format' do
       target = nil
       msg = {:ok => true}
-      if params['certificate'].respond_to? :[] 
+      if params['certificate'].respond_to? :[]
         begin
           cert = OpenSSL::X509::Certificate.new(
               params['certificate'][:tempfile].read
@@ -84,7 +84,7 @@ class OnBoard
               OpenSSL::X509::Certificate.new(File.read target)
               status(409)
               msg = {
-                :ok => false, 
+                :ok => false,
                 :err_html => "A certificate with the same Common Name &ldquo;<code>#{cn}</code>&rdquo; already exists!"
               }
             rescue OpenSSL::X509::CertificateError # otherwise you can overwrite
@@ -92,7 +92,7 @@ class OnBoard
                 # the same format created by easy-rsa...
                 f.write cert.to_text # human readable data
                 f.write cert.to_s # the certificate itself between BEGIN-END tags
-              end           
+              end
             end
           else
             File.open(target, 'w') do |f|
@@ -112,12 +112,12 @@ class OnBoard
             f.write File.read params['private_key'][:tempfile]
           end
           params['private_key'][:tempfile].unlink
-        end 
+        end
         params['certificate'][:tempfile].unlink
       else
-        status(400)  
+        status(400)
         msg = {
-          :ok => false, 
+          :ok => false,
           :err => "No certificate was sent.",
           :err_html => "No certificate was sent."
         }
@@ -134,7 +134,7 @@ class OnBoard
     post '/crypto/ssl/CRLs.:format' do
       target = nil
       msg = {:ok => true}
-      if params['CRL'].respond_to? :[] 
+      if params['CRL'].respond_to? :[]
         begin
           crl = OpenSSL::X509::CRL.new(
               params['CRL'][:tempfile].read
@@ -154,16 +154,16 @@ class OnBoard
           end
         rescue OpenSSL::X509::CRLError, OnBoard::Crypto::SSL::ArgumentError
           status(400)
-          msg = {:ok => false, :err => $!} 
+          msg = {:ok => false, :err => $!}
         rescue OnBoard::Crypto::SSL::Conflict
           status(409)
-          msg = {:ok => false, :err => $!, :err_html => $!.to_s} 
+          msg = {:ok => false, :err => $!, :err_html => $!.to_s}
         end
         params['CRL'][:tempfile].unlink
       else
-        status(400)  
+        status(400)
         msg = {
-          :ok => false, 
+          :ok => false,
           :err => "No CRL was sent.",
           :err_html => "No CRL was sent."
         }

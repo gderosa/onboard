@@ -10,7 +10,7 @@ class OnBoard
     get '/services/radius/accounting.:format' do
       use_pagination_defaults
       msg = objects = {}
-      msg = handle_errors do 
+      msg = handle_errors do
         objects = Service::RADIUS::Accounting.get(params)
       end
       format(
@@ -22,6 +22,6 @@ class OnBoard
         :msg      => msg
       )
     end
-  
+
   end
 end

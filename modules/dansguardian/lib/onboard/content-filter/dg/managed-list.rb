@@ -4,7 +4,7 @@ class OnBoard
       module ManagedList
 
         autoload :Dir,  'onboard/content-filter/dg/managed-list/dir'
-        autoload :List, 'onboard/content-filter/dg/managed-list/list'       
+        autoload :List, 'onboard/content-filter/dg/managed-list/list'
 
         class << self
 
@@ -29,18 +29,18 @@ class OnBoard
               output[:noun]       =   'MIME types'
             end
             if splat.length > 2 # e.g. ["banned", "phrases", "violence/english"]
-              subpath = splat[2] 
+              subpath = splat[2]
               return "#{output[:adjective]} #{output[:noun]}: #{subpath}"
             else
               return "#{output[:adjective]} #{output[:noun]}"
             end
           end
 
-          def get(relative_path, opts={}) 
+          def get(relative_path, opts={})
             arg = opts.merge :relative_path => relative_path
             real_path = File.realpath(
                 File.join root_dir, relative_path
-            ) 
+            )
             if File.directory? real_path
               ManagedList::Dir.new arg
             else

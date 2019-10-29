@@ -14,12 +14,12 @@ class OnBoard
               return @models
             end
 
-            def get_models 
+            def get_models
               # TODO: get long description too (in a Sound::Hardware::Model object?)
               # think about @shortname, @description or something
 
               exe = QEMU::Config::Common.get['exe']
-              
+
               # Assuming an output like:
               # ============================================
               # Valid sound card names (comma separated):
@@ -31,7 +31,7 @@ class OnBoard
               #
               # -soundhw all will enable all of the above
               # ============================================
-              
+
               models_ = []
               `#{exe} -soundhw ? 2>&1`.each_line do |l|
                 if l =~ /(\S+)\s{2,}/

@@ -27,7 +27,7 @@ class OnBoard
             def set(h)
               FileUtils.mkdir_p CONFDIR
               File.open CONFFILE, 'w' do |f|
-                f.write YAML.dump h[:http_params].let_in('exe' => true)  
+                f.write YAML.dump h[:http_params].let_in('exe' => true)
               end
               QEMU.reset_capabilities
             end

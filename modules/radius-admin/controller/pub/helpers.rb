@@ -14,7 +14,7 @@ class OnBoard
           headers(
             "Refresh" => "#{opts[:time]};url=#{params['redirect']}"
           )
-        end      
+        end
       end
 
     end

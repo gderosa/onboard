@@ -482,7 +482,7 @@ class OnBoard
             if metric_data =~ /\d/
               @preferred_metric = metric_data.to_i
             else
-              @preferred_metric = metric_data.to_s 
+              @preferred_metric = metric_data.to_s
             end
           end
         end

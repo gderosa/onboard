@@ -5,7 +5,7 @@ class OnBoard
     MENU_ROOT.add_path('/webif', {
       :name => 'Web Interface',
       :desc => '',
-      :n    => 9 
+      :n    => 9
     })
     MENU_ROOT.add_path('/webif/pub', {
       :name => 'Public interface / End users',

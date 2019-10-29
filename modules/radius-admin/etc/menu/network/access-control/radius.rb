@@ -10,7 +10,7 @@
 # /network/ may change IP adresses, network interfaces, routing table,
 # packet filtering etc...
 #
-# Instead, /services/ are various daemons/servers operating at the 
+# Instead, /services/ are various daemons/servers operating at the
 # application layer only.
 
 class OnBoard
@@ -32,13 +32,13 @@ class OnBoard
   })
 
   MENU_ROOT.add_path('/network/access-control/radius/config', {
-    :href => '/services/radius/config', 
+    :href => '/services/radius/config',
     :name => 'Configuration',
     :n    => 10
   })
 
   MENU_ROOT.add_path('/network/access-control/radius/accounting', {
-    :href => '/services/radius/accounting', 
+    :href => '/services/radius/accounting',
     :name => 'Accounting',
     :desc => 'Track users consumption of network resources',
     :n    => 20

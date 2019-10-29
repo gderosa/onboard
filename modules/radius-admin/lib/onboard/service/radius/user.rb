@@ -166,7 +166,7 @@ class OnBoard
                 invalid << params_key_to_i18n(k, i18n) unless personal[k] =~ /\S/
               end
             end
-            invalid << 'Email' if fields.include? 'Email' and 
+            invalid << 'Email' if fields.include? 'Email' and
                 not personal['Email'] =~ /\S@\S/
             if fields.include? 'Birth' # TODO: granularize: date vs place?
               begin
@@ -547,15 +547,15 @@ class OnBoard
         #
         # Returns an Hash.
         #
-        def find_attribute(tbl, &blk) 
+        def find_attribute(tbl, &blk)
           case tbl
           when :check
-            row = @check.find do |h| 
+            row = @check.find do |h|
               blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
           when :reply
-            row = @reply.find do |h| 
+            row = @reply.find do |h|
               blk.call(h[:Attribute], h[:Operator], h[:Value])
             end
             return row ? row : nil
@@ -575,7 +575,7 @@ class OnBoard
 
         def password_type
           row = find_attribute :check do |attrib, op, val|
-            attrib =~ /-Password$/ 
+            attrib =~ /-Password$/
           end
           row ? row[:Attribute] : nil
         end
@@ -584,7 +584,7 @@ class OnBoard
           find_attribute_value_by_name :check, password_type
         end
 
-        def check_password(cleartext) 
+        def check_password(cleartext)
           begin
             passwd = Passwd.new :type => password_type, :cleartext => cleartext
             return passwd.check stored_password

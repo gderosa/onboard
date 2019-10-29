@@ -30,7 +30,7 @@ class OnBoard
           DEFAULT_DEVICES     = [
             {
               'driver'    => 'usb-tablet',
-              'bus'       => DEFAULT_CONTROLLERS.first['id'] + '.0' 
+              'bus'       => DEFAULT_CONTROLLERS.first['id'] + '.0'
             },
           ]
 

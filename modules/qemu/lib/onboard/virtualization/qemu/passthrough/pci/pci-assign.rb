@@ -10,7 +10,7 @@ class OnBoard
             System::Command.run 'modprobe pci_stub', :sudo
 
             class << self
-  
+
               def prepare(id)
                 # http://www.linux-kvm.org/page/How_to_assign_devices_with_VT-d_in_KVM
                 if `lspci -n -s #{id}` =~ /(\h\h\h\h):(\h\h\h\h)/ # TODO: move this into LSPCI library?

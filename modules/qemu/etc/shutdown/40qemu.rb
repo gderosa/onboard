@@ -2,7 +2,7 @@ require 'timeout'
 
 require 'onboard/virtualization/qemu'
 
-SHUTDOWN_TIMEOUT      = 420 
+SHUTDOWN_TIMEOUT      = 420
 QUICK_SAVEVM_TIMEOUT  = 120
 
 running_VMs = OnBoard::Virtualization::QEMU.get_all.select{|vm| vm.running?}

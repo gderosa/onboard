@@ -22,7 +22,7 @@ class OnBoard
           FileUtils.mkdir_p File.dirname SAVED_DAT_FILE
           all = getAll
           File.open SAVED_DAT_FILE, 'w' do |f|
-            f.write Marshal.dump(getAll) 
+            f.write Marshal.dump(getAll)
           end
         end
 
@@ -40,7 +40,7 @@ class OnBoard
             if chilli.conf['pidfile']
               if File.exists? chilli.conf['pidfile']
                 pid = File.read(chilli.conf['pidfile']).to_i
-                if pid > 0 
+                if pid > 0
                   pids << pid
                 end
               end
@@ -65,8 +65,8 @@ class OnBoard
           end
           # may be not running, but a configuration files exists
           Dir.glob(CURRENT_CONF_GLOB).each do |conffile|
-            chilli = new(:conffile => conffile) 
-            ary << chilli unless 
+            chilli = new(:conffile => conffile)
+            ary << chilli unless
                 ary.detect{|x| x.conffile == conffile} or
                 !chilli.validate_conffile
           end
@@ -78,7 +78,7 @@ class OnBoard
           return h unless File.exists? filename
           File.foreach(filename) do |line|
             line.sub! /#.*$/, ''
-            if line =~ /(\S+)\s+(.*)\s*$/  
+            if line =~ /(\S+)\s+(.*)\s*$/
               opt, arg = $1, $2
               arg.strip!
               if arg =~ /^"(.*)"$/ # remove double quote
@@ -97,10 +97,10 @@ class OnBoard
           return h
         end
 
-        def self.create_from_HTTP_request(params) 
+        def self.create_from_HTTP_request(params)
           validate_HTTP_creation(params)
           chilli_new = new(:conffile => DEFAULT_NEW_CONF_FILE)
-          chilli_new.conf.merge! params['conf'] 
+          chilli_new.conf.merge! params['conf']
           chilli_new.set_dhcp_range(params['dhcp_start'], params['dhcp_end'])
           chilli_new.dynaconf # set temporary dirs, ipc, etc.
           return chilli_new
@@ -119,11 +119,11 @@ class OnBoard
           ip_dhcp_end   = nil
 
           if dhcpif =~ /\S/
-            unless Interface.getAll.detect{|netif| netif.name == dhcpif} 
+            unless Interface.getAll.detect{|netif| netif.name == dhcpif}
               raise BadRequest, "Network interface #{dhcpif} does not exist"
             end
           else
-            raise BadRequest, "No network interface provided!" 
+            raise BadRequest, "No network interface provided!"
           end
           if net =~ /\S/
             begin
@@ -135,25 +135,25 @@ class OnBoard
               raise BadRequest, "\"#{net}\" is not a valid network!"
             end
           else
-            raise BadRequest, "No network specified!" 
+            raise BadRequest, "No network specified!"
           end
           if uamlisten =~ /\S/
             unless Interface::IP.valid_address? uamlisten
               raise BadRequest, "\"#{uamlisten}\" is not a valid listen address!"
-            else 
+            else
               unless ip_net.include? IPAddr.new uamlisten
                 raise BadRequest, "Listen address #{uamlisten} is outside network #{net} !"
               end
             end
           end # if blank, will defaults to the first address of the network...
-          if params['conf']['uamsecret'].length > 0 and 
+          if params['conf']['uamsecret'].length > 0 and
               params['conf']['uamsecret'] != params['verify_conf']['uamsecret']
             raise BadRequest, "UAM passwords do not match!"
           end
           return true
         end
 
-        def self.validate_conffile(h) # based on chilli_opt(1) 
+        def self.validate_conffile(h) # based on chilli_opt(1)
           msg = System::Command.run "chilli_opt --conf #{h[:file]}", :sudo
           if msg[:ok]
             return true
@@ -166,30 +166,30 @@ class OnBoard
           end
         end
 
-        attr_reader :data, :conf, :managed 
+        attr_reader :data, :conf, :managed
             # no :conffile getter : there's already an explicit method
         attr_writer :conf, :conffile
-        
+
         def initialize(h)
           # TODO? It would probably be more efficient to store IP address
           # objects as instance variables instead of just storing Strings
-          # (and create IPAddr or Interface::IP objects each time 
+          # (and create IPAddr or Interface::IP objects each time
           # we need to perform some computation...)
           # NOTE: apparently, performance is pretty good, anyway.
-          if h[:process] 
+          if h[:process]
               # Running Chilli instance
             @process = h[:process]
             @conffile = conffile()
             @conf = self.class.parse_conffile(@conffile)
             @managed = managed?
-          elsif h[:conffile] and not h[:conf] 
+          elsif h[:conffile] and not h[:conf]
               # Not running, but a configuration file exists
             @process = nil
             @conffile = h[:conffile]
-            @conf = self.class.parse_conffile(@conffile) 
+            @conf = self.class.parse_conffile(@conffile)
             @managed = managed?
             dynaconf_coaport unless @conf['coaport'].to_i > 0
-          elsif h[:conffile] and h[:conf] 
+          elsif h[:conffile] and h[:conf]
               # We will have to (over-)write a configuration file
             @conffile = h[:conffile]
             @managed = true
@@ -202,12 +202,12 @@ class OnBoard
           self.class.validate_conffile(h.merge(:file => @conffile))
         end
 
-        def write_tmp_conffile_and_validate(opt_h={}) 
+        def write_tmp_conffile_and_validate(opt_h={})
           write_conffile(
-            :tmp => true, 
+            :tmp => true,
             :check => true,
             :raise_exception => opt_h[:raise_exception]
-          )  
+          )
         end
 
         def set_dhcp_range(dhcp_start, dhcp_end)
@@ -224,11 +224,11 @@ class OnBoard
                   raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
                 end
               else
-                raise BadRequest, "Interval \"#{dhcp_start}\"..\"#{dhcp_end}\" is outside network #{net} !" 
+                raise BadRequest, "Interval \"#{dhcp_start}\"..\"#{dhcp_end}\" is outside network #{net} !"
               end
             else
               raise BadRequest, "\"#{dhcp_start}\"..\"#{dhcp_end}\" is not a valid DHCP interval!"
-            end                
+            end
           end
 
           # actual set of @conf['dhcpstart'] and @conf['dhcpend']
@@ -244,15 +244,15 @@ class OnBoard
           )
           @conf['cmdsocket']  = "/var/run/chilli/#{@conf['dhcpif']}/chilli.sock"
           @conf['pidfile']    = "/var/run/chilli/#{@conf['dhcpif']}/chilli.pid"
-          @conf['statedir']   = "/var/run/chilli/#{@conf['dhcpif']}" 
+          @conf['statedir']   = "/var/run/chilli/#{@conf['dhcpif']}"
           @conf['tundev']     = "chilli_#{@conf['dhcpif']}"
         end
 
         def dynaconf_coaport
-          all_except_self = self.class.getAll.reject do |x| 
+          all_except_self = self.class.getAll.reject do |x|
             x.conf['dhcpif'] == self.conf['dhcpif']
           end
-          forbidden_coaports = all_except_self.map{|x| x.conf['coaport']} 
+          forbidden_coaports = all_except_self.map{|x| x.conf['coaport']}
           coaport = DEFAULT_COAPORT
           while forbidden_coaports.include? coaport.to_s
             coaport += 1
@@ -265,10 +265,10 @@ class OnBoard
           return false
         end
 
-        def write_conffile(opt_h={})  
-          
+        def write_conffile(opt_h={})
+
           FileUtils.mkdir_p File.dirname @conffile if @conffile
-          if opt_h[:tmp] 
+          if opt_h[:tmp]
             f = Tempfile.new 'chilli-test'
           else
             f = File.open @conffile, 'w'
@@ -289,7 +289,7 @@ class OnBoard
           @conf.each_pair do |key, value|
             if value == true
               f.write "#{key}\n"
-            elsif value.respond_to? :strip! and value =~ /\S/ 
+            elsif value.respond_to? :strip! and value =~ /\S/
                 # String-like, non-blank
               value.strip!
               if value =~ /\s/
@@ -298,12 +298,12 @@ class OnBoard
               f.write "#{key}\t#{value}\n"
             end
           end
-          f.close 
-          FileUtils.cp f.path "#{f.path}.debug" if 
+          f.close
+          FileUtils.cp f.path "#{f.path}.debug" if
             opt_h[:tmp] and opt_h[:debug] # keep a copy: the temp file
                 # will be removed when f object is finalized
-                # (if f is a Tempfile object)  
-          if opt_h[:validate] or opt_h[:check] 
+                # (if f is a Tempfile object)
+          if opt_h[:validate] or opt_h[:check]
             return self.class.validate_conffile(
               :file => f.path,
               :raise_exception => opt_h[:raise_exception]
@@ -311,11 +311,11 @@ class OnBoard
           end
         end
 
-        # true if the config file is a subdirectory of 
+        # true if the config file is a subdirectory of
         # OnBoard::Network::AccessControl::Chilli::CONFDIR or
         # defaults conf dir...
         def managed?
-          return true if 
+          return true if
               @conffile[CONFDIR] or @conffile[ROOTDIR + '/etc/defaults']
           return false
         end
@@ -326,14 +326,14 @@ class OnBoard
             return @conffile
           end
           cmdline = @process.cmdline # Array, like in ARGV ...
-          index = cmdline.index('--conf') 
+          index = cmdline.index('--conf')
           unless index # --conf option not found
             @conffile = DEFAULT_SYS_CONF_FILE
-            return @conffile 
+            return @conffile
           end
-          argument = cmdline[index + 1] 
+          argument = cmdline[index + 1]
           if argument =~ /^\-/
-            fail "bad chilli command line: #{cmdline.inspect}" 
+            fail "bad chilli command line: #{cmdline.inspect}"
           end
           if argument =~ /^\// # absolute path
             @conffile = argument
@@ -359,26 +359,26 @@ class OnBoard
             end
           end
           if conf['dhcpend']
-            ip_dhcpend = ip_net + @conf['dhcpend'] 
+            ip_dhcpend = ip_net + @conf['dhcpend']
           else
             ip_dhcpend = ip_net.to_range.last - 1
           end
-          return (ip_dhcpstart..ip_dhcpend) 
+          return (ip_dhcpstart..ip_dhcpend)
         end
 
-        def stop(opt_h={})   
-          msg = @process.kill(:wait => true, :sudo => true)  
+        def stop(opt_h={})
+          msg = @process.kill(:wait => true, :sudo => true)
           if msg[:ok]
-            @process = nil 
+            @process = nil
 
             #restore previous IP configuration of the interface
             netif = Interface.getAll.detect{|x| x.name == @conf['dhcpif']}
             # do not perform the restore if the interface has got some
             # non-linklocal IP address
-            if opt_h[:restore] and netif and 
+            if opt_h[:restore] and netif and
                 File.exists? "#{CONFDIR}/current/#{netif.name}.dat" and (
                     !netif.ip or
-                    netif.ip.reject{|i| i.addr.link_local?}.length == 0 
+                    netif.ip.reject{|i| i.addr.link_local?}.length == 0
                 )
               saved_netif = Marshal.load File.read(
                   "#{CONFDIR}/current/#{netif.name}.dat"
@@ -398,7 +398,7 @@ class OnBoard
           netif = Interface.getAll.detect{|x| x.name == @conf['dhcpif']}
 
           # save previous IP configuration before flushing it
-          if opt_h[:save] and netif and netif.ip 
+          if opt_h[:save] and netif and netif.ip
             if (netif.ipassign[:method] == :static and netif.ip.length > 0) or
                 netif.ipassign[:method] == :dhcp
               File.open "#{CONFDIR}/current/#{netif.name}.dat", 'w' do |f|
@@ -424,14 +424,14 @@ class OnBoard
 
         def data
           {
-            'process'   => @process ? 
+            'process'   => @process ?
               {
                 'pid'       => @process.pid,
                 'cmdline'   => @process.cmdline,
                 'cwd'       => @process.cwd
               } : nil,
             'conffile'  => conffile(),
-            'conf'      => @conf.delete_if{|key,val| key =~ /secret/}, 
+            'conf'      => @conf.delete_if{|key,val| key =~ /secret/},
                 # do not export passwords
             'dhcprange' => {
               'start'     => dhcp_range.first.to_s,

@@ -25,11 +25,11 @@ class OnBoard
                   "#{VARWWW}/custom_text.html"
       CUSTOMFOOTER_HTMLFRAGMENT =
                   "#{VARWWW}/custom_footer.html"
-      
+
       # TODO: move this in some specific place
       unless Dir.exists? File.dirname CONFFILE
         FileUtils.mkdir_p File.dirname CONFFILE
-      end        
+      end
       unless File.exists? CONFFILE
         FileUtils.cp DEFAULT_CONFFILE, CONFFILE
       end
@@ -39,7 +39,7 @@ class OnBoard
       class AlreadyRunning < RuntimeError; end
 
       class << self
-        
+
         def save # use YAML, not Marshal, this time
           unless Dir.exists? File.dirname SAVEFILE
             FileUtils.mkdir_p File.dirname SAVEFILE
@@ -69,7 +69,7 @@ class OnBoard
           return false unless Dir.exists? "/proc/#{pid}"
 begin # THIS IS DIIIIIRTY! # TODO? use OnBoard::System::Process#kill stop!()
           process = System::Process.new File.read(PIDFILE).to_i
-          return true if 
+          return true if
               process.cmdline[0] and
               (File.basename(process.cmdline[0]) =~ /^hotspotlogin(\.rb)?$/)
           return true if
@@ -121,16 +121,16 @@ end
 
         def change_from_HTTP_request!(params)
           conf_h = read_conf
-          conf_h['port']      = # don't use priviliged ports 
+          conf_h['port']      = # don't use priviliged ports
             params['port'].to_i if params['port'].to_i > 1024
-          conf_h['interval']  = 
+          conf_h['interval']  =
             params['interval'].to_i if params['interval'].to_i > 0
 
-          if 
-              conf_h['uamsecret'] and 
+          if
+              conf_h['uamsecret'] and
               conf_h['uamsecret'].length > 0 and
               conf_h['uamsecret'] != params['uamsecret_old'] and
-              ( 
+              (
                 params['uamsecret'].length > 0 or
                 params['uamsecret_verify'].length > 0
               )
@@ -140,8 +140,8 @@ end
           end
           if params['uamsecret'].length > 0
             conf_h['uamsecret'] = params['uamsecret']
-          else 
-            # extra check of the old password (if any): BadRequest was not 
+          else
+            # extra check of the old password (if any): BadRequest was not
             # raised in this case
             if conf_h['uamsecret'] and conf_h['uamsecret'].length > 0
               if conf_h['uamsecret'] == params['uamsecret_old']
@@ -151,17 +151,17 @@ end
               conf_h['uamsecret'] = nil
             end
           end
-          
+
           conf_h['userpassword'] = (params['userpassword'] == 'on')
-          
+
           # logo
           # TODO: delete stale files or manage a collection/library of logos?
           if params['delete'] and params['delete']['logo'] == 'on'
             conf_h['logo'] = nil
             conf_h['logo-link'] = nil
-          elsif params['logo'] 
+          elsif params['logo']
             logo_path = "#{VARWWW}/#{params['logo'][:filename]}"
-            FileUtils.mv(params['logo'][:tempfile], logo_path) 
+            FileUtils.mv(params['logo'][:tempfile], logo_path)
             conf_h['logo'] = logo_path
           end
           if params['logo_link'] and params['logo_link'] =~ /\S/
@@ -175,7 +175,7 @@ end
           elsif params['signup_url'] and params['signup_url'] =~ /\S/
             conf_h['signup-url'] = params['signup_url']
           end
-         
+
           # my_url # "My Account" link
           if params['delete'] and params['delete']['my_url']
             conf_h['my-url'] = nil
@@ -189,14 +189,14 @@ end
           elsif params['password_recovery_url'] and params['password_recovery_url'] =~ /\S/
             conf_h['password-recovery-url'] = params['password_recovery_url']
           end
- 
+
           # custom headline
           if params['delete'] and params['delete']['custom_headline']
             conf_h['custom-headline'] = nil
           elsif params['custom_headline']
             conf_h['custom-headline'] = params['custom_headline']
           end
-          
+
           # custom text
           if params['delete'] and params['delete']['custom_text']
             if File.file? CUSTOMTEXT_HTMLFRAGMENT
@@ -225,13 +225,13 @@ end
             conf_h['custom-footer'] = CUSTOMFOOTER_HTMLFRAGMENT
           end
 
-          # Boolean params 
+          # Boolean params
           %w{remember_credentials}.each do |p|
             conf_h[p.gsub('_', '-')] = !!params[p] # "!!" coerces to true/false ...
           end
 
           # This underscore vs dash thing is very awkward :-/
-         
+
           File.open CONFFILE, 'w' do |f|
             f.write YAML.dump conf_h
           end

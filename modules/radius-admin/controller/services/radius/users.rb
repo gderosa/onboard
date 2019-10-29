@@ -13,7 +13,7 @@ class OnBoard
         raduserinfo = Service::RADIUS::User.get(params)
       end
       users = raduserinfo['users'] || []
-      users.each do |u| 
+      users.each do |u|
         u.retrieve_attributes_from_db if !u.check or u.check.length == 0
       end
       format(

@@ -12,7 +12,7 @@ class Object
         return JSON.generate(self)
       end
     elsif what.to_s == 'yaml'
-      return YAML.dump(self) 
+      return YAML.dump(self)
     else
       method(('to_' + what.to_s).to_sym).call
     end
