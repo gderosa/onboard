@@ -34,7 +34,9 @@ class OnBoard::Controller
 
     params['netifs'].each_pair do |ifname, ifhash|
       interface = current_interfaces.detect {|i| i.name == ifname}
-      interface.modify_from_HTTP_request(ifhash) 
+      # In browser context, a checkbox param is simply absent (null/nil) for "unchecked".
+      # In (JSON) API context, we want "active": false to be explicit, before bringing a network interface down!
+      interface.modify_from_HTTP_request(ifhash, :safe_updown => (params[:format] != 'html'))
     end
 
     updated_objects = OnBoard::Network::Interface.getAll.sort_by(

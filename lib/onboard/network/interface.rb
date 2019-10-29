@@ -1,5 +1,6 @@
 require 'timeout'
 require 'yaml'
+require 'fileutils'
 
 require 'onboard/network/interface/mac'
 require 'onboard/network/interface/ip'
@@ -16,9 +17,9 @@ class OnBoard
       # Constants
 
       DHCPC_ATTEMPTS = [
-        lambda{|ifname| System::Command.send_command  "dhcpcd5  -b  -p  #{ifname}", :sudo},
-        lambda{|ifname| System::Command.send_command  "dhcpcd   -b  -p  #{ifname}", :sudo},
-        lambda{|ifname| System::Command.bgexec        "dhcpcd       -p  #{ifname}", :sudo},
+        lambda{|ifname, metric_switch| System::Command.send_command  "dhcpcd5  -b  -p  #{metric_switch} #{ifname}", :sudo},
+        lambda{|ifname, metric_switch| System::Command.send_command  "dhcpcd   -b  -p  #{metric_switch} #{ifname}", :sudo},
+        lambda{|ifname, metric_switch| System::Command.bgexec        "dhcpcd       -p  #{metric_switch} #{ifname}", :sudo},
       ]
 
       TYPES = {
@@ -57,7 +58,7 @@ class OnBoard
       }
 
       # sort by muliple criteria
-# http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
+      # http://samdorr.net/blog/2009/01/ruby-sorting-with-multiple-sort-criteria/
       #
       # in practice, you are sorting an Enumerable made up of Arrays
 
@@ -81,6 +82,9 @@ class OnBoard
           ary += @@all_layer3
           @@all_layer2.each do |netif|
             ary << netif unless ary.detect {|x| x.name == netif.name}
+          end
+          @@all_layer3.each do |netif|
+            netif.get_preferred_metric!
           end
           return @@all = ary
         end
@@ -113,7 +117,6 @@ class OnBoard
                 :qdisc      => $5,
                 :state      => $6
               }
-              #puts netif_h[:name] # DEBUG
               if netif_h[:state] == "UNKNOWN"
                 if netif_h[:misc].include? "DOWN"
                   netif_h[:state] = "DOWN"
@@ -336,11 +339,12 @@ class OnBoard
               end
             end
             if saved_iface.active
-              if saved_iface.ipassign[:method] == :static and
-                  current_iface.ipassign[:method] == :dhcp
+              # Stop dhcp if saved as static, restart anyway if saved as dhcp.
+              # Restarting/refreshing dhcp client is needed, among other things, to set route metrics.
+              if current_iface.ipassign[:method] == :dhcp
                 current_iface.stop_dhcp_client
-              elsif current_iface.ipassign[:method] == :static and
-                  saved_iface.ipassign[:method] == :dhcp
+              end
+              if saved_iface.ipassign[:method] == :dhcp
                 current_iface.start_dhcp_client
               end
             end
@@ -355,6 +359,7 @@ class OnBoard
             if saved_iface.ipassign[:method] == :static
               current_iface.assign_static_ips saved_iface.ip
             end
+            current_iface.set_preferred_metric saved_iface.preferred_metric if saved_iface.preferred_metric
           end
         end
 
@@ -363,7 +368,7 @@ class OnBoard
 
       # Instance methods and attributes.
 
-      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid
+      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
       attr_accessor :ipassign, :type, :wifi_properties
 
       include OnBoard::System
@@ -456,29 +461,62 @@ class OnBoard
 
       def is_bridged?; bridged_to; end
 
-      def modify_from_HTTP_request(h)
-        if h['active'] =~ /on|yes|1/
-          #Command.run "ip link set #{@name} up", :sudo unless @active # DRY!
+      def set_preferred_metric(_preferred_metric)
+        # TODO: use tmpfs?
+        metrics_dir = OnBoard::CONFDIR + '/network/interfaces/preferred_metrics/new'
+        metric_file = metrics_dir + '/' + @name
+        @preferred_metric = _preferred_metric
+        FileUtils.mkdir_p metrics_dir
+        File.open(metric_file, 'w') do |f|
+          f.write @preferred_metric.to_s
+        end
+      end
+
+      def get_preferred_metric!
+        # gets from file but set in the object!
+        metrics_dir = OnBoard::CONFDIR + '/network/interfaces/preferred_metrics/new'
+        metric_file = metrics_dir + '/' + @name
+        if File.exists? metric_file
+          File.open(metric_file, 'r') do |f|
+            metric_data = f.read
+            if metric_data =~ /\d/
+              @preferred_metric = metric_data.to_i
+            else
+              @preferred_metric = metric_data.to_s 
+            end
+          end
+        end
+      end
+
+      def modify_from_HTTP_request(h, opts={})
+        if h['preferred_metric']
+          set_preferred_metric h['preferred_metric']
+        end
+
+        if h['active']
           ip_link_set_up unless @active
+        elsif @active and (h['active'] == false or not opts[:safe_updown])
+          # In browser context, a checkbox param ^^ is simply absent (null/nil) for "unchecked".
+          # In (JSON) API context, we want h['active'] to be false explicitly, before bringing a network interface down!
+          # See also controller/network/interfaces.rb
+          ip_link_set_down
+        end
+
+        if h['ipassign'].respond_to? :[]
           if @ipassign[:method] == :static and h['ipassign']['method'] == 'dhcp'
             start_dhcp_client
           elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'static'
             stop_dhcp_client h['ipassign']['pid']
             assign_static_ips h['ip']
-          elsif
-              @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
+          elsif @ipassign[:method] == :dhcp and h['ipassign']['method'] == 'dhcp'
+            if ['on', true].include? h['ipassign']['renew']
+              stop_dhcp_client h['ipassign']['pid']
+              start_dhcp_client
+            end
+          elsif @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
             assign_static_ips h['ip']
-          end # if was dhcp and shall be dhcp... simply do nothing :-)
-        elsif @active
-          stop_dhcp_client h['ipassign']['pid'] if h['ipassign']['pid'] =~ /\d+/
-          #flush_ip
-          #Command.run "ip link set #{@name} down", :sudo # DRY!
-          ip_link_set_down
+          end
         end
-        if @ipassign[:method] == :static and h['ipassign']['method'] == 'static'
-            assign_static_ips h['ip']
-        end
-        # if was dhcp and shall be dhcp... simply do nothing :-)
       end
 
       def has_ip?(ipobj)
@@ -512,17 +550,26 @@ class OnBoard
       end
       alias ip_addr_flush flush_ip
 
+      def dhcpcd_metric_switch
+        if @preferred_metric.is_a? Integer or @preferred_metric =~ /\d/
+          return "-m #{@preferred_metric}"
+        end
+        return ''
+      end
+
       def start_dhcp_client
         success = nil
         DHCPC_ATTEMPTS.each do |lmbda|
-          success = lmbda.call @name
+          success = lmbda.call @name, dhcpcd_metric_switch
           break if success
         end
         sleep(0.1) # horrible
         return success
       end
 
-      def stop_dhcp_client(pid=@ipassign[:pid])
+      def stop_dhcp_client(pid=nil)
+        # Sometimes it's actually called with a nil arg, so just setting a default is not enough
+        pid = @ipassign[:pid] unless pid and pid != 0
         Command.run "kill #{pid}", :sudo # apparently dhcpcd --release #{@name} is useless...
       end
 

@@ -103,7 +103,7 @@ class OnBoard::Controller
       raise Sinatra::NotFound
     end
   end
-
+  
   # Instead of CREATEing or DELETEing ip routes, we UPDATE the ip routing 
   # table, hence the use of the sole PUT method to an unique URI. 
   # A way to retain our code simple but still respect (somewhat) 
@@ -121,7 +121,7 @@ class OnBoard::Controller
     if params['name']
       name = params['name'].strip.gsub(' ', '_') 
       #
-      # One may just want to chenge the comment...
+      # One may just want to change the comment...
       #
       #if names.include? name 
       #  status 409 # HTTP Conflict!
@@ -140,7 +140,7 @@ class OnBoard::Controller
       end
     elsif params['ip_route_del']
       # 'default' might be ambiguous, 0.0.0.0/0 or ::/0 ? So, specifying
-      # the address family (af) is required. 
+      # the address family (af) is required.
       msg = table.ip_route_del params['ip_route_del'], :af => params['af']
     else
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params
@@ -157,6 +157,12 @@ class OnBoard::Controller
       :objects  => OnBoard::Network::Routing::Table.get(params['table']),
       :msg      => msg
     )   
+  end
+
+  # Neverthless... allow some ReST-ful behavior...
+  post "/network/routing/tables/:table.:format" do
+    status, headers, body = call env.merge('REQUEST_METHOD' => 'PUT')
+    [status, headers, body]
   end
 
   delete "/network/routing/tables/:table.:format" do

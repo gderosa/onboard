@@ -145,7 +145,7 @@ div#main div.error, div#main div.warn, div#main div.info, div#main pre.error, di
   color: black;
   padding: 0.3em 0.3em;
   margin-bottom: 1em;
-  margin-top: 2em;
+  margin-top: 1em;
 }
 
 div#main .error pre, div#main .warn pre, div#main .info pre {
@@ -160,7 +160,11 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 
 .error, .error-like {border: 1px red dashed;}
 .warn,  .warn-like  {border: 1px yellow solid; font-style: italic; font-size:105%;}
-.info,  .info-like  {border: 1px #4b0 dotted;} 
+.info,  .info-like  {border: 1px #4b0 dotted;}
+
+.warn em {
+  font-style: normal;
+}
 
 .optional, .optinfo {
   text-align:   left;
@@ -293,7 +297,7 @@ table tr td, table tr th, table thead tr th, table tbody tr td {
   border: 1px white solid;
 }
 
-table tr td, table tr th, fieldset, .table-cell-bg, ul[role="tablist"] { 
+table tr td, table tr th, fieldset, .table-cell-bg, ul[role="tablist"], .th-like {
   background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png"); 
   background-attachment: fixed;
 }
@@ -377,6 +381,21 @@ table tr td div {
   margin: 0.3em 0;
 }
 
+.th-like {
+  font-style: normal;
+  font-weight: bold;
+}
+
+.btn-like {
+  display: inline-block;
+  border: 1px #ccc solid;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: bold;
+  font-size: 85%;
+  font-style: normal;
+}
+
 .term, .em-special {
   text-decoration: none;
   border-bottom: 1px #444 dashed;
@@ -393,6 +412,7 @@ fieldset {
 
 button[type="submit"] {
   margin: 1ex 0;
+  font-weight: bold;
 }
 
 button[disabled] {
@@ -452,5 +472,10 @@ sup {
   margin-top: 0.5em;
 }
 
+.footnote {
+  font-size: smaller;
+}
 
-
+hr {
+  border: 1px solid #eee;
+}
