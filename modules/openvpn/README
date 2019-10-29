@@ -4,9 +4,9 @@ its functionalities part of the core.
 
 Anyway, this should not be a requirement for all modules: sometimes
 a simpler file hierarcy might be considered more valuable than the bare
-compliance to a "standard". 
+compliance to a "standard".
 
-DEPENDENCIES: 
+DEPENDENCIES:
 
 This module depends on the module "easy-rsa".
 

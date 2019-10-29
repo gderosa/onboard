@@ -4,7 +4,7 @@ Upgrading to Version 3.0
 .. contents:: Sections
    :depth: 2
 
-.. important:: 
+.. important::
    The configuration for 3.0 is *largely* compatible with the 2.x.x
    configuration.  However, it is NOT possible to simply use the 2.x.x
    configuration as-is.  Instead, you should re-create it.
@@ -300,11 +300,11 @@ virtual-servers, to get functionality equivalent to v2.x::
     }
     ...
   }
-  
+
   authenticate {
     ...
     Auth-Type ldap {
-      ldap   
+      ldap
     }
     ...
   }
@@ -364,13 +364,13 @@ rlm_date
 
 Instances of rlm_date register an xlat method which can translate
 integer and date values to an arbitrarily formatted date time
-string, or an arbitrarily formated time string to an integer, 
+string, or an arbitrarily formated time string to an integer,
 depending on the attribute type passed.
 
 rlm_rest
 ~~~~~~~~
 
-The ``rest`` module is used to translate RADIUS requests into 
+The ``rest`` module is used to translate RADIUS requests into
 RESTfull HTTP requests. Currently supported body types are JSON
 and POST.
 
@@ -389,7 +389,7 @@ rlm_yubikey
 ~~~~~~~~~~~
 
 The ``yubikey`` module can be used to forward yubikey OTP token
-values to a Yubico validation server, or decrypt the token 
+values to a Yubico validation server, or decrypt the token
 using a PSK.
 
 Deleted Modules

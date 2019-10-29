@@ -91,7 +91,7 @@ INSTALL easy-rsa
    participating in a secure SSL/TLS
    connection.
 5. (Optional) If you intend to use PKCS#11,
-   install openssl >= 0.9.7, install the 
+   install openssl >= 0.9.7, install the
    following components from www.opensc.org:
    - opensc >= 0.10.0
    - engine_pkcs11 >= 0.1.3
@@ -123,12 +123,12 @@ of accomplishing this, listed in the order of preference:
     Client    digitalSignature	                 TLS Web Client Authentication
               keyAgreement
               digitalSignature, keyAgreement
-	      
+
     Server    digitalSignature, keyEncipherment  TLS Web Server Authentication
               digitalSignature, keyAgreement
 
     Now add the following line to your client configuration:
-      
+
     remote-cert-tls server
 
     This will block clients from connecting to any

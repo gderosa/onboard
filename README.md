@@ -79,7 +79,7 @@ and therefore circumvent the captive portal (depending on the configuration).
 Margay server will be available at
 
 * http://localhost:4567
-* https://localhost 
+* https://localhost
   * *or https://localhost:4443 (from the host) if you're using Vagrant*
 
 The default credentials are `admin`:`admin`.
