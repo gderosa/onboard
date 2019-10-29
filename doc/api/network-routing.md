@@ -306,8 +306,8 @@ in future, though.
 Meanwhile, the functionality is fully available to Network Administrators
 via **web UI**.
 
-<img alt="policyrouting-rules" src="img/policyrouting-rules.png" width="40%"/>
-<img alt="policyrouting-tables" src="img/policyrouting-tables.png" width="40%"/>
+  <img alt="policyrouting-rules" src="img/policyrouting-rules.png" width="45%"/>&nbsp;<!--
+--><img alt="policyrouting-tables" src="img/policyrouting-tables.png" width="45%"/>
 
 # *Notes*
 
