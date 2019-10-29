@@ -14,7 +14,7 @@ view:
 download:
   you: scarica
 
-delete_: # diiirty 
+delete_: # diiirty
   you: cancella
 
 update_: # diiirty
@@ -33,10 +33,10 @@ send:
 eg: p. es.
 
 password:
-  repeat: 
+  repeat:
     you: ripeti password
     any: ripetere password
-  type_twice: 
+  type_twice:
     you: inserisci due volte
     any: inserire due volte
   do_not_match: le password non coincidono
