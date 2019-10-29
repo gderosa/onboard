@@ -226,11 +226,16 @@ Accept: application/json
 
 The below example:
 
-* Turns `eth0` into DHCP.
+* Requests to configure `eth0` with DHCP.
 * Set the preferred metric for `eth0` to "empty" i.e. system defaults will be used.
-* Kills the DHCP client for `eth1` (by setting `"ipassign": {"method": "static"}`)
+* Kills the DHCP client for `eth1` by setting `"ipassign": {"method": "static"}`.
+* Sets the `"ip"[]` addresses for `eth1`.
 * Set the preferred metric for `eth1` to `100`.
 * Brings the wireless interface `wlan0` down.
+
+Please note, if you want to set the `"ip"` addresses explicitly,
+the assignment `"method"` MUST be set to `"static"`,
+otherwise the requested IP addresses will be ignored.
 
 ```javascript
 {
