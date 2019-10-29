@@ -10,9 +10,9 @@
       <tr>
         <th scope="row">
           <select name="check[Password-Type]">
-            <% 
-              if group 
-                if group.password_type 
+            <%
+              if group
+                if group.password_type
                   selected = group.password_type
                 else
                   selected = ''
@@ -23,10 +23,10 @@
             %>
             <option value="" <%= 'selected' if selected == '' %>>
               (no password)
-              </option>  
+              </option>
             <% passwd_types.each do |passwd_type| %>
-              <option 
-                  <%= 'selected' if passwd_type == selected %> 
+              <option
+                  <%= 'selected' if passwd_type == selected %>
                   value="<%= passwd_type %>">
                 <%= passwd_type %>
               </option>
@@ -34,7 +34,7 @@
           </select>
         </th>
         <td style="vertical-align: top;">
-          <div style="margin-top:0;"> 
+          <div style="margin-top:0;">
             <input type="password" name="check[Group-Password]"/>
           </div>
           <div style="margin-top:0.7em;">
@@ -54,7 +54,7 @@
                         'bg_high'
                       else
                         ''
-                      end 
+                      end
         end
       %>
       <tr class="<%= csstclass %>">
@@ -63,7 +63,7 @@
         </th>
         <td>
           <fieldset>
-            <% 
+            <%
               selected_auth_type = ''
               if group and group.auth_type
                 selected_auth_type = group.auth_type
@@ -76,9 +76,9 @@
               }
             %>
             <% ['Reject', '', 'Accept'].each do |auth_type| %>
-              <input 
-                  type="radio" 
-                  name="check[Auth-Type]" 
+              <input
+                  type="radio"
+                  name="check[Auth-Type]"
                   value="<%= auth_type %>"
                   <%= 'checked' if auth_type == selected_auth_type %>/>
               <%= human_friendly[auth_type] %>

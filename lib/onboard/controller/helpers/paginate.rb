@@ -3,7 +3,7 @@
 class OnBoard
   class Controller < ::Sinatra::Base
     helpers do
-    
+
       def paginator(h)
         partial(
           :path     => '_paginator',
@@ -12,7 +12,7 @@ class OnBoard
       end
 
       def use_pagination_defaults()
-        params.update OnBoard::Pagination.normalize(params) 
+        params.update OnBoard::Pagination.normalize(params)
       end
 
     end

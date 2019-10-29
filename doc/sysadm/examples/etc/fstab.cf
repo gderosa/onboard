@@ -9,10 +9,10 @@ tmpfs /var/run tmpfs defaults 0 0
 
 # Take care:
 #
-# * a sync scrypt to preserve data in /var/tmp (and /var/log) ? 
-#   (as in Voyage Linux http://linux.voyage.hk) 
+# * a sync scrypt to preserve data in /var/tmp (and /var/log) ?
+#   (as in Voyage Linux http://linux.voyage.hk)
 #
-# * on system boot, create required dirs in /var/log for various services 
+# * on system boot, create required dirs in /var/log for various services
 #   if you mount it as tmpfs
 
 

@@ -61,14 +61,14 @@ class OnBoard
         user.retrieve_group_membership_from_db
 
         not_found unless user.found?
-        
+
         redirect '/pub/services/radius/login.html' unless
             user.check_password session[:radpass] and user.name == session[:raduser]
 
         user.retrieve_personal_info_from_db
         user.get_personal_attachment_info
 
-        params['personal']['Birth-Date'] = 
+        params['personal']['Birth-Date'] =
             r18n_normalize_date params['personal']['Birth-Date'] # Sinatra helper
             # to manage American dates 01/30/1980 which Date.parse cannot understand
 
@@ -76,7 +76,7 @@ class OnBoard
             :params => params,
             :fields => config['mandatory']['personal'].select{|k, v| v}.keys,
 	    :i18n   => i18n
-        )       
+        )
         if config['enable_selfcare']
           user.update(params_filtered)
           user.retrieve_attributes_from_db
@@ -102,7 +102,7 @@ class OnBoard
         :title    => "RADIUS User: #{params[:userid]}",
         :format   => params[:format],
         :msg      => msg,
-        :locals   => {:signup_config => config}, 
+        :locals   => {:signup_config => config},
         :objects  => {
           'user'    => user
         }
@@ -119,7 +119,7 @@ class OnBoard
 
       redirect '/pub/services/radius/login.html' unless
           user.check_password session[:radpass] and user.name == session[:raduser]
-     
+
       attachment(params[:basename]) if params['disposition'] == 'attachment'
       send_file( File.join(
           OnBoard::Service::RADIUS::User::UPLOADS,

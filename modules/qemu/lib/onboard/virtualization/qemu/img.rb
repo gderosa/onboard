@@ -10,7 +10,7 @@ class OnBoard
 
         # Please don'use url like gluster:// with qemu-img, ecen when supported;
         # it hangs for long time in case of a degraded cluster. Always prefer
-        # mount points (but of course you can use urls with qemu itself, if 
+        # mount points (but of course you can use urls with qemu itself, if
         # available, to get performance boost).
 
         ROOTDIR = File.join ENV['HOME'], 'files/QEMU'
@@ -25,7 +25,7 @@ class OnBoard
             QEMU::Config.relative_path *a
           end
 
-	  # gluster:// doesn't like spaces or brackets, even with quoting or 
+	  # gluster:// doesn't like spaces or brackets, even with quoting or
 	  # escaping...
 	  def sanitize_file_or_dirname(name)
             name.gsub(/\s/, '_').gsub(/[^\d\w_\+\-\.]/, '+').gsub(/\+{2,}/, '++')
@@ -46,16 +46,16 @@ class OnBoard
                          h['qemu-img']['subdir'] + '/QEMU'
                        end
               dir = File.join QEMU::FILESDIR, subdir, sanitize_file_or_dirname(name)
-              System::Command.run "mkdir -p '#{dir}'", :sudo # sudo, otherwise 
-                  # we should ensure that the onboard user has the same UID 
-                  # across the cluster, in case directories are on a 
+              System::Command.run "mkdir -p '#{dir}'", :sudo # sudo, otherwise
+                  # we should ensure that the onboard user has the same UID
+                  # across the cluster, in case directories are on a
                   # distributed file system.
               filepath = "#{dir}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
                 System::Command.run "mv '#{filepath}' '#{filepath}.old'", :sudo
               end
               System::Command.run(
-                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :sudo, :raise_BadRequest) 
+                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :sudo, :raise_BadRequest)
               return filepath
             end
           end
@@ -73,7 +73,7 @@ class OnBoard
             cmd = %Q{qemu-img snapshot -l "#{@file}"}
             out = `sudo #{cmd}` # sudo to access gluster://
             out.each_line do |line|
-              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
+              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/
                 list << Snapshot.new(
                   :id       =>                                $1.to_i,
                   :tag      =>                                $2,
@@ -92,7 +92,7 @@ class OnBoard
           if @file and (File.exists? @file or @file.is_uri?)
             `sudo qemu-img info "#{@file}"`.each_line do |line|
               break if line =~ /^\s*Snapshot list:/
-              if line =~ /([^:]+):([^:]+)/ 
+              if line =~ /([^:]+):([^:]+)/
                 k = $1
                 v = $2
                 h[k.strip.gsub(' ', '_')] = v.strip if h and v

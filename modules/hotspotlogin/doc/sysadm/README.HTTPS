@@ -1,5 +1,5 @@
 It's strongly suggested to put hotspotlogin behind a reverse HTTPS proxy.
-For example, if you use LigHTTPd, these are the relevant parts of 
+For example, if you use LigHTTPd, these are the relevant parts of
 the configuration:
 
     server.modules = (

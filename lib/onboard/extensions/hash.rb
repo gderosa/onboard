@@ -36,7 +36,7 @@ class Hash
     return result
   end
 
-  # Can't find a reason why: 
+  # Can't find a reason why:
   #
   #   Array#select #=> an Array
   #   Array#partition #=> an Array
@@ -52,11 +52,11 @@ class Hash
   #    h = {'a' => 1, 'b' => 2, 'c' => 3}
   #    good, bad = h.partition_hash {|key, val| key < 'b' or val > 2}
   #    good #=> {"a"=>1, "c"=>3}
-  #    bad #=> {"b"=>2}  
+  #    bad #=> {"b"=>2}
   #
   def partition_hash(&blk)
     yes = {}
-    no = {} 
+    no = {}
     each_pair do |k, v|
       if blk.call(k, v)
         yes[k] = v
@@ -84,7 +84,7 @@ class Hash
   end
 
   # non-facets
-  
+
   def symbolize_all
     h = {}
     each_pair do |k, v|

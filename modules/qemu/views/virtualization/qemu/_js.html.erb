@@ -58,13 +58,13 @@
       this.uuidsLength = 1;
     } else {
       this.uuids = this.uuids || <%= all_vm_uuids %>;
-      this.uuidsLength = this.uuids.length; 
-    } 
+      this.uuidsLength = this.uuids.length;
+    }
     for (var i=0; i<uuidsLength; i++) {
       var uuid = uuids[i];
       var quit_button =
           document.getElementById('quit[' + uuid + ']');
-      var quit_button_img = 
+      var quit_button_img =
           document.getElementById('quit_button_img[' + uuid + ']');
       var saverestore_checkbox =
           document.getElementById('saverestore[' + uuid + ']');
@@ -73,7 +73,7 @@
         quit_button.title = 'Quit virtualization and save machine state';
       } else {
         quit_button_img.src = '<%= action_icon_path(:process_stop) %>';
-      quit_button.title = 'Quit virtualization immediately (beware: you may corrupt data!)';  
+      quit_button.title = 'Quit virtualization immediately (beware: you may corrupt data!)';
       }
     }
   }
@@ -106,7 +106,7 @@
     }
   }
   function qemuIsRunning(vmid, basepath) {
-    if (typeof basepath === 'undefined') 
+    if (typeof basepath === 'undefined')
       basepath = '';
     var fetch_from = basepath + vmid + '/running.json';
     var request = new XMLHttpRequest();

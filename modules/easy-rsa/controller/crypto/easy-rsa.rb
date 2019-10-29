@@ -1,5 +1,5 @@
 # OnBoard::Crypto::SSL is part of the core, while OnBoard::Crypto::EasyRSA
-# is in a module and is just one of the ways to create/view certs via 
+# is in a module and is just one of the ways to create/view certs via
 # helper scripts.
 
 require 'sinatra/base'
@@ -15,7 +15,7 @@ class OnBoard::Controller < Sinatra::Base
     OnBoard::Crypto::SSL::KEY_SIZES.each do |n|
       Thread.new do
         OnBoard::Crypto::SSL.dh_mutex(n).synchronize do
-          unless OnBoard::Crypto::SSL.dh_exists?(n) 
+          unless OnBoard::Crypto::SSL.dh_exists?(n)
             OnBoard::Crypto::EasyRSA.create_dh(n)
           end
         end
@@ -66,14 +66,14 @@ class OnBoard::Controller < Sinatra::Base
 
   delete '/crypto/easy-rsa/ca.:format' do
     msg = OnBoard::System::Command.run <<EOF
-cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}    
+cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}
 export KEY_DIR=#{OnBoard::Crypto::EasyRSA::KEYDIR}
-./clean-all    
+./clean-all
 EOF
     FileUtils.rm OnBoard::Crypto::SSL::CACERT
     FileUtils.rm OnBoard::Crypto::SSL::CAKEY
 
-    redirection = "/crypto/easy-rsa.#{params['format']}"      
+    redirection = "/crypto/easy-rsa.#{params['format']}"
     status(303)                       # HTTP "See Other"
     headers('Location' => redirection)
     format(
@@ -85,16 +85,16 @@ EOF
 
   post '/crypto/easy-rsa/ca.:format' do
     msg = {}
-    if msg[:err] = OnBoard::Crypto::EasyRSA::CA.HTTP_POST_data_invalid?(params) 
+    if msg[:err] = OnBoard::Crypto::EasyRSA::CA.HTTP_POST_data_invalid?(params)
       # client sent invalid data
       status(400)
     else
       msg = OnBoard::Crypto::EasyRSA::CA.create_from_HTTP_request(params)
       if msg[:ok]
-        status(201)  
+        status(201)
       else # client sent a valid request but (server-side) errors occured
-        status(500) 
-      end     
+        status(500)
+      end
     end
     format(
       :module   => 'easy-rsa',
@@ -109,20 +109,20 @@ EOF
   # cert. creation and signature by our CA
   post '/crypto/easy-rsa/certs.:format' do
     msg = {}
-    if msg[:err] = 
-        OnBoard::Crypto::EasyRSA::Cert.HTTP_POST_data_invalid?(params) 
+    if msg[:err] =
+        OnBoard::Crypto::EasyRSA::Cert.HTTP_POST_data_invalid?(params)
       # client sent invalid data
       #
       status(400)
     else
       msg = OnBoard::Crypto::EasyRSA::Cert.create_from_HTTP_request(params)
       if msg[:ok]
-        status(201)  
+        status(201)
       elsif msg[:err] =~ /already exists/
         status(409) # Conflict
       else # client sent a valid request but (server-side) errors occured
-        status(500) 
-      end     
+        status(500)
+      end
     end
     format(
       :module   => 'easy-rsa',
@@ -137,14 +137,14 @@ EOF
   # A WebService client does not need an entity-body (headers and Status
   # will suffice), so html is fine as well, since it will be ignored...
   delete '/crypto/easy-rsa/certs/:name.crt' do
-    msg = {:ok => true} 
+    msg = {:ok => true}
     certfile = "#{OnBoard::Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
     keyfile = "#{OnBoard::Crypto::SSL::CERTDIR}/private/#{params[:name]}.key"
-    certfile_easyrsa = 
+    certfile_easyrsa =
         "#{OnBoard::Crypto::EasyRSA::KEYDIR}/#{params[:name]}.crt"
-    keyfile_easyrsa = 
+    keyfile_easyrsa =
       "#{OnBoard::Crypto::EasyRSA::KEYDIR}/#{params[:name]}.key"
-    csr_easyrsa = 
+    csr_easyrsa =
       "#{OnBoard::Crypto::EasyRSA::KEYDIR}/#{params[:name]}.csr"
 
     if File.exists? certfile_easyrsa
@@ -152,7 +152,7 @@ EOF
 cd #{OnBoard::Crypto::EasyRSA::SCRIPTDIR}
 . ./vars
 export CACERT=#{OnBoard::Crypto::SSL::CACERT}
-export CAKEY=#{OnBoard::Crypto::SSL::CAKEY} 
+export CAKEY=#{OnBoard::Crypto::SSL::CAKEY}
 ./revoke-full "#{params['name']}"
 EOF
     end
@@ -160,7 +160,7 @@ EOF
         certfile_easyrsa, keyfile_easyrsa, csr_easyrsa,
         certfile, keyfile
     ].each do |file|
-      FileUtils.rm(file) if File.exists?(file) or File.symlink?(file) 
+      FileUtils.rm(file) if File.exists?(file) or File.symlink?(file)
     end
     format(
       :module   => 'easy-rsa',
@@ -172,5 +172,5 @@ EOF
     )
   end
 
- 
+
 end

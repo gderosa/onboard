@@ -6,7 +6,7 @@ module Digest
   module Instance
     def salted_digest(str='', salt=:auto)
       if salt == :auto
-        salt = String.random_binary(digest_length) 
+        salt = String.random_binary(digest_length)
       end
       digest(str + salt) + salt
     end
@@ -21,7 +21,7 @@ module Digest
   class Class
     def self.salted_digest(str, salt=:auto, *args)
       new(*args).salted_digest(str, salt)
-    end 
+    end
     def self.salted_hexdigest(str, salt=:auto, *args)
       new(*args).salted_hexdigest(str, salt)
     end

@@ -1,11 +1,11 @@
-<% 
+<%
   sqlauth = objects
   o = sqlauth
 %>
 
 <h2><%= title %></h2>
 
-<%= 
+<%=
   partial(
     :module => 'dansguardian',
     :path => 'content-filter/dansguardian/authplugins/sql/_info'
@@ -27,17 +27,17 @@
     <tr>
       <th scope="row">DB host</th>
       <td>
-        <input 
+        <input
             type="text" name="sqlauthdbhost" value="<%= o[:sqlauthdbhost] %>"/>
       </td>
     </tr>
     <tr>
       <th scope="row">DB username</th>
       <td>
-        <input 
+        <input
             type="text" name="sqlauthdbuser" value="<%= o[:sqlauthdbuser] %>"/>
       </td>
-    </tr> 
+    </tr>
     <tr>
       <th scope="row">
         DB password
@@ -48,7 +48,7 @@
       <td>
         <input type="password" name="sqlauthdbpass"/>
       </td>
-    </tr> 
+    </tr>
   </table>
 
   <h3>Cache</h3>
@@ -65,7 +65,7 @@
             sqlauthcachettl = 'UNKNOWN/INVALID'
           end
         %>
-        <input 
+        <input
             type="text" name="sqlauthcachettl" value="<%= sqlauthcachettl %>"/>
       </td>
     </tr>
@@ -77,15 +77,15 @@
       <th scope="row">
         Map IP address to (RADIUS) User name
         <div class="optinfo">
-          <span class="term">-IPADDRESS-</span> will be replaced by the actual 
+          <span class="term">-IPADDRESS-</span> will be replaced by the actual
           IP address of the client
         </div>
       </th>
       <td>
         <!-- HTML5 spellcheck="false" -->
         <textarea
-            spellcheck="false" 
-            name="sqlauthipuserquery" 
+            spellcheck="false"
+            name="sqlauthipuserquery"
             cols="60"><%= o[:sqlauthipuserquery] %></textarea>
       </td>
     </tr>
@@ -93,18 +93,18 @@
       <th scope="row">
         Map (RADIUS) user to (RADIUS) group
         <div class="optinfo">
-          <span class="term">-USERNAME-</span> will be replaced by the (RADIUS) 
+          <span class="term">-USERNAME-</span> will be replaced by the (RADIUS)
           username resulting from the previous query
         </div>
       </th>
       <td>
         <!-- HTML5 spellcheck="false" -->
-        <textarea 
-            spellcheck="false" 
-            name="sqlauthusergroupquery" 
+        <textarea
+            spellcheck="false"
+            name="sqlauthusergroupquery"
             cols="60"><%= o[:sqlauthusergroupquery] %></textarea>
       </td>
     </tr>
-  </table> 
+  </table>
   <button type="submit" style="margin-top:2em;">Change!</button>
 </form>

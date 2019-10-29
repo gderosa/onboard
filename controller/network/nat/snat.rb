@@ -5,12 +5,12 @@ require 'onboard/network/iptables'
 class OnBoard::Controller
 
   get '/network/nat/masquerade.:format' do
-    redirect "/network/nat/snat.#{params[:format]}" 
+    redirect "/network/nat/snat.#{params[:format]}"
   end
 
   get '/network/nat/snat.:format' do
     iptablesobj = OnBoard::Network::Iptables.new(
-      :ip_version => '4', # no IPv6 NAT implemented (probably useless...)  
+      :ip_version => '4', # no IPv6 NAT implemented (probably useless...)
       :tables => %w{nat}
     )
     iptablesobj.get_all_info
@@ -58,5 +58,5 @@ class OnBoard::Controller
       :title => 'SNAT'
     )
   end
- 
+
 end

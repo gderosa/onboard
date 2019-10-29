@@ -1,4 +1,4 @@
-<% 
+<%
   require 'set'
 
   dg = objects[:dg] # This is an OnBoard:: object
@@ -38,7 +38,7 @@
 
 <h3>General configuration</h3>
 <form method="POST">
-  <input type="hidden" name="_method" value="put"/> 
+  <input type="hidden" name="_method" value="put"/>
   <input type="hidden" name="change_general_config" value="on"/>
   <table id="general_configuration">
     <tr>
@@ -77,14 +77,14 @@
               <span class="term">Case-insensitive</span> is the default option.
             </li>
             <li>
-              <span class="term">Case-sensitive</span> is generaly discouraged, 
-              as it would require 
-              separate list items for “word”, “Word”, and “WORD”; but may be 
-              useful to work-around problems with accented letters and 
+              <span class="term">Case-sensitive</span> is generaly discouraged,
+              as it would require
+              separate list items for “word”, “Word”, and “WORD”; but may be
+              useful to work-around problems with accented letters and
               multibyte character encodings.
             </li>
             <li>
-              “<span class="term">Both</span>” is the most powerful option, 
+              “<span class="term">Both</span>” is the most powerful option,
               but may affect performance.
             </li>
           </ul>
@@ -92,19 +92,19 @@
       </th>
       <td>
         <select name="preservecase">
-          <option 
+          <option
             value="0"
-            <%= 'selected' if 
+            <%= 'selected' if
                 dg.config.main[:preservecase] == Set.new([:lower]) %>
           >Case-insensitive</option>
-          <option 
+          <option
             value="1"
-            <%= 'selected' if 
+            <%= 'selected' if
                 dg.config.main[:preservecase] == Set.new([:original]) %>
           >Case-sensitive</option>
-          <option 
+          <option
             value="2"
-            <%= 'selected' if 
+            <%= 'selected' if
                 dg.config.main[:preservecase] == Set.new([:lower, :original]) %>
           >Both</option>
         </select>
@@ -117,7 +117,7 @@
           0 to block any file upload, -1 for “unlimited”
         </div>
       </th>
-      <% 
+      <%
         begin
           maxuploadsize = dg.config.main[:maxuploadsize]
         rescue ConfigFiles::Base::NoKeyError
@@ -129,22 +129,22 @@
   </table>
 
   <h3>Authentication Plugins</h3>
-  <table id="authplugins"> 
+  <table id="authplugins">
     <tr>
       <th scope="row">
         SQL/RADIUS
         <div class="optinfo">
           Allows Captive Portal and 802.1X integration.
-          More info 
-          <a href="http://dev.vemarsas.it/projects/dansguardian">here</a> and 
+          More info
+          <a href="http://dev.vemarsas.it/projects/dansguardian">here</a> and
           <a href="http://tech.groups.yahoo.com/group/dansguardian/message/24647">here</a>.
         </div>
       </th>
       <td>
-        <input 
-          type="checkbox" 
+        <input
+          type="checkbox"
           name="authplugin[sql]"
-          <%= 
+          <%=
             'checked' if dg.config.main[:authplugin].include?(
               OnBoard::ContentFilter::DG::AuthPlugin.config_file :sql
             )
@@ -155,20 +155,20 @@
   </table>
 
   <h3>Anti Virus / Content Scanners</h3>
-  <table id="contentscanners"> 
+  <table id="contentscanners">
     <tr>
       <th scope="row">
         ClamD scan
         <div class="optinfo">
-          Based on 
+          Based on
           <a href="http://www.clamav.net">ClamAV</a>.
         </div>
       </th>
       <td>
-        <input 
-          type="checkbox" 
+        <input
+          type="checkbox"
           name="contentscanner[clamdscan]"
-          <%= 
+          <%=
             'checked' if dg.config.main[:contentscanner].include?(
               OnBoard::ContentFilter::DG::ContentScanner.config_file :clamdscan
             )
@@ -177,7 +177,7 @@
       </td>
     </tr>
   </table>
-  
+
   <button type="submit" style="margin-top:2em;">Change!</button>
 
 </form>

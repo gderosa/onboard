@@ -1,16 +1,16 @@
-<% 
+<%
   require "pp"
   require "onboard/extensions/string"
   require "onboard/network/interface"
 
-  iface_path = 
-      "/network/interfaces/#{Rack::Utils.escape(netif.name)}.html" 
-  iface_href ||= {} 
-  iface_href = 
+  iface_path =
+      "/network/interfaces/#{Rack::Utils.escape(netif.name)}.html"
+  iface_href ||= {}
+  iface_href =
       request.path_info == iface_path           ?
       {:open    => '', :close => ''}            :
       {
-        :open   => %Q{<a href="#{iface_path}">},   
+        :open   => %Q{<a href="#{iface_path}">},
         :close  => '</a>'
       }
   netif_html = "#{iface_href[:open]}#{netif.name}#{iface_href[:close]}"
@@ -19,8 +19,8 @@
             <th scope="row">
               <% if netif.type == 'bridge' %>
                 <%=
-                  if netif.members.length > 0 
-                    netif_html + ':' 
+                  if netif.members.length > 0
+                    netif_html + ':'
                   else
                     netif_html
                   end
@@ -44,7 +44,7 @@
             <td><!--<div>-->
               <% if netif.data['type'] == 'bridge' %>
                 <a href="<%= '/network/bridges/' + Rack::Utils.escape(netif.name) + '.html' %>" title="Configure <%= netif.name %> bridge">
-                  <%= netif.type_hr  %>            
+                  <%= netif.type_hr  %>
                 </a>
               <% else %>
                 <%= netif.type_hr %>
@@ -85,7 +85,7 @@
                     <% end %>
                   <% end %>
                 <% end %>
-              <% end %>  
+              <% end %>
 
               <% if netif.ipassign[:method] == :static %>
                 <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
@@ -95,14 +95,14 @@
                 <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
               <% end %>
 
-              <% 
-                unless some_ip_printed or netif.ipassign[:method] == :static 
+              <%
+                unless some_ip_printed or netif.ipassign[:method] == :static
                 # method static implies that "add new" has been printed...
               %>
                 &nbsp; <!-- make certain browsers happy :-/ -->
               <% end %>
 
-            </td>       
+            </td>
             <td>
               <% if [:static, :dhcp].include? netif.ipassign[:method] %>
                 <select name="netifs[<%= netif.name %>][ipassign][method]">
@@ -112,13 +112,13 @@
               <% else %>
                 <input type="hidden" name="netifs[<%= netif.name %>][ipassign][method]" value="<%= netif.ipassign[:method].to_s %>"/>
                 <div style="text-align:center;">
-                  <%= 
+                  <%=
                     if netif.ipassign[:method] == :none
                       'None'
                     else
                       netif.type_hr
                     end
-                  %> 
+                  %>
                 </div>
               <% end %>
               <% %w{pid cmd args}.each do |what| %>
@@ -134,14 +134,14 @@
               <input class="rwtext" type="text" size="6" name="netifs[<%= netif.name %>][preferred_metric]" value="<%= netif.preferred_metric %>"/>
             </td>
             <td>
-              <% 
+              <%
                 str = ''
                 begin
-                  str += (netif.vendor  + ' ')  
+                  str += (netif.vendor  + ' ')
                 rescue NoMethodError
                 end
                 begin
-                  str += (netif.model   + ' ') 
+                  str += (netif.model   + ' ')
                 rescue NoMethodError
                 end
               %>
@@ -150,4 +150,4 @@
             <td>
               <%= netif.bus.upcase if netif.bus %>
             </td>
-     
+

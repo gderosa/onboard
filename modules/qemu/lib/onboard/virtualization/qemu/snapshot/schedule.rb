@@ -31,27 +31,27 @@ class OnBoard
               delete_older_than_days =
 h[:http_params]['snapshot_schedule']['delete_older_than_days']
 
-              vmid      = h[:http_params]['vmid']            
+              vmid      = h[:http_params]['vmid']
               snapname  = "`date '+scheduled_\\%y\\%m\\%d_\\%H\\%M'`"
                   # Will be replaced by the shell at time of snapshotting.
-                  # Cron comment sign '%' are escaped. 
-                  # TODO: patch CronEdit to do such cron-escaping trasparently? 
+                  # Cron comment sign '%' are escaped.
+                  # TODO: patch CronEdit to do such cron-escaping trasparently?
               envstr    = "DELETE_SCHEDULED_OLDER_THAN=#{delete_older_than_days}d"
               exe       = "#{QEMU::BINDIR}/snapshot"
 
               cmd       = ''
               cmd       << envstr                             << ' '
               cmd       << "#{exe} take #{vmid} #{snapname}"  << ' '
-              cmd       << comma_separated_drive_names                       
+              cmd       << comma_separated_drive_names
 
-              if enable 
+              if enable
                 CronEdit::Crontab.Add cronid(vmid), {
                   :minute   => minute,
                   :hour     => hour,
                   :day      => dayofmonth,
                   :weekday  => weekday,
-                  :command  => cmd 
-                } 
+                  :command  => cmd
+                }
               else
                 remove(vmid)
               end

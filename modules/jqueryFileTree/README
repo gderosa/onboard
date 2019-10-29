@@ -1,16 +1,16 @@
 This module integrates jqueryFileTree [0].
 
 controller/connectors/jqueryFileTree.rb is a Sinatra implementation of
-the server-side connector: it's strongly modeled on 
-connectors/jqueryFileTree.rb, the CGI example provided in the download [2]. 
+the server-side connector: it's strongly modeled on
+connectors/jqueryFileTree.rb, the CGI example provided in the download [2].
 
-jqueryFileTree is dual-licensed under the GNU General Public License and 
+jqueryFileTree is dual-licensed under the GNU General Public License and
 the MIT License and is copyright 2008 A Beautiful Site, LLC [3].
 
-jQuery JavaScript Library [4] is Copyright 2011, John Resig, dual licensed 
+jQuery JavaScript Library [4] is Copyright 2011, John Resig, dual licensed
 under the MIT or GPL Version 2.
 
--- 
+--
 
 [0] http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/
 

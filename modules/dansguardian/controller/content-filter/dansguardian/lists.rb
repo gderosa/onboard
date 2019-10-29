@@ -30,8 +30,8 @@ class OnBoard
                  else
                    raise TypeError, "I would expect a ContentFilter::DG::ManagedList::(File|List) object, got #{object.inspect}"
                  end
-          if 
-              params[:format] == 'raw' and 
+          if
+              params[:format] == 'raw' and
               object.is_a? ContentFilter::DG::ManagedList::List
             attachment File.basename params[:splat].last
             send_file object.absolute_path, :type => 'text/plain'
@@ -39,7 +39,7 @@ class OnBoard
             format(
               :path     => view_path,
               :module   => 'dansguardian',
-              :title    => 
+              :title    =>
                   "DansGuardian: #{ContentFilter::DG::ManagedList.title(
                       params[:splat]
                   )}",
@@ -71,7 +71,7 @@ class OnBoard
           format(
             :path     => view_path,
             :module   => 'dansguardian',
-            :title    => 
+            :title    =>
                 "DansGuardian: #{ContentFilter::DG::ManagedList.title(
                     params[:splat]
                 )}",
@@ -82,23 +82,23 @@ class OnBoard
           not_found
         end
       end
-      
-      post path do 
+
+      post path do
         basedir = File.realpath ContentFilter::DG::ManagedList.absolute_path(
-          params[:splat].join('/') 
+          params[:splat].join('/')
         )
         not_found unless File.directory? basedir
 
         # Create new file or directory
-        case params['new'] 
+        case params['new']
         when 'directory'
-          FileUtils.mkdir "#{basedir}/#{params['name']}" 
+          FileUtils.mkdir "#{basedir}/#{params['name']}"
         when 'file'
-          File.open("#{basedir}/#{params['name']}", 'w') {} 
+          File.open("#{basedir}/#{params['name']}", 'w') {}
         when /^copy_from:(.*)/
           copy_from_basename = File.basename $1
           FileUtils.cp(
-              "#{basedir}/#{copy_from_basename}", 
+              "#{basedir}/#{copy_from_basename}",
               "#{basedir}/#{params['name']}"
           )
         end
@@ -112,7 +112,7 @@ class OnBoard
           if params['rename'] =~ /\S/
             dest = "#{basedir}/#{params['rename']}"
           else
-            dest = "#{basedir}/#{params['upload'][:filename]}" 
+            dest = "#{basedir}/#{params['upload'][:filename]}"
           end
           if File.exists? dest
             f = File.open dest, 'r'
@@ -135,14 +135,14 @@ class OnBoard
         format(
           :path     => '/content-filter/dansguardian/lists/dir',
           :module   => 'dansguardian',
-          :title    => 
+          :title    =>
               "DansGuardian: #{ContentFilter::DG::ManagedList.title(
                   params[:splat]
               )}",
           :format   => params[:format],
           :objects  => object
-        )       
-      end 
+        )
+      end
 
     end
 
@@ -152,9 +152,9 @@ class OnBoard
       )
       listobject.delete_files! if params['confirm'] == 'on'
       status 303 # HTTP See Other
-      headers 'Location' => # redirect to parent dir 
+      headers 'Location' => # redirect to parent dir
           "#{File.dirname(request.path_info)}.#{params[:format]}"
     end
-   
+
   end
 end

@@ -31,10 +31,10 @@ sqlauthipuserquery = 'SELECT `username` FROM `radacct` WHERE `acctstoptime` IS N
 # file untl a match is found, so order is important.
 sqlauthusergroupquery = 'SELECT `groupname` FROM `radusergroup` WHERE `username` = "-USERNAME-" ORDER BY `priority` ASC'
 
-# Any child will keep data in memory for specified seconds before 
+# Any child will keep data in memory for specified seconds before
 # querying the database again
 sqlauthcachettl = 120
 
-# Whether to print sql queries to stdout when in foreground (-N switch) 
+# Whether to print sql queries to stdout when in foreground (-N switch)
 # default off
 #sqlauthdebug = off

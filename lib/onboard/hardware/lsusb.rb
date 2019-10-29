@@ -39,7 +39,7 @@ class OnBoard
           to_a.send id, *args, &blk
         end
       end
-      
+
       class << self
 
         def method_missing(id, *args, &blk)
@@ -49,7 +49,7 @@ class OnBoard
         def all
           @sysfs_data = SysFSData.new
           output_text = `lsusb`
-          parse output_text 
+          parse output_text
         end
         alias devices all
 
@@ -73,15 +73,15 @@ class OnBoard
                   :full_line    => line.strip,
                 }
                 next if h[:vendor_id] =~ /^[\s0]*$/
-                sysfs_entry = @sysfs_data.find do |entry| 
+                sysfs_entry = @sysfs_data.find do |entry|
                   # NOTE: String#to_i has been "smartly" overwritten
                   # in lib/extensions, so a String like "011" would be interpreted
                   # as octal :-/
-                  entry[:bus_id].to_i     == h[:bus_id].to_i    and 
+                  entry[:bus_id].to_i     == h[:bus_id].to_i    and
                   entry[:device_id].to_i  == h[:device_id].to_i
                 end
                 h[:port_id] = sysfs_entry[:port_id] if sysfs_entry
-                yielder.yield self.new(h) 
+                yielder.yield self.new(h)
               end
             end
           end
@@ -105,7 +105,7 @@ class OnBoard
       end
 
       def method_missing(id, *args, &blk)
-        @data[id] 
+        @data[id]
       end
 
     end

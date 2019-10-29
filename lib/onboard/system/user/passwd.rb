@@ -7,7 +7,7 @@ require 'onboard/system/fs'
 
 class OnBoard
   module System
-    class User 
+    class User
       class Passwd
 
         attr_reader :entry, :status
@@ -30,15 +30,15 @@ class OnBoard
         end
 
         # TODO: change_from_HTTP_request() is horrible, turn this into
-        # change(newpasswd) and extract from HTTP params within the 
+        # change(newpasswd) and extract from HTTP params within the
         # Sinatra Controller. This should be done for many modules and classes
         # throughout the OnBoard source tree...
         #
         def change_from_HTTP_request(params)
-          was_readonly = System::FS.root.readonly? 
+          was_readonly = System::FS.root.readonly?
           System::FS.root.remount 'rw' if was_readonly
           System::Command.send_command(
-            'chpasswd', 
+            'chpasswd',
             :sudo,
             :stdin => "#{name}:#{params['newpasswd']}",
             :raise => ServerError

@@ -28,7 +28,7 @@ client
 # the firewall for the TUN/TAP interface.
 ;dev tap
 ;dev tun
-dev <%= vpn.data['dev-type'] %> 
+dev <%= vpn.data['dev-type'] %>
 <%#
   Yeah. No matter what the interface name is on the client side.
   The important is TUN vs TAP. So, OpenVPN will automatically choose
@@ -46,13 +46,13 @@ dev <%= vpn.data['dev-type'] %>
 # UDP server?  Use the same setting as
 # on the server.
 ;proto tcp
-<% 
+<%
   proto = case vpn.data['proto']
           when 'udp'
             'udp'
           when 'tcp-server'
             'tcp-client'
-          else # you shouldn't be here... 
+          else # you shouldn't be here...
             vpn.data['proto']
           end
 %>

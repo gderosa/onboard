@@ -29,7 +29,7 @@ class OnBoard
         :path     => '/services/radius/config',
         :title    => 'RADIUS Configuration',
         :format   => params[:format],
-        :objects  => actual_conf  
+        :objects  => actual_conf
       )
     end
 

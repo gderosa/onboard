@@ -1,6 +1,6 @@
-<% name = "MARGAY"  %>    
+<% name = "MARGAY"  %>
   <div style="margin-top: 6em;">
-    <div style="text-align:center; border: 0;">      
+    <div style="text-align:center; border: 0;">
       <div><img src="/images/margay.gif"/></div>
     </div>
     <div>

@@ -16,7 +16,7 @@ class OnBoard
       # by message_partial .
       def on_error(exception, &blk)
         @@error_handlers ||= {}
-        @@error_handlers[exception] ||= [] 
+        @@error_handlers[exception] ||= []
         @@error_handlers[exception] << blk
       end
     end

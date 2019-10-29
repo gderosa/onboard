@@ -11,9 +11,9 @@ class OnBoard
       :lowlight       =>  "#666",
     }
 
-    public_access! %r{^/backgrounds/} 
+    public_access! %r{^/backgrounds/}
 
-    public_access! %r{^/icons/} 
+    public_access! %r{^/icons/}
 
   end
 end

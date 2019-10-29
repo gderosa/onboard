@@ -10,7 +10,7 @@ _NEW="NewName"
 
 
 Find.find _old do |path|
-  newpath = path.gsub /#{_old}/, _new 
+  newpath = path.gsub /#{_old}/, _new
   puts path + ' -> ' + newpath
   if File.directory? path
     system "mkdir -p #{newpath}"

@@ -8,7 +8,7 @@ module Radiustar
       @dict = dict_file.nil? ? Dictionary.default : Dictionary.new(dict_file)
 
       @host, @port = server.split(":")
-      
+
       @my_ip = my_ip || get_my_ip(@host)
 
       @port = Socket.getservbyname("radius", "udp") unless @port

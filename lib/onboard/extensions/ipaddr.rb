@@ -25,10 +25,10 @@ class IPAddr
     def random_rfc1918
       random_multiple('192.168.0.0/16', '172.16.0.0/12', '10.0.0.0/8')
     end
-    
+
     # Returns an IPAddr within one of the nets. It's probability-aware,
     # meaning that the likelihood of getting an address in one net or
-    # another is proportional to its "width". 
+    # another is proportional to its "width".
     #
     #   IPAddr.random_multiple('192.168.0.0/16', '172.16.0.0/12', '10.0.0.0/8')
     def random_multiple(*nets)
@@ -63,7 +63,7 @@ class IPAddr
           offset = n - partition[i-1]
           break
         end
-      end      
+      end
       return ip_nets[selected_set_i] + offset
     end
 
@@ -90,11 +90,11 @@ class IPAddr
   end
 
   def +(other)
-    IPAddr.new(self.to_i + other.to_i, self.family) 
+    IPAddr.new(self.to_i + other.to_i, self.family)
   end
 
   def -(other)
-    self.+(-(other.to_i)) 
+    self.+(-(other.to_i))
   end
 
   def netmask
@@ -109,9 +109,9 @@ class IPAddr
       128
     end
   end
-  
+
   def prefixlen
-    # a crude way to get prefix length from netmask: convert to a binary 
+    # a crude way to get prefix length from netmask: convert to a binary
     # string, remove all the '0' and count the remaining '1' ;-P
 
     @mask_addr.to_s(2).gsub('0','').length
@@ -133,7 +133,7 @@ class IPAddr
           when Socket::AF_INET6
             'inet6'
           end
-      ) 
+      )
     }
   end
 
@@ -143,7 +143,7 @@ class IPAddr
       return IPAddr.new("127.0.0.1/8").include? self
     when Socket::AF_INET6
       return IPAddr.new("::1/128").include? self
-    else 
+    else
       raise RuntimeError, "IPAddr object @family is neither Socket::AF_INET nor Socket::AF_INET6 so I can't say wheter it's a loopback address or not"
     end
   end
@@ -153,7 +153,7 @@ class IPAddr
       return IPAddr.new("224.0.0.0/4").include? self
     when Socket::AF_INET6
       return IPAddr.new("ff00::/8").include? self
-    else 
+    else
       raise RuntimeError, "IPAddr object @family is neither Socket::AF_INET nor Socket::AF_INET6 so I can't say wheter it's a multicast or not"
     end
   end

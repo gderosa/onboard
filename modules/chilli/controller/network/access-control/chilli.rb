@@ -21,24 +21,24 @@ class OnBoard
       # TODO: DRY
       if params['stop'] =~ /\S/
         iface = params['stop'].strip
-        chilli = CHILLI_CLASS.getAll().detect do |x| 
+        chilli = CHILLI_CLASS.getAll().detect do |x|
           x.conf['dhcpif'] == iface and x.running? and x.managed?
         end
         if chilli
           if params['restore_interface'] == 'on'
-            msg = chilli.stop(:restore => true) 
+            msg = chilli.stop(:restore => true)
           else
             msg = chilli.stop
           end
         end
       elsif params['start'] =~ /\S/
         iface = params['start'].strip
-        chilli = CHILLI_CLASS.getAll().detect do |x| 
+        chilli = CHILLI_CLASS.getAll().detect do |x|
           x.conf['dhcpif'] == iface and (not x.running?) and x.managed?
         end
         if chilli
           if params['save_interface'] == 'on'
-            msg = chilli.start(:save => true) 
+            msg = chilli.start(:save => true)
           else
             msg = chilli.start
           end
@@ -76,8 +76,8 @@ class OnBoard
         #raise CHILLI_CLASS::BadRequest, 'Invalid configuration!' unless chilli.validate_conffile # for whatever is not already checked by Chilli::validate_HTTP_creation
         status(201) # HTTP Created
         headers(
-            'Location' => 
-  "#{request.scheme}://#{request.host}:#{request.port}/network/access-control/chilli/#{chilli.conf['dhcpif']}.#{params[:format]}" 
+            'Location' =>
+  "#{request.scheme}://#{request.host}:#{request.port}/network/access-control/chilli/#{chilli.conf['dhcpif']}.#{params[:format]}"
         )
         msg = {:ok => true}
         chilli.start if params['start_now'] == 'on'
@@ -128,11 +128,11 @@ class OnBoard
             chilli.conf['radiussecret'] = params['conf']['radiussecret']
           end
 
-          if 
+          if
               !chilli.conf['uamsecret'] or
               chilli.conf['uamsecret'].length == 0 or
-              (chilli.conf['uamsecret'] == params['old_conf']['uamsecret']) 
-            if  params['verify_conf']['uamsecret'] == 
+              (chilli.conf['uamsecret'] == params['old_conf']['uamsecret'])
+            if  params['verify_conf']['uamsecret'] ==
                 params['conf']['uamsecret']
               chilli.conf['uamsecret'] = params['conf']['uamsecret']
             else
@@ -144,11 +144,11 @@ class OnBoard
                 params['verify_conf']['uamsecret'].length == 0
           end
           # ########
-          chilli.write_tmp_conffile_and_validate(:raise_exception => true) 
+          chilli.write_tmp_conffile_and_validate(:raise_exception => true)
           chilli.write_conffile
           chilli.restart if chilli.running? and params['do_not_restart'] != 'on'
         rescue CHILLI_CLASS::BadRequest
-          status 400 
+          status 400
           msg[:err] = $!
           msg[:ok] = false
         end
@@ -169,17 +169,17 @@ class OnBoard
         not_found
       end
     end
-   
+
 
     delete '/network/access-control/chilli/:ifname.:format' do
       params[:ifname].strip!
       msg = {}
       chilli = CHILLI_CLASS.getAll.detect do |x|
-        x.conf['dhcpif'].strip == params[:ifname] 
-      end 
+        x.conf['dhcpif'].strip == params[:ifname]
+      end
       if chilli
         if chilli.managed?
-          if chilli.running? 
+          if chilli.running?
             msg = chilli.stop
           else
             msg[:ok] = true
@@ -197,9 +197,9 @@ class OnBoard
                 :format   => params[:format],
                 :objects  => redirection
               )
-            else 
+            else
               status 500 # internal Server Error
-              msg[:err] = $! 
+              msg[:err] = $!
               msg[:ok] = false
               format(
                 :path     => '/500',
@@ -216,7 +216,7 @@ class OnBoard
         not_found
       end
     end
-   
+
   end
 
 end

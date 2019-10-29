@@ -14,22 +14,22 @@ class OnBoard::Controller
       :path     => 'system/logs',
       :format   => params[:format],
       :objects  => OnBoard::System::Log , # yes, the class: a way to implement
-        # the Singleton pattern without creating "AllLogs"  
+        # the Singleton pattern without creating "AllLogs"
       :title    => 'Logs'
     )
   end
 
   get "/system/logs/:logid.raw" do
-    hash = OnBoard::System::Log.getAll.detect do |h| 
+    hash = OnBoard::System::Log.getAll.detect do |h|
       h['id'] == params['logid'] or h['path'] == params['logid']
     end
     not_found if not hash
-    attachment(params['logid']) 
+    attachment(params['logid'])
     content_type 'text/plain'
     if File.readable? hash['path']
       `cat #{hash['path']}`
     else
-      `sudo cat #{hash['path']}` 
+      `sudo cat #{hash['path']}`
     end
   end
 
@@ -63,7 +63,7 @@ class OnBoard::Controller
         :path     => 'system/logs',
         :format   => fmt,
         :objects  => log,
-        :title    => "Log: #{path}" 
+        :title    => "Log: #{path}"
       )
     end
   end

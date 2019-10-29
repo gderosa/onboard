@@ -20,7 +20,7 @@ class OnBoard
 
         #
         # opt_h[:file]
-        # 
+        #
         # opt_h[:match]
         # a lamda with a custom selection rule
         #
@@ -99,14 +99,14 @@ class OnBoard
         end
 
         # Loose comparison. For example,
-        #     1.2.3.4 via 6.7.8.9 dev eth2 
+        #     1.2.3.4 via 6.7.8.9 dev eth2
         # and
         #     1.2.3.4 via 6.7.8.9
         # are equal, but
         #     1.2.3.4 via 6.7.8.9 dev eth2
-        # and    
+        # and
         #     1.2.3.4 via 6.7.8.9 dev eth1
-        # are not.    
+        # are not.
         def ===(other)
           return true if rawline.strip == other.rawline.strip
           if !dev or !other.dev

@@ -1,14 +1,14 @@
-<% 
+<%
   require "pp"
   require "onboard/extensions/string"
   require "onboard/network/interface"
 %>
   <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method/Renew Preferred<br/>Metric Vendor/Model Bus} %>
   <% colspans = [1, 2, 1, 1, 1, 1, 2, 1, 1, 1,] %>
-  <form method="post"> 
+  <form method="post">
     <input type="hidden" name="_method" value="put"/>
     <table>
-      <thead> 
+      <thead>
       <tr>
         <% fieldnames.each_index do |i| %>
           <th colspan="<%= colspans[i] %>">
@@ -24,17 +24,17 @@
               {
                 :layout => false,
                 :locals => {:objects => objects}
-              }  
+              }
             )
         %>
       </tbody>
     </table>
     <button type="submit">Submit!</button>
     (<a href="<%= request.fullpath %>">Refresh</a>)
-    <% showhide = 
+    <% showhide =
       'loopback, raw ieee802.11 interfaces and IPv6 link-local addresses' %>
     <% if params['view'] == 'all' %>
-      (<a title="Hide <%= showhide %>" 
+      (<a title="Hide <%= showhide %>"
         href="<%= request.path_info %>">Compact view</a>)
     <% else %>
       (<a title="Show <%= showhide %>"

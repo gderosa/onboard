@@ -41,7 +41,7 @@ _action_, _vmid_, _snap_name_, _comma_separated_drive_names_ = ARGV
 
 vm = QEMU.find :vmid => _vmid_
 
-unless vm 
+unless vm
   STDERR.puts "  Couldn't find VM: #{_vmid_}"
   exit 1
 end
@@ -58,7 +58,7 @@ if _drive_names_.any?
 else
   drive_name, drive = vm.drives.find{|n,d| d['config']['media'] == 'disk'}
   drive_names = [drive_name]
-  drives = {drive_name => drive} 
+  drives = {drive_name => drive}
 end
 
 Process.daemon
@@ -73,7 +73,7 @@ File.open "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.pid", 'w' do |f|
 end
 cmdline_file = "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.cmdline"
 FileUtils.rm cmdline_file if File.exists? cmdline_file
-FileUtils.cp "/proc/#{Process.pid}/cmdline", cmdline_file    
+FileUtils.cp "/proc/#{Process.pid}/cmdline", cmdline_file
 
 # useful if running under cron
 waiting_file = "#{VARRUN}/qemu-#{vm.uuid_short}.snapshot.waiting"
@@ -84,8 +84,8 @@ end
 FileUtils.rm waiting_file
 
 if vm.running?
-  vm.delvm_all( 
-    :name => /^scheduled_/, 
+  vm.delvm_all(
+    :name => /^scheduled_/,
     :older_than => ENV['DELETE_SCHEDULED_OLDER_THAN']
   ) if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /\d/
   case _action_
@@ -99,7 +99,7 @@ if vm.running?
 else
   drives.each_pair do |drive_name, drive|
     if ENV['DELETE_SCHEDULED_OLDER_THAN'] =~ /\d/
-      drive['snapshots'].each do |snap|    
+      drive['snapshots'].each do |snap|
         next unless snap.disk_only?
         age = Time.now - snap.time
         if \
@@ -107,15 +107,15 @@ else
             snap.name =~ /^scheduled_/
           system 'sudo qemu-img', 'snapshot', '-d', snap.name, drive['config']['file']
         end
-      end 
+      end
     end
     case _action_
     when 'take'
       ## 'take' is a create-or-update operation
       if drive['snapshots'].any?{|snap| snap.name == _snap_name_}
-         system 'sudo', 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file'] 
+         system 'sudo', 'qemu-img', 'snapshot', '-d', _snap_name_, drive['config']['file']
       end
-      system 'sudo', 'qemu-img', 'snapshot', '-c', _snap_name_, drive['config']['file'] 
+      system 'sudo', 'qemu-img', 'snapshot', '-c', _snap_name_, drive['config']['file']
     when 'apply'
       system 'sudo', 'qemu-img', 'snapshot', '-a', _snap_name_, drive['config']['file']
     when 'delete'

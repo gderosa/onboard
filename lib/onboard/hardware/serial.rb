@@ -9,11 +9,11 @@ class OnBoard
           base_node_paths = []
           File.foreach '/proc/tty/drivers' do |line|
             # http://lwn.net/images/pdf/LDD3/ch18.pdf
-            driver, 
-            base_node_path, 
-            major, 
-            minors, 
-            type = 
+            driver,
+            base_node_path,
+            major,
+            minors,
+            type =
                 line.strip.split(/\s+/)
             if type == 'serial'
               base_node_paths << base_node_path

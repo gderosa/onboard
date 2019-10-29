@@ -1,22 +1,22 @@
 <%
   filtergroup ||= nil
   name ||= nil
-  selected_absolute_path = (filtergroup && name) ? filtergroup[name] : nil 
+  selected_absolute_path = (filtergroup && name) ? filtergroup[name] : nil
 %>
   <option value="null">(disabled)</option>
-<% 
+<%
   dir = OnBoard::ContentFilter::DG::ManagedList.get(relative_dir_path)
 
-  dir.select do |x| 
-    x.is_a? OnBoard::ContentFilter::DG::ManagedList::List 
+  dir.select do |x|
+    x.is_a? OnBoard::ContentFilter::DG::ManagedList::List
         # not a ManagedList::Dir
   end.sort.each do |list|
 %>
-  <option 
-    title="<%= list.relative_path %>" 
+  <option
+    title="<%= list.relative_path %>"
     value="<%= list.relative_path %>"
-    <%= 'selected' if 
-       selected_absolute_path                      and 
+    <%= 'selected' if
+       selected_absolute_path                      and
        list.absolute_path == selected_absolute_path %>
   ><%= list.relative_path %></option>
 <% end %>

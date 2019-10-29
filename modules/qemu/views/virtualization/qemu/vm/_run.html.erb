@@ -25,13 +25,13 @@
             <%= vmstatus %>
           </td>
 
-          <% show_saverestore = vm.running?             ? 
-              vm.monitor.works? && vm.quick_snapshots?  : 
-              vm.config['-loadvm'] 
-          %> 
+          <% show_saverestore = vm.running?             ?
+              vm.monitor.works? && vm.quick_snapshots?  :
+              vm.config['-loadvm']
+          %>
           <% action_button_rowspan = 1 %>
           <td class="button button_left" rowspan="<%= action_button_rowspan %> "id="button_power_wrapper[<%= vm.uuid %>]" >
-            <%= 
+            <%=
               partial(
                 :module => 'qemu',
                 :path   => 'virtualization/qemu/vm/buttons/_power',
@@ -50,7 +50,7 @@
                   :vm     => vm,
                 }
               )
-             
+
             %>
           </td>
           <td class="button" rowspan="<%= action_button_rowspan %>" id="button_quit_wrapper[<%= vm.uuid %>]">
@@ -77,10 +77,10 @@
           </td>
         </tr>
         <tr>
-          <td colspan="4" class="saverestore<%= ' lowlight' unless show_saverestore %>"> 
+          <td colspan="4" class="saverestore<%= ' lowlight' unless show_saverestore %>">
             <input style="vertical-align:middle;" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> id="saverestore[<%= vm.uuid %>]" name="saverestore[<%= vm.uuid %>]" onclick="javascript:qemuSaveRestoreControls('<%= vm.uuid %>');"/>
             <span style="vertical-align:middle;"><%= vm.running? ? 'Save state on Quit' : 'Restore state' %></span>
-          </td>          
+          </td>
         </tr>
       </tbody>
     </table>

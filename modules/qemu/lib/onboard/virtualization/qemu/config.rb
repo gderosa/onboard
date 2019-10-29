@@ -14,10 +14,10 @@ class OnBoard
         autoload :USB,    'onboard/virtualization/qemu/config/usb'
 
         # paste from man page
-        KEYBOARD_LAYOUTS = %w{ 
+        KEYBOARD_LAYOUTS = %w{
             ar  de-ch  es  fo     fr-ca  hu  ja  mk     no  pt-br  sv
             da  en-gb  et  fr     fr-ch  is  lt  nl     pl  ru     th
-            de  en-us  fi  fr-be  hr     it  lv  nl-be  pt  sl     tr        
+            de  en-us  fi  fr-be  hr     it  lv  nl-be  pt  sl     tr
         }.sort
 
         class << self
@@ -37,24 +37,24 @@ class OnBoard
         attr_reader :uuid, :cmd, :drop_privileges, :force_command_line
 
         def [](k)
-          @cmd['opts'][k] 
+          @cmd['opts'][k]
         end
 
         def []=(k, val)
           @cmd['opts'][k] = val
-        end 
+        end
 
         alias drop_privileges? drop_privileges
 
         def name
-          self['-name'] 
+          self['-name']
         end
 
         def initialize(h)
           @drop_privileges = true
           if h[:http_params]
             @drop_privileges = false if h[:http_params]['run_as_root'] == 'on'
-            @uuid = h[:uuid] || h[:http_params][:uuid] || UUID.generate 
+            @uuid = h[:uuid] || h[:http_params][:uuid] || UUID.generate
             @cmd  = {
               #'exe'   => 'kvm',
               'opts'  => {
@@ -62,7 +62,7 @@ class OnBoard
                 '-uuid'       => @uuid,
                 '-name'       => h[:http_params]['name'],
                 '-m'          => h[:http_params]['m'].to_i,
-                '-smp'        => h[:http_params]['smp'], 
+                '-smp'        => h[:http_params]['smp'],
                 '-vnc'        => h[:http_params]['vnc'],
                 '-spice'      => {
                   'port'        => (
@@ -73,8 +73,8 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 '-vga'        => h[:http_params]['vga'],
                 '-soundhw'    => h[:http_params]['soundhw'],
                 '-serial'     => (
-                      h[:http_params]['serial'].respond_to?(:keys)  ? 
-                      h[:http_params]['serial'].keys                : 
+                      h[:http_params]['serial'].respond_to?(:keys)  ?
+                      h[:http_params]['serial'].keys                :
                       []
                 ),
                 '-daemonize'  => true,
@@ -95,7 +95,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
 
             if h[:http_params]['rtc_base_localtime']
               @cmd['opts']['-rtc']          ||= {}
-              @cmd['opts']['-rtc']['base']  =   'localtime' 
+              @cmd['opts']['-rtc']['base']  =   'localtime'
             end
 
             @cmd['opts']['-device'] ||= []
@@ -157,12 +157,12 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   'serial'  => generate_drive_serial,
                   'media'   => 'disk',
                 }
-                
+
                 # NOTE: you can't use this Facets thing if you have already required Sequel.
                 # The '|' operation between two Hashes produces a Sequel boolean expression object.
                 # So there's a conflict between the two gems, which should be reported/fixed.
                 #
-                # newhd = hd | default | (Drive.slot2data(hd['slot']) || {}) 
+                # newhd = hd | default | (Drive.slot2data(hd['slot']) || {})
                 #
                 newhd = default.merge(hd).merge( Drive.slot2data(hd['slot']) || {}  )
 
@@ -172,16 +172,16 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   newhd['file_url'] = "#{protocol}://#{host}/#{volume}/#{path_to_image}"
                 end
                 # pp newhd # DEBUG
-                
+
                 @cmd['opts']['-drive'] << newhd
               end
             end
             @cmd['opts']['-drive'] ||= []
             @cmd['opts']['-drive'] << {
-              'serial'=> generate_drive_serial, 
+              'serial'=> generate_drive_serial,
               'file'  => (
-                self.class.absolute_path(h[:http_params]['cdrom']) if 
-                    h[:http_params]['cdrom'] =~ /\S/  
+                self.class.absolute_path(h[:http_params]['cdrom']) if
+                    h[:http_params]['cdrom'] =~ /\S/
               ),
               'media'     => 'cdrom',
               'if'        => 'ide',     # IDE (default)
@@ -197,7 +197,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             else
               valid_netifs.each do |netif_h|
                 netif_h.each_pair do |k, v|
-                  netif_h[k] = nil if (v =~ /^\s*(\[auto\])?\s*$/) 
+                  netif_h[k] = nil if (v =~ /^\s*(\[auto\])?\s*$/)
                 end
                 @cmd['opts']['-net'] << {
                   'type'    => 'nic',
@@ -211,7 +211,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   'ifname'  => netif_h['ifname'] || generate_tapname(netif_h),
                   'bridge'  => netif_h['bridge'],
                 }
-              end 
+              end
             end
             if h[:http_params]['cmdline_append'] =~ /\S/
               @cmd['opts']['append'] = h[:http_params]['cmdline_append']
@@ -235,7 +235,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
           when :add_qmp
             if @cmd['opts']['-monitor'] and not @cmd['opts']['-qmp']
               @cmd['opts']['-qmp'] = @cmd['opts']['-monitor'].dup
-              @cmd['opts']['-qmp']['unix'] = 
+              @cmd['opts']['-qmp']['unix'] =
                   @cmd['opts']['-monitor']['unix'].sub /\.sock$/, '.qmp.sock'
             end
           end
@@ -275,7 +275,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
         end
 
         def uuid_short
-          @uuid.split('-')[0] 
+          @uuid.split('-')[0]
         end
 
         def opts
@@ -300,7 +300,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
         def save
           yaml_file = file
           File.open yaml_file, 'w' do |f|
-            f.write YAML.dump to_h 
+            f.write YAML.dump to_h
           end
         end
 

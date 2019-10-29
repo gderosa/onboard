@@ -1,5 +1,5 @@
 <%
-  require 'socket'  
+  require 'socket'
   require 'ipaddr'
 
   require 'onboard/extensions/ipaddr'
@@ -15,13 +15,13 @@
 
 <h2><%= title %></h2>
 
-<% 
-  fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Static? Metric} 
+<%
+  fieldnames = %w{Delete?  Destination Device  Gateway Destination\ Type Route\ Type Static? Metric}
   colspans   =   [1, 1, 1, 1, 1,  1, 1, 1]
 %>
 
-<% 
-  # if not msg or not msg[:stderr] =~ /\S/ 
+<%
+  # if not msg or not msg[:stderr] =~ /\S/
   if request.env["REQUEST_METHOD"] == "GET"
 %>
   <p class="warn">
@@ -54,14 +54,14 @@
   </tr>
   <% routing_table.each_route do |route| %>
     <%
-      next unless route 
+      next unless route
       if params['view'] != 'all' and not route.static?
-        next if 
+        next if
             route.dest.family == Socket::AF_INET6 and
             (
-                route.dest.link_local? or 
-                route.dest.multicast? 
-            ) 
+                route.dest.link_local? or
+                route.dest.multicast?
+            )
 
         next unless route.route_type == 'unicast'
       end
@@ -69,7 +69,7 @@
     <tr>
       <form method="POST">
         <%
-          # instead of DELETEing a "route" resource, we PUT our edits to the 
+          # instead of DELETEing a "route" resource, we PUT our edits to the
           # "routing table" resource; it's not totally RESTful, but it's
           # simple...
         %>
@@ -85,14 +85,14 @@
         <td><%= route.dev if route.dev %></td>
         <td><%= route.gw.to_s if route.gw %></td>
         <td>
-          <% 
+          <%
             str =  ""
             str << "IPv4"       if route.dest.family == Socket::AF_INET
             str << "IPv6"       if route.dest.family == Socket::AF_INET6
             str << " "
             str << "default gateway" if
                 [
-                    IPAddr.new('::/0'), 
+                    IPAddr.new('::/0'),
                     IPAddr.new('0.0.0.0/0')
                 ].include? route.dest and route.route_type == 'unicast'
             str << "loopback"   if route.dest.loopback?
@@ -118,10 +118,10 @@
 (<a href="<%= request.fullpath %>">Refresh</a>)
 <% showhide = 'IPv6 link-local and non-unicast routes' %>
 <% if params['view'] == 'all' %>
-  (<a title="Hide <%= showhide %>" 
+  (<a title="Hide <%= showhide %>"
     href="<%= request.path_info %>">Compact view</a>)
 <% else %>
-  (<a title="Show <%= showhide %>" 
+  (<a title="Show <%= showhide %>"
     href="<%= request.path_info + '?view=all' %>">Full view</a>)
 <% end %>
 

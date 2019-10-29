@@ -12,7 +12,7 @@ class OnBoard
         def self.HTTP_POST_data_invalid?(params)
           return "Invalid key size."        unless params['key_size'] =~ /^\d+$/
           return "Invalid expiry."          unless params['days']     =~ /^\d+$/
-          return "Invalid country name."    unless params['C']        =~ 
+          return "Invalid country name."    unless params['C']        =~
               /^[A-Z][A-Z]$/i
           return "Invalid province/state."  unless params['ST']       =~ /\S/
           return "Invalid city name"        unless params['L']        =~ /\S/
@@ -39,7 +39,7 @@ export KEY_DIR=#{KEYDIR}
 EOF
             return msg unless msg[:ok]
           end
-          msg = System::Command.run <<EOF 
+          msg = System::Command.run <<EOF
 cd #{SCRIPTDIR}
 export KEY_DIR=#{EasyRSA::KEYDIR}
 . ./vars
@@ -56,7 +56,7 @@ export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool --initca
 EOF
           if msg[:ok]
-            [SSL::CAKEY, "#{KEYDIR}/index.txt", "#{KEYDIR}/serial"].each do |f| 
+            [SSL::CAKEY, "#{KEYDIR}/index.txt", "#{KEYDIR}/serial"].each do |f|
               begin
                 FileUtils.chown nil, Process.gid, f
                 FileUtils.chmod 0640, f

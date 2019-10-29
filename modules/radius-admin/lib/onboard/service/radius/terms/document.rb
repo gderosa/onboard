@@ -27,18 +27,18 @@ class OnBoard
               q = RADIUS.db[@@terms_table].filter(filter_)
 
               hashes = q.map do |row|
-                Hash[ 
-                  row.map do |k, v| 
+                Hash[
+                  row.map do |k, v|
                     [
-                      k, 
-                      v.respond_to?(:smart_encode)  ? 
-                          v.smart_encode('utf-8')   : 
+                      k,
+                      v.respond_to?(:smart_encode)  ?
+                          v.smart_encode('utf-8')   :
                           v
                     ]
                   end
                 ]
-              end      
-              
+              end
+
               hashes.each do |h| # TODO: a smart join...
                 h[:accept_count] = RADIUS.db[@@terms_accept_table].filter(:terms_id => h[:id]).count
               end
@@ -54,14 +54,14 @@ class OnBoard
               columns         = options[:content] ?
                 table.columns                     :
                 table.columns - [:content]          # unused?
-              document        = table.select(*columns)[:id => id] 
-              return unless document               
+              document        = table.select(*columns)[:id => id]
+              return unless document
               Hash[
-                document.map do |k, v| 
+                document.map do |k, v|
                   [
-                    k, 
-                    v.respond_to?(:smart_encode)  ? 
-                       v.smart_encode('utf-8')    : 
+                    k,
+                    v.respond_to?(:smart_encode)  ?
+                       v.smart_encode('utf-8')    :
                        v
                   ]
                 end
@@ -72,7 +72,7 @@ class OnBoard
               setup
               wrap_params! params
 
-              RADIUS.db[@@terms_table].insert( 
+              RADIUS.db[@@terms_table].insert(
                 :name     => params['name'],
                 :content  => params['content'],
                 :asked    => params['asked']    ? true : false,
@@ -103,10 +103,10 @@ class OnBoard
             private
 
             def wrap_params(params); wrap_params!(params.dup); end
-            
+
             def wrap_params!(params)
               # translate a <select> into two checkboxes :-)
-              # (which is why a ReST backend and a web frontend should be separated!) 
+              # (which is why a ReST backend and a web frontend should be separated!)
               if params['asked required'].respond_to? :include?
                 params['asked']     = 'on' if params['asked required'].include? 'asked'
                 params['required']  = 'on' if params['asked required'].include? 'required'

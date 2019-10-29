@@ -1,4 +1,4 @@
-require 'onboard/network/interface' 
+require 'onboard/network/interface'
 
 OnBoard::Network::Interface.save
 

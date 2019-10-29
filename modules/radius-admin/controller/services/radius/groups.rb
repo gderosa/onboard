@@ -61,7 +61,7 @@ class OnBoard
         member_info = group.get_members(params)
         members = member_info['users']
         members.each do |member|
-          member.retrieve_attributes_from_db if 
+          member.retrieve_attributes_from_db if
               !member.check or member.check.length == 0
         end
       end

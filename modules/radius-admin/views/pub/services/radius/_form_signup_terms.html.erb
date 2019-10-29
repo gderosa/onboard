@@ -1,5 +1,5 @@
 <%# -*- coding: UTF-8 -*-%>
-<% 
+<%
   require 'facets/string'
 
   # pp template_params # DEBUG
@@ -15,7 +15,7 @@
     <tbody>
       <% terms.each do |document| %>
         <tr>
-          <td><a href="terms/<%= document[:id] %>.html" target="_blank"><%= document[:name] %></a> <%= mandatory_mark if document[:required] %></td> 
+          <td><a href="terms/<%= document[:id] %>.html" target="_blank"><%= document[:name] %></a> <%= mandatory_mark if document[:required] %></td>
         <td style="text-align:center"><input type="checkbox" name="terms[accept][<%= document[:id] %>]" <% if template_params['terms']['accept'][document[:id].to_s] %>checked<% end %> /></td>
         </tr>
       <% end %>

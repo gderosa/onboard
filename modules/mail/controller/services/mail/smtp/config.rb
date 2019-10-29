@@ -18,7 +18,7 @@ class OnBoard
     put '/services/mail/smtp.:format' do
       smtp      = Service::Mail::SMTP::Config.new params['smtp']
       smtp_orig = Service::Mail::SMTP::Config.get
-      if !smtp['password'] or smtp['password'] == ''  and 
+      if !smtp['password'] or smtp['password'] == ''  and
           # if you empty the username (i.e. no auth) you
           # don't want to keep the existing password!
           smtp['username'] =~ /\S/

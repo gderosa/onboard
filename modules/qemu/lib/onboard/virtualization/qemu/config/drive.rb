@@ -6,13 +6,13 @@ class OnBoard
     module QEMU
       class Config
 
-        class Drive 
+        class Drive
 
-          # NOTE: directsync available on recent versions only 
+          # NOTE: directsync available on recent versions only
           CACHE = %w{unsafe writeback writethrough directsync none}
-          
+
           class << self
-            
+
             def slot2h(slot)
               media = {'hd' => 'disk', 'cd' => 'cdrom'}
               case slot
@@ -40,7 +40,7 @@ class OnBoard
                 },
                 :virtio   =>  {
                   :indexes  =>    8,
-                } 
+                }
               }
               opts = defaults.deep_merge(opts)
               slots = %w{ide0-hd0 ide0-hd1 ide1-hd1}
@@ -52,7 +52,7 @@ class OnBoard
                 end
               end
               0.upto(opts[:virtio][:indexes] - 1) do |index|
-                slots <<%Q{virtio#{index}} 
+                slots <<%Q{virtio#{index}}
               end
               slots
             end
@@ -82,7 +82,7 @@ class OnBoard
               nil
             end
 
-          end          
+          end
 
           attr_reader :config
 
@@ -100,7 +100,7 @@ class OnBoard
             name = "#{@config['if']}"
             case @config['if']
             when 'virtio'
-              warn "#{cannot_guess_from}: #{@config.inspect}" unless 
+              warn "#{cannot_guess_from}: #{@config.inspect}" unless
                   xor( @config['index'], @config['unit'] )
               name << (@config['index'] || @config['unit']).to_s
               return name
@@ -120,7 +120,7 @@ class OnBoard
           end
           alias runtime_name to_runtime_name
           alias slot runtime_name
-          # The idea is a one-to-one correspondence between 
+          # The idea is a one-to-one correspondence between
           # (bus, index, unit) and runtime name (as shown by qemu monitor)
 
           def img_info
@@ -128,11 +128,11 @@ class OnBoard
             img.info
           end
 
-          def [](k) 
+          def [](k)
             @config[k]
           end
 
-          def []=(k, val) 
+          def []=(k, val)
             @config[k] = val
           end
 

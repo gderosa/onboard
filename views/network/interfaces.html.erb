@@ -1,4 +1,4 @@
-<% 
+<%
   require "pp"
   require "onboard/extensions/string"
   require "onboard/network/interface"
@@ -6,15 +6,15 @@
 
 <% if objects.class == Array %>
   <h2><%= title %></h2>
-  <%= 
+  <%=
     erb(
-      :"network/_interfaces_table.html", 
+      :"network/_interfaces_table.html",
       {
-        :layout => false, 
+        :layout => false,
         :locals => {:objects => objects}
       }
-    )  
-  %> 
+    )
+  %>
 <% else %>
 
       <% netif = objects %>

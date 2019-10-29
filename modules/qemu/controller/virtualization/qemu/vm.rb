@@ -30,11 +30,11 @@ class OnBoard
 
     put '/virtualization/qemu/vm/:vmid.:format' do
       vm_old = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
-      
+
       msg = handle_errors do
 
-        if params['name'] 
-        
+        if params['name']
+
           params['disk'] ||= []
 
           # normalize
@@ -52,7 +52,7 @@ class OnBoard
                 'idx'     => idx,
                 'vmname'  => params['name'],
               } )
-              created_disk_image = 
+              created_disk_image =
                   OnBoard::Virtualization::QEMU::Img.create(hd)
               params['disk'][idx]['file'] = created_disk_image
               params['disk'][idx]['path'] = \
@@ -61,7 +61,7 @@ class OnBoard
 
             # If image file comes from form text input / browsing (not creation)
             if hd['path'] =~ /\S/
-              params['disk'][idx]['file'] ||= 
+              params['disk'][idx]['file'] ||=
                   OnBoard::Virtualization::QEMU::Img.absolute_path hd['path']
             else
               params['disk'][idx]['file'] = nil # explicit is better than implicit :-)
@@ -73,15 +73,15 @@ class OnBoard
             :http_params  =>  params,
             :uuid         =>  vm_old.uuid
           )
-          
+
           vm_new.save # replace configuration file
         end
 
         # Action buttons / runtime
         if params.keys.include_any_of?(%w{
-                start start_paused stop pause quit powerdown resume delete 
+                start start_paused stop pause quit powerdown resume delete
                 snapshot_take snapshot_apply snapshot_delete snapshot_schedule
-        }) 
+        })
                 # Yup, deleting with a PUT is unRESTful... :-P
           OnBoard::Virtualization::QEMU.manage(:http_params => params)
         end
@@ -95,10 +95,10 @@ class OnBoard
       # Re-read, so the user is able to know whether data has been properly
       # updated
       vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
-      redirect "/virtualization/qemu.#{params[:format]}" if 
+      redirect "/virtualization/qemu.#{params[:format]}" if
           params['delete'] and not vm
       status 202 if msg[:ok] and params.keys.include_any_of? %w{
-          snapshot_take snapshot_apply snapshot_delete } 
+          snapshot_take snapshot_apply snapshot_delete }
       format(
         :module => 'qemu',
         :path => 'virtualization/qemu/vm',
@@ -113,15 +113,15 @@ class OnBoard
 
     get '/virtualization/qemu/vm/:vmid/screen.:format' do
       vm = OnBoard::Virtualization::QEMU.find(:vmid => params[:vmid])
-      if 
-          vm.respond_to? :screendump                  and 
-          vm.running?                                 and 
+      if
+          vm.respond_to? :screendump                  and
+          vm.running?                                 and
           screendump = vm.screendump(params[:format])
         # This is done inside vm.screendump, inlcluding (intermediate) ppm file
         # unless File.readable? screendump
         #   OnBoard::System::Command.send_command "chown #{Process.uid} #{screendump}", :sudo
         # end
-        send_file screendump 
+        send_file screendump
       else
         not_found
       end

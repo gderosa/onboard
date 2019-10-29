@@ -7,8 +7,8 @@ class OnBoard::Controller
 
   get '/network/interfaces.:format' do
     objects = OnBoard::Network::Interface.getAll.sort_by(
-      &OnBoard::Network::Interface::PREFERRED_ORDER 
-    ) 
+      &OnBoard::Network::Interface::PREFERRED_ORDER
+    )
     format(
       :path     => '/network/interfaces',
       :format   => params[:format],
@@ -28,7 +28,7 @@ class OnBoard::Controller
     )
   end
 
-  # An example params is found in doc/  
+  # An example params is found in doc/
   put '/network/interfaces.:format' do
     current_interfaces = OnBoard::Network::Interface.getAll
 
@@ -48,7 +48,7 @@ class OnBoard::Controller
       :format   => params[:format],
       :title    => 'Network Interfaces',
       :objects  => updated_objects
-    ) 
+    )
   end
 
   put '/network/interfaces/:ifname.:format' do
@@ -69,7 +69,7 @@ class OnBoard::Controller
       :objects  => OnBoard::Network::Interface.getAll.select do |iface|
         iface.name == ifname
       end
-    ) 
+    )
   end
 
 end

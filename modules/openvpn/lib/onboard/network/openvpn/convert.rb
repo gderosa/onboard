@@ -30,7 +30,7 @@ class OnBoard
           h_ary.each do |route_h|
             # out << route_h.pretty_inspect
             if route_h['net'] and route_h['mask']
-              out << route_h['net'] << '/' << route_h['mask'] << "\n" 
+              out << route_h['net'] << '/' << route_h['mask'] << "\n"
             end
           end
           return out

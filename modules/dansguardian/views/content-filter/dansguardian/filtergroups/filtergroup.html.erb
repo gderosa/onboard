@@ -1,5 +1,5 @@
 <%
-  fg = objects.fgdata # The filtergroup object (::DansGuardian::Config) 
+  fg = objects.fgdata # The filtergroup object (::DansGuardian::Config)
 %>
 
 <style type="text/css">
@@ -35,7 +35,7 @@
       <th scope="row">Group mode</th>
       <td>
         <select name="groupmode">
-          <% 
+          <%
   DansGuardian::Config::FilterGroup::GROUPMODE.each_pair do |num, name| %>
             <option value="<%= name %>" <%= 'selected' if name == fg[:groupmode] %>><%= name %></option>
           <% end %>
@@ -52,7 +52,7 @@
       <th scope="row"><a href="/content-filter/dansguardian/lists/banned/sites.html">Sites</a></th>
       <td>
         <select name="bannedsitelist">
-          <%= 
+          <%=
             partial(
               :module => 'dansguardian',
               :path   => 'content-filter/dansguardian/filtergroups/_list_options',
@@ -70,7 +70,7 @@
       <th scope="row"><a href="/content-filter/dansguardian/lists/banned/URLs.html">URLs</a></th>
       <td>
         <select name="bannedurllist">
-          <%= 
+          <%=
             partial(
               :module => 'dansguardian',
               :path   => 'content-filter/dansguardian/filtergroups/_list_options',
@@ -88,7 +88,7 @@
       <th scope="row"><a href="/content-filter/dansguardian/lists/banned/phrases.html">Phrases</a></th>
       <td>
         <select name="bannedphraselist">
-          <%= 
+          <%=
             partial(
               :module => 'dansguardian',
               :path   => 'content-filter/dansguardian/filtergroups/_list_options',
@@ -106,7 +106,7 @@
       <th scope="row"><a href="/content-filter/dansguardian/lists/banned/extensions.html">File extensions</a></th>
       <td>
         <select name="bannedextensionlist">
-           <%= 
+           <%=
             partial(
               :module => 'dansguardian',
               :path   => 'content-filter/dansguardian/filtergroups/_list_options',
@@ -154,7 +154,7 @@
                 :name               => :exceptionsitelist
               }
             )
-          %>        
+          %>
         </select>
       </td>
     </tr>
@@ -231,7 +231,7 @@
   <table class="dglists">
     <caption>Weighted phrase list</caption>
     <tr>
-      <th scope="row"><a href="/content-filter/dansguardian/lists/weighted/phrases.html">Weighted phrase list</a></th> 
+      <th scope="row"><a href="/content-filter/dansguardian/lists/weighted/phrases.html">Weighted phrase list</a></th>
       <td>
         <select name="weightedphraselist">
           <%=
@@ -253,12 +253,12 @@
   <table id="main-options">
     <tr>
       <th scope="row">
-        Block <em>all</em> file downloads? 
+        Block <em>all</em> file downloads?
       </th>
       <td>
         <input
-            type="checkbox" 
-            name="blockdownloads" 
+            type="checkbox"
+            name="blockdownloads"
             <%= 'checked' if fg[:blockdownloads] %>
         />
       </td>
@@ -269,13 +269,13 @@
         <div class="optinfo">
           The limit over which the page will be blocked.  Each weighted phrase
           is given a value either positive or negative and the values added up.
-          Phrases to do with good subjects will have negative values, and bad 
-          subjects will have positive. See the weighted phrase lists file 
+          Phrases to do with good subjects will have negative values, and bad
+          subjects will have positive. See the weighted phrase lists file
           for examples.
         </div>
       </th>
       <td>
-        <% 
+        <%
           begin
             naughtynesslimit = fg[:naughtynesslimit]
           rescue ConfigFiles::Base::NoKeyError
@@ -287,12 +287,12 @@
     </tr>
      <tr>
       <th scope="row">
-        Enable AntiVirus and/or other content scanners?      
+        Enable AntiVirus and/or other content scanners?
       </th>
       <td>
         <input
-            type="checkbox" 
-            name="enablecontentscan" 
+            type="checkbox"
+            name="enablecontentscan"
             <%= 'checked' unless fg[:disablecontentscan] %>
         />
       </td>
@@ -303,27 +303,27 @@
       </th>
       <td>
         <fieldset>
-         <input 
-              type="radio" 
-              name="weightedphrasemode" 
+         <input
+              type="radio"
+              name="weightedphrasemode"
               value=""
               <%= 'checked' if fg[:weightedphrasemode] == :inherit %>
           />Inherit from the main configuration<br/>
-          <input 
-              type="radio" 
-              name="weightedphrasemode" 
+          <input
+              type="radio"
+              name="weightedphrasemode"
               value="0"
               <%= 'checked' if fg[:weightedphrasemode] == :disabled %>
           />Do not use the weighted phrase feature<br/>
-          <input 
-              type="radio" 
-              name="weightedphrasemode" 
+          <input
+              type="radio"
+              name="weightedphrasemode"
               value="1"
-              <%= 'checked' if fg[:weightedphrasemode] == :normal %> 
+              <%= 'checked' if fg[:weightedphrasemode] == :normal %>
           />Normal weighted phrase operation<br/>
-          <input 
-              type="radio" 
-              name="weightedphrasemode" 
+          <input
+              type="radio"
+              name="weightedphrasemode"
               value="2"
               <%= 'checked' if fg[:weightedphrasemode] == :singular %>
           />Each weighted phrase found only counts once on a page</br>

@@ -7,9 +7,9 @@ class OnBoard
         module Name
           def self.generate(extra='')
             n = 0
-            names = 
+            names =
                 Interface.getAll.map  {|x| x.name}        |
-                VPN.all_cached.map    {|x| x.data['dev']} 
+                VPN.all_cached.map    {|x| x.data['dev']}
             name_ = nil
             while names.include? (name_ = "ovpn_#{extra}#{n}")
               n += 1

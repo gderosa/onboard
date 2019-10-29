@@ -1,7 +1,7 @@
 <% # encoding: utf-8
-  
+
   require 'rack/utils'
-  require 'i18n_data' 
+  require 'i18n_data'
   require 'date'
 
   require 'onboard/extensions/integer'
@@ -20,15 +20,15 @@
     </tr>
   </thead>
   <tbody>
-    <% objects['dh'].each_pair do |filename, dh_h| %>   
-      <tr> 
+    <% objects['dh'].each_pair do |filename, dh_h| %>
+      <tr>
         <td><code><%= filename %></code></td>
         <td><%= dh_h['size'] %></td>
         <td>
-          <%= 
+          <%=
             if not dh_h['err']
-              'Ok'  
-            elsif dh_h['being_created'] 
+              'Ok'
+            elsif dh_h['being_created']
               '<span style="font-style:italic;">generating DH params... this may take a long time...</span>'
             else
               dh_h['err']
@@ -49,7 +49,7 @@
     <th>Issued to:</th>
     <th>Key size (bits)</th>
     <th>Private Key?</th>
-    <th title="Is a Certificate Authority?">Cert. Auth.?</th> 
+    <th title="Is a Certificate Authority?">Cert. Auth.?</th>
     <th title="Certificate Revocation List">CRL</th>
     <th>SSL Server?</th>
   </tr></thead>
@@ -59,7 +59,7 @@
         <td style="text-align: center;">
           <form method="POST" action="/crypto/easy-rsa/certs/<%= Rack::Utils.escape name %>.crt">
             <input type="hidden" name="_method" value="delete"/>
-            <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!"> 
+            <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!">
               <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
             </button>
           </form>
@@ -71,9 +71,9 @@
           <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
           <td><%= '<strong class="superhighlight" title="Signed by our internal Certificate Authority">' if cert['signed_by_our_CA'] %><%= cert['cert']['issuer']['CN'] %><%= '</strong>' if cert['signed_by_our_CA'] %></td>
           <td>
-            <%= 
+            <%=
               ::OnBoard::Crypto::SSL::x509_Name_Hash_to_html_address(
-                cert['cert']['subject'] 
+                cert['cert']['subject']
               )
             %>
           </td>
@@ -95,12 +95,12 @@
               <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
             <% end %>
           </td>
-          <td style="text-align:center;"> 
+          <td style="text-align:center;">
             <% if cert['crl'] %>
               <small>
               <a title="Download the Certificate Revocation List in PEM format"
                 href="/crypto/ssl/CRLs/<%= cert['crl'] %>.pem">PEM</a>&nbsp;|&nbsp;<a
-                title="Download the Certificate Revocation List in DER format" 
+                title="Download the Certificate Revocation List in DER format"
                 href="/crypto/ssl/CRLs/<%= cert['crl'] %>.der">DER</a>
               </small>
             <% end %>
@@ -136,17 +136,17 @@
       <tr>
         <th scope="row">Validity</th>
         <td>
-          <%= 
+          <%=
             begin
-              i18n.l(objects['ca']['not_before'].to_date, :full) 
-            rescue 
+              i18n.l(objects['ca']['not_before'].to_date, :full)
+            rescue
               objects['ca']['not_before'].to_date
             end
           %>
-          -      
-          <%= 
+          -
+          <%=
             begin
-              i18n.l(objects['ca']['not_after'].to_date, :full)  
+              i18n.l(objects['ca']['not_after'].to_date, :full)
             rescue
               objects['ca']['not_after'].to_date
             end
@@ -160,7 +160,7 @@
             <%= objects['ca']['serial'].to_byte_s %>
           </code>
         </td>
-      </tr>   
+      </tr>
       <tr>
         <th scope="row">X509 Standard version</th>
         <td><%= objects['ca']['version'] %></td>
@@ -168,7 +168,7 @@
       <tr>
         <th scope="row">Signature algorithm</th>
         <td><code><%= objects['ca']['signature_algorithm'] %></code></td>
-      </tr> 
+      </tr>
     </tbody>
   </table>
   <% cadata = objects['ca']['subject'] %>
@@ -176,7 +176,7 @@
     <caption style="margin-top:0.5em;">CA details</caption>
     <tbody>
       <tr>
-        <th scope="row">&ldquo;Common Name&rdquo;</th>     
+        <th scope="row">&ldquo;Common Name&rdquo;</th>
         <td><strong><code><%= cadata['CN'] %></code></strong></td>
       </tr>
       <tr>
@@ -188,7 +188,7 @@
       <tr>
         <th scope="row">State/Province</th>
         <td><%= cadata['ST'] %></td>
-      </tr>   
+      </tr>
       <tr>
         <th scope="row">Location</th>
         <td><%= cadata['L'] %></td>
@@ -196,7 +196,7 @@
       <tr>
         <th scope="row">Organization</th>
         <td><%= cadata['O'] %><%= (', <span style="font-style: italic;">' + cadata['OU'] + '</span>') if cadata['OU'] =~ /\S/ %></td>
-      </tr> 
+      </tr>
       <tr>
         <th scope="row">E-mail</th>
         <td><code><%= cadata['emailAddress'] %></code></td>
@@ -212,7 +212,7 @@
       Full Hystory of issued certificates: <a href="/crypto/easy-rsa/ca/index.txt"><code>index.txt</code></a>
     </li>
     <li>
-      Certificate Revocation List: 
+      Certificate Revocation List:
       <% if File.exists? OnBoard::Crypto::EasyRSA::CRL %>
         <a title="CRL in PEM format" href="/crypto/easy-rsa/ca/crl.pem">
           <code>crl.pem</code>
@@ -227,13 +227,13 @@
   </ul>
 <% end %>
 
-<% 
+<%
   # CA Deletion/RESET makes sense if either it's not valid, or it has not
   # issued certificates, or issued certs have been all revoked; otherwise
   # it would be a dangerous, stupid action -- don't do that!
 %>
 <% if objects['ca'] %>
-  <% if objects['err'] or not (objects['certs'].values.detect{|c| 
+  <% if objects['err'] or not (objects['certs'].values.detect{|c|
       c['signed_by_our_CA'] }) %>
     <h4>RESET CA (use with caution!)</h4>
     <form method="POST" action="/crypto/easy-rsa/ca.html">
@@ -247,10 +247,10 @@
   <h3>Issue a new certificate</h3>
 <% else %>
   <h4>Initialize a new CA</h4>
-<% end %>  
+<% end %>
 
 <% if objects['ca'] and not objects['ca']['err'] %>
-  <form method="POST" action="easy-rsa/certs.html"> 
+  <form method="POST" action="easy-rsa/certs.html">
 <% else %>
   <form method="POST" action="easy-rsa/ca.html">
 <% end %>
@@ -272,7 +272,7 @@
         <td style="text-align:center;">
           <select name="key_size">
             <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
-              <option value="<%= ksiz %>"><%= ksiz %></option>  
+              <option value="<%= ksiz %>"><%= ksiz %></option>
             <% end %>
           </select>
         </td>
@@ -283,14 +283,14 @@
               <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%== countries[cc] %>">
                 <%
                   truncate = 18
-                  country_html = Rack::Utils.escape_html countries[cc][0..truncate] 
+                  country_html = Rack::Utils.escape_html countries[cc][0..truncate]
                       # truncate to not mess the page layout
                       #
                   country_html << "&hellip;" if countries[cc].length > truncate
-                %> <%= country_html %> 
-              </option> 
+                %> <%= country_html %>
+              </option>
             <% end %>
-          </select> 
+          </select>
         </td>
         <td><input name="L"  type="text" size="9"/></td>
         <td><input name="ST" type="text" size="2"/></td>

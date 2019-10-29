@@ -1,6 +1,6 @@
 TODO: check if the below is still valid with FreeRADIUS 3
 
-To allow RADIUS clients other then localhost add something like this to 
+To allow RADIUS clients other then localhost add something like this to
 /etc/freeradius/clients.conf :
 
 	client 192.168.0.0/16 {

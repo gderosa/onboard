@@ -13,7 +13,7 @@ class OnBoard
 
         class VMClock # allow further data manipulation...
           def self.parse(str)
-            new(str) 
+            new(str)
           end
           def initialize(str)
             @str = str
@@ -28,11 +28,11 @@ class OnBoard
           def running?(opts={})
             Dir.glob "#{VARRUN}/qemu-*.snapshot.pid" do |pidfile|
               pid = File.read(pidfile).to_i
-              waiting_file = pidfile.sub(/\.pid$/, '.waiting') 
+              waiting_file = pidfile.sub(/\.pid$/, '.waiting')
               waiting = File.exists? waiting_file
-              next if waiting and opts[:except_waiting] 
+              next if waiting and opts[:except_waiting]
               next if opts[:except_pid] and opts[:except_pid] == pid
-              return true if pid > 0 and ::Process.running? pid 
+              return true if pid > 0 and ::Process.running? pid
             end
             # Maybe we missed something...?
             `pidof qemu-img`.split.each do |pidstr|
@@ -68,14 +68,14 @@ class OnBoard
             'w' => 60*60*24*7,
           } # TODO: use ChronicDuration
 
-          if str =~ /([\d\.]+)\s*(s|m|h|d|w)?/ 
+          if str =~ /([\d\.]+)\s*(s|m|h|d|w)?/
             n, unit = $1.to_i, $2
             unit ||= 's'
           else
             raise ArgumentError, "invalid time interval string '#{str}'"
           end
           age = Time.now - time
-          seconds = n * unit_conversion[unit]  
+          seconds = n * unit_conversion[unit]
           return (age < seconds)
         end
 
@@ -85,14 +85,14 @@ class OnBoard
 
         def method_missing(id, *a)
           if @data.keys.include? id or @data.keys.include? id.to_s
-            @data[id] or @data[id.to_s] 
+            @data[id] or @data[id.to_s]
           else
             raise NoMethodError, "Undefined method `#{id}' for #{self}"
           end
         end
-      
+
         def to_json(*a)
-          @data.to_json(*a) 
+          @data.to_json(*a)
         end
 
       end

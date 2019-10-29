@@ -14,7 +14,7 @@ view:
 download:
   you: download
 
-delete_: # diiirty 
+delete_: # diiirty
   you: delete
 
 update_: # diiirty
@@ -33,10 +33,10 @@ send:
 eg: e.g.
 
 password:
-  repeat: 
+  repeat:
     you: ripeat password
     any: ripeat password
-  type_twice: 
+  type_twice:
     you: type twice
     any: type twice
     do_not_match: passwords do not match

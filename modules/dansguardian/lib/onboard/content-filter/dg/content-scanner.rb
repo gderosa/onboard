@@ -7,7 +7,7 @@ class OnBoard
         class << self
 
           def config_file(id)
-            "#{DG.root}/contentscanners/#{id}.conf" 
+            "#{DG.root}/contentscanners/#{id}.conf"
           end
 
         end

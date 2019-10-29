@@ -4,7 +4,7 @@ class OnBoard
   class Controller < ::Sinatra::Base
 
     helpers do
-    
+
       def handle_external_errors(e, req)
         result = nil
         @@error_handlers ||= {}
@@ -12,14 +12,14 @@ class OnBoard
         # So, if @@error_handlers[MyError] exists, it's also valid
         # for MyDerivedError where:
         #
-        #   class MyDerivedError < MyError; end         
+        #   class MyDerivedError < MyError; end
         #
         select = @@error_handlers.select{|k, v| e.is_a? k } || {}
         arrays = select.values
         arrays.each do |array|
           array.each do |handler|
             result = handler.call(e, req)
-            return result if result and result != :pass 
+            return result if result and result != :pass
           end
         end
         return result
@@ -45,7 +45,7 @@ class OnBoard
         rescue OnBoard::Warning
           @msg[:warn] = $!
         rescue StandardError
-          if h = handle_external_errors($!, request) 
+          if h = handle_external_errors($!, request)
             status h[:status]
             @msg = h[:msg]
           else

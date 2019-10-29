@@ -3,13 +3,13 @@
 class OnBoard
   class Controller < ::Sinatra::Base
     helpers do
-     
-      def multiple_choices(h={}) 
+
+      def multiple_choices(h={})
         status(300)
         paths = []
         formats = h[:formats] || @@formats
         formats.each do |fmt|
-          paths << request.path_info.sub(/\.[^\.]*$/, '.' + fmt) 
+          paths << request.path_info.sub(/\.[^\.]*$/, '.' + fmt)
         end
         formats.each do |fmt|
           args_h = {
@@ -26,9 +26,9 @@ class OnBoard
 
       def forbidden
         status 403
-        format :path => '403' 
+        format :path => '403'
       end
-      
+
       # http://www.sinatrarb.com/intro#Triggering%20Another%20Route
       # This would have saved lots of duplicated code!
       #

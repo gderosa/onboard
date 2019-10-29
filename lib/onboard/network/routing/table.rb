@@ -29,12 +29,12 @@ class OnBoard
 
         def self.getAllIDs
           # Hashes with numeric keys...
-          system_tables = {} 
+          system_tables = {}
           custom_tables = {}
           comments      = {}
           # It's assumed that the only number->name map is here:
           File.foreach '/etc/iproute2/rt_tables' do |line|
-            if line =~ /^(\d+)\s+([^#\s]+)(\s*#\s*(\S.*))?/  
+            if line =~ /^(\d+)\s+([^#\s]+)(\s*#\s*(\S.*))?/
               n = $1.to_i
               system_tables[n] = $2
               comments[n] = $4
@@ -71,7 +71,7 @@ class OnBoard
             number  = params['number']
             name    = params['name']
             comment = params['comment']
-            
+
             f.puts "#{number} #{name} # #{comment}"
           end
         end
@@ -87,7 +87,7 @@ class OnBoard
             return 'Fallback table'
           else
             return nil # 'User defined table'
-          end          
+          end
         end
 
         def self.number(table)
@@ -120,14 +120,14 @@ class OnBoard
           ary = []
 
           # IPv4
-          `ip -f inet route show table #{table_n}`.each_line do |line| 
+          `ip -f inet route show table #{table_n}`.each_line do |line|
             ary << rawline2routeobj(line, Socket::AF_INET)
           end
 
           #raise NotFound if ary.length == 0 and $?.exitstatus != 0
 
           # IPv6
-          `ip -f inet6 route show table #{table_n}`.each_line do |line| 
+          `ip -f inet6 route show table #{table_n}`.each_line do |line|
             ary << rawline2routeobj(line, Socket::AF_INET6)
           end
 
@@ -160,7 +160,7 @@ class OnBoard
               :scope      => $23,
               :src        => $25
             }
-            rawline = 
+            rawline =
                 line.sub(/^(#{rttypes})/, '').gsub(/(table|proto) \S+/, '')
             h[:rawline] = rawline
           end
@@ -177,7 +177,7 @@ class OnBoard
           File.open RT_TABLES_CONFFILE, 'w' do |f|
             old_text.each_line do |line|
               if line =~ /^\s*#{number}([^\d].*)?$/
-                f.puts "#{number} #{name} # #{comment}" 
+                f.puts "#{number} #{name} # #{comment}"
                 found = true
               else
                 f.write line
@@ -199,7 +199,7 @@ class OnBoard
               str << params['ip'] << ' '
             elsif params['ip'] =~ /^\s*(0\.0\.0\.0|::)\s*$/
               str << params['ip'] << '/0 '
-            elsif params['ip'] =~ /^[^\w\d]*(default)?[^\w\d]*$/ 
+            elsif params['ip'] =~ /^[^\w\d]*(default)?[^\w\d]*$/
               str << "default "
             else
               str << params['ip'] << " "
@@ -237,10 +237,10 @@ class OnBoard
 
           table = self.get(params['table'])
           result = table.ip_route_add(str.strip, :try)
-          if not result[:ok] 
+          if not result[:ok]
             if result[:stderr] =~ /file exists/i
               LOGGER.info "Retrying \"ip route change #{str.strip}\""
-              result = table.ip_route_change(str.strip) 
+              result = table.ip_route_change(str.strip)
             else
               LOGGER.error \
                   "Couldn't add route as requested (see messages above)"
@@ -253,17 +253,17 @@ class OnBoard
 
         # @id is generally the number (Integer), but methods re-read
         # RT_TABLES_CONFFILE in case it's a (non-numerical) String
-        # (e.g. the name) 
+        # (e.g. the name)
 
         def initialize(ary, table='main')
           @routes = ary
-          @id = Routing::Table.number(table)   
+          @id = Routing::Table.number(table)
         end
 
         def delete!
           all_rules = Rule.getAll
           if all_rules.detect{|rule| Routing::Table.number(rule.table) == self.number}
-            raise OnBoard::Network::Routing::RulesExist, 
+            raise OnBoard::Network::Routing::RulesExist,
                 'Couldn\'t delete: one or more rules still refer to this routing table! Delete them and try again.'
           end
           ip_route_flush
@@ -283,7 +283,7 @@ class OnBoard
           @id.strip!
           return @id.to_i if @id =~ /^\d+$/
           h = self.class.getAllIDs
-          return 
+          return
             (h['system_tables'].detect{|k, v| v == @id}[0]) or
             (h['custom_tables'].detect{|k, v| v == @id}[0])
         end
@@ -291,7 +291,7 @@ class OnBoard
         def name
           h = self.class.getAllIDs
           if @id.kind_of? Integer
-            n = @id 
+            n = @id
             if kv = h['system_tables'].detect{|k, v| k == n}
               return kv[1]
             elsif kv = h['custom_tables'].detect{|k, v| k == n}
@@ -328,7 +328,7 @@ class OnBoard
         def ip_route_flush
           msg = OnBoard::System::Command.run "ip route flush table #{@id}", :sudo
         end
-        
+
         def ip_route_del(str, opt_h={})
           opt_h = {:af => 'inet'}.merge opt_h
           af = opt_h[:af]
@@ -336,7 +336,7 @@ class OnBoard
           return msg
         end
 
-        def ip_route_add(route, *opts) 
+        def ip_route_add(route, *opts)
           str = route.to_s # so Route and String are both ok
           n = number
           cmd = "ip route add #{str} table #{n}"

@@ -9,42 +9,42 @@ browsed by jQueryFileTree popup window.
 
 There's a special subdir:
 
-/home/onboard/files/[network] 
+/home/onboard/files/[network]
 
-which contains mount points for networked filesystems which might be later 
+which contains mount points for networked filesystems which might be later
 "optimized" as in the following examples.
 
 IT IS YOUR CARE to ensure thet distributed / networked filesystems are actually
-mounted there, otherwise you will end up creating vm images on local storage. 
+mounted there, otherwise you will end up creating vm images on local storage.
 (Until an OnBoard module is created to manage GlusterFS and such).
 
-Suppose you open/pick 
+Suppose you open/pick
 
 [network]/gluster/localhost/gv0/QEMU/MyVM/disk0.qcow2 .
 
 Well, /home/onboard/files/[network]/gluster/localhost/gv0 is the mount point
-for a GlusterFS volume. The volume is mounted (via FUSE) just for the sake of 
+for a GlusterFS volume. The volume is mounted (via FUSE) just for the sake of
 browsing, and to allow an easier access for qemu-img.
 
 Actually, QEMU is now able to bypass FUSE to improve performance [1].
 
-The idea, within our code,  is to automatically translate a file path under the 
-special directory '[network]' into a "direct" URI. So the above file path get 
+The idea, within our code,  is to automatically translate a file path under the
+special directory '[network]' into a "direct" URI. So the above file path get
 translated into:
 
-file=gluster://localhost/gv0/QEMU/MyVM/disk0.qcow2 
+file=gluster://localhost/gv0/QEMU/MyVM/disk0.qcow2
 
 in qemu-system-x86_64 -drive command line option.
 
-This should be true for other distributed storage systems - for possible 
+This should be true for other distributed storage systems - for possible
 future developments.
 
-To have GlusterFS/QEMU integration you need QEMU >= 1.3 (compiled with Gluster suport) 
+To have GlusterFS/QEMU integration you need QEMU >= 1.3 (compiled with Gluster suport)
 and GlusterFS >= 3.4 (which provides libgfapi).
 
 ** A NOTE ON qemu-img **
 
-When the cluster is in under-optimal state (i.e. a replica brick or peer is 
+When the cluster is in under-optimal state (i.e. a replica brick or peer is
 unavailable) qemu-img gluster:// is VERY slow: so it's better to make it work
 on FUSE mount points rather than on gluster:// URLs, which should be used by
 qemu only.

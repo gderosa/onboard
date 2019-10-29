@@ -87,7 +87,7 @@ class OnBoard
             headers x_headers
           end
 
-          if h[:msg][:ok] == false 
+          if h[:msg][:ok] == false
             return h[:msg].to_(h[:format])
           else
             return h[:objects].to_(h[:format])
@@ -120,9 +120,9 @@ class OnBoard
 
       def message_partial(h={})
         @msg ||= {}
-        @msg.merge! (h or {:ok => true}) 
+        @msg.merge! (h or {:ok => true})
         partial(
-          :path => '_messages', 
+          :path => '_messages',
           :locals => {
             :msg => @msg,
             :status => status
@@ -132,13 +132,13 @@ class OnBoard
 
       # much simpler version, no multiple formats here
       def format_file(h)
-        if h[:module] 
-          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '') 
+        if h[:module]
+          h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '')
         end
         return erb( # See above for #erb Vs #erubis
           h[:path].to_sym,
           :layout   => false,
-          :locals   => h[:locals] 
+          :locals   => h[:locals]
         )
       end
 

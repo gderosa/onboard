@@ -9,7 +9,7 @@ class OnBoard
 
           DRIVERS       = %w{pci-assign vfio-pci}
           TYPES         = DRIVERS
-          EXCLUDE_LSPCI_DESCS = 
+          EXCLUDE_LSPCI_DESCS =
               /host bridge|pci bridge|isa bridge|ide interface|usb controller|smbus|communication controller/i
           EXCLUDE_DESCS = EXCLUDE_LSPCI_DESCS # Compat
 
