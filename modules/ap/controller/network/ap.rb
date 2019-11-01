@@ -14,7 +14,7 @@ class OnBoard
         :title => "Wireless Access Point"
       )
     end
-   
+
   end
 end
 
