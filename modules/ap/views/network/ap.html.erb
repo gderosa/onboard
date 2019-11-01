@@ -1,8 +1,10 @@
-<% 
-  #require 'onboard/network/ap'
+<%
+  require 'onboard/network/interface'
+
+  wlifs = OnBoard::Network::Interface.getAll.select{|i| i.type == 'wi-fi'}
 %>
 
-<h2>Wireless Access Point</h2>
+<h2>Wireless Access Point(s)</h2>
   <%=
     # example partial
     #erubis(
@@ -17,4 +19,7 @@
     #)
   %>
 
+<% wlifs.each do |i| %>
+  <a href="ap/<%= i.name %>.html"><%= i.name %></a>
+<% end %>
 
