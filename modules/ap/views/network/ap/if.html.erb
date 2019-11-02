@@ -22,15 +22,33 @@
 <table>
   <tr>
     <th>Driver</th>
-    <td><input type="text" name="driver" value="nl80211"/></td>
+    <td>
+      <select name="driver">
+        <option value="nl80211">nl80211</option>
+        <option value="hostap">hostap</option>
+        <option value="wired">wired</option>
+        <option value="bsd">bsd</option>
+        <option value="none">none</option>
+      </select>
+    </td>
   </tr>
   <tr>
     <th>SSID</th>
     <td><input type="text" name="ssid"/></td>
   </tr>
   <tr>
-    <th>HW Mode</th>
-    <td><input type="text" name="hw_mode"/></td>
+    <th>Mode/freq.: IEEE 802.11-</th>
+    <td>
+      <select name="mode">
+        <option title="hostapd.conf: hw_mode=a" value="a">a (5GHz)</option>
+        <option title="hostapd.conf: hw_mode=b" value="a">b (2.4GHz)</option>
+        <option title="hostapd.conf: hw_mode=g" value="g">g (2.4GHz)</option>
+        <option title="hostapd.conf: ieee80211n=1 hw_mode=a" value="n_5">n (5GHz)</option>
+        <option title="hostapd.conf: ieee80211n=1 hw_mode=g" value="n_2.4">n (2.4GHz)</option>
+        <option title="hostapd.conf: ieee80211ac=1 hw_mode=a" value="ac">ac (5GHz)</option>
+        <option title="hostapd.conf: hw_mode=ad" value="ad">ad (60GHz)</option>
+      </select>
+    </td>
   </tr>
   <tr>
     <th>x</th>
