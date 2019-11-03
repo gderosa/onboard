@@ -1,5 +1,11 @@
 <%
+  require 'i18n_data'
+
   require 'onboard/network/ap'
+
+  ENV['LANG'] =~ /_([A-Z]{2})/
+  default_country_code = $1
+  selected_country_code = default_country_code
 %>
 
 <h2><%= title %></h2>
@@ -50,13 +56,28 @@
       </select>
     </td>
   </tr>
+  <!-- TODO: bridge option? -->
   <tr>
-    <th>x</th>
-    <td>y</td>
+    <th>Channel</th>
+    <td>
+      <select name="channel">
+      <option value="0">0 / auto / not set</option>
+      <% 1.upto(173) do |c| %>
+        <option value="<%= c %>"><%= c %></option>
+      <% end %>
+      </select>
+    </td>
   </tr>
   <tr>
-    <th>x</th>
-    <td>y</td>
+    <th>Country <div class="optinfo" style="text-align: center">Regulatory domain.</div></th>
+    <td>
+      <select name="country_code">
+        <% I18nData.countries.sort_by{|code, name| name}.each do |codecountry|  %>
+        <% code, country = codecountry %>
+        <option value="<%= code %>" <%= 'selected' if code == selected_country_code %>><%= country %> (<%= code %>)</option>
+      <% end %>
+      </select>
+    </td>
   </tr>
   <tr>
     <th>x</th>
