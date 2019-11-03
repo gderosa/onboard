@@ -1,1 +1,0 @@
-Decide whether to use a default hostapd conf or a default OnBoard hostapd conf.
