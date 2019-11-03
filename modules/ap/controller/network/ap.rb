@@ -25,6 +25,18 @@ class OnBoard
       )
     end
 
+    put '/network/ap/:ifname.:format' do
+      msg = Network::AP::set_config(params[:ifname], params)
+      format(
+        :module => 'ap',
+        :path => '/network/ap/if',
+        :format => params[:format],
+        :objects  => [],
+        :msg => msg,
+        :title => "Wireless Access Point: #{params[:ifname]}"
+      )
+    end
+
   end
 end
 
