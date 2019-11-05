@@ -7,7 +7,8 @@
   default_country_code = $1
   selected_country_code = (objects['country_code'] || default_country_code)
 
-  all_channels = OnBoard::Network::AP::CHANNELS[2.4] + OnBoard::Network::AP::CHANNELS[5]
+  channels24  = OnBoard::Network::AP::CHANNELS[2.4]
+  channels5   = OnBoard::Network::AP::CHANNELS[5]
 
 %>
 
@@ -59,13 +60,18 @@
   </tr>
   <!-- TODO: bridge option? -->
   <tr>
-    <th>Channel <div class="optinfo">Actual availabilty depends on mode and country regulation.</div></th>
+    <th>Channel <div class="optinfo">Actual availabilty depends on <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_WLAN_channels">mode and country regulation</a>.</div></th>
     <td>
       <select name="channel">
-      <option value="0">0 / auto / not set</option>
-      <% all_channels.each do |c| %>
+        <option value="0">0 / auto / not set</option>
+        <option disabled>Channels @ 2.4 GHz:</option>
+        <% channels24.each do |c| %>
         <option value="<%= c %>" <%= 'selected' if c == objects['channel'].to_i %>><%= c %></option>
-      <% end %>
+        <% end %>
+        <option disabled>Channels @ 5 GHz:</option>
+        <% channels5.each do |c| %>
+        <option value="<%= c %>" <%= 'selected' if c == objects['channel'].to_i %>><%= c %></option>
+        <% end %>
       </select>
     </td>
   </tr>
