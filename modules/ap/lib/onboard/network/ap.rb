@@ -1,9 +1,4 @@
-#require 'fileutils'
-
-#require 'onboard/extensions/ipaddr'
-#require 'onboard/system/process'
-#require 'onboard/network/interface'
-#require 'onboard/network/interface/ip'
+require 'onboard/system/process'
 
 class OnBoard
   module Network
@@ -94,7 +89,14 @@ EOF
       end
 
       def self.running?(params)
-        return true
+        pidfile = File.join AP::VARRUN, "#{params['ifname']}.pid"
+        if File.exists? pidfile
+          pid = File.read(pidfile).to_i
+          puts pid
+          return OnBoard::System::Process.running? pid
+        else
+          return false
+        end
       end
 
       def self.save
