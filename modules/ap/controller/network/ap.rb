@@ -16,22 +16,27 @@ class OnBoard
     end
 
     get '/network/ap/:ifname.:format' do
+      running = Network::AP::running?(params)
+      res_data = Network::AP::get_config(params[:ifname]).merge({'run' => running})
       format(
         :module => 'ap',
         :path => '/network/ap/if',
         :format => params[:format],
-        :objects  => Network::AP::get_config(params[:ifname]),
+        :objects  => res_data,
         :title => "Wireless Access Point: #{params[:ifname]}"
       )
     end
 
     put '/network/ap/:ifname.:format' do
-      msg = Network::AP::set_config(params[:ifname], params)
+      Network::AP::set_config(params[:ifname], params)
+      msg = Network::AP::start_stop(params)
+      running = Network::AP::running?(params)
+      res_data = Network::AP::get_config(params[:ifname]).merge({'run' => running})
       format(
         :module => 'ap',
         :path => '/network/ap/if',
         :format => params[:format],
-        :objects  => Network::AP::get_config(params[:ifname]),
+        :objects  => res_data,
         :msg => msg,
         :title => "Wireless Access Point: #{params[:ifname]}"
       )

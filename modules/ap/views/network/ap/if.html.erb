@@ -14,17 +14,16 @@
 
 <h2><%= title %></h2>
   <%=
-    # example partial
-    #erubis(
-    #  :"/_messages.html",
-    #  {
-    #    :layout => false,
-    #    :locals => {
-    #      :msg => msg,
-    #      :status => status
-    #    }
-    #  }
-    #)
+    erubis(
+     :"/_messages.html",
+     {
+       :layout => false,
+       :locals => {
+         :msg => msg,
+         :status => status
+       }
+     }
+    )
   %>
 
 <form method="post">
@@ -90,6 +89,12 @@
     <th>WPA2 Passphrase <div class="optinfo" style="text-align: center">Leave empty for an open network.</div></th>
     <td>
       <input type="password" name="passphrase" value="<%= objects['passphrase'] %>"/>
+    </td>
+  </tr>
+  <tr>
+    <th>Run?</th>
+    <td>
+      <input type="checkbox" <%= 'checked' if objects['run'] %>/>
     </td>
   </tr>
 </table>

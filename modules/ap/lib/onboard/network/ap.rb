@@ -85,6 +85,17 @@ EOF
         return res
       end
 
+      def self.start_stop(params)
+        return {
+          :ok => true,
+          :info => 'This is the message'
+        }
+      end
+
+      def self.running?(params)
+        return true
+      end
+
       def self.save
       end
 
