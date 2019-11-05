@@ -7,6 +7,8 @@
   default_country_code = $1
   selected_country_code = (objects['country_code'] || default_country_code)
 
+  all_channels = OnBoard::Network::AP::CHANNELS[2.4] + OnBoard::Network::AP::CHANNELS[5]
+
 %>
 
 <h2><%= title %></h2>
@@ -57,11 +59,11 @@
   </tr>
   <!-- TODO: bridge option? -->
   <tr>
-    <th>Channel</th>
+    <th>Channel <div class="optinfo">Actual availabilty depends on mode and country regulation.</div></th>
     <td>
       <select name="channel">
       <option value="0">0 / auto / not set</option>
-      <% 1.upto(173) do |c| %>
+      <% all_channels.each do |c| %>
         <option value="<%= c %>" <%= 'selected' if c == objects['channel'].to_i %>><%= c %></option>
       <% end %>
       </select>

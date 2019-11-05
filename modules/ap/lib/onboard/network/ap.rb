@@ -8,6 +8,19 @@
 class OnBoard
   module Network
     module AP
+
+      # https://en.wikipedia.org/wiki/List_of_WLAN_channels
+      CHANNELS = {
+        2.4 => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+        5   => [
+          32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68,
+          96, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128,
+          132, 134, 136, 138, 140, 142, 144,
+          149, 151, 153, 155, 157, 159, 161,
+          165, 169, 173
+        ]
+      }
+
       def self.set_config(ifname, params)
         File.open CONFDIR + '/new/' + ifname + '.conf', 'w' do |f|
           f.puts "interface=#{ifname}"
