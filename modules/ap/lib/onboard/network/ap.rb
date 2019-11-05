@@ -43,6 +43,32 @@ EOF
         end
       end
 
+      def self.get_config(ifname)
+        parse = {}
+        res = {}
+        File.readlines(CONFDIR + '/new/' + ifname + '.conf').each do |line|
+          if line =~ /^\s*([^#\s]+)\s*=\s*([^#\s]+)/  # Assuming no spaces in values.
+            parse[$1.strip] = $2.strip  # Redundant, but in case we include spaces above...
+          end
+        end
+        %w{driver ssid channel country_code wpa}.each do |k|
+          res[k] = parse[k]
+        end
+        if parse['ieee80211ac'] == '1'
+          res['mode'] = 'ac'
+        elsif parse['ieee80211n'] == '1'
+          if parse['hw_mode'] == 'g'
+            res['mode'] = 'n_2.4'
+          elsif parse['hw_mode'] == 'a'
+            res['mode'] = 'n_5'
+          end
+        else
+          res['mode'] = parse['hw_mode']
+        end
+        res['passphrase'] = parse['wpa_passphrase']
+        return res
+      end
+
       def self.save
       end
 

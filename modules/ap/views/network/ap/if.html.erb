@@ -5,7 +5,8 @@
 
   ENV['LANG'] =~ /_([A-Z]{2})/
   default_country_code = $1
-  selected_country_code = default_country_code
+  selected_country_code = (objects['country_code'] || default_country_code)
+
 %>
 
 <h2><%= title %></h2>
@@ -30,29 +31,27 @@
     <th>Driver</th>
     <td>
       <select name="driver">
-        <option value="nl80211">nl80211</option>
-        <option value="hostap">hostap</option>
-        <option value="wired">wired</option>
-        <option value="bsd">bsd</option>
-        <option value="none">none</option>
+      <% %w{nl80211 hostap wired bsd none}.each do |drv| %>
+        <option value="<%= drv %>" <%= 'selected' if drv == objects['driver'] %>><%= drv %></option>
+      <% end %>
       </select>
     </td>
   </tr>
   <tr>
     <th>SSID</th>
-    <td><input type="text" name="ssid"/></td>
+    <td><input type="text" name="ssid" value="<%= objects['ssid'] %>"/></td>
   </tr>
   <tr>
     <th>Mode/freq.: IEEE 802.11-</th>
     <td>
       <select name="mode">
-        <option title="hostapd.conf: hw_mode=a" value="a">a (5GHz)</option>
-        <option title="hostapd.conf: hw_mode=b" value="a">b (2.4GHz)</option>
-        <option title="hostapd.conf: hw_mode=g" value="g">g (2.4GHz)</option>
-        <option title="hostapd.conf: ieee80211n=1 hw_mode=a" value="n_5">n (5GHz)</option>
-        <option title="hostapd.conf: ieee80211n=1 hw_mode=g" value="n_2.4">n (2.4GHz)</option>
-        <option title="hostapd.conf: ieee80211ac=1 hw_mode=a" value="ac">ac (5GHz)</option>
-        <option title="hostapd.conf: hw_mode=ad" value="ad">ad (60GHz)</option>
+        <option title="hostapd.conf: hw_mode=a" value="a" <%= 'selected' if 'a' == objects['mode'] %>>a (5GHz)</option>
+        <option title="hostapd.conf: hw_mode=b" value="a" <%= 'selected' if 'b' == objects['mode'] %>>b (2.4GHz)</option>
+        <option title="hostapd.conf: hw_mode=g" value="g" <%= 'selected' if 'g' == objects['mode'] %>>g (2.4GHz)</option>
+        <option title="hostapd.conf: ieee80211n=1 hw_mode=a" value="n_5" <%= 'selected' if 'n_5' == objects['mode'] %>>n (5GHz)</option>
+        <option title="hostapd.conf: ieee80211n=1 hw_mode=g" value="n_2.4" <%= 'selected' if 'n_2.4' == objects['mode'] %>>n (2.4GHz)</option>
+        <option title="hostapd.conf: ieee80211ac=1 hw_mode=a" value="ac" <%= 'selected' if 'ac' == objects['mode'] %>>ac (5GHz)</option>
+        <option title="hostapd.conf: hw_mode=ad" value="ad" <%= 'selected' if 'ad' == objects['mode'] %>>ad (60GHz)</option>
       </select>
     </td>
   </tr>
@@ -63,7 +62,7 @@
       <select name="channel">
       <option value="0">0 / auto / not set</option>
       <% 1.upto(173) do |c| %>
-        <option value="<%= c %>"><%= c %></option>
+        <option value="<%= c %>" <%= 'selected' if c == objects['channel'].to_i %>><%= c %></option>
       <% end %>
       </select>
     </td>
@@ -80,9 +79,9 @@
     </td>
   </tr>
   <tr>
-    <th>(WPA 2) Passphrase <div class="optinfo" style="text-align: center">Leave empty for an empty network.</div></th>
+    <th>WPA2 Passphrase <div class="optinfo" style="text-align: center">Leave empty for an open network.</div></th>
     <td>
-      <input type="password" name="passphrase"/>
+      <input type="password" name="passphrase" value="<%= objects['passphrase'] %>"/>
     </td>
   </tr>
 </table>

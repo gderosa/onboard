@@ -20,7 +20,7 @@ class OnBoard
         :module => 'ap',
         :path => '/network/ap/if',
         :format => params[:format],
-        :objects  => [],
+        :objects  => Network::AP::get_config(params[:ifname]),
         :title => "Wireless Access Point: #{params[:ifname]}"
       )
     end
@@ -31,7 +31,7 @@ class OnBoard
         :module => 'ap',
         :path => '/network/ap/if',
         :format => params[:format],
-        :objects  => [],
+        :objects  => Network::AP::get_config(params[:ifname]),
         :msg => msg,
         :title => "Wireless Access Point: #{params[:ifname]}"
       )
