@@ -86,6 +86,7 @@ EOF
       end
 
       def self.start_stop(params)
+        # sudo hostapd -B -P /var/run/onboard/ap/wlan0.pid -t -d -f .onboard/var/log/ap/wlan0.log .onboard/etc/config/network/ap/new/wlan0.conf ; sleep 3 ; pidof hostapd
         return {
           :ok => true,
           :info => 'This is the message'
