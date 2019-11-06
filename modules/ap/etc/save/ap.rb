@@ -1,5 +1,4 @@
-#require 'onboard/network/ap'
+require 'onboard/network/ap'
 
-#OnBoard::Network::AP.save
-
+OnBoard::Network::AP.save
 

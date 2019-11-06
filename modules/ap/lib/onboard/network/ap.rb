@@ -1,3 +1,5 @@
+require 'fileutils'
+
 require 'onboard/system/process'
 
 class OnBoard
@@ -136,6 +138,17 @@ EOF
       end
 
       def self.save
+        Dir.glob("#{AP::CONFDIR}/new/*.conf") do |conf_file|
+          FileUtils.cp conf_file, AP::CONFDIR
+          conf_file =~ /([^\/]+)\.conf$/
+          ifname = $1
+          run_persist_file = File.join AP::CONFDIR, "#{ifname}.run"
+          if running?(ifname)
+            FileUtils.touch run_persist_file
+          elsif File.exists? run_persist_file
+            FileUtils.rm run_persist_file
+          end
+        end
       end
 
       def self.restore
