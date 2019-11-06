@@ -102,13 +102,20 @@ EOF
             return OnBoard::System::Command.run cmdline, :sudo
           end
         else
-          return {
-            :ok => true,
-            :info => 'TODO: I should make sure it is stopped here.'
-          }
+          if running?(params)
+            return process(params).kill :sudo => true
+          end
         end
       end
 
+      def self.process(params)
+        ifname = params['ifname']
+        if File.exists? pidfile(ifname)
+          pid = File.read(pidfile(ifname)).to_i
+          return OnBoard::System::Process.new pid
+        end
+      end
+      # TODO: DRY a pid method?
       def self.running?(arg)
         if arg.respond_to? :[]
           params = arg

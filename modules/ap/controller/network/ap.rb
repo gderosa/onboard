@@ -34,6 +34,7 @@ class OnBoard
     put '/network/ap/:ifname.:format' do
       Network::AP::set_config(params[:ifname], params)
       msg = Network::AP::start_stop(params)
+      sleep 1
       running = Network::AP::running?(params)
       # TODO: DRY
       res_data = Network::AP::get_config(params[:ifname]).merge({
