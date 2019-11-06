@@ -97,7 +97,7 @@ EOF
         cmdline = "hostapd -B -P #{pidfile(ifname)} -t -f #{logfile(ifname)} #{conffile(ifname)}"
         if params['run']
           if running?(params)
-            # TODO: refresh!
+            return System::Command.run "kill -HUP #{pid(params)}", :sudo
           else
             return OnBoard::System::Command.run cmdline, :sudo
           end
@@ -108,15 +108,19 @@ EOF
         end
       end
 
-      def self.process(params)
+      def self.pid(params)
         ifname = params['ifname']
         if File.exists? pidfile(ifname)
-          pid = File.read(pidfile(ifname)).to_i
-          return OnBoard::System::Process.new pid
+          return File.read(pidfile(ifname)).to_i
         end
       end
-      # TODO: DRY a pid method?
+
+      def self.process(params)
+        return OnBoard::System::Process.new pid(params)
+      end
+
       def self.running?(arg)
+        # Hardo to DRY with self.pid() ...
         if arg.respond_to? :[]
           params = arg
           ifname = params['ifname']
