@@ -121,11 +121,11 @@ EOF
 
       def self.running?(arg)
         # Hardo to DRY with self.pid() ...
-        if arg.respond_to? :[]
+        if arg.is_a? String
+          ifname = arg
+        else
           params = arg
           ifname = params['ifname']
-        else
-          ifname = arg
         end
         if File.exists? pidfile(ifname)
           pid = File.read(pidfile(ifname)).to_i
