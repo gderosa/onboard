@@ -17,7 +17,11 @@ class OnBoard
 
     get '/network/ap/:ifname.:format' do
       running = Network::AP::running?(params)
-      res_data = Network::AP::get_config(params[:ifname]).merge({'run' => running})
+      # TODO: DRY
+      res_data = Network::AP::get_config(params[:ifname]).merge({
+        'run' => running,
+        'logfile' => Network::AP::logfile(params[:ifname])
+      })
       format(
         :module => 'ap',
         :path => '/network/ap/if',
@@ -31,7 +35,11 @@ class OnBoard
       Network::AP::set_config(params[:ifname], params)
       msg = Network::AP::start_stop(params)
       running = Network::AP::running?(params)
-      res_data = Network::AP::get_config(params[:ifname]).merge({'run' => running})
+      # TODO: DRY
+      res_data = Network::AP::get_config(params[:ifname]).merge({
+        'run' => running,
+        'logfile' => Network::AP::logfile(params[:ifname])
+      })
       format(
         :module => 'ap',
         :path => '/network/ap/if',
