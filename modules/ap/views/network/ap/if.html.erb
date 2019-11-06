@@ -102,8 +102,8 @@
 </table>
 <button type="submit">Change!</button>
 </form>
-
-<h3 style="font-style: italic">Log</h3>
+<br/>
+<h3><code>hostapd</code> Log</h3>
 <%=
   erubis(:"system/_log.html", :layout => false, :locals => {:log => log})
 %>
