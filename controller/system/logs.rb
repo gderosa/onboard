@@ -19,17 +19,26 @@ class OnBoard::Controller
     )
   end
 
-  get "/system/logs/:logid.raw" do
-    hash = OnBoard::System::Log.getAll.detect do |h|
-      h['id'] == params['logid'] or h['path'] == params['logid']
-    end
-    not_found if not hash
-    attachment(params['logid'])
-    content_type 'text/plain'
-    if File.readable? hash['path']
-      `cat #{hash['path']}`
+  get %r{/system/logs/(.*)\.raw} do
+    logid = params['captures'].first  # could be a full path or an identifying basname
+    potential_absolute_path = File.join '/', logid
+    if potential_absolute_path.start_with? OnBoard::LOGDIR
+      path = potential_absolute_path
     else
-      `sudo cat #{hash['path']}`
+      # Require "registration" for logs outside ~/.onboard/var/log
+      pp OnBoard::System::Log.getAll
+      hash = OnBoard::System::Log.getAll.detect do |h|
+        h['id'] == logid or h['path'] == logid
+      end
+      not_found if not hash
+      path = hash['path']
+    end
+    attachment(path)
+    content_type 'text/plain'
+    if File.readable? path
+      `cat #{path}`
+    else
+      `sudo cat #{path}`
     end
   end
 
