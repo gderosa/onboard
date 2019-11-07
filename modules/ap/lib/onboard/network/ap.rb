@@ -1,6 +1,7 @@
 require 'fileutils'
 
 require 'onboard/system/process'
+require 'onboard/network/interface'
 
 class OnBoard
   module Network
@@ -152,6 +153,15 @@ EOF
       end
 
       def self.restore
+        Dir.glob("#{AP::CONFDIR}/*.conf") do |conf_file|
+          FileUtils.cp conf_file, AP::CONFDIR + '/new/'
+        end
+        wlifs = Interface.getAll.select{|i| i.type == 'wi-fi'}
+        wlifs.each do |iface|
+          if File.exists? "#{AP::CONFDIR}/#{iface.name}.run"
+            start_stop :ifname => iface.name, :run => true
+          end
+        end
       end
     end
   end
