@@ -1,7 +1,7 @@
 class OnBoard
   module System
     class Log
-      Tail_n = 75 # show the last Tail_n number of lines in HTML, JSON, YAML
+      Tail_n = 120 # show the last Tail_n number of lines in HTML, JSON, YAML
       DATAFILE = File.join VARLIB, 'system/logs/registered.yaml'
 
       # badly designed class, too much hashes...

@@ -170,6 +170,9 @@ class OnBoard
         #   {:conffile => nil}      # use the long command line
         #   {:conffile => :auto}    #
         #   {:conffile => filename} #
+        # If conffile is used, this method is only invoked on first creation of the
+        # vpn instance, to generate the config file content, so changes to this method require
+        # re-creation to be effective.
         def self.start_from_HTTP_request(params, opt_h={:conffile => :auto})
           uuid = UUID.generate
           config_dir = "#{CONFDIR}/#{uuid}"
@@ -180,9 +183,11 @@ class OnBoard
           cmdline << '--script-security' << '2'
           cmdline << '--up' << UPSCRIPT
           # cmdline << '--up-restart'
+          cmdline << '--setenv' << 'HOME' << ENV['HOME']
           cmdline << '--setenv' << 'PATH' << ENV['PATH']
-	  cmdline << '--setenv' << 'bridge_to' << params['bridge_to']
+	        cmdline << '--setenv' << 'bridge_to' << params['bridge_to']
           cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
+          cmdline << '--setenv' << 'ONBOARD_DATADIR' << OnBoard::DATADIR
           cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' <<
               OnBoard::CONFDIR + '/network/interfaces.yml'
           cmdline << '--setenv' << 'STATIC_ROUTES_DATFILE' <<
@@ -489,6 +494,7 @@ EOF
             pwd = @data_internal['process'].env['PWD']
             cmd = Escape.shell_command(@data_internal['process'].cmdline)
             cmd += ' --daemon' unless @data_internal['daemon']
+            cmd += " --setenv HOME #{ENV['HOME']}"
             msg = System::Command.bgexec ("cd #{pwd} && UUID=#{uuid} sudo -E #{cmd}")
             msg[:ok] = true
             msg[:info] = 'Request accepted. You may check <a href="">this page</a> again to get updated info for the active VPNs. You may also check the <a href="/system/logs.html">logs</a>.'
