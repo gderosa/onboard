@@ -96,9 +96,10 @@ EOF
       end
 
       def self.start_stop(params)
-        ifname = params['ifname']
+        ifname = (params['ifname'] or params[:ifname])
+        run = (params['run'] or params[:run])
         cmdline = "hostapd -B -P #{pidfile(ifname)} -t -f #{logfile(ifname)} #{conffile(ifname)}"
-        if params['run']
+        if run
           if running?(params)
             return System::Command.run "kill -HUP #{pid(params)}", :sudo
           else
@@ -159,7 +160,7 @@ EOF
         wlifs = Interface.getAll.select{|i| i.type == 'wi-fi'}
         wlifs.each do |iface|
           if File.exists? "#{AP::CONFDIR}/#{iface.name}.run"
-            start_stop :ifname => iface.name, :run => true
+            start_stop 'ifname' => iface.name, 'run' => true
           end
         end
       end

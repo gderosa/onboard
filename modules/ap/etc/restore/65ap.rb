@@ -1,4 +1,3 @@
-#require 'onboard/network/ap'
+require 'onboard/network/ap'
 
-#OnBoard::Network::AP.restore
-
+OnBoard::Network::AP.restore
