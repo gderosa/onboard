@@ -272,7 +272,7 @@
         <td style="text-align:center;">
           <select name="key_size">
             <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
-              <option value="<%= ksiz %>"><%= ksiz %></option>
+              <option value="<%= ksiz %>" <%= 'selected' if ksiz == 2048 %>> <%= ksiz %> <%= '(recommended)' if ksiz == 2048 %> </option>
             <% end %>
           </select>
         </td>
