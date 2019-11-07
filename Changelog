@@ -1,6 +1,10 @@
+2019.12.02
+
+* Quick DNSmasq file fix
+
 2019.12.01
 
-+ Fix OpenVPN: --up scripts and ghost duplicates in list
+* Fix OpenVPN: --up scripts and ghost duplicates in list
 
 2019.12
 
