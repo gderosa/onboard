@@ -1,3 +1,7 @@
+2019.12.01
+
++ Fix OpenVPN: --up scripts and ghost duplicates in list
+
 2019.12
 
 * Wireless Access Point management (hostapd) web ui
