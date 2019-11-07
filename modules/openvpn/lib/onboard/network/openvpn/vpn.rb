@@ -214,11 +214,7 @@ class OnBoard
 
           # TLS opts which may be useful for compat w/ older peers
           if params['tls-version-min'] =~ /\S/
-            if params['tls-version-min'] ==  'or-highest'
-              cmdline << '--tls-version-min' << 'xxx' << 'or-highest'
-            else
-              cmdline << '--tls-version-min' << params['tls-version-min']
-            end
+            cmdline << '--tls-version-min' << params['tls-version-min']
           end
           if params['tls-cipher'] =~ /\S/
             cmdline << '--tls-cipher' << params['tls-cipher']
