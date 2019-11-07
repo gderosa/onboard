@@ -78,8 +78,7 @@ class OnBoard
           return false unless File.readable? datafile
           current_VPNs = getAll()
           YAML.load(File.read datafile).each do |h|
-            if current_vpn = current_VPNs.detect{ |x|
-                h[:process].portable_id == x.data['portable_id'] }
+            if current_vpn = current_VPNs.detect{|x| h[:uuid] == x.uuid}
               next if current_vpn.data['running']
               current_vpn.start() if h[:start_at_boot]
             else
@@ -142,25 +141,18 @@ class OnBoard
 
         def self.all_cached; @@all_vpn; end
 
-        # TODO: get rid of portable_id, because you cannot foresee it before
-        # starting the openvpn process (i.e. on creation)
-        #
         def self.lookup(h)
           h[:all] ||= getAll
           if h[:any]
             return (
               lookup(:all => h[:all], :human_index  => h[:any]) or
-              lookup(:all => h[:all], :uuid         => h[:any]) or
-              lookup(:all => h[:all], :portable_id  => h[:any])
+              lookup(:all => h[:all], :uuid         => h[:any])
             )
           elsif h[:human_index]
             return h[:all][h[:human_index].to_i - 1]
           elsif h[:uuid]
             return h[:all].detect {|x|
               x.data['uuid']            == h[:uuid]}
-          elsif h[:portable_id]
-            return h[:all].detect {|x|
-              x.data['portable_id']     == h[:portable_id]}
           else
             return nil
           end
@@ -185,7 +177,7 @@ class OnBoard
           # cmdline << '--up-restart'
           cmdline << '--setenv' << 'HOME' << ENV['HOME']
           cmdline << '--setenv' << 'PATH' << ENV['PATH']
-	        cmdline << '--setenv' << 'bridge_to' << params['bridge_to']
+          cmdline << '--setenv' << 'bridge_to' << params['bridge_to']
           cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
           cmdline << '--setenv' << 'ONBOARD_DATADIR' << OnBoard::DATADIR
           cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' <<
@@ -335,19 +327,7 @@ EOF
         end
 
         def self.modify_from_HTTP_request(params)
-          vpn = nil
-          if    params['portable_id'] and params['portable_id'] =~ /\S/
-            vpn = @@all_vpn.detect do |x|
-              x.data['portable_id'] == params['portable_id']
-            end
-          end
-          if vpn  # the VPN has been found by portable_id (preferred method?)
-            if params['stop']
-              return vpn.stop()
-            elsif params['start']
-              return vpn.start()
-            end
-          elsif params['stop'] # try to seek the right VPN by array index
+          if params['stop'] # try to seek the right VPN by array index
             i = params['stop'].to_i - 1
                 # array index = "human-friendly index" - 1
             return @@all_vpn[i].stop()
@@ -372,7 +352,6 @@ EOF
             'conffile'  => h[:conffile]
           }
           @data = {'running' => h[:running]}
-          @data['portable_id'] = @data_internal['process'].portable_id
           @data['uuid'] = uuid unless @data['uuid']
           parse_conffile() if File.file? @data_internal['conffile'] # regular
           parse_conffile(:text => cmdline2conf())
@@ -538,7 +517,8 @@ EOF
                 vpn.data_internal['process'].cmdline ==
                     self.data_internal['process'].cmdline and
                 vpn.data_internal['process'].env['PWD'] ==
-                    self.data_internal['process'].env['PWD']
+                    self.data_internal['process'].env['PWD'] or
+                vpn.uuid == self.uuid
             )
               @@all_vpn[vpn_i] = self
               already_in_the_pool = true

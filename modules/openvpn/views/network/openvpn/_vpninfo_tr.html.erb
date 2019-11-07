@@ -34,7 +34,6 @@ locals automatically provided by format() helper:
           <td rowspan="<%= rowspan %>" style="text-align:center;">
             <form method="POST">
               <input type="hidden" name="_method" value="put"/>
-              <input type="hidden" name="portable_id" value="<%= vpn.data['portable_id'] if vpn.data['portable_id'] %>"/>
               <% if vpn.data['running'] %>
                 <button type="submit" name="stop" value="<%= vpnid %>" title="Disconnect VPN">
                   <img src="<%= icondir + '/' + iconsize + '/stock/net/stock_disconnect.png'%>" alt="Disconnect!"/>
