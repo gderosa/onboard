@@ -220,7 +220,7 @@ class OnBoard
               cmdline << '--tls-version-min' << params['tls-version-min']
             end
           end
-          if params['tls-cipher'] = ~ /\S/
+          if params['tls-cipher'] =~ /\S/
             cmdline << '--tls-cipher' << params['tls-cipher']
           end
 
