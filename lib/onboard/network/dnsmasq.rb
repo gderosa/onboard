@@ -253,10 +253,12 @@ class OnBoard
         if File.read("/proc/#{pid}/cmdline") =~ /-r\0([^\0]+)/
           @data['resolvconf']['file'] = $1
         end
-        File.open @data['resolvconf']['file'] do |file|
-          file.each_line do |line|
-            if line =~ /^\s*nameserver\s+(\S+)/
-              @data['resolvconf']['nameservers'] << $1
+        if File.exists? @data['resolvconf']['file'] 
+          File.open @data['resolvconf']['file'] do |file|
+            file.each_line do |line|
+              if line =~ /^\s*nameserver\s+(\S+)/
+                @data['resolvconf']['nameservers'] << $1
+              end
             end
           end
         end
