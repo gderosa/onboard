@@ -22,7 +22,9 @@
   hundreds of clients (each one with an entire LAN behind it).
 -->
 
-UUID: <code><%= vpn.uuid %></code>
+UUID:&nbsp;<code><%= vpn.uuid %></code>
+&nbsp;|&nbsp;
+Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %></code>
 
 <% if vpn.data['server'] %>
   <% unless vpn.data['dev-type'] == 'tap' %>
