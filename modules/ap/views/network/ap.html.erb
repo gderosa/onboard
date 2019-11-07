@@ -1,0 +1,29 @@
+<%
+  require 'onboard/network/interface'
+  require 'onboard/network/ap'
+
+  wlifs = OnBoard::Network::Interface.getAll.select{|i| i.type == 'wi-fi'}
+%>
+
+<h2>Wireless Access Point(s)</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Interface <div class="optinfo">Click name to manage.</div></th>
+  <th>Running?  <div class="optinfo">         &nbsp;      </div></th>
+</tr>
+</thead>
+<tbody>
+<% wlifs.each do |i| %>
+<tr style="height: 2.4em">
+  <td>
+    <a href="ap/<%= i.name %>.html"><%= i.name %></a>
+  </td>
+  <td style="text-align: center">
+    <%= yes_no_icon OnBoard::Network::AP.running?(i.name), :print_no %>
+  </td>
+</tr>
+<% end %>
+</tbody>
+</table>

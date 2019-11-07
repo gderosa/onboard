@@ -119,6 +119,13 @@ EOFF
         args: PROVISIONER_ARGS,
         run: "never"
 
+    # Is there a way to emulate a Wi-Fi network?
+    mgy.vm.provision "ap",
+        type: "shell",
+        path: "./modules/ap/etc/scripts/platform/debian/setup.sh",
+        args: PROVISIONER_ARGS,
+        run: "never"
+
   end
 
   # The client machine may be any OS, but for economy of storage and download time,

@@ -1,12 +1,12 @@
-<% 
+<%
   superhighlight  = "#080"
   highlight       = DEFAULT_THEME[:highlight]
-  lighthighlight  = "#88e" 
+  lighthighlight  = "#88e"
   almostblack     = "#222"
-  lowlight        = DEFAULT_THEME[:lowlight] 
-  superlowlight   = "#bbb" 
-  hover           = "color: white; background: #{highlight};" 
-  lightbg         = "#dfdfdf" 
+  lowlight        = DEFAULT_THEME[:lowlight]
+  superlowlight   = "#bbb"
+  hover           = "color: white; background: #{highlight};"
+  lightbg         = "#dfdfdf"
   lightbg_off     = "#eedddd"
   lightbg_high    = "#ddeedd"
   serif           = %q{"Times New Roman", Times, Georgia, serif}
@@ -192,6 +192,10 @@ div#main p {
 div#main pre, kbd, code {
   /* font-size: 11pt; */
   color: <%= highlight %>;
+}
+
+h2 code, h3 code, h4 code {
+  color: #040;
 }
 
 div#main td pre {
