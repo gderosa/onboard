@@ -212,6 +212,18 @@ class OnBoard
           end
           cmdline << '--crl-verify' << crlfile if File.exists? crlfile
 
+          # TLS opts which may be useful for compat w/ older peers
+          if params['tls-version-min'] =~ /\S/
+            if params['tls-version-min'] ==  'or-highest'
+              cmdline << '--tls-version-min' << 'xxx' << 'or-highest'
+            else
+              cmdline << '--tls-version-min' << params['tls-version-min']
+            end
+          end
+          if params['tls-cipher'] = ~ /\S/
+            cmdline << '--tls-cipher' << params['tls-cipher']
+          end
+
           dev_type ||= 'tun' # default
           if params['dev-type'] =~ /^\s*(tun|tap)\s*$/
             dev_type = $1
