@@ -1,3 +1,8 @@
+require 'onboard/constants'
+# The above also fixes an issue when chain-loaded from openvpn --up script
+# (modules/openvpn/etc/scripts/up)
+# and possibly other places.
+
 class OnBoard
   module Hardware
     module SDIO
