@@ -1,3 +1,7 @@
+2019.12.05
+
+* TLS/easy-rsa: recommend/default a 2048 key size 
+
 2019.12.04
 
 * TLS backward compatibility options for OpenVPN server
