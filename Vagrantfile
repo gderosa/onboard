@@ -103,7 +103,7 @@ EOFF
     # Optional modules
 
     # Actually deploy all other AAA/Hotspot -related modules as well: chilli etc.
-    # Not automatically run on provision, you have to explicitely call it with
+    # Not automatically run on provision, you have to explicitly call it with
     #    vagrant provision margay --provision-with radius
     # after the first provision has been completed.
     mgy.vm.provision "radius",

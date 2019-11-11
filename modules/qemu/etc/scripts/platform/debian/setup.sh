@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ONBOARD_USER=onboard
+ONBOARD_ROOT=${1:-`pwd`}
+ONBOARD_USER=${2:-'onboard'}
 ONBOARD_GROUP=$ONBOARD_USER
-ONBOARD_ROOT=/home/$ONBOARD_USER/onboard
 
 enable_onboard_modules() {
 	cd $ONBOARD_ROOT/modules/
