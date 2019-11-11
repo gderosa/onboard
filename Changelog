@@ -1,3 +1,8 @@
+2019.13.1
+
+* Fix setup scripts
+* Fixsupport for  no-usb systems
+
 2019.13
 
 * The connection with year-month in versioning is so loose than "13" is
