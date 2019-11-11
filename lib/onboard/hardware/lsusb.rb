@@ -8,6 +8,7 @@ class OnBoard
 
         def initialize
           @data = []
+          return unless Dir.exists? BASEDIR  # Some VMs simply do not have USB at all...
           Dir.foreach BASEDIR do |subdir|
             if subdir =~ /^(\d+)-(\d+(.\d+)?)$/
               bus, port = $1, $2
