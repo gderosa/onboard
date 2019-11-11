@@ -1,3 +1,10 @@
+2019.13
+
+* The connection with year-month in versioning is so loose than "13" is
+possible as a minor version number. It's kinda semantic versioning :)
+
+* Multi-PKI support for OpenVPN and in general
+
 2019.12.05
 
 * TLS/easy-rsa: recommend/default a 2048 key size 
