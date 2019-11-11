@@ -167,5 +167,5 @@ cd $PROJECT_ROOT  # Apparently needed...
 
 setup_nginx
 
-# Remove packages conflicting with rou DHCP management
-dpkg -l | egrep '^i.\s+wicd-daemon' && apt-get -y remove wicd-daemon
+# Remove packages conflicting with our DHCP management
+dpkg -l | egrep '^i.\s+wicd-daemon' && apt-get -y remove wicd-daemon || true
