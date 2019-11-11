@@ -2,6 +2,8 @@
   vpns = objects[:vpns] || objects['vpns'] # be robust
 
   windoze = %q{<span class="product-name">Microsoft<sup class="trademark">&reg;</sup> Windows<sup class="trademark">&reg;</sup></span>}
+
+  multi_pkis = (OnBoard::Crypto::SSL::Multi.get_pki_names.size > 1)
 %>
 
 <h2><%= title %></h2>
@@ -27,6 +29,7 @@
           :path     => 'network/openvpn/_vpninfo_thead',
           :locals   => {
             :show_actions_column => 'Choose',
+            :multi_pkis => multi_pkis
           }
         )
       %>
@@ -43,7 +46,8 @@
               :show_actions_column  =>
 %Q{<input #{'checked' if checked} type="radio" name="vpn_uuid" value="#{vpn.data['uuid']}"/>},
               :vpn                  => vpn,
-              :vpn_i                => vpn_i
+              :vpn_i                => vpn_i,
+              :multi_pkis => multi_pkis
             }
           )
         %>

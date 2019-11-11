@@ -7,14 +7,14 @@
       <p><%= msg[:err_html] %></p>
     <% else %>
       <% if msg[:err].kind_of? OpenSSL::X509::CRLError %>
-        <p>Invalid certificate. OpenSSL reported: &ldquo;<code><%= html_escape msg[:err] %></code>&rdquo;.</p>
+        <p>Invalid certificate. OpenSSL reported: &ldquo;<code><%= escape_html msg[:err] %></code>&rdquo;.</p>
       <%
         else  #String assumed, .to_s as a fallback
       %>
-       <pre><%= html_escape msg[:err] %></pre>
+       <pre><%= escape_html msg[:err] %></pre>
      <% end %>
     <% end %>
-    <pre><%= html_escape msg[:stderr] %></pre>
+    <pre><%= escape_html msg[:stderr] %></pre>
   </div>
 <% end %>
 <% if request.referer =~ /\S/ %>

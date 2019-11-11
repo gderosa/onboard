@@ -3,6 +3,7 @@
     actions:
     common_name_description:
     show_actions_column: boolean or an alternate String
+    multi_pkis:
 %>
 
 <%
@@ -12,6 +13,8 @@
   if show_actions_column == true
     show_actions_column = 'Actions'
   end
+
+  multi_pkis              ||= false
 %>
 
     <tr>
@@ -24,6 +27,11 @@
       <th rowspan="3" title="<%= common_name_description %>">
         &ldquo;Common Name&rdquo;
       </th>
+      <% if multi_pkis %>
+      <th rowspan="3">
+        PKI
+      </th>
+      <% end %>
       <th colspan="5">
         Real
       </th>

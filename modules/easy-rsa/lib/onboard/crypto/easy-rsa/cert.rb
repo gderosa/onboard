@@ -1,6 +1,8 @@
 require 'fileutils'
 require 'pathname'
 
+require 'onboard/crypto/ssl'
+require 'onboard/crypto/ssl/pki'
 require 'onboard/crypto/easy-rsa'
 
 class OnBoard
@@ -24,25 +26,27 @@ class OnBoard
         end
 
         def self.create_from_HTTP_request(params)
+          ssl_pki = SSL::PKI.new params[:pkiname]
+          easyrsa_pki = EasyRSA::PKI.new params[:pkiname]
 
           # First, create necessary files if they are missing
-          [SSL::CERTDIR, SSL::KEYDIR, EasyRSA::KEYDIR].each do |dir|
+          [ssl_pki.certdir, ssl_pki.keydir, easyrsa_pki.keydir].each do |dir|
             FileUtils.mkdir_p dir unless Dir.exists? dir
           end
           %w{index.txt serial}.each do |file|
-            path = File.join KEYDIR, file
+            path = File.join easyrsa_pki.keydir, file
             unless File.exists? path
               File.new(path, 'w')
             end
           end
-          serfile = File.join KEYDIR, 'serial'
+          serfile = File.join easyrsa_pki.keydir, 'serial'
           unless File.read(serfile).strip =~ /^([a-f\d][a-f\d])+$/i
             File.open serfile, 'w' do |f|
               f.puts '01'
             end
           end
 
-          if Crypto::SSL.getAllCerts.values.detect do |c|
+          if ssl_pki.getAllCerts.values.detect do |c|
             c['cert']['subject']['CN'] == params['CN']
           end
             msg = {
@@ -53,10 +57,10 @@ class OnBoard
           else
             msg = System::Command.run <<EOF
 cd #{SCRIPTDIR}
-export KEY_DIR=#{EasyRSA::KEYDIR}
+export KEY_DIR=#{easyrsa_pki.keydir}
 . ./vars
-export CACERT=#{SSL::CACERT}
-export CAKEY=#{SSL::CAKEY}
+export CACERT=#{ssl_pki.cacertpath}
+export CAKEY=#{ssl_pki.cakeypath}
 export KEY_SIZE=#{params['key_size']}
 export KEY_EXPIRE=#{params['days']}
 export KEY_COUNTRY="#{params['C']}"
@@ -68,24 +72,24 @@ export KEY_EMAIL="#{params['emailAddress']}"
 ./pkitool #{'--server' if params['type'] == 'server'} "#{params['CN']}"
 EOF
             if msg[:ok]
-              destcert = "#{SSL::CERTDIR}/#{params['CN']}.crt"
-              destkey = "#{SSL::KEYDIR}/#{params['CN']}.key"
+              destcert = "#{ssl_pki.certdir}/#{params['CN']}.crt"
+              destkey = "#{ssl_pki.keydir}/#{params['CN']}.key"
               begin
                 FileUtils.mv(
-                    KEYDIR + "/#{params['CN']}.crt",
-                    SSL::CERTDIR
+                    easyrsa_pki.keydir + "/#{params['CN']}.crt",
+                    ssl_pki.certdir
                 )
                 FileUtils.symlink(
                     destcert,
-                    EasyRSA::KEYDIR
+                    easyrsa_pki.keydir
                 )
                 FileUtils.mv(
-                    KEYDIR + "/#{params['CN']}.key",
-                    SSL::KEYDIR
+                    easyrsa_pki.keydir + "/#{params['CN']}.key",
+                    ssl_pki.keydir
                 )
                 FileUtils.symlink(
                     destkey,
-                    EasyRSA::KEYDIR
+                    easyrsa_pki.keydir
                 )
                 begin
                   FileUtils.chown nil, Process.gid, destkey

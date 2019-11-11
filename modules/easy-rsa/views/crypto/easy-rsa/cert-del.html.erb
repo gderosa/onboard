@@ -5,8 +5,8 @@
   <div class="error">
     <p style="font-style: italic;">
       Request was not fulfilled due to the reported errors:</p>
-    <pre><%= html_escape msg[:err] %></pre>
-    <pre><%= html_escape msg[:stderr] %></pre>
+    <pre><%= escape_html msg[:err] %></pre>
+    <pre><%= escape_html msg[:stderr] %></pre>
   </diV>
 <% end %>
 <% if request.referer =~ /\S/ %>

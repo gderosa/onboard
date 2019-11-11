@@ -4,8 +4,18 @@
   require 'onboard/crypto/ssl'
   require 'onboard/network/bridge'
 
-  ssl     = OnBoard::Crypto::SSL.getAll
-  bridges = OnBoard::Network::Bridge.get_all
+  all_pki_names = OnBoard::Crypto::SSL::Multi.get_pki_names - ['default']
+  all_pki_names = ['default'] + all_pki_names
+
+  multi_pkis = (all_pki_names.size  > 1)
+
+  params['pki'] ||= 'default'
+
+  ssl = {}
+  pki = OnBoard::Crypto::SSL::PKI.new(params['pki'])
+  ssl['certs'] = pki.getAllCerts :with_ca => true
+
+  bridges   = OnBoard::Network::Bridge.get_all
 %>
 
 <style type="text/css">
@@ -48,6 +58,7 @@
         :partial  => true,
         :path     => 'network/openvpn/_vpninfo_thead',
         :locals   => {
+          :multi_pkis => multi_pkis,
           :show_actions_column => true,
           :common_name_description => common_name_description
         }
@@ -62,6 +73,7 @@
           :partial  => true,
           :path     => 'network/openvpn/_vpninfo_tr',
           :locals   => {
+            :multi_pkis           => multi_pkis,
             :show_actions_column  => true,
             :vpn                  => vpn,
             :vpn_i                => vpn_i
@@ -72,8 +84,23 @@
   </tbody>
 </table>
 
-<h3>Create new VPN (client mode)</h3>
+<h3>Create new VPN</h3>
+
+<% if multi_pkis %>
+  <h4>(Choose <a href="../../crypto/easy-rsa.html">alternate PKI)</a></h4>
+  <form method="GET">
+    <select name="pki" style="width: 8em">
+      <% all_pki_names.each do |pkiname| %>
+        <option value="<%= pkiname %>" <%= 'selected' if pkiname == params['pki'] %>> <%= pkiname %> </option>
+      <% end %>
+    </select>
+    <button type="submit">Choose PKI!</button>
+  </form>
+<% end %>
+
+<h4>Client mode</h4>
 <form method="POST">
+  <input type="hidden" name="pki" value="<%= params['pki'] %>">
   <table>
     <thead>
       <tr>
@@ -144,7 +171,14 @@
             <% end %>
             <% ssl['certs'].each_pair do |name, h| %>
               <% if h['cert']['is_ca'] %>
-                <option value="<%= name %>"><%==  name %></option>
+                <%
+                  begin
+                    displayname = h['cert']['subject']['CN']
+                  rescue NoMethodError
+                    displayname = name
+                  end
+                %>
+                <option value="<%= name %>"><%==  displayname %></option>
               <% end %>
             <% end %>
           </select>
@@ -219,8 +253,9 @@
   </table>
 </form>
 
-<h3>Create new VPN (server mode)</h3>
+<h4>Server mode</h4>
 <form method="POST">
+  <input type="hidden" name="pki" value="<%= params['pki'] %>">
   <table>
     <thead>
       <tr>
@@ -283,7 +318,14 @@
             <% end %>
             <% ssl['certs'].each_pair do |name, h| %>
               <% if h['cert']['is_ca'] %>
-                <option value="<%= name %>"><%== name %></option>
+                <%
+                  begin
+                    displayname = h['cert']['subject']['CN']
+                  rescue NoMethodError
+                    displayname = name
+                  end
+                %>
+                <option value="<%= name %>"><%== displayname %></option>
               <% end %>
             <% end %>
           </select>

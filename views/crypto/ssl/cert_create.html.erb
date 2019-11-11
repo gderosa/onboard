@@ -7,16 +7,16 @@
       <p><%= msg[:err_html] %></p>
     <% else %>
       <% if msg[:err].kind_of? OpenSSL::X509::CertificateError %>
-        Invalid certificate. <em>OpenSSL</em> reported: <span style="margin-left:1ex;">&ldquo;<code><%= html_escape msg[:err] %></code>&rdquo;.</span>
+        Invalid certificate. <em>OpenSSL</em> reported: <span style="margin-left:1ex;">&ldquo;<code><%= escape_html msg[:err] %></code>&rdquo;.</span>
       <% elsif msg[:err].kind_of? ::OnBoard::Crypto::SSL::ArgumentError %>
         Cerificate error:
-          <code style="margin-left:1ex;"><%= html_escape msg[:err] %></code>.
+          <code style="margin-left:1ex;"><%= escape_html msg[:err] %></code>.
       <% else %>
-        <pre><%= html_escape msg[:err] %></pre>
+        <pre><%= escape_html msg[:err] %></pre>
       <% end %>
     <% end %>
     <% if msg[:stderr] =~ /\S/ %>
-      <pre><%= html_escape msg[:stderr] %></pre>
+      <pre><%= escape_html msg[:stderr] %></pre>
     <% end %>
   </div>
 <% end %>

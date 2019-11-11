@@ -34,7 +34,7 @@ class OnBoard
 
   PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
-  ROOTDIR           = File.dirname File.expand_path(__FILE__)
+  ROOTDIR           = File.dirname File.expand_path(__FILE__) unless defined? ROOTDIR
   DATADIR = RWDIR = (
       ENV['ONBOARD_RWDIR'] or
       ENV['ONBOARD_DATADIR'] or
@@ -58,7 +58,7 @@ class OnBoard
   # NOTE: we are re-defining a constant!
   # ...really, it should not be a constant... :-(
   # TODO TODO TODO ...
-  LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log')
+  LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log') unless defined? LOGGER
 
   LOGGER.formatter = proc { |severity, datetime, progname, msg|
     "#{datetime} #{severity}: #{msg}\n"

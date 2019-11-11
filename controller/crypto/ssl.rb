@@ -1,19 +1,27 @@
-autoload :FileUtils,  'fileutils'
-autoload :OpenSSL,    'onboard/extensions/openssl'
+require 'fileutils'
+
+require 'onboard/extensions/openssl'
+
+require 'onboard/crypto/ssl/pki'
+
 
 class OnBoard
   class Controller
 
-    get '/crypto/ssl/ca/ca.crt' do
+    get '/crypto/ssl/:pkiname/ca/ca.crt' do
+      ssl_pki = OnBoard::Crypto::SSL::PKI.new params[:pkiname]
       # decode it, for better human readability (but it's still a valid cert.)
-      c = ::OpenSSL::X509::Certificate.new(File.read(Crypto::SSL::CACERT))
+      c = ::OpenSSL::X509::Certificate.new(File.read(ssl_pki.cacertpath))
       content_type "application/x-x509-ca-cert"
       attachment "ca.crt" # avoid auto-import into browser
       c.to_text + c.to_pem
     end
 
-    get '/crypto/ssl/certs/:name.crt' do
-      certfile = "#{Crypto::SSL::CERTDIR}/#{params[:name]}.crt"
+    get '/crypto/ssl/:pkiname/certs/:name.crt' do
+      pkiname = params[:pkiname]
+      certname = params[:name]
+      ssl_pki = Crypto::SSL::PKI.new(pkiname)
+      certfile = "#{ssl_pki.certdir}/#{certname}.crt"
       if File.exists? certfile
         c = ::OpenSSL::X509::Certificate.new(File.read(certfile))
         if c.ca?
@@ -23,14 +31,16 @@ class OnBoard
               # What is the correct MIME-type for an X509 cert. which is NOT
               # a CA?
         end
-        attachment "#{params[:name]}.crt"
+        attachment "#{certname}.crt"
         c.to_text + c.to_pem
       else
         not_found
       end
     end
 
-    get '/crypto/ssl/CRLs/:name.crl.?:sslformat?' do
+=begin
+    # CRL support has been buggy on single PKI too...
+    get '/crypto/ssl/:pkiname/CRLs/:name.crl.?:sslformat?' do
       params[:sslformat] = 'pem' unless params[:sslformat]
       crlfile = "#{Crypto::SSL::CERTDIR}/#{params[:name]}.crl"
       if File.exists? crlfile
@@ -52,9 +62,10 @@ class OnBoard
         not_found
       end
     end
+=end
 
-    get '/crypto/ssl/certs/private/:name.key' do
-      keyfile = "#{Crypto::SSL::KEYDIR}/#{params[:name]}.key"
+    get '/crypto/ssl/:pkiname/certs/private/:name.key' do
+      keyfile = "#{OnBoard::Crypto::SSL::PKI.new(params[:pkiname]).keydir}/#{params[:name]}.key"
       if File.exists? keyfile
         content_type "application/x-pem-key"
         attachment "#{params[:name]}.key"
@@ -65,20 +76,21 @@ class OnBoard
     end
 
     # Certificate upload
-    post '/crypto/ssl/certs.:format' do
+    post '/crypto/ssl/:pkiname/certs.:format' do
       target = nil
       msg = {:ok => true}
+      ssl_pki = OnBoard::Crypto::SSL::PKI.new params[:pkiname]
       if params['certificate'].respond_to? :[]
         begin
           cert = OpenSSL::X509::Certificate.new(
               params['certificate'][:tempfile].read
           )
           cn = cert.to_h['subject']['CN']
-          raise Crypto::SSL::ArgumentError,
+          raise OnBoard::Crypto::SSL::PKI::ArgumentError,
               'Cannot find subject\'s Common Name' if not cn
-          cn_escaped = cn.gsub('/', Crypto::SSL::SLASH_FILENAME_ESCAPE)
-          FileUtils.mkdir_p Crypto::SSL::CERTDIR
-          target = "#{Crypto::SSL::CERTDIR}/#{cn_escaped}.crt"
+          cn_escaped = cn.gsub('/', Crypto::SSL::PKI::SLASH_FILENAME_ESCAPE)
+          FileUtils.mkdir_p ssl_pki.certdir
+          target = "#{ssl_pki.certdir}/#{cn_escaped}.crt"
           if File.readable? target # already exists
             begin # check if it's valid
               OpenSSL::X509::Certificate.new(File.read target)
@@ -101,14 +113,14 @@ class OnBoard
               f.write cert.to_s # the certificate itself between BEGIN-END tags
             end
           end
-        rescue OpenSSL::X509::CertificateError, Crypto::SSL::ArgumentError
+        rescue OpenSSL::X509::CertificateError, Crypto::SSL::PKI::ArgumentError
           status(400)
           msg = {:ok => false, :err => $!}
         end
         if params['private_key'].respond_to? :[]
           # priv. key verification is not done here...
-          FileUtils.mkdir_p Crypto::SSL::KEYDIR
-          File.open("#{Crypto::SSL::KEYDIR}/#{cn}.key", 'w') do |f|
+          FileUtils.mkdir_p ssl_pki.keydir
+          File.open("#{ssl_pki.keydir}/#{cn}.key", 'w') do |f|
             f.write File.read params['private_key'][:tempfile]
           end
           params['private_key'][:tempfile].unlink
@@ -130,8 +142,9 @@ class OnBoard
       )
     end
 
-    # CRL upload
-    post '/crypto/ssl/CRLs.:format' do
+=begin
+    # CRL upload: buggy since single-PKI versions
+    post '/crypto/ssl/:pkiname/CRLs.:format' do
       target = nil
       msg = {:ok => true}
       if params['CRL'].respond_to? :[]
@@ -175,6 +188,7 @@ class OnBoard
         :msg      => msg
       )
     end
+=end
 
   end
 end

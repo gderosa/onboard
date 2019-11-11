@@ -40,7 +40,7 @@ class OnBoard
         vpn_.data['uuid'] == params['vpn_uuid']
       end
       not_found unless vpn
-      certs = vpn.find_client_certificates
+      certs = vpn.find_client_certificates_from_pki(params['pki'] || vpn.data['pkiname'] || 'default')
       objects = {
         :vpn   => vpn,
         :certs => certs
@@ -62,6 +62,7 @@ class OnBoard
       vpn = Network::OpenVPN::VPN.getAll.detect do |vpn_|
         vpn_.data['uuid'] == params['vpn_uuid']
       end
+      ssl_pki = Crypto::SSL::PKI.new(params['pki'] || vpn.data['pkiname'])
 
       not_found unless vpn
 
@@ -72,9 +73,9 @@ class OnBoard
       # Actually a check is done in howto.html but just on X509::Name part,
       # not cryptographically...
       ca_filepath_orig =
-          File.exists?("#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt") ?
-          "#{Crypto::SSL::CERTDIR}/#{ca_cn}.crt" :
-          Crypto::SSL::CACERT
+          File.exists?("#{ssl_pki.certdir}/#{ca_cn}.crt") ?
+          "#{ssl_pki.certdir}/#{ca_cn}.crt" :
+          ssl_pki.cacertpath
       subject_filename = name.gsub(' ', '_')
           # params['name'] is the client CN
       clientside_configuration = vpn.clientside_configuration(
@@ -94,11 +95,11 @@ class OnBoard
         },
         {
           :name     => "#{subject_filename}.crt",
-          :content  => File.read("#{Crypto::SSL::CERTDIR}/#{client_cn}.crt")
+          :content  => File.read("#{ssl_pki.certdir}/#{client_cn}.crt")
         },
         {
           :name     => "#{subject_filename}.key",
-          :content  => File.read("#{Crypto::SSL::KEYDIR}/#{client_cn}.key"),
+          :content  => File.read("#{ssl_pki.keydir}/#{client_cn}.key"),
           :mode     => 0400 # private key security
         },
         {

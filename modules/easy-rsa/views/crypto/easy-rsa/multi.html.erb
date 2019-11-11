@@ -1,0 +1,63 @@
+<% # encoding: utf-8
+  require 'onboard/crypto/easy-rsa'
+  require 'onboard/crypto/ssl'
+
+  pkinames = objects - ['default'] + ['default']  # move default at end
+  pkis = pkinames.map{|pkiname| OnBoard::Crypto::SSL::PKI.new(pkiname)}
+%>
+
+<h2><%= title %></h2>
+Each PKI can issue and sign certificates and private keys from its own Certicate Autority,
+or import certificates and keys from user uploads.
+<p>
+<table>
+  <thead>
+    <tr>
+      <th>PKI</th>
+      <th style="width: 1em">Num. certificates</th>
+      <th>Delete? <div class="optinfo">PKI containing certificates cannot be deleted.</div></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% pkis.each do |pki| %>
+      <tr style="height: 3em">
+        <%
+          displayname = case pki.name
+          when 'default'
+            '<em>Default PKI</em>'
+          else
+            pki.name
+          end
+        %>
+        <td><a href="easy-rsa/<%= pki.name %>.html"> <%= displayname %></a></td>
+        <%
+          displaynum = case pki.num_certs
+          when 0
+            '<span class="lowlight">&minus;</span>'
+          else
+            pki.num_certs
+          end
+        %>
+        <td class="num"><%= displaynum %></td>
+        <td style="text-align: center">
+          <% unless pki.has_certs? or pki.name == 'default' %>
+            <form method="POST" action="easy-rsa/<%= pki.name %>.html">
+              <input type="hidden" name="_method" value="delete">
+              <%= action_button :delete %>
+            </form>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td>
+        <form method="POST">
+          <button type="submit">(Add new!)</button> <input type="text" name="pkiname"/> 
+        </form>
+      </td>
+      <td></td>
+      <td></td>
+    <tr>
+  </tbody>
+</table>
+

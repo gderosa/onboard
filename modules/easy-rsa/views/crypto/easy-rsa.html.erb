@@ -7,9 +7,12 @@
   require 'onboard/extensions/integer'
   require 'onboard/crypto/easy-rsa'
   require 'onboard/crypto/ssl'
+
+  pkiname = params[:pkiname]
 %>
 
-<h2>SSL keys and certificates</h2>
+<h2>Manage Public Key Infrastructure: <%= params[:pkiname] %></h2>
+
 <h3>Diffie-Hellman parameters</h3>
 <table>
   <thead>
@@ -42,7 +45,7 @@
 <h3>Certificates</h3>
 <table>
   <thead><tr>
-      <th title="Certificates issued by our CA will be also added to the Certificate Revocation List">Delete / Revoke</th>
+      <th>Delete / Revoke</th>
     <th>&ldquo;Common Name&rdquo;</th>
     <th>Serial no.</th>
     <th>Issued by:</th>
@@ -50,14 +53,14 @@
     <th>Key size (bits)</th>
     <th>Private Key?</th>
     <th title="Is a Certificate Authority?">Cert. Auth.?</th>
-    <th title="Certificate Revocation List">CRL</th>
+    <!-- <th title="Certificate Revocation List">CRL</th> -->  <!-- CRL has been buggy even on single PKI -->
     <th>SSL Server?</th>
   </tr></thead>
   <tbody>
     <% objects['certs'].each_pair do |name, cert| %>
       <tr>
         <td style="text-align: center;">
-          <form method="POST" action="/crypto/easy-rsa/certs/<%= Rack::Utils.escape name %>.crt">
+          <form method="POST" action="/crypto/easy-rsa/<%= pkiname %>/certs/<%= name %>.crt">
             <input type="hidden" name="_method" value="delete"/>
             <button type="submit" title="Remove this certificate<%= ' (and the associated private key)' if cert['private_key'] %>!">
               <img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="delete"/>
@@ -67,7 +70,7 @@
         <% if cert['cert']['err'] and not cert['cert']['ok'] %>
           <td colspan="0" class="error">Certificate Error for &ldquo;<code><%= name %>.crt</code>&rdquo;: <code><%= cert['cert']['err'] %></code></td>
         <% else %>
-          <td><a title="Click to download the certificate" href="/crypto/ssl/certs/<%= Rack::Utils.escape name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
+          <td><a title="Click to download the certificate" href="/crypto/ssl/<%= params[:pkiname] %>/certs/<%= Rack::Utils.escape name %>.crt"><code><%= cert['cert']['subject']['CN'] %></code></a></td>
           <td style="text-align: right;"><code><%= cert['cert']['serial'].to_byte_s %></code></td>
           <td><%= '<strong class="superhighlight" title="Signed by our internal Certificate Authority">' if cert['signed_by_our_CA'] %><%= cert['cert']['issuer']['CN'] %><%= '</strong>' if cert['signed_by_our_CA'] %></td>
           <td>
@@ -80,10 +83,9 @@
           <td><%= cert['cert']['key_size'] %></td>
           <% if cert['private_key'] %>
             <% if cert['private_key']['ok'] %>
-              <!-- <td><%= "<strong>#{i18n.yes}</strong>" %> <small>[<a href="/crypto/ssl/certs/private/<%= name %>.key">download</a>]</small></td> -->
-              <td style="text-align:center"><a class="img" title="Download" href="/crypto/ssl/certs/private/<%= name %>.key"><img style="vertical-align:middle;" alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
+              <td style="text-align:center"><a class="img" title="Download" href="/crypto/ssl/<%= params[:pkiname] %>/certs/private/<%= name %>.key"><img style="vertical-align:middle;" alt="download" src="<%= icondir %>/<%= iconsize %>/actions/document-save-as.png"/></a></td>
             <% else %>
-              <td class="error"><code><%= html_escape cert['private_key']['err'] %></code></td>
+              <td class="error"><code><%= escape_html cert['private_key']['err'] %></code></td>
             <% end %>
           <% else %>
             <!-- <td><%= i18n.no %></td> -->
@@ -95,6 +97,9 @@
               <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
             <% end %>
           </td>
+          <!-- CRL buggy even on single PKI -->
+          <!--
+          <% if false %>
           <td style="text-align:center;">
             <% if cert['crl'] %>
               <small>
@@ -105,7 +110,8 @@
               </small>
             <% end %>
           </td>
-          <!-- <td><%= cert['cert']['is_server'] ? "<strong>#{i18n.yes}</strong>" : i18n.no %></td> -->
+          <% end %>
+          -->
           <td style="text-align:center;">
             <% if cert['cert']['is_server'] %>
               <img style="vertical-align:middle;" alt="<%= i18n.yes %>" src="<%= icondir %>/<%= iconsize %>/emblems/emblem-default.png"/>
@@ -116,10 +122,13 @@
     <% end %>
   </tbody>
 </table>
+
+
+<!-- BEGIN OWN CA SECTION -->
 <h3>Certificate Authority</h3>
 <% if objects['ca'] and objects['ca']['err'] %>
   <span class="error">
-    Certificate error: <code><%= html_escape objects['ca']['err'] %></code>
+    Certificate error: <code><%= escape_html objects['ca']['err'] %></code>
   </span>
 <% end %>
 <% if objects['ca'] and not objects['ca']['err'] %>
@@ -206,24 +215,27 @@
   <h4>Downloads</h4>
   <ul>
     <li>
-      CA Certificate: <a href="/crypto/ssl/ca/ca.crt"><code>ca.crt</code></a>
+      CA Certificate: <a href="/crypto/ssl/<%= params[:pkiname] %>/ca/ca.crt"><code class="superhighlight">ca.crt</code></a>
     </li>
     <li>
-      Full Hystory of issued certificates: <a href="/crypto/easy-rsa/ca/index.txt"><code>index.txt</code></a>
+      Full Hystory of issued certificates: <a href="/crypto/easy-rsa/<%= params[:pkiname] %>/ca/index.txt"><code class="superhighlight">index.txt</code></a>
     </li>
+    <!-- CRL did not work even with single PKI... -->
+    <!--
     <li>
       Certificate Revocation List:
-      <% if File.exists? OnBoard::Crypto::EasyRSA::CRL %>
+      <%# if File.exists? OnBoard::Crypto::EasyRSA::CRL %>
         <a title="CRL in PEM format" href="/crypto/easy-rsa/ca/crl.pem">
           <code>crl.pem</code>
         </a>,
         <a title="CRL in DER format" href="/crypto/easy-rsa/ca/crl.der">
           <code>crl.der</code>
         </a>
-      <% else %>
+      <%# else %>
         <code class="lowlight" title="No certificate has been revoked.">crl.pem</code>
-      <% end %>
+      <%# end %>
     </li>
+    -->
   </ul>
 <% end %>
 
@@ -236,7 +248,7 @@
   <% if objects['err'] or not (objects['certs'].values.detect{|c|
       c['signed_by_our_CA'] }) %>
     <h4>RESET CA (use with caution!)</h4>
-    <form method="POST" action="/crypto/easy-rsa/ca.html">
+    <form method="POST" action="/crypto/easy-rsa/<%= pkiname %>/ca.html">
       <input type="hidden" name="_method" value="delete"/>
       <button type="submit"><img style="vertical-align:middle;" src="<%= "#{icondir}/#{iconsize}/emblems/emblem-important.png" %>"/> RESET!</a></button>
     </form>
@@ -250,9 +262,11 @@
 <% end %>
 
 <% if objects['ca'] and not objects['ca']['err'] %>
-  <form method="POST" action="easy-rsa/certs.html">
+  <form method="POST" action="<%= pkiname %>/certs.html">
+  <% days = 3650 %>
 <% else %>
-  <form method="POST" action="easy-rsa/ca.html">
+  <form method="POST" action="<%= pkiname %>/ca.html">
+  <% days = 36500 %>  <!-- Renewing a CA is a total hassle... -->
 <% end %>
 
   <table>
@@ -272,11 +286,11 @@
         <td style="text-align:center;">
           <select name="key_size">
             <% OnBoard::Crypto::SSL::KEY_SIZES.each do |ksiz| %>
-              <option value="<%= ksiz %>" <%= 'selected' if ksiz == 2048 %>> <%= ksiz %> <%= '(recommended)' if ksiz == 2048 %> </option>
+              <option value="<%= ksiz %>" <%= 'selected' if ksiz == 2048 %>> <%= ksiz %> <%= '(not recommended)' if ksiz < 2048 %> </option>
             <% end %>
           </select>
         </td>
-        <td><input name="days" size="4" value="3650"/></td>
+        <td><input name="days" size="6" value="<%= days %>"/></td>
         <td style="text-align:center;">
           <select name="C">
             <% country_codes_by_name.each do |cc| %>
@@ -326,11 +340,12 @@
   <% end %>
   <button type="submit" style="margin: 0.3em 0.6em;">Create!</button>
 </form>
+<!-- END OWN CA SECTION -->
 
 <h3>Import</h3>
 
 <div style="width:48%; float:left;">
-  <form method="POST" action="/crypto/ssl/certs.html" enctype="multipart/form-data">
+  <form method="POST" action="/crypto/ssl/<%= pkiname %>/certs.html" enctype="multipart/form-data">
     <input type="hidden" name="file_upload" value="yes"/>
     <table>
       <tr>
@@ -344,17 +359,4 @@
     </table>
     <button type="submit">Upload!</button>
   </form>
-</div>
-
-<div style="width:48%; float:right;">
-  <form method="POST" action="/crypto/ssl/CRLs.html" enctype="multipart/form-data">
-    <input type="hidden" name="file_upload" value="yes"/>
-    <table>
-      <tr>
-        <th scope="row">Certificate Revocation List<br/>(Import/Update)</th>
-        <td><input type="file" name="CRL"/></td>
-      </tr>
-    </table>
-    <button type="submit">Upload!</button>
-  </form>
-</div>
+  </div>

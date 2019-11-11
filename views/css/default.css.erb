@@ -88,7 +88,7 @@ a.created, a.new {
 div#main {
   border: 0;
   float: right;
-  width: 80%;	
+  width: 80%;
   padding: 2px;
   margin: 1em 1px;
 }
@@ -134,7 +134,7 @@ textarea {
 }
 
 input[type="radio"], input[type="checkbox"] {
-  vertical-align: middle; 
+  vertical-align: middle;
 }
 
 .product-name, em {
@@ -142,7 +142,7 @@ input[type="radio"], input[type="checkbox"] {
   margin-right: 0.3ex;
 }
 
-div#main div.error, div#main div.warn, div#main div.info, div#main pre.error, div#main pre.warn, div#main pre.info div#main p.error, div#main p.warn, div#main p.info { 
+div#main div.error, div#main div.warn, div#main div.info, div#main pre.error, div#main pre.warn, div#main pre.info div#main p.error, div#main p.warn, div#main p.info {
   color: black;
   padding: 0.3em 0.3em;
   margin-bottom: 1em;
@@ -239,7 +239,7 @@ div#main pre.framed {
 pre.log {
   margin: 2em 0;
   width: 95%;
-  height: 17em; 
+  height: 17em;
   border: 2px <%= lightbg %> solid;
 }
 
@@ -247,19 +247,19 @@ pre {
   overflow: auto;
 }
 
-a, .hmenu-bullet {
+a, .hmenu-bullet, td a code, a code {
   color: <%= highlight %>;
   text-decoration: none;
 }
 
-a {
+a, td a code, a code {
   font-weight: bold;
 }
 
-a:hover   {
-  color: white; 
-  background: <%= highlight %>; 
-} 
+a:hover, td a:hover code, a:hover code {
+  color: white;
+  background: <%= highlight %>;
+}
 
 .hmenu-bullet:hover  {
   color: <%= superhighlight %>;
@@ -272,19 +272,19 @@ li .hmenu-content {
 
 li span.hmenu-selected, li div.hmenu-selected {
   font-weight: bold;
-  color: <%= superhighlight %>; 
+  color: <%= superhighlight %>;
   padding: 0;
   margin: 0 0 0 2px; /* Y A alignment hack ? */
 }
 
-li.hmenu-selected > .hmenu-bullet, 
+li.hmenu-selected > .hmenu-bullet,
 li.hmenu-selected > .hmenu-bullet-nochildren {
   color: <%= superhighlight %>;
 }
 
 /* border-aligment hack... */
 ul.hmenu li.hmenu-selected, ul.hmenu-submenu li.hmenu-selected {
-  border-left: 1px <%= superhighlight %> dashed; 
+  border-left: 1px <%= superhighlight %> dashed;
   padding-left: 4px;  /* 4px + 1px = 5px */
 }
 ul.hmenu li, ul.hmenu-submenu li {
@@ -303,13 +303,13 @@ a.img, a.img:hover, a img  {
   background: transparent;
 }
 
-.superhighlight a {
+.superhighlight a, a .superhighlight {
   color: <%= superhighlight %>;
 }
 
-.superhighlight a:hover {
+.superhighlight a:hover, a:hover .superhighlight {
   color: white;
-  background: <%= superhighlight %>;
+  background: <%= highlight %>;
 }
 
 table {
@@ -322,7 +322,7 @@ table caption {
 }
 
 table tr th {
-  border:0; 
+  border:0;
   text-align: center;
   padding: 0 1em;
 }
@@ -332,7 +332,7 @@ table tr td, table tr th, table thead tr th, table tbody tr td {
 }
 
 table tr td, table tr th, fieldset, .table-cell-bg, ul[role="tablist"], .th-like {
-  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png"); 
+  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png");
   background-attachment: fixed;
 }
 
@@ -415,6 +415,11 @@ table tr td div {
   margin: 0.3em 0;
 }
 
+td.num {
+  text-align: right;
+  padding-right: 1ex;
+}
+
 .th-like {
   font-style: normal;
   font-weight: bold;
@@ -454,7 +459,7 @@ button[disabled] {
   border: 1px <%= superlowlight %> solid;
 }
 
-button[disabled] img { /* CSS3 */ 
+button[disabled] img { /* CSS3 */
   opacity: 0.4; /* Firefox */
   filter: alpha(opacity=40); /* MSIE */
 }
@@ -470,7 +475,7 @@ input[disabled] {
 
 ul li ul li .hmenu-content  {
   font-size: 97%;
-} 
+}
 
 div#sidebar ul {
   font-weight: bold;
@@ -478,7 +483,7 @@ div#sidebar ul {
 
 li {
   margin: 0.2em 0;
-} 
+}
 
 li.hmenu-item, li.hmenu-submenu {
   margin-top: 0.5em;
