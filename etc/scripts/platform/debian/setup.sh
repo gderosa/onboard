@@ -3,19 +3,24 @@
 # This assumes that the user
 # OnBoard/Margay will run-as
 # already exists in the system and can sudo,
-# and software is copied / placed in the relevant directory with proper
-# ownership/permissions. This script takes
-# control from there.
+# and the current software project
+# is copied / placed in the relevant directory with proper
+# ownership/permissions.
+# This script takes control from there.
 # Another script may be implemented for that very initial
 # bootstrap instead, and will likely not be used by Vagrant but only for
 # deployment on real hardware or "naked" VMs.
 
 # echo $* # DEBUG
 
+
 PROJECT_ROOT=${1:-`pwd`}
 APP_USER=${2:-'onboard'}
 
 CONFDIR=~$APP_USER/.onboard
+
+export DEBIAN_FRONTEND=noninteractive
+
 
 install_conffiles() {
     # See README file in doc/sysadm/examples/ .
@@ -65,6 +70,7 @@ disable_dhcpcd_master() {
 }
 
 setup_nginx() {
+    apt-get -y remove lighttpd
     apt-get -y install nginx-light ssl-cert
     rm -fv /etc/nginx/sites-enabled/default  # just a symlink
     install -bvC -m 644 doc/sysadm/examples/etc/nginx/sites-available/margay /etc/nginx/sites-available/
@@ -72,8 +78,6 @@ setup_nginx() {
     systemctl reload nginx
 }
 
-
-export DEBIAN_FRONTEND=noninteractive
 
 cd $PROJECT_ROOT
 
@@ -168,4 +172,9 @@ cd $PROJECT_ROOT  # Apparently needed...
 setup_nginx
 
 # Remove packages conflicting with our DHCP management
-dpkg -l | egrep '^i.\s+wicd-daemon' && apt-get -y remove wicd-daemon || true
+if (dpkg -l | egrep '^i.\s+wicd-daemon');
+then
+    apt-get -y remove wicd-daemon
+fi
+
+apt-get -y autoremove
