@@ -78,11 +78,26 @@ setup_nginx() {
     systemctl reload nginx
 }
 
+upgrade_to_bullseye() {
+    SOURCES_LIST='/etc/apt/sources.list'
+    if (egrep '^[^#]+buster' $SOURCES_LIST); then
+        cp $SOURCES_LIST $SOURCES_LIST.buster
+        sed -e 's/buster/bullseye/g' $SOURCES_LIST.buster > $SOURCES_LIST
+        apt-get update
+        apt-get -y dist-upgrade
+        apt-get -y upgrade
+    fi
+}
+
 
 cd $PROJECT_ROOT
 
 apt-get update
 apt-get -y upgrade
+
+# Remove when we can directly switch to a bullseye vagrant box and a bare-metal Debian iso.
+upgrade_to_bullseye
+
 apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
 # Optional, but useful tools when ssh'ing
 apt-get -y install vim-nox mc
@@ -172,7 +187,7 @@ cd $PROJECT_ROOT  # Apparently needed...
 setup_nginx
 
 # Remove packages conflicting with our DHCP management
-if (dpkg -l | egrep '^i.\s+wicd-daemon');
+if (dpkg -l | egrep '^i.\s+wicd-daemon')
 then
     apt-get -y remove wicd-daemon
 fi
