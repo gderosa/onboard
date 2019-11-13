@@ -1,3 +1,5 @@
+DEBIAN_FRONTEND=noninteractive
+
 SOURCES_LIST='/etc/apt/sources.list'
 
 backup_sources_list() {
