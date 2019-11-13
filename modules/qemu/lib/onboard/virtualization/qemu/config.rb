@@ -154,7 +154,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             h[:http_params]['disk'].each_with_index do |hd, idx|
               if hd['file']
                 default = {
-                  'serial'  => generate_drive_serial,
+                  # 'serial'  => generate_drive_serial,  # option remove in QEMU 4
                   'media'   => 'disk',
                 }
 
@@ -178,7 +178,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             end
             @cmd['opts']['-drive'] ||= []
             @cmd['opts']['-drive'] << {
-              'serial'=> generate_drive_serial,
+              # 'serial'=> generate_drive_serial,  # removed from qemu 4
               'file'  => (
                 self.class.absolute_path(h[:http_params]['cdrom']) if
                     h[:http_params]['cdrom'] =~ /\S/
