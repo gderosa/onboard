@@ -189,7 +189,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               'unit'      => 0,         # Master
             }
             @cmd['opts']['-nic'] ||= []
-            valid_netifs = h[:http_params]['net'].reject do |netif_h|
+            valid_netifs = h[:http_params]['nic'].reject do |netif_h|
               netif_h['type'] =~ /^\s*(none)?\s*$/
             end
             if valid_netifs.length == 0

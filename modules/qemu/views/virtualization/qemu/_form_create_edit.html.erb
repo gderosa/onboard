@@ -86,28 +86,28 @@
   extra_nics  = 1 # TODO: move on top
   min_nics    = 3 # TODO: move on top
 
-  formvals['net'] ||= []
-  nics_max = [formvals['net'].length + extra_nics, min_nics].max
+  formvals['nic'] ||= []
+  nics_max = [formvals['nic'].length + extra_nics, min_nics].max
 
   random_macs               = []
   0.upto(nics_max-1) do |i|
     random_macs << OnBoard::V12n::QEMU::Network::NIC::MAC.random
   end
   random_macs.sort!
-  formvals['net']           ||= []
-  formvals['net'][0]        ||= {
+  formvals['nic']           ||= []
+  formvals['nic'][0]        ||= {
     'type'    => 'user',
     'ifname'  => '[auto]',
     'macaddr' => random_macs.first.to_s.upcase
   }
   1.upto(nics_max-1) do |i|
-    formvals['net'][i] ||= {
+    formvals['nic'][i] ||= {
       'type'    => 'none',
       'ifname'  => '[auto]',
       'macaddr' => random_macs[i].to_s.upcase
     }
   end
-  formvals['net'].each do |fv|
+  formvals['nic'].each do |fv|
     fv['ifname']  ||= '[auto]'
     fv['macaddr'] ||= '[auto]'
   end
@@ -312,7 +312,7 @@
               <%
                 subdir_show_as = subdir
                 # TODO: DRY: implement a library method
-                if subdir =~ %r{^[^/]*net[^/]*/([^/]+)/([^/]+)/([^/]+)}
+                if subdir =~ %r{^[^/]*nic[^/]*/([^/]+)/([^/]+)/([^/]+)}
                   proto, host, vol = $1, $2, $3
                   subdir_show_as = "#{proto}://#{host}/#{vol}"
                 end
@@ -553,36 +553,36 @@
       </tr>
     </thead>
     <tbody>
-      <% nn = formvals['net'].length - 1 %>
+      <% nn = formvals['nic'].length - 1 %>
       <% 0.upto nn do |n| %>
         <tr>
           <td>
-            <select onclick="javascript:qemuNetIfControls();" id="net[<%= n %>][type]" name="net[][type]">
-              <option <%= 'selected' if formvals['net'][n]['type'] == 'none' %> value="none">(none)</option>
-              <option <%= 'selected' if formvals['net'][n]['type'] == 'user' %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
-              <option <%= 'selected' if formvals['net'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
+            <select onclick="javascript:qemuNetIfControls();" id="nic[<%= n %>][type]" name="nic[][type]">
+              <option <%= 'selected' if formvals['nic'][n]['type'] == 'none' %> value="none">(none)</option>
+              <option <%= 'selected' if formvals['nic'][n]['type'] == 'user' %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
+              <option <%= 'selected' if formvals['nic'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
             </select>
           </td>
           <td style="text-align:center;">
-            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="<%= formvals['net'][n]['ifname'] %>" style="width:95%"/>
+            <input type="text" maxlength="15" id="nic[<%= n %>][ifname]" name="nic[][ifname]" value="<%= formvals['nic'][n]['ifname'] %>" style="width:95%"/>
           </td>
           <td>
-            <select id="net[<%= n %>][bridge]" name="net[][bridge]">
+            <select id="nic[<%= n %>][bridge]" name="nic[][bridge]">
               <option value="">(none)</option>
               <% all_bridges.each do |br| %>
-                <option <%= 'selected' if br.name == formvals['net'][n]['bridge'] %> value="<%= br.name %>"><%= br.name %></option>
+                <option <%= 'selected' if br.name == formvals['nic'][n]['bridge'] %> value="<%= br.name %>"><%= br.name %></option>
               <% end %>
             </select>
           </td>
           <td>
-            <select id="net[<%= n %>][model]" name="net[][model]">
+            <select id="nic[<%= n %>][model]" name="nic[][model]">
               <option value="">(default)</option>
               <% OnBoard::V12n::QEMU::Network::NIC.models.sort.each do |model| %>
-                <option <%= 'selected' if model == formvals['net'][n]['model'] %> value="<%= model %>"><%= model %></option>
+                <option <%= 'selected' if model == formvals['nic'][n]['model'] %> value="<%= model %>"><%= model %></option>
               <% end %>
             </select>
           </td>
-          <td><input type="text" id="net[<%= n %>][macaddr]" name="net[][macaddr]" value="<%= formvals['net'][n]['macaddr'] %>"/></td>
+          <td><input type="text" id="nic[<%= n %>][macaddr]" name="nic[][macaddr]" value="<%= formvals['nic'][n]['macaddr'] %>"/></td>
         </tr>
       <% end %>
     </tbody>

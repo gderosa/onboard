@@ -211,16 +211,16 @@ class OnBoard
 
           # Network interfaces
           if opts['-nic'].respond_to? :each
-            opts['-nic'].each do |net|
-              net_args = [ net['type'] ]
-              net.each_pair do |k, v|
-                net_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
+            opts['-nic'].each do |nic|
+              nic_args = [ nic['type'] ]
+              nic.each_pair do |k, v|
+                nic_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
               end
-              if net['type'] == 'tap'
-                net_args << 'script=no'
-                net_args << 'downscript=no'
+              if nic['type'] == 'tap'
+                nic_args << 'script=no'
+                nic_args << 'downscript=no'
               end
-              cmdline << '-nic' << ' ' << net_args.join(',') << ' '
+              cmdline << '-nic' << ' ' << nic_args.join(',') << ' '
             end
           end
 
