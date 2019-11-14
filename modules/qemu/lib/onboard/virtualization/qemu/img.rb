@@ -70,7 +70,7 @@ class OnBoard
         def snapshots
           list = []
           if @file and (File.exists? @file or @file.is_uri?)
-            cmd = %Q{qemu-img snapshot -l "#{@file}"}
+            cmd = %Q{qemu-img snapshot -U -l "#{@file}"}
             out = `sudo #{cmd}` # sudo to access gluster://
             out.each_line do |line|
               if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/
@@ -90,7 +90,7 @@ class OnBoard
         def info
           h = {}
           if @file and (File.exists? @file or @file.is_uri?)
-            `sudo qemu-img info "#{@file}"`.each_line do |line|
+            `sudo qemu-img info -U "#{@file}"`.each_line do |line|
               break if line =~ /^\s*Snapshot list:/
               if line =~ /([^:]+):([^:]+)/
                 k = $1
