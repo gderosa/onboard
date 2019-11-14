@@ -232,7 +232,6 @@
               <% vm.config['-net'].each do |netif| %>
                 <% next if netif['type'] == 'nic' %>
                 <tr>
-                  <td class="vlan">VLAN#<%= netif['vlan'] %></td>
                   <td class="ifname">
                     <em><%= netif['type'] %></em><%=
                       if netif['ifname'] =~ /\S/

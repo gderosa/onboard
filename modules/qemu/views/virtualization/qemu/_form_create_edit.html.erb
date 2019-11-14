@@ -64,23 +64,6 @@
       formvals['smp']['n'] = vm.config['-smp']['n'].to_i
     end
 
-    # Now, the -net machinery: there are two (or more???) -net Hashes for
-    # each row in the form: -net nic,... -net tap,... , or
-    # -net nic,... -net user,... and so...
-    #
-    # Do as follows: for each -net nic, associate th first -net (tap|user)
-    # with same VLAN. Besides, does it make sense to have several host TAPs
-    # on the same QEMU VLAN? I guess, no...
-
-    formvals['net'] = []
-
-    vm.config['-net'].select{|x| x['type'] == 'nic'}.each do |nic|
-      hostside = vm.config['-net'].detect do |x|
-        x['vlan'] == nic['vlan'] and not %w{none nic}.include? x['type']
-      end
-      formvals['net'] << nic.merge( hostside )
-    end
-
   end
 
   next_suggested_slot = OnBoard::V12n::QEMU::Config::Drive.next_slot(hd_drives)
@@ -93,7 +76,7 @@
 
 
   # Some defaults:
-  formvals['m']             ||= 348
+  formvals['m']             ||= 512
   formvals['vnc']           ||= ":#{vnc_available.first}"
   formvals['spice']         ||= {}
   formvals['spice']['port'] ||= spice_available.first
@@ -114,14 +97,12 @@
   formvals['net']           ||= []
   formvals['net'][0]        ||= {
     'type'    => 'user',
-    'vlan'    => '0',
     'ifname'  => '[auto]',
     'macaddr' => random_macs.first.to_s.upcase
   }
   1.upto(nics_max-1) do |i|
     formvals['net'][i] ||= {
       'type'    => 'none',
-      'vlan'    => i.to_s,
       'ifname'  => '[auto]',
       'macaddr' => random_macs[i].to_s.upcase
     }
@@ -547,7 +528,6 @@
   <table id="net">
     <thead>
       <tr>
-        <th>VLAN</th>
         <th>Type</th>
         <th>
           Name (visible in the host)
@@ -576,13 +556,6 @@
       <% nn = formvals['net'].length - 1 %>
       <% 0.upto nn do |n| %>
         <tr>
-          <td>
-            <select id="net[<%= n %>][vlan]" name="net[][vlan]">
-              <% 0.upto nn do |vlan| %>
-                <option <%= 'selected' if formvals['net'][n]['vlan'] == vlan.to_s %> value="<%= vlan %>"><%= vlan %></option>
-              <% end %>
-            </select>
-          </td>
           <td>
             <select onclick="javascript:qemuNetIfControls();" id="net[<%= n %>][type]" name="net[][type]">
               <option <%= 'selected' if formvals['net'][n]['type'] == 'none' %> value="none">(none)</option>

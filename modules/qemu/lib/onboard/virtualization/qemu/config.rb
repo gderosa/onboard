@@ -201,13 +201,11 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                 end
                 @cmd['opts']['-net'] << {
                   'type'    => 'nic',
-                  #'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
                   'model'   => netif_h['model'],
                   'macaddr' => netif_h['macaddr'],
                 }
                 @cmd['opts']['-net'] << {
                   'type'    => netif_h['type'],
-                  #'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
                   'ifname'  => netif_h['ifname'] || generate_tapname(netif_h),
                   'bridge'  => netif_h['bridge'],
                 }

@@ -28,21 +28,18 @@
     while(typeSelect = document.getElementById('net[' + i + '][type]')) {
       switch(typeSelect.value) {
         case 'none':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = true;
           document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
           document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
           document.getElementById('net[' + i + '][model]'   ).disabled = true;
           document.getElementById('net[' + i + '][macaddr]' ).disabled = true;
           break;
         case 'user':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
           document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
           document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
           document.getElementById('net[' + i + '][model]'   ).disabled = false;
           document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
           break;
         case 'tap':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
           document.getElementById('net[' + i + '][ifname]'  ).disabled = false;
           document.getElementById('net[' + i + '][bridge]'  ).disabled = false;
           document.getElementById('net[' + i + '][model]'   ).disabled = false;
