@@ -188,23 +188,23 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               'bus'       => 1,         # Secondary
               'unit'      => 0,         # Master
             }
-            @cmd['opts']['-net'] ||= []
+            @cmd['opts']['-nic'] ||= []
             valid_netifs = h[:http_params]['net'].reject do |netif_h|
               netif_h['type'] =~ /^\s*(none)?\s*$/
             end
             if valid_netifs.length == 0
-              @cmd['opts']['-net'] << {'type' => 'none'}
+              @cmd['opts']['-nic'] << {'type' => 'none'}
             else
               valid_netifs.each do |netif_h|
                 netif_h.each_pair do |k, v|
                   netif_h[k] = nil if (v =~ /^\s*(\[auto\])?\s*$/)
                 end
-                @cmd['opts']['-net'] << {
+                @cmd['opts']['-nic'] << {
                   'type'    => 'nic',
                   'model'   => netif_h['model'],
                   'macaddr' => netif_h['macaddr'],
                 }
-                @cmd['opts']['-net'] << {
+                @cmd['opts']['-nic'] << {
                   'type'    => netif_h['type'],
                   'ifname'  => netif_h['ifname'] || generate_tapname(netif_h),
                   'bridge'  => netif_h['bridge'],
@@ -249,7 +249,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
           count = 0
           loop do
             name = "#{base}.#{sprintf('%02x', count)}"
-            already_existing_names = @cmd['opts']['-net'].map{|x| x['ifname']}
+            already_existing_names = @cmd['opts']['-nic'].map{|x| x['ifname']}
             if already_existing_names.include? name
               count += 1
             else

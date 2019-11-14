@@ -20,7 +20,7 @@ class OnBoard
               exe = QEMU::Config::Common.get['exe']
               # Assumption: something like
               #   qemu: Supported NIC models: ne2k_pci,i82551,i82557b,i82559er,rtl8139,e1000,pcnet,virtio
-              cmd_output = `#{exe} -net nic,model=? 2>&1`
+              cmd_output = `#{exe} -nic nic,model=? 2>&1`
               if cmd_output =~ /NIC models: ([^\s\n]+)/mi
                 model_list = $1
                 model_list.split(',')

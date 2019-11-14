@@ -210,16 +210,18 @@ class OnBoard
           end
 
           # Network interfaces
-          opts['-net'].each do |net|
-            net_args = [ net['type'] ]
-            net.each_pair do |k, v|
-              net_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
+          if opts['-nic'].respond_to? :each
+            opts['-nic'].each do |net|
+              net_args = [ net['type'] ]
+              net.each_pair do |k, v|
+                net_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
+              end
+              if net['type'] == 'tap'
+                net_args << 'script=no'
+                net_args << 'downscript=no'
+              end
+              cmdline << '-nic' << ' ' << net_args.join(',') << ' '
             end
-            if net['type'] == 'tap'
-              net_args << 'script=no'
-              net_args << 'downscript=no'
-            end
-            cmdline << '-net' << ' ' << net_args.join(',') << ' '
           end
 
           # (Host) serial ports
@@ -254,7 +256,7 @@ class OnBoard
 
         def setup_networking(*opts)
           uid = Process.uid
-          @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap|
+          @config['-nic'].select{|x| x['type'] == 'tap'}.each do |tap|
             if opts.include? :wait
               wait_for :sleep => 0.8, :timeout => 10.0 do
 	        System::Command.run(
