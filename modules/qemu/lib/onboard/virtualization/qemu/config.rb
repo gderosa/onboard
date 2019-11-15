@@ -203,8 +203,8 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   'type'    => netif_h['type'],
                   'ifname'  => netif_h['ifname'] || generate_tapname(netif_h),
                   'model'   => netif_h['model'],
-                  'mac'     => netif_h['macaddr'],
-                  'br'      => netif_h['bridge'],
+                  'mac'     => netif_h['mac'],
+                  'br'      => netif_h['br'],
                 }
               end
             end

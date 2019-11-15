@@ -86,7 +86,7 @@
   extra_nics  = 1 # TODO: move on top
   min_nics    = 3 # TODO: move on top
 
-  formvals['nic'] ||= []
+  formvals['nic'] = (vm.config['-nic'] || [])
   nics_max = [formvals['nic'].length + extra_nics, min_nics].max
 
   random_macs               = []
@@ -94,22 +94,23 @@
     random_macs << OnBoard::V12n::QEMU::Network::NIC::MAC.random
   end
   random_macs.sort!
+  pp formvals['nic'] # DEBUG
   formvals['nic']           ||= []
   formvals['nic'][0]        ||= {
     'type'    => 'user',
     'ifname'  => '[auto]',
-    'macaddr' => random_macs.first.to_s.upcase
+    'mac' => random_macs.first.to_s.upcase
   }
   1.upto(nics_max-1) do |i|
     formvals['nic'][i] ||= {
       'type'    => 'none',
       'ifname'  => '[auto]',
-      'macaddr' => random_macs[i].to_s.upcase
+      'mac' => random_macs[i].to_s.upcase
     }
   end
   formvals['nic'].each do |fv|
     fv['ifname']  ||= '[auto]'
-    fv['macaddr'] ||= '[auto]'
+    fv['mac'] ||= '[auto]'
   end
   formvals['smp']       ||= {}
   formvals['smp']['n']  ||= 1
@@ -567,10 +568,10 @@
             <input type="text" maxlength="15" id="nic[<%= n %>][ifname]" name="nic[][ifname]" value="<%= formvals['nic'][n]['ifname'] %>" style="width:95%"/>
           </td>
           <td>
-            <select id="nic[<%= n %>][bridge]" name="nic[][bridge]">
+            <select id="nic[<%= n %>][br]" name="nic[][br]">
               <option value="">(none)</option>
               <% all_bridges.each do |br| %>
-                <option <%= 'selected' if br.name == formvals['nic'][n]['bridge'] %> value="<%= br.name %>"><%= br.name %></option>
+                <option <%= 'selected' if br.name == formvals['nic'][n]['br'] %> value="<%= br.name %>"><%= br.name %></option>
               <% end %>
             </select>
           </td>
@@ -582,7 +583,7 @@
               <% end %>
             </select>
           </td>
-          <td><input type="text" id="nic[<%= n %>][macaddr]" name="nic[][macaddr]" value="<%= formvals['nic'][n]['macaddr'] %>"/></td>
+          <td><input type="text" id="nic[<%= n %>][mac]" name="nic[][mac]" value="<%= formvals['nic'][n]['mac'] %>"/></td>
         </tr>
       <% end %>
     </tbody>

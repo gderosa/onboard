@@ -29,21 +29,21 @@
       switch(typeSelect.value) {
         case 'none':
           document.getElementById('nic[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('nic[' + i + '][bridge]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = true;
           document.getElementById('nic[' + i + '][model]'   ).disabled = true;
-          document.getElementById('nic[' + i + '][macaddr]' ).disabled = true;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = true;
           break;
         case 'user':
           document.getElementById('nic[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('nic[' + i + '][bridge]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = true;
           document.getElementById('nic[' + i + '][model]'   ).disabled = false;
-          document.getElementById('nic[' + i + '][macaddr]' ).disabled = false;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = false;
           break;
         case 'tap':
           document.getElementById('nic[' + i + '][ifname]'  ).disabled = false;
-          document.getElementById('nic[' + i + '][bridge]'  ).disabled = false;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = false;
           document.getElementById('nic[' + i + '][model]'   ).disabled = false;
-          document.getElementById('nic[' + i + '][macaddr]' ).disabled = false;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = false;
           break;
       }
       i++;
