@@ -71,9 +71,18 @@ class OnBoard
           list = []
           if @file and (File.exists? @file or @file.is_uri?)
             cmd = %Q{qemu-img snapshot -U -l "#{@file}"}
-            out = `sudo #{cmd}` # sudo to access gluster://
+            #out = `sudo #{cmd}` # sudo to access gluster://
+            out = `#{cmd}`
+            # E.g.:
+            # Snapshot list:
+            # ID        TAG                 VM SIZE                DATE       VM CLOCK
+            # 1         test_snap0_off          0 B 2019-11-15 09:13:28   00:00:00.000
+            # 2         test_snap1_off          0 B 2019-11-15 09:15:19   00:00:00.000
+            # 3         test3off                0 B 2019-11-15 21:00:34   00:00:00.000
+            # 4         test1on             257 MiB 2019-11-15 21:43:00   00:00:34.011
+            # 5         restore_me          260 MiB 2019-11-15 22:09:33   00:27:04.415
             out.each_line do |line|
-              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/
+              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+([\d\.]+\s+[TGMkiB]+)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/
                 list << Snapshot.new(
                   :id       =>                                $1.to_i,
                   :tag      =>                                $2,
