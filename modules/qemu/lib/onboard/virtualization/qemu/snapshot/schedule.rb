@@ -32,7 +32,8 @@ class OnBoard
 h[:http_params]['snapshot_schedule']['delete_older_than_days']
 
               vmid      = h[:http_params]['vmid']
-              snapname  = "`date '+scheduled_\\%y\\%m\\%d_\\%H\\%M'`"
+              # shorter name to avoid qemu-img snapshot -l bug...
+              snapname  = "`date '+sched.\\%y\\%m\\%d.\\%H\\%M'`"
                   # Will be replaced by the shell at time of snapshotting.
                   # Cron comment sign '%' are escaped.
                   # TODO: patch CronEdit to do such cron-escaping trasparently?
