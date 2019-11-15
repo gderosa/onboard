@@ -18,15 +18,30 @@ class OnBoard
 
             def get_models
               exe = QEMU::Config::Common.get['exe']
-              # Assumption: something like
-              #   qemu: Supported NIC models: ne2k_pci,i82551,i82557b,i82559er,rtl8139,e1000,pcnet,virtio
-              cmd_output = `#{exe} -nic nic,model=? 2>&1`
-              if cmd_output =~ /NIC models: ([^\s\n]+)/mi
-                model_list = $1
-                model_list.split(',')
-              else
-                []
+              model_list = []
+
+              # Assumption: something like:
+              #
+              # Supported NIC models:
+              # e1000
+              # e1000-82544gc
+              # e1000-82545em
+              # e1000e
+              # i82550
+              # i82551
+              # [...]
+              # virtio-net-pci
+              # virtio-net-pci-non-transitional
+              # virtio-net-pci-transitional
+              # vmxnet3
+              cmd_output = `#{exe} -nic model=help 2>&1`
+
+              cmd_output.each_line do |l|
+                next if l =~ /\S\s+\S/
+                l.strip!
+                model_list << l
               end
+              return model_list
             end
 
           end
