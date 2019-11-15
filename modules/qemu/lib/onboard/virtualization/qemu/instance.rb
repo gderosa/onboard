@@ -259,16 +259,27 @@ class OnBoard
           @config['-nic'].select{|x| x['type'] == 'tap'}.each do |tap|
             if opts.include? :wait
               wait_for :sleep => 0.8, :timeout => 10.0 do
-	        System::Command.run(
+	              System::Command.run(
                   "ip link set up dev #{tap['ifname']}",
                   :sudo,
                 )[:ok]
               end
             end
-            System::Command.run(
-                "brctl addif #{tap['bridge']} #{tap['ifname']}",
+            if tap['br'] =~ /\S/
+              if opts.include? :wait
+                wait_for :sleep => 0.8, :timeout => 10.0 do
+                  System::Command.run(
+                    "brctl addif #{tap['br']} #{tap['ifname']}",
+                    :sudo
+                  )[:ok]
+                end
+              end
+            else  # TODO: DRY
+              System::Command.run(
+                "brctl addif #{tap['br']} #{tap['ifname']}",
                 :sudo
-            ) if tap['bridge'] =~ /\S/
+              )
+            end
           end
         end
 
