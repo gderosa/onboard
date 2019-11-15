@@ -10,10 +10,15 @@
   all_bridges         = all_netifs.select     { |i| i.bridge? }
   all_running_ifnames = all_netifs.map        { |i| i.name    }
 
+  vncurlpart = vm.config['-vnc']
+  if vm.config['-vnc'] =~ /(\d+)/
+    vncurlpart = ':' + ($1.to_i + 5900).to_s
+  end
+
   # Please make sure a possible reverse proxy does set X-Forwarded-Host -- https://linuxize.com/post/nginx-reverse-proxy/
   # Sinatra/Rack's request.host reads it, if present.
   vnc_uri             = (
-      "vnc://#{request.host}#{vm.config['-vnc']}" if vm.config['-vnc'] =~ /\d/ )
+      "vnc://#{request.host}#{vncurlpart}" if vm.config['-vnc'] =~ /\d/ )
   spice_uri           = (
       "spice://#{request.host}:#{vm.config['-spice']['port']}" if
           vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'].to_i > 0 )
