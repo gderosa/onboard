@@ -557,7 +557,7 @@
       <% 0.upto nn do |n| %>
         <tr>
           <td>
-            <select onclick="javascript:qemuNetIfControls();" id="nic[<%= n %>][type]" name="nic[][type]">
+            <select onchange="javascript:qemuNetIfControls();" id="nic[<%= n %>][type]" name="nic[][type]">
               <option <%= 'selected' if formvals['nic'][n]['type'] == 'none' %> value="none">(none)</option>
               <option <%= 'selected' if formvals['nic'][n]['type'] == 'user' %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
               <option <%= 'selected' if formvals['nic'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
