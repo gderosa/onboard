@@ -86,7 +86,7 @@
   extra_nics  = 1 # TODO: move on top
   min_nics    = 3 # TODO: move on top
 
-  formvals['nic'] = (vm.config['-nic'] || [])
+  formvals['nic'] = (vm.respond_to? :config and vm.config['-nic'] or [])
   nics_max = [formvals['nic'].length + extra_nics, min_nics].max
 
   random_macs               = []
@@ -94,7 +94,6 @@
     random_macs << OnBoard::V12n::QEMU::Network::NIC::MAC.random
   end
   random_macs.sort!
-  pp formvals['nic'] # DEBUG
   formvals['nic']           ||= []
   formvals['nic'][0]        ||= {
     'type'    => 'user',
