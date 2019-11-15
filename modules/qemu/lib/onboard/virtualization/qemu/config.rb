@@ -200,14 +200,11 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
                   netif_h[k] = nil if (v =~ /^\s*(\[auto\])?\s*$/)
                 end
                 @cmd['opts']['-nic'] << {
-                  'type'    => 'nic',
-                  'model'   => netif_h['model'],
-                  'macaddr' => netif_h['macaddr'],
-                }
-                @cmd['opts']['-nic'] << {
                   'type'    => netif_h['type'],
                   'ifname'  => netif_h['ifname'] || generate_tapname(netif_h),
-                  'bridge'  => netif_h['bridge'],
+                  'model'   => netif_h['model'],
+                  'mac'     => netif_h['macaddr'],
+                  'br'      => netif_h['bridge'],
                 }
               end
             end

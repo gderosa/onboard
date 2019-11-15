@@ -214,7 +214,7 @@ class OnBoard
             opts['-nic'].each do |nic|
               nic_args = [ nic['type'] ]
               nic.each_pair do |k, v|
-                nic_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
+                nic_args << "#{k}=#{v}" if v and k != 'type'
               end
               if nic['type'] == 'tap'
                 nic_args << 'script=no'
