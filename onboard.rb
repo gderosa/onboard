@@ -12,6 +12,7 @@ require 'find'
 require 'logger'
 require 'etc'
 
+require 'onboard/constants'
 require 'onboard/exceptions'
 require 'onboard/extensions/object'
 require 'onboard/extensions/logger'
@@ -19,51 +20,18 @@ require 'onboard/menu/node'
 require 'onboard/system/command'
 require 'onboard/platform/debian'
 
-begin
-  require 'onboard/constants/custom'
-rescue LoadError
-end
-
 if Process.uid == 0
   fail 'OnBoard should not be run as root: use an user who can sudo with no-password instead!'
 end
 
 class OnBoard
-  LONGNAME          ||= 'OnBoard'
-  VERSION           = '2019.13.1'
-
-  PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
-
-  ROOTDIR           = File.dirname File.expand_path(__FILE__) unless defined? ROOTDIR
-  DATADIR = RWDIR = (
-      ENV['ONBOARD_RWDIR'] or
-      ENV['ONBOARD_DATADIR'] or
-      File.join(ENV['HOME'], '.onboard')
-  )
   FileUtils.mkdir_p RWDIR
   FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
-  CONFDIR             = File.join RWDIR, '/etc/config'
-  LOGDIR              = File.join RWDIR, '/var/log'
-  FILESDIR            = File.join ENV['HOME'], 'files' # mass storage...
-  # sometimes files are uploaded elsewhere, as best suitable
-  DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
-  LOGFILE_BASENAME    = 'onboard.log'
-  LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
-
-  VARRUN              ||= '/var/run/onboard'
-
-  VARLIB              ||= File.join RWDIR, 'var/lib'
-
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
-  # NOTE: we are re-defining a constant!
-  # ...really, it should not be a constant... :-(
-  # TODO TODO TODO ...
-  LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log') unless defined? LOGGER
 
   LOGGER.formatter = proc { |severity, datetime, progname, msg|
     "#{datetime} #{severity}: #{msg}\n"
   }
-
   LOGGER.level = Logger::INFO
   LOGGER.level = Logger::DEBUG if
       $0 == __FILE__ and not
@@ -71,6 +39,8 @@ class OnBoard
       # this is required because there is no Sinatra environment until
       # controller.rb is loaded (where OnBoard::Controller inherits
       # from Sinatra::Base)
+
+  PLATFORM = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
   MENU_ROOT = Menu::MenuNode.new('ROOT', {
     :href => '/',

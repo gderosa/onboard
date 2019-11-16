@@ -14,6 +14,8 @@ enable_onboard_modules() {
 	# touch glusterfs/.enable  # DEPRECATED
 }
 
+. $ONBOARD_ROOT/etc/scripts/platform/debian/_upgrade_to_bullseye.sh
+
 apt-get -y install qemu-system-x86 qemu-utils ruby-rmagick
 
 adduser $ONBOARD_USER kvm

@@ -210,16 +210,18 @@ class OnBoard
           end
 
           # Network interfaces
-          opts['-net'].each do |net|
-            net_args = [ net['type'] ]
-            net.each_pair do |k, v|
-              net_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
+          if opts['-nic'].respond_to? :each
+            opts['-nic'].each do |nic|
+              nic_args = [ nic['type'] ]
+              nic.each_pair do |k, v|
+                nic_args << "#{k}=#{v}" if v and k != 'type'
+              end
+              if nic['type'] == 'tap'
+                nic_args << 'script=no'
+                nic_args << 'downscript=no'
+              end
+              cmdline << '-nic' << ' ' << nic_args.join(',') << ' '
             end
-            if net['type'] == 'tap'
-              net_args << 'script=no'
-              net_args << 'downscript=no'
-            end
-            cmdline << '-net' << ' ' << net_args.join(',') << ' '
           end
 
           # (Host) serial ports
@@ -254,19 +256,30 @@ class OnBoard
 
         def setup_networking(*opts)
           uid = Process.uid
-          @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap|
+          @config['-nic'].select{|x| x['type'] == 'tap'}.each do |tap|
             if opts.include? :wait
               wait_for :sleep => 0.8, :timeout => 10.0 do
-	        System::Command.run(
+                System::Command.run(
                   "ip link set up dev #{tap['ifname']}",
                   :sudo,
                 )[:ok]
               end
             end
-            System::Command.run(
-                "brctl addif #{tap['bridge']} #{tap['ifname']}",
+            if tap['br'] =~ /\S/
+              if opts.include? :wait
+                wait_for :sleep => 0.8, :timeout => 10.0 do
+                  System::Command.run(
+                    "brctl addif #{tap['br']} #{tap['ifname']}",
+                    :sudo
+                  )[:ok]
+                end
+              end
+            else  # TODO: DRY
+              System::Command.run(
+                "brctl addif #{tap['br']} #{tap['ifname']}",
                 :sudo
-            ) if tap['bridge'] =~ /\S/
+              )
+            end
           end
         end
 

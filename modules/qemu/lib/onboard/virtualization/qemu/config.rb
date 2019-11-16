@@ -154,7 +154,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             h[:http_params]['disk'].each_with_index do |hd, idx|
               if hd['file']
                 default = {
-                  'serial'  => generate_drive_serial,
+                  # 'serial'  => generate_drive_serial,  # option remove in QEMU 4
                   'media'   => 'disk',
                 }
 
@@ -178,7 +178,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
             end
             @cmd['opts']['-drive'] ||= []
             @cmd['opts']['-drive'] << {
-              'serial'=> generate_drive_serial,
+              # 'serial'=> generate_drive_serial,  # removed from qemu 4
               'file'  => (
                 self.class.absolute_path(h[:http_params]['cdrom']) if
                     h[:http_params]['cdrom'] =~ /\S/
@@ -188,28 +188,23 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
               'bus'       => 1,         # Secondary
               'unit'      => 0,         # Master
             }
-            @cmd['opts']['-net'] ||= []
-            valid_netifs = h[:http_params]['net'].reject do |netif_h|
+            @cmd['opts']['-nic'] ||= []
+            valid_netifs = h[:http_params]['nic'].reject do |netif_h|
               netif_h['type'] =~ /^\s*(none)?\s*$/
             end
             if valid_netifs.length == 0
-              @cmd['opts']['-net'] << {'type' => 'none'}
+              @cmd['opts']['-nic'] << {'type' => 'none'}
             else
               valid_netifs.each do |netif_h|
                 netif_h.each_pair do |k, v|
                   netif_h[k] = nil if (v =~ /^\s*(\[auto\])?\s*$/)
                 end
-                @cmd['opts']['-net'] << {
-                  'type'    => 'nic',
-                  'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
-                  'model'   => netif_h['model'],
-                  'macaddr' => netif_h['macaddr'],
-                }
-                @cmd['opts']['-net'] << {
+                @cmd['opts']['-nic'] << {
                   'type'    => netif_h['type'],
-                  'vlan'    => netif_h['vlan'], # Could be a (non-numeric) String??
                   'ifname'  => netif_h['ifname'] || generate_tapname(netif_h),
-                  'bridge'  => netif_h['bridge'],
+                  'model'   => netif_h['model'],
+                  'mac'     => netif_h['mac'],
+                  'br'      => netif_h['br'],
                 }
               end
             end
@@ -251,7 +246,7 @@ h[:http_params]['spice'].respond_to?(:[]) && h[:http_params]['spice']['port'].to
           count = 0
           loop do
             name = "#{base}.#{sprintf('%02x', count)}"
-            already_existing_names = @cmd['opts']['-net'].map{|x| x['ifname']}
+            already_existing_names = @cmd['opts']['-nic'].map{|x| x['ifname']}
             if already_existing_names.include? name
               count += 1
             else

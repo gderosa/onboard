@@ -17,7 +17,7 @@ class OnBoard
           when String
             @string = arg
             set_raw_from_string
-          when Fixnum, Bignum
+          when Integer
             @raw = arg
             set_string_from_raw
           else

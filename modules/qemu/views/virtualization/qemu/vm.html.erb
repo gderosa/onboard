@@ -10,10 +10,15 @@
   all_bridges         = all_netifs.select     { |i| i.bridge? }
   all_running_ifnames = all_netifs.map        { |i| i.name    }
 
+  vncurlpart = vm.config['-vnc']
+  if vm.config['-vnc'] =~ /(\d+)/
+    vncurlpart = ':' + ($1.to_i + 5900).to_s
+  end
+
   # Please make sure a possible reverse proxy does set X-Forwarded-Host -- https://linuxize.com/post/nginx-reverse-proxy/
   # Sinatra/Rack's request.host reads it, if present.
   vnc_uri             = (
-      "vnc://#{request.host}#{vm.config['-vnc']}" if vm.config['-vnc'] =~ /\d/ )
+      "vnc://#{request.host}#{vncurlpart}" if vm.config['-vnc'] =~ /\d/ )
   spice_uri           = (
       "spice://#{request.host}:#{vm.config['-spice']['port']}" if
           vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'].to_i > 0 )
@@ -171,6 +176,14 @@
       drives_w_snapshots.each_pair do |drive_name, drive|
     %>
       <% drive['snapshots'].each do |snapshot| %>
+        <%
+          # This is without units...
+          snapshot_vmsize = 0.0
+          if snapshot.vmsize =~ /([\d\.]+)/
+            num = $1
+            snanpshot_vmsize = num.to_f
+          end
+        %>
         <tr>
           <form method="POST">
             <input type="hidden" name="_method" value="put"/>
@@ -180,11 +193,7 @@
             <td><%= snapshot.tag %></td>
             <td>
               <%=
-                if snapshot.vmsize == '0'
-                  'Disk Only'
-                else
-                  "VM, size=#{snapshot.vmsize}"
-                end
+                (snanpshot_vmsize == 0.0) ? 'Disk Only' : "VM, size=#{snapshot.vmsize}"
               %>
             </td>
             <td><%= snapshot.time %></td>

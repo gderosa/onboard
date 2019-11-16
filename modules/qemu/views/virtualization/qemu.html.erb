@@ -229,10 +229,9 @@
           <!-- Network Interfaces -->
           <td rowspan="2" class="vmnetwork">
             <table> <!-- nested table, yeah :-P -->
-              <% vm.config['-net'].each do |netif| %>
+              <% vm.config['-nic'].each do |netif| %>
                 <% next if netif['type'] == 'nic' %>
                 <tr>
-                  <td class="vlan">VLAN#<%= netif['vlan'] %></td>
                   <td class="ifname">
                     <em><%= netif['type'] %></em><%=
                       if netif['ifname'] =~ /\S/
@@ -246,7 +245,7 @@
                   </td>
                   <td class="bridge"><%= %Q{<em>Bridged to</em>: <a href="/network/bridges.html">#{netif['bridge']}</a>} if netif['bridge'] =~ /\S/ %></td>
                 </tr>
-              <% end if vm.config['-net'].respond_to? :each %>
+              <% end if vm.config['-nic'].respond_to? :each %>
             </table>
           </td>
 

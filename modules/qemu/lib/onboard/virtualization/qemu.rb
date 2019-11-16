@@ -11,7 +11,9 @@ class OnBoard
     module QEMU
 
       ROOTDIR ||= File.realpath File.join File.dirname(__FILE__), '..'
-      # TODO: do not hardcode so badly
+      # TODO: do not hardcode so badly / use a module constants.rb?
+      # NOTE: these are already defined in load.rb... except if used from standalone scripts e.g. bin/snapshot ...
+      CONFDIR = File.join(OnBoard::CONFDIR, 'virtualization/qemu') unless defined? QEMU::CONFDIR
       FILESDIR = OnBoard::FILESDIR
       BINDIR = ROOTDIR + '/bin'
 

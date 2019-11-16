@@ -25,28 +25,25 @@
   function qemuNetIfControls() {
     var i = 0;
     var typeSelect;
-    while(typeSelect = document.getElementById('net[' + i + '][type]')) {
+    while(typeSelect = document.getElementById('nic[' + i + '][type]')) {
       switch(typeSelect.value) {
         case 'none':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = true;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
-          document.getElementById('net[' + i + '][model]'   ).disabled = true;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = true;
+          document.getElementById('nic[' + i + '][ifname]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][model]'   ).disabled = true;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = true;
           break;
         case 'user':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
-          document.getElementById('net[' + i + '][model]'   ).disabled = false;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
+          document.getElementById('nic[' + i + '][ifname]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][model]'   ).disabled = false;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = false;
           break;
         case 'tap':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = false;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = false;
-          document.getElementById('net[' + i + '][model]'   ).disabled = false;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
+          document.getElementById('nic[' + i + '][ifname]'  ).disabled = false;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = false;
+          document.getElementById('nic[' + i + '][model]'   ).disabled = false;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = false;
           break;
       }
       i++;
