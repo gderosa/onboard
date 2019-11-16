@@ -46,6 +46,7 @@ unless vm
   exit 1
 end
 
+# Elements of Array ARGV are "frozen"
 snap_name = _snap_name_.strip
 
 if snap_name.size > 18
