@@ -1,10 +1,8 @@
 require 'logger'
 
-# TODO: move all constants here and DRY with root onboard.rb
-# At the moment this is mostly useful from standalone scripts like openvpn --up etc.
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2019.13.1'
+  VERSION           = '2019.14'
   FILESDIR            ||= File.join ENV['HOME'], 'files' # mass storage...
   ROOTDIR = File.join(File.dirname(__FILE__), '../..')
   RWDIR = (

@@ -1,3 +1,8 @@
+2019.14
+
+* QEMU 3/4 support
+* Setup scripts with option to upgrade to Debian 11/bullseye, thus including QEMU 4
+
 2019.13.1
 
 * Fix setup scripts
@@ -12,7 +17,7 @@ possible as a minor version number. It's kinda semantic versioning :)
 
 2019.12.05
 
-* TLS/easy-rsa: recommend/default a 2048 key size 
+* TLS/easy-rsa: recommend/default a 2048 key size
 
 2019.12.04
 
