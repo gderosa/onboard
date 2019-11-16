@@ -52,7 +52,9 @@ class OnBoard
         end
 
         def disk_only?
-          vmsize == '0'
+          num = 0.0
+          vmsize =~ /([\d\.]+)/ && num = $1.to_f
+          return (num == 0.0)
         end
 
         def full_vm?
