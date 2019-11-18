@@ -43,6 +43,7 @@ if (egrep '^[^#]+buster' $SOURCES_LIST > /dev/null); then
     read yn
     case $yn in
         [Yy] )
+            backup_sources_list
             modified_sources_list_content > $SOURCES_LIST
             ;;
         [Nn] )
@@ -50,9 +51,8 @@ if (egrep '^[^#]+buster' $SOURCES_LIST > /dev/null); then
         * )
             exit
     esac
+    apt-get update
+    apt-get -y dist-upgrade
+    apt-get -y upgrade
+    apt-get -y autoremove
 fi
-
-apt-get update
-apt-get -y dist-upgrade
-apt-get -y upgrade
-apt-get -y autoremove
