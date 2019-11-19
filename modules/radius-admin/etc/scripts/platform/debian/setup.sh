@@ -12,7 +12,7 @@ FREERADIUS_CONF_BAK=/etc/freeradius.before-margay
 cd $PROJECT_ROOT
 
 # apt-get update
-apt-get -y install freeradius freeradius-mysql mysql-server ruby-sequel ruby-mysql2 diffutils \
+apt-get -y install freeradius freeradius-mysql default-mysql-server ruby-sequel ruby-mysql2 diffutils \
     libjson-c3 libssl1.1 iptables haserl adduser  # dependencies of the self-built coova-chilli deb package
 
 # --force-confnew will overwrite (without prompting) files in /etc/default and similar.
