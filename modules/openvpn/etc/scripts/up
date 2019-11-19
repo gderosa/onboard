@@ -28,12 +28,16 @@
 
 # require 'pp' # DEBUG
 
+require 'onboard/logger'
+OnBoard.use_default_logfile  # instead of STDOUT
+
 require 'onboard/network/interface'
 require 'onboard/network/routing'
 
-ifname = ARGV[0]
 
-puts "PATH=#{ENV['PATH']}"
+OnBoard::LOGGER.info "#{__FILE__} #{ARGV.join(' ')}  started."
+
+ifname = ARGV[0]
 
 all_interfaces = OnBoard::Network::Interface.getAll
 
@@ -87,3 +91,4 @@ OnBoard::Network::Routing::Route.restore_static(
   :file => ENV['STATIC_ROUTES_DATFILE']
 )
 
+OnBoard::LOGGER.info "#{__FILE__} #{ARGV.join(' ')} finished."

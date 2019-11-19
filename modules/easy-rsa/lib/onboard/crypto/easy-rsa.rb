@@ -46,12 +46,13 @@ class OnBoard
         def initialize(name)
           @name = name
           @sslpki = SSL::PKI.new(name)
+          @@dh_mutexes[@name] ||= {}
         end
 
         # Mutual exclusion for threads creating Diffie-Hellman parameters
         def dh_mutex(n)
-          @@dh_mutexes[n] = Mutex.new unless @@dh_mutexes[n]
-          return @@dh_mutexes[n]
+          @@dh_mutexes[@name][n] = Mutex.new unless @@dh_mutexes[@name][n]
+          return @@dh_mutexes[@name][n]
         end
 
         def datadir
@@ -85,7 +86,19 @@ export KEY_SIZE=#{n}
 ./#{build_dh}
 EOF
           FileUtils.mkdir_p @sslpki.datadir unless Dir.exists? @sslpki.datadir
-          FileUtils.cp(keydir + '/dh' + n.to_s + '.pem', @sslpki.datadir)
+          dhfile_orig = keydir + '/dh' + n.to_s + '.pem'
+          if File.exists? dhfile_orig
+            # Not sure why the above "if" is needed:
+            # is another thread creating the dh file?
+            # then mutex does not work?
+            # The answer probably lies in the fact that the controller checks existence in etc/crypto/ssl
+            # instead of var/lib/crypto/easy-rsa (TODO: fix that);
+            # so an extra thread may be queued
+            FileUtils.cp(dhfile_orig, @sslpki.datadir)
+            LOGGER.info "#{self.class}: generated #{dhfile_orig} and copied into #{@sslpki.datadir}/ ."
+          else
+            LOGGER.warn "#{self.class}: A thread supposed to create #{dhfile_orig} did not find it; this may be harmless if another thread sorts it."
+          end
         end
 
         def getAllDH
@@ -95,8 +108,8 @@ EOF
             dh_file = "dh#{n}.pem"
             dh_file_fullpath = File.join(@sslpki.datadir, dh_file)
             dh_h[dh_file] = {} unless dh_h[dh_file]
-            if @@dh_mutexes[n] and @@dh_mutexes[n].respond_to? :locked?
-              dh_h[dh_file]['being_created'] = @@dh_mutexes[n].locked?
+            if @@dh_mutexes[@name][n] and @@dh_mutexes[@name][n].respond_to? :locked?
+              dh_h[dh_file]['being_created'] = @@dh_mutexes[@name][n].locked?
             else
               dh_h[dh_file]['being_created'] = false
             end

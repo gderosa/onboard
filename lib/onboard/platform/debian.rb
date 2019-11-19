@@ -14,7 +14,7 @@ class OnBoard
       # TAP bridges.
       #
       DNSMASQ_INIT_SCRIPT =
-"#{::OnBoard::ROOTDIR}/etc/scripts/platform/debian/init.d/dnsmasq"
+          "#{::OnBoard::ROOTDIR}/etc/scripts/platform/debian/init.d/dnsmasq"
 
       def self.restart_dnsmasq(confdir)
         msg = OnBoard::System::Command.run(

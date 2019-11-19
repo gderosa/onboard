@@ -1,6 +1,3 @@
-require 'logger'
-require 'fileutils'
-
 class OnBoard
   LONGNAME          ||= 'OnBoard'
   VERSION           = '2019.14'
@@ -13,20 +10,8 @@ class OnBoard
   )
   DATADIR = RWDIR
   CONFDIR = File.join RWDIR, '/etc/config'
-  # sometimes files are uploaded elsewhere, as best suitable
-  DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
-  LOGDIR = File.join RWDIR, '/var/log'
-
-  # TODO: move I/O outside of here, replace LOGGER, with @@logger and an accessor class-method.
-  FileUtils.mkdir_p LOGDIR
-
-  LOGFILE_BASENAME    = 'onboard.log'
-  LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
   VARRUN              ||= '/var/run/onboard'
   VARLIB              ||= File.join RWDIR, 'var/lib'
-
-  LOGGER = Logger.new(LOGFILE_PATH)
+  # sometimes files are uploaded elsewhere, as best suitable
+  DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
 end
-
-
-

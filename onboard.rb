@@ -13,6 +13,7 @@ require 'logger'
 require 'etc'
 
 require 'onboard/constants'
+require 'onboard/logger'
 require 'onboard/exceptions'
 require 'onboard/extensions/object'
 require 'onboard/extensions/logger'
@@ -29,9 +30,8 @@ class OnBoard
   FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
 
-  LOGGER.formatter = proc { |severity, datetime, progname, msg|
-    "#{datetime} #{severity}: #{msg}\n"
-  }
+  use_logfile
+
   LOGGER.level = Logger::INFO
   LOGGER.level = Logger::DEBUG if
       $0 == __FILE__ and not
