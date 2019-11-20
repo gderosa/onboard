@@ -20,10 +20,13 @@ require 'onboard/extensions/logger'
 require 'onboard/menu/node'
 require 'onboard/system/command'
 require 'onboard/platform/debian'
+require 'onboard/network/dnsmasq'
+
 
 if Process.uid == 0
-  fail 'OnBoard should not be run as root: use an user who can sudo with no-password instead!'
+  fail 'OnBoard should not be run as root: use an user who can sudo instead!'
 end
+
 
 class OnBoard
   FileUtils.mkdir_p RWDIR
@@ -64,8 +67,13 @@ class OnBoard
   end
 
   def self.web?
-    return true unless ARGV.include? '--no-web'
+    return true unless (ARGV.include?('--no-web') or ARGV.include?('--restore-dns'))
     return false
+  end
+
+  def self.restore_dns
+    Network::Dnsmasq.init_conf
+    Network::Dnsmasq.restart
   end
 
   def self.prepare
@@ -79,9 +87,10 @@ class OnBoard
         file = dir_fullpath + '/load.rb'
         if File.readable? file
           if File.exists? dir_fullpath + '/.disable'
-            puts "Module #{dir}: disabled!"
+            puts "Module #{dir}: disabled." if web?  # be quiet if non-web
           else
             load dir_fullpath + '/load.rb'
+            puts "Module #{dir}: enabled." if web?  # be quiet if non-web
           end
         else
           STDERR.puts "Warning: Couldn't load modules/#{dir}/load.rb: Skipped!"
@@ -186,6 +195,10 @@ class OnBoard
 end
 
 OnBoard.prepare
+
+if ARGV.include? '--restore-dns'
+  OnBoard.restore_dns
+end
 
 if OnBoard.web?
   if $0 == __FILE__

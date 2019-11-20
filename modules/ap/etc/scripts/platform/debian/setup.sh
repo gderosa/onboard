@@ -1,11 +1,12 @@
 #!/bin/bash
 
-ONBOARD_USER=onboard
-ONBOARD_GROUP=$ONBOARD_USER
-ONBOARD_ROOT=/home/$ONBOARD_USER/onboard
+APP_USER=onboard
+PROJECT_ROOT=/home/$APP_USER/onboard
+
+SCRIPTDIR=$PROJECT_ROOT/etc/scripts
 
 enable_onboard_modules() {
-	cd $ONBOARD_ROOT/modules/
+	cd $PROJECT_ROOT/modules/
 	rm -f ap/.disable
 	touch ap/.enable
 }
@@ -17,12 +18,15 @@ apt-get -yq install hostapd
 enable_onboard_modules
 
 # Maybe it won't need any specific extra gem
-#su - $ONBOARD_USER -c "
+#su - $APP_USER -c "
 #cd
-#cd $ONBOARD_ROOT
+#cd $PROJECT_ROOT
 #./etc/scripts/bundle-with.rb ap
 #bundle install
 #"
 
 systemctl stop margay
 systemctl start margay
+
+. $SCRIPTDIR/_restore_dns.sh
+

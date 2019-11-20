@@ -4,6 +4,7 @@
 
 PROJECT_ROOT=${1:-`pwd`}
 APP_USER=${2:-'onboard'}
+SCRIPTDIR=$PROJECT_ROOT/etc/scripts
 MODULES="radius-core radius-admin chilli hotspotlogin mail"
 FREERADIUS_CONF_NEW=$PROJECT_ROOT/modules/radius-admin/doc/sysadm/examples/etc/freeradius
 FREERADIUS_CONF_SYS=/etc/freeradius
@@ -70,4 +71,6 @@ su - $APP_USER -c "
 "
 
 systemctl start margay
+
+. $SCRIPTDIR/_restore_dns.sh
 

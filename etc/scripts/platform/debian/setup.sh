@@ -19,8 +19,9 @@ APP_USER=${2:-'onboard'}
 
 CONFDIR=~$APP_USER/.onboard
 
-export DEBIAN_FRONTEND=noninteractive
+SCRIPTDIR=$PROJECT_ROOT/etc/scripts
 
+export DEBIAN_FRONTEND=noninteractive
 
 install_conffiles() {
     # See README file in doc/sysadm/examples/ .
@@ -166,7 +167,6 @@ systemctl enable margay
 systemctl start margay
 
 systemctl enable margay-persist
-systemctl start margay-persist  # Also resume dnsmasq after reconfig, it's not optional!
 
 cd $PROJECT_ROOT  # Apparently needed...
 
@@ -178,4 +178,5 @@ then
     apt-get -y remove wicd-daemon
 fi
 
-apt-get -y autoremove
+. $SCRIPTDIR/_restore_dns.sh
+
