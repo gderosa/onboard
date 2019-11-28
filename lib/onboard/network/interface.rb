@@ -69,8 +69,15 @@ class OnBoard
       # First, order by type, according to a prefered order; then
       # order by name, but put interfaces with no MAC address at the end.
       PREFERRED_ORDER = lambda do |iface|
-        [
-          OnBoard::Network::Interface::TYPES[iface.type][:preferred_order],
+
+        # Also, handle the case of possible new types:
+        order_by_type = 9999
+        if OnBoard::Network::Interface::TYPES[iface.type]
+         order_by_type =  OnBoard::Network::Interface::TYPES[iface.type][:preferred_order] 
+        end
+
+        return [
+          order_by_type,
           (iface.mac ? iface.name : "zzz_#{iface.name}")
       	]
       end
@@ -608,7 +615,11 @@ class OnBoard
       end
 
       def type_hr
-        TYPES[@type.to_s][:human_readable] or @type.to_s
+        if TYPES[@type.to_s]
+          return TYPES[@type.to_s][:human_readable]
+        else
+          return @type.to_s
+        end
       end
 
       def to_h
