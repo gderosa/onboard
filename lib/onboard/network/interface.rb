@@ -54,6 +54,10 @@ class OnBoard
         'P-t-P'       => {
           :preferred_order  => 5,
           :human_readable   => 'Point-to-Point'
+        },
+        'can' => {
+          :preferred_order  => 6,
+          :human_readable   => 'Controller Area Network'
         }
       }
 
