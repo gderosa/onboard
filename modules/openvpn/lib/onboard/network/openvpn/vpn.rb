@@ -865,9 +865,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   @data['client-config'][cn]['routes'] <<
                       {'net' => $1, 'mask' => $2}
                   next
-                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
+                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)(\s+(\S+))?(\s+(\S+))?.*"/
                   @data['client-config'][cn]['push']['routes'] <<
-                      {'net' => $1, 'mask' => $2}
+                      {'net' => $1, 'mask' => $2, 'metric' => $6}
+                  @data['client-config'][cn]['push']['route_metric'] ||= $6  # one for all routes for a client from a user perspective
                 end
               end
             end
