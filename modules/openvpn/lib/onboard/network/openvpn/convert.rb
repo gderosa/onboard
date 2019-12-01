@@ -8,6 +8,12 @@ class OnBoard
         module_function
 
         def textarea2push_routes(text, metric=nil)
+          if metric
+            # an empty of space-only string should bring to default
+            unless metric =~/\S/
+              metric = nil
+            end
+          end
           out = ''
           push_routes = text.lines.map{|x| x.strip}
           push_routes.each do |push_route|

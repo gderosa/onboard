@@ -466,7 +466,7 @@ EOF
                       @data['explicitly_configured_routes'].include? h
                 end
 
-                f.puts Convert.textarea2push_routes client['push_routes']
+                f.puts Convert.textarea2push_routes client['push_routes'], client['push_route_metric']
 
               end
 

@@ -88,7 +88,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
               <textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
             </td>
             <td style="text-align: center">
-              <input type="text" name="route_metric" value="<%= vpn.data['push']['route_metric'] %>" class="rwtext" size="7">
+              <input type="text" name="push_route_metric" value="<%= vpn.data['push']['route_metric'] %>" class="rwtext" size="7">
             </td>
             <td></td>
           </tr>
@@ -114,7 +114,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
                 <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
               </td>
               <td style="text-align: center">
-                <input type="text" name="clients[][route_metric]" value="<%= h['push']['route_metric'] %>" class="rwtext" size="7"/>
+                <input type="text" name="clients[][push_route_metric]" value="<%= h['push']['route_metric'] %>" class="rwtext" size="7"/>
               </td>
               <td style="text-align: center;">
                 <input type="checkbox" name="clients[][delete]"/>
@@ -134,7 +134,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
               <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea>
             </td>
             <td style="text-align: center">
-              <input type="text" name="clients[][route_metric]" class="rwtext" size="7"/>
+              <input type="text" name="clients[][push_route_metric]" class="rwtext" size="7"/>
             </td>
             <td style="text-align: center;">
             </td>
