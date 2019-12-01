@@ -7,7 +7,7 @@ class OnBoard
 
         module_function
 
-        def textarea2push_routes(text)
+        def textarea2push_routes(text, metric=nil)
           out = ''
           push_routes = text.lines.map{|x| x.strip}
           push_routes.each do |push_route|
@@ -17,7 +17,7 @@ class OnBoard
             rescue ArgumentError
               next
             end
-            out << %Q{push "route #{ip} #{ip.netmask} vpn_gateway #{DEFAULT_METRIC}"}
+            out << %Q{push "route #{ip} #{ip.netmask} vpn_gateway #{metric or DEFAULT_METRIC}"}
             out << "\n"
           end
           return out
