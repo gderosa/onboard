@@ -40,7 +40,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
         <thead>
           <tr>
             <th>Client&rsquo;s &ldquo;Common Name&rdquo;</th>
-            <th>
+            <th style="width:42ex">
               Route networks
               <div class="optinfo">
                 <p>
@@ -52,7 +52,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
                 </p>
               </div>
             </th>
-            <th>
+            <th style="width:42ex">
               Push routes
               <div class="optinfo">
                 <p>
@@ -64,14 +64,14 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
                 </p>
               </div>
             </th>
-            <th>Route<br/>metric</th>
+            <th style="width: 11ex">Push Route Metric<div class="optinfo">Route metric to be set in clients</div></th>
             <th>
               Delete?
             </th>
           </tr>
         </thead>
-        <% network_textarea_columns = 28 %>
-        <% network_textarea_rows = 3 %>
+        <% network_textarea_columns = 32 %>
+        <% network_textarea_rows = 5 %>
         <% cols = network_textarea_columns %>
         <% rows = network_textarea_rows %>
         <tbody>
@@ -87,8 +87,8 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
             <td>
               <textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
             </td>
-            <td>
-              <input type="text" name="route_metric" value="<%= vpn.data['route_metric'] %>" size="6" class="rwtext">
+            <td style="text-align: center">
+              <input type="text" name="route_metric" value="<%= vpn.data['push']['route_metric'] %>" class="rwtext" size="7">
             </td>
             <td></td>
           </tr>
@@ -113,8 +113,8 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
                 %>
                 <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
               </td>
-              <td>
-                <input type="text" name="clients[][route_metric]" value="<%= h['route_metric'] %>" size="6" class="rwtext"/>
+              <td style="text-align: center">
+                <input type="text" name="clients[][route_metric]" value="<%= h['route_metric'] %>" class="rwtext" size="7"/>
               </td>
               <td style="text-align: center;">
                 <input type="checkbox" name="clients[][delete]"/>
@@ -125,7 +125,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
           <tr>
             <td>
               <!-- <p class="optinfo" style="margin-bottom: 0.5em;">New client-specific routes configuration</p> -->
-              <input title='Add a new client&rsquo;s "Common Name" ' name="clients[][CN]" type="text" class="rwtext"/>
+              <input title='Add a new client&rsquo;s "Common Name" ' name="clients[][CN]" type="text" class="rwtext" style="width: 94%; margin: auto"/>
             </td>
             <td>
               <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea>
@@ -133,8 +133,8 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
             <td>
               <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off></textarea>
             </td>
-            <td>
-              <input type="text" name="clients[][route_metric]" size="6" class="rwtext"/>
+            <td style="text-align: center">
+              <input type="text" name="clients[][route_metric]" class="rwtext" size="7"/>
             </td>
             <td style="text-align: center;">
             </td>

@@ -451,8 +451,7 @@ EOF
 
               routes      = client['routes'].lines.map{|x| x.strip}
 
-              client_config_file =
-"#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
+              client_config_file = "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
               File.open(client_config_file, 'w') do |f|
                 routes.each do |route|
                   # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
@@ -722,10 +721,11 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   @data['explicitly_configured_routes'].include? h
             end
             # TODO: DRY with parse_client_config code: How?
-            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
+            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)(\s+(\S+))?(\s+(\S+))?.*"/
               @data['push'] ||= {}
               @data['push']['routes'] ||= []
-              @data['push']['routes'] << {'net' => $1, 'mask' => $2}
+              @data['push']['routes'] << {'net' => $1, 'mask' => $2, 'metric' => $6}
+              @data['push']['route_metric'] ||= $6  # a default value for UI use
             end
 
             # "private" options with no args
