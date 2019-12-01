@@ -486,7 +486,8 @@ EOF
               text << "route #{route_h['net']} #{route_h['mask']}\n"
             end
             text << "client-to-client\n" if params['client_to_client'] == 'on'
-            text << Convert.textarea2push_routes(params['push_routes'])
+            # All-client push-routes
+            text << Convert.textarea2push_routes(params['push_routes'], params['push_route_metric'])
             File.open @data_internal['conffile'], 'w' do |f|
               f.write text
             end
