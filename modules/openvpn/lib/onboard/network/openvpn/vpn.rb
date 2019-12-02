@@ -451,8 +451,7 @@ EOF
 
               routes      = client['routes'].lines.map{|x| x.strip}
 
-              client_config_file =
-"#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
+              client_config_file = "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
               File.open(client_config_file, 'w') do |f|
                 routes.each do |route|
                   # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
@@ -467,7 +466,7 @@ EOF
                       @data['explicitly_configured_routes'].include? h
                 end
 
-                f.puts Convert.textarea2push_routes client['push_routes']
+                f.puts Convert.textarea2push_routes client['push_routes'], client['push_route_metric']
 
               end
 
@@ -487,7 +486,8 @@ EOF
               text << "route #{route_h['net']} #{route_h['mask']}\n"
             end
             text << "client-to-client\n" if params['client_to_client'] == 'on'
-            text << Convert.textarea2push_routes(params['push_routes'])
+            # All-client push-routes
+            text << Convert.textarea2push_routes(params['push_routes'], params['push_route_metric'])
             File.open @data_internal['conffile'], 'w' do |f|
               f.write text
             end
@@ -722,10 +722,11 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   @data['explicitly_configured_routes'].include? h
             end
             # TODO: DRY with parse_client_config code: How?
-            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
+            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)(\s+(\S+))?(\s+(\S+))?.*"/
               @data['push'] ||= {}
               @data['push']['routes'] ||= []
-              @data['push']['routes'] << {'net' => $1, 'mask' => $2}
+              @data['push']['routes'] << {'net' => $1, 'mask' => $2, 'metric' => $6}
+              @data['push']['route_metric'] ||= $6  # a default value for UI use
             end
 
             # "private" options with no args
@@ -865,9 +866,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   @data['client-config'][cn]['routes'] <<
                       {'net' => $1, 'mask' => $2}
                   next
-                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
+                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)(\s+(\S+))?(\s+(\S+))?.*"/
                   @data['client-config'][cn]['push']['routes'] <<
-                      {'net' => $1, 'mask' => $2}
+                      {'net' => $1, 'mask' => $2, 'metric' => $6}
+                  @data['client-config'][cn]['push']['route_metric'] ||= $6  # one for all routes for a client from a user perspective
                 end
               end
             end
