@@ -1011,11 +1011,9 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             ary.each do |client|
               t = client['Connected Since (time_t)'].to_i
               if t > 0
-                client['Connected Since'] =
-                    Time.at t
+                client['Connected Since'] = Time.at t
               else
-                client['Connected Since'] =
-                    Time.parse client['Connected Since']
+                client['Connected Since'] = Time.parse client['Connected Since']
               end
               # creating a Time object from a Unix timestamp should be
               # more efficient than parsing a human readable string, so
