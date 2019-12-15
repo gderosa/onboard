@@ -87,8 +87,7 @@ apt-get update
 apt-get -y upgrade
 
 apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
-# Optional, but useful tools when 
-'ing
+# Optional, but useful tools when ssh'ing
 apt-get -y install vim-nox mc
 
 install_conffiles
