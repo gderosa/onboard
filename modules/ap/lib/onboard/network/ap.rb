@@ -72,6 +72,9 @@ EOF
       def self.get_config(ifname)
         parse = {}
         res = {}
+        unless File.exists? conffile(ifname)
+          FileUtils.touch conffile(ifname)
+        end
         File.readlines(conffile(ifname)).each do |line|
           if line =~ /^\s*([^#\s]+)\s*=\s*([^#\s]+)/  # Assuming no spaces in values.
             parse[$1.strip] = $2.strip  # Redundant, but in case we include spaces above...
