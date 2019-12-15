@@ -65,7 +65,7 @@ disable_dhcpcd_master() {
     # Even if no interface is configured with dhcp in /etc/network/interfaces,
     # dhcpcd is a system(d) service, that starts as just "dhcpcd" (master mode)
     # which is incompatible with onboard detection and control.
-    if (systemctl status dhcpcd > /dev/null); then
+    if (systemctl list-units --all -t service | grep dhcpcd); then
         systemctl stop dhcpcd
         systemctl disable dhcpcd
     fi
