@@ -65,7 +65,8 @@ disable_dhcpcd_master() {
     # Even if no interface is configured with dhcp in /etc/network/interfaces,
     # dhcpcd is a system(d) service, that starts as just "dhcpcd" (master mode)
     # which is incompatible with onboard detection and control.
-    if (systemctl status dhcpcd > /dev/null); then
+    if (systemctl list-units --all -t service | grep dhcpcd); then
+        systemctl stop dhcpcd
         systemctl disable dhcpcd
     fi
 }
@@ -86,8 +87,6 @@ apt-get update
 apt-get -y upgrade
 
 apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
-# Optional, but useful tools when ssh'ing
-apt-get -y install vim-nox mc
 
 install_conffiles
 
