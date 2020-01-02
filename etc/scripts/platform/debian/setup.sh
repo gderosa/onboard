@@ -36,7 +36,9 @@ bundle_without_all() {
     groups=''
     for mod in `ls $PROJECT_ROOT/modules` ; do
         if [ -f $PROJECT_ROOT/modules/$mod/Gemfile ]; then
-            groups="$groups $mod"
+            if [ ! -f $PROJECT_ROOT/modules/$mod/.enable ]; then
+                groups="$groups $mod"
+            fi
         fi
     done
     echo "$groups" | xargs
