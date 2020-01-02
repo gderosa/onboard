@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Since bundle --with doesn't exist, and --without is "remembered",
+# Since `bundle config set with` doesn't exist, and `without` is "remembered",
 # let's remove a group from the "without"-list, by just running
 #
 #     ruby bundle-with.rb group1 [group2] [...]
