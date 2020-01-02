@@ -141,7 +141,8 @@ EOFF
       virtualbox__intnet: "margay-net-downstream"
     mgyc.vm.provider "virtualbox" do |vb|
       vb.gui = true
-      # vb.memory = "1024"
+      # https://stackoverflow.com/a/24253435
+      vb.customize ["modifyvm", :id, "--vram", "16"]
     end
     mgyc.vm.provision "shell", inline: <<-EOF
       # restore default VBox NAT interface networking (if it has been disabled previously to use margay-connected interface eth1)
@@ -160,7 +161,7 @@ EOFF
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
       apt-get -y upgrade
-      apt-get install -y lightdm openbox lxterminal qupzilla psmisc
+      apt-get install -y lightdm openbox lxterminal psmisc firefox-esr
       systemctl start lightdm
 
       # Remove default Internet connection, it will use the second interface behind
