@@ -6,8 +6,8 @@ source "https://rubygems.org" do
   # However, they are of general use (and perhaps not too heavyweight)
   # and may be required by the core as well at some point.
   gem 'hierarchical_menu'
-  gem 'sinatra'
-  gem 'rack-contrib'
+  gem 'sinatra', '~> 2'
+  gem 'rack-contrib', '~> 2'
   gem 'thin'
   gem 'locale'
   gem 'i18n_data'
@@ -16,7 +16,7 @@ source "https://rubygems.org" do
   gem 'uuid'
   gem 'facets'
   gem 'archive-tar-minitar'
-  gem 'rubyzip'
+  gem 'rubyzip', '~> 1'
   gem 'cronedit'
   gem 'chronic_duration'
   gem 'mail'
