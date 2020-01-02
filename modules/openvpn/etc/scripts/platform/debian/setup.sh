@@ -31,7 +31,7 @@ systemctl stop margay
 su - $APP_USER -c "
     cd $PROJECT_ROOT
     set -x
-    bundle config set with openvpn easy-rsa
+    ./etc/scripts/bundle-with.rb openvpn easy-rsa
     bundle install
 "
 

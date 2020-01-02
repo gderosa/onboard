@@ -67,7 +67,7 @@ systemctl stop margay
 su - $APP_USER -c "
     cd $PROJECT_ROOT
     set -x
-    bundle config set with $MODULES
+    ./etc/scripts/bundle-with.rb $MODULES
     bundle install
 "
 

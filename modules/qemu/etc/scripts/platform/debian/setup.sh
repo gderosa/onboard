@@ -36,7 +36,7 @@ set -x
 mkdir -p files/QEMU
 mkdir -p files/ISO
 cd $PROJECT_ROOT
-bundle config set with qemu jqueryFileTree
+./etc/scripts/bundle-with.rb qemu jqueryFileTree
 bundle install
 "
 
