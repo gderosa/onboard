@@ -5,7 +5,9 @@
 # therefore we better use only one of those options.
 #
 # When we want to add a group of gems, we actually remove it
-# from BUNDLE_WITHOUT. This script implements the necessary logic.
+# from BUNDLE_WITHOUT. This script implements the necessary "negative" logic.
+#
+# Example: bundle-with.rb openvpn easy-rsa
 
 require 'yaml'
 
