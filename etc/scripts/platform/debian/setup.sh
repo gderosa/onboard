@@ -32,17 +32,16 @@ install_conffiles() {
     install -bvC -m 644 doc/sysadm/examples/etc/usb_modeswitch.d/*:*    /etc/usb_modeswitch.d/
 }
 
-bundle_without_all_opts() {
-    # Avoid --without (empty)
-    without_opt=''
+bundle_without_all() {
     groups=''
     for mod in `ls $PROJECT_ROOT/modules` ; do
         if [ -f $PROJECT_ROOT/modules/$mod/Gemfile ]; then
-            without_opt='--without'
-            groups="$groups $mod"
+            if [ ! -f $PROJECT_ROOT/modules/$mod/.enable ]; then
+                groups="$groups $mod"
+            fi
         fi
     done
-    echo "$without_opt $groups" | xargs
+    echo "$groups" | xargs
 }
 
 disable_app_modules() {
@@ -96,8 +95,9 @@ gem install --no-rdoc --no-ri  -v '~> 2' bundler
 su - $APP_USER -c "
     cd $PROJECT_ROOT
     # Module names are also Gemfile groups
-    echo Running: bundle install $(bundle_without_all_opts) ...
-    bundle install $(bundle_without_all_opts)
+    set -x
+    bundle config set without $(bundle_without_all)
+    bundle install
 "
 
 modprobe nf_conntrack

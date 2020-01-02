@@ -32,6 +32,7 @@ fi
 
 su - $APP_USER -c "
 cd
+set -x
 mkdir -p files/QEMU
 mkdir -p files/ISO
 cd $PROJECT_ROOT

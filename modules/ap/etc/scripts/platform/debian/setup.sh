@@ -17,14 +17,6 @@ apt-get -yq install hostapd
 
 enable_onboard_modules
 
-# Maybe it won't need any specific extra gem
-#su - $APP_USER -c "
-#cd
-#cd $PROJECT_ROOT
-#./etc/scripts/bundle-with.rb ap
-#bundle install
-#"
-
 systemctl stop margay
 systemctl start margay
 
