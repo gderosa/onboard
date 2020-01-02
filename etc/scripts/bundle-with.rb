@@ -15,7 +15,7 @@ BUNDLECONFIG = File.join ROOT, '/.bundle/config'
 # TODO: use system('bundle config ...') instead?
 if File.exists? BUNDLECONFIG
   config = YAML.load File.read BUNDLECONFIG
-  config.delete['BUNDLE_WITH']
+  config.delete 'BUNDLE_WITH'
   if config['BUNDLE_WITHOUT'].respond_to? :split
     withouts = config['BUNDLE_WITHOUT'].split(':')
     withouts = withouts - ARGV
