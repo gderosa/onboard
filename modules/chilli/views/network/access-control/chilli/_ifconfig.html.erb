@@ -145,6 +145,31 @@
     </tr>
   </tbody>
 </table>
+<h5>MAC-based Authentication</h5>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        Enable MAC-based Authentication
+        <div class="optinfo" style="width:50ex">
+          To use it,
+          create RADIUS usernames equal to the the desired MAC addresses,
+          in the format <kbd style="display:inline-block">AB-CD-EF-12-34-56</kbd>,
+          and with same password as <span class="term">MAC-Auth Password</span> below.
+        </div>
+      </th>
+      <td><input type="checkbox" <%= 'checked' if chilli.conf['macauth'] %> name="conf[macauth]"/></td>
+    </tr>
+    <tr title="Empty to leave unchanged">
+      <th scope="row">MAC-Auth Password</th>
+      <td><input type="password" name="conf[macpasswd]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr title="Empty to leave unchanged">
+      <th scope="row">MAC-Auth Password (type again)</th>
+      <td><input type="password" name="verify_conf[macpasswd]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+  </tbody>
+</table>
 
 <h4>Captive portal</h4>
 <table>

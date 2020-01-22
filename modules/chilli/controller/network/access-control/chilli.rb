@@ -120,8 +120,11 @@ class OnBoard
         begin
           chilli_new = CHILLI_CLASS.create_from_HTTP_request(params)
           chilli_new.conf.each_pair do |key, val|
-            chilli.conf[key] = val unless key =~ /secret/
+            chilli.conf[key] = val unless key =~ /secret|passwd/ or key == 'macauth'
           end
+
+          # TODO: this logic should better be under lib/
+          # TODO: as it happens on creation (post)
 
           # passwords are treated differently
           if params['conf']['radiussecret'].length > 0
@@ -143,6 +146,22 @@ class OnBoard
                 params['conf']['uamsecret'].length == 0 and
                 params['verify_conf']['uamsecret'].length == 0
           end
+
+          # macauth (and checkboxes in general) are also special
+          if params['conf']['macauth']
+            if params['conf']['macpasswd'] == params['verify_conf']['macpasswd']
+              chilli.conf['macauth'] = true
+              if params['conf']['macpasswd'].size > 0
+                chilli.conf['macpasswd'] = params['conf']['macpasswd']
+              end
+            else
+              raise CHILLI_CLASS::BadRequest, "MAC-Auth passwords do not match!"
+            end
+          else
+            chilli.conf.delete 'macauth'
+            chilli.conf.delete 'macpasswd'
+          end
+
           # ########
           chilli.write_tmp_conffile_and_validate(:raise_exception => true)
           chilli.write_conffile

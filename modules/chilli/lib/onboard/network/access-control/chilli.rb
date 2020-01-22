@@ -100,6 +100,11 @@ class OnBoard
         def self.create_from_HTTP_request(params)
           validate_HTTP_creation(params)
           chilli_new = new(:conffile => DEFAULT_NEW_CONF_FILE)
+          if params['conf']['macauth']
+            params['conf']['macauth'] = true  # instead of "on" string
+          else
+            params['conf'].delete 'macauth'  # instead of some falsey value, just remove the key
+          end
           chilli_new.conf.merge! params['conf']
           chilli_new.set_dhcp_range(params['dhcp_start'], params['dhcp_end'])
           chilli_new.dynaconf # set temporary dirs, ipc, etc.
@@ -150,6 +155,12 @@ class OnBoard
               params['conf']['uamsecret'] != params['verify_conf']['uamsecret']
             raise BadRequest, "UAM passwords do not match!"
           end
+          if
+              params['conf']['macauth'] and
+              params['conf']['macpasswd'].length > 0 and
+              params['conf']['macpasswd'] != params['verify_conf']['macpasswd']
+          raise BadRequest, "MAC-auth passwords do not match!"
+        end
           return true
         end
 
@@ -295,7 +306,7 @@ class OnBoard
               if value =~ /\s/
                 value = "\"#{value}\"" # protect with double-quotes
               end
-              f.write "#{key}\t#{value}\n"
+              f.write "#{key}\t#{value}\n"  # TODO: check truthy-ness?
             end
           end
           f.close
