@@ -19,7 +19,7 @@ class OnBoard
           }
         ]
       }
-      format(:format => 'json', :objects => paths, :module   => 'radius-admin')
+      format(:format => 'json', :objects => paths)
     end
 
     # Intended mainly as /api/v1/services/radius/doc
