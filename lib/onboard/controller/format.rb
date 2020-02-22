@@ -25,6 +25,10 @@ class OnBoard
       [status, headers, body]
     end
 
+    get %r{(/api/.*)/} do
+      redirect params['captures'][0]
+    end
+
     get %r{/api/v1/(.*)} do |subpath|
       api_route_trigger subpath
     end

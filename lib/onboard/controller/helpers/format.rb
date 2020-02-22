@@ -12,7 +12,9 @@ class OnBoard
       # Following method should be called PROVIDED that the resource exists.
       def format(h)
 
-        h[:msg] ||= msg
+        h[:path]  ||= ''  # allow json-only (view-less) calls
+
+        h[:msg]   ||= msg
 
         #h[:formats] ||= %w{html json yaml}
         #h[:formats] |= %w{rb} if settings.environment == :development
