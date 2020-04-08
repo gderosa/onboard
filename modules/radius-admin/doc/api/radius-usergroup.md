@@ -102,8 +102,8 @@ attributes may generally refer to an user and/or to a group.
 
 |Name           |Description and possible values|
 |---            |---                                                                              |
-|"User-Name"    |RADIUS username                                                                  |
-|"Group-Name"   |RADIUS group name                                                                |
+|"User-Name"    |RADIUS username. Only use A-Z, a-z, 0-9, '-', '_', ':'. Do not use spaces, accented, or non-English characters.|
+|"Group-Name"   |RADIUS group name. Only use A-Z, a-z, 0-9, '-', '_', ':'. Do not use spaces, accented, or non-English characters.|
 |"Password-Type"|Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, <br/> `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
 |"User-Password"|The user password.|
 |"Auth-Type"    |Sould generaly not be set, unless user must be always accepted (`Accept`) <br/> or rejected (`Reject`).|
@@ -420,7 +420,7 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 
 |Parent |Name           |Type   |Required |Description                                                                      |
 |---    |---            |---    |---      |---                                                                              |
-|"check"|"User-Name"    |string |true     |RADIUS username                                                                  |
+|"check"|"User-Name"    |string |true     |RADIUS username. Only use A-Z, a-z, 0-9, '-', '_', ':'. Do not use spaces, accented, or non-English characters.|
 |"check"|"Password-Type"|string |true     |Any of `SSHA1-Password` (recommended), <br/> `SHA1-Password`, `SMD5-Password`, `MD5-Password`, <br/> `Crypt-Password`, `Cleartext-Password`.|
 |"check"|"User-Password"|string |true     |The user password.|
 |"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) <br/> or rejected (`Reject`).       |
