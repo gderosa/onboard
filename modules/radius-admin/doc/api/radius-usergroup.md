@@ -759,6 +759,27 @@ Accept: application/json
 It's similar to [Create a User (POST)](#create-a-user-post), except:
 * replace `User-` with `Group-` in all relevant property names of the request body
 * there is no "`personal`" information
+* Similarly to Users, `"Group-Password"` and `"Password-Type"` are not allowed when `"Auth-Type"` is set (either to `"Accept"` or `"Reject"`).
+
+For example:
+
+```javascript
+{
+  "check": {
+    "Group-Name": "test_group_accept",
+    "Auth-Type": "Accept"
+  },
+  "confirm": {
+  	"check": {}
+  },
+  "reply": {
+    "Session-Timeout": "7200",
+    "Idle-Timeout": "1800",
+    "WISPr-Bandwidth-Max-Down": "500000",
+    "WISPr-Bandwidth-Max-Up": "250000"
+  }
+}
+```
 
 ## Change attributes of a Group (PUT)
 
