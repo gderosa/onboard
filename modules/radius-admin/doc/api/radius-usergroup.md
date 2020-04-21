@@ -369,6 +369,8 @@ Creates a new RADIUS user.
 <a name="create-user-example-body"></a>
 ### Example request body
 
+#### With password
+
 ```javascript
 {
   "check": {
@@ -397,6 +399,37 @@ Creates a new RADIUS user.
 }
 ```
 
+#### No password, user always accepted
+
+Minimal example:
+
+```javascript
+{
+  "check": {
+    "User-Name": "user_accept",
+    "Auth-Type": "Accept"
+  },
+  "reply": {
+  }
+}
+```
+
+#### No password, user always rejected
+
+Minimal example:
+```javascript
+{
+  "check": {
+    "User-Name": "user_reject",
+    "Auth-Type": "Reject"
+  },
+  "reply": {
+  }
+}
+```
+
+Please note `"Auth-Type": "Accept"` (or `"Reject"`) is incompatible with `User-Password` and `Password-Type` properties.
+
 ### Request body properties
 
 The JSON object sent with the request has four main properties,
@@ -423,7 +456,7 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 |"check"|"User-Name"    |string |true     |RADIUS username. Only use A-Z, a-z, 0-9, '-', '_', ':'. Do not use spaces, accented, or non-English characters.|
 |"check"|"Password-Type"|string |true     |Any of `SSHA1-Password` (recommended), <br/> `SHA1-Password`, `SMD5-Password`, `MD5-Password`, <br/> `Crypt-Password`, `Cleartext-Password`.|
 |"check"|"User-Password"|string |true     |The user password.|
-|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) <br/> or rejected (`Reject`).       |
+|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) <br/> or rejected (`Reject`). It's incompatible with `User-Password` and `Password-Type` |
 |"check"|"Login-Time"   |string |false    |The time span a user may login to the system, <br/> more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
 
 #### `confirm` attributes
