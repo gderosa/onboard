@@ -102,8 +102,8 @@ attributes may generally refer to an user and/or to a group.
 
 |Name           |Description and possible values|
 |---            |---                                                                              |
-|"User-Name"    |RADIUS username                                                                  |
-|"Group-Name"   |RADIUS group name                                                                |
+|"User-Name"    |RADIUS username. Only use A-Z, a-z, 0-9, '-', '_', ':'. Do not use spaces, accented, or non-English characters.|
+|"Group-Name"   |RADIUS group name. Only use A-Z, a-z, 0-9, '-', '_', ':'. Do not use spaces, accented, or non-English characters.|
 |"Password-Type"|Any of `SSHA1-Password` (recommended), `SHA1-Password`, `SMD5-Password`, <br/> `MD5-Password`, `Crypt-Password`, `Cleartext-Password`.|
 |"User-Password"|The user password.|
 |"Auth-Type"    |Sould generaly not be set, unless user must be always accepted (`Accept`) <br/> or rejected (`Reject`).|
@@ -369,6 +369,8 @@ Creates a new RADIUS user.
 <a name="create-user-example-body"></a>
 ### Example request body
 
+#### With password
+
 ```javascript
 {
   "check": {
@@ -397,6 +399,37 @@ Creates a new RADIUS user.
 }
 ```
 
+#### No password, user always accepted
+
+Minimal example:
+
+```javascript
+{
+  "check": {
+    "User-Name": "user_accept",
+    "Auth-Type": "Accept"
+  },
+  "reply": {
+  }
+}
+```
+
+#### No password, user always rejected
+
+Minimal example:
+```javascript
+{
+  "check": {
+    "User-Name": "user_reject",
+    "Auth-Type": "Reject"
+  },
+  "reply": {
+  }
+}
+```
+
+Please note `"Auth-Type": "Accept"` (or `"Reject"`) is incompatible with `User-Password` and `Password-Type` properties.
+
 ### Request body properties
 
 The JSON object sent with the request has four main properties,
@@ -420,10 +453,10 @@ e.g. `"Idle-Timeout": "3600"` instead of `"Idle-Timeout": 3600`.
 
 |Parent |Name           |Type   |Required |Description                                                                      |
 |---    |---            |---    |---      |---                                                                              |
-|"check"|"User-Name"    |string |true     |RADIUS username                                                                  |
+|"check"|"User-Name"    |string |true     |RADIUS username. Only use A-Z, a-z, 0-9, '-', '_', ':'. Do not use spaces, accented, or non-English characters.|
 |"check"|"Password-Type"|string |true     |Any of `SSHA1-Password` (recommended), <br/> `SHA1-Password`, `SMD5-Password`, `MD5-Password`, <br/> `Crypt-Password`, `Cleartext-Password`.|
 |"check"|"User-Password"|string |true     |The user password.|
-|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) <br/> or rejected (`Reject`).       |
+|"check"|"Auth-Type"    |string |false    |Only set if user must be always accepted (`Accept`) <br/> or rejected (`Reject`). It's incompatible with `User-Password` and `Password-Type` |
 |"check"|"Login-Time"   |string |false    |The time span a user may login to the system, <br/> more info and exmples [here](https://wiki.freeradius.org/config/Users#special-attributes-used-in-the-users-file).|
 
 #### `confirm` attributes
@@ -726,6 +759,27 @@ Accept: application/json
 It's similar to [Create a User (POST)](#create-a-user-post), except:
 * replace `User-` with `Group-` in all relevant property names of the request body
 * there is no "`personal`" information
+* Similarly to Users, `"Group-Password"` and `"Password-Type"` are not allowed when `"Auth-Type"` is set (either to `"Accept"` or `"Reject"`).
+
+For example:
+
+```javascript
+{
+  "check": {
+    "Group-Name": "test_group_accept",
+    "Auth-Type": "Accept"
+  },
+  "confirm": {
+  	"check": {}
+  },
+  "reply": {
+    "Session-Timeout": "7200",
+    "Idle-Timeout": "1800",
+    "WISPr-Bandwidth-Max-Down": "500000",
+    "WISPr-Bandwidth-Max-Up": "250000"
+  }
+}
+```
 
 ## Change attributes of a Group (PUT)
 
@@ -749,6 +803,20 @@ It's similar to [Create User (POST)](#create-user-example-body), with check and 
 * there is no "`personal`" information
 * you can't modify the `Group-Name`
 * setting a `Group-Password` (and "`confirm`") is not necessary
+
+### Example body
+
+```javascript
+{
+	"check": {
+		
+	},
+	"reply": {
+		"Session-Timeout": "6200",
+		"Idle-Timeout": "2800"
+	}
+}
+```
 
 ## DELETE a Group
 
