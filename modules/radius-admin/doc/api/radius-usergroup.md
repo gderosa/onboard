@@ -804,6 +804,20 @@ It's similar to [Create User (POST)](#create-user-example-body), with check and 
 * you can't modify the `Group-Name`
 * setting a `Group-Password` (and "`confirm`") is not necessary
 
+### Example body
+
+```javascript
+{
+	"check": {
+		
+	},
+	"reply": {
+		"Session-Timeout": "6200",
+		"Idle-Timeout": "2800"
+	}
+}
+```
+
 ## DELETE a Group
 
 Delete a RADIUS group.
