@@ -15,6 +15,7 @@ class OnBoard
       users = raduserinfo['users'] || []
       users.each do |u|
         u.retrieve_attributes_from_db if !u.check or u.check.length == 0
+        u.retrieve_group_membership_from_db
       end
       format(
         :module   => 'radius-admin',

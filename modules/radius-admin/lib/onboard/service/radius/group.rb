@@ -447,12 +447,17 @@ class OnBoard
         end
 
         def to_h
-          {
+          h = {
             :name     => @name,
             :check    => @check,
-            :reply    => @reply,
-            :members  => @members || @member_names
+            :reply    => @reply
           }
+          if @members
+            h[:members] = @members
+          elsif @member_names
+            h[:member_names] = @member_names
+          end
+          return h
         end
 
         def to_json(*args)
