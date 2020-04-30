@@ -343,8 +343,17 @@ For example:
       }
     ],
     "groups": [
-      // ...
-    ],
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_A",
+          "Priority": 1
+        },
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_B",
+          "Priority": 2
+        }
+      ],
     "personal": [
       // ...
     ],
