@@ -654,6 +654,10 @@ See [List Users (GET)](#list-users-get) for a more detailed example.
       ],
       "reply": [
         // ...
+      ],
+      "member_names": [
+        "user1",
+        "user2"
       ]
     },
     {
