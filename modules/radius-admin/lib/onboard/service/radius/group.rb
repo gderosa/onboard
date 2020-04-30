@@ -191,6 +191,16 @@ class OnBoard
           }
         end
 
+        def get_member_names()
+          setup
+          q_members     = RADIUS.db[@@maptable].where(
+            @@mapcols['Group-Name'] => @name
+          ).order_by @@mapcols['User-Name']
+          @member_names  = q_members.map(@@mapcols['User-Name']).map do |s|
+            s.force_encoding 'utf-8'
+          end
+        end
+
         def found?
           return true if
               (@check and @check.any?) or
@@ -437,12 +447,17 @@ class OnBoard
         end
 
         def to_h
-          {
+          h = {
             :name     => @name,
             :check    => @check,
-            :reply    => @reply,
-            :members  => @members
+            :reply    => @reply
           }
+          if @members
+            h[:members] = @members
+          elsif @member_names
+            h[:member_names] = @member_names
+          end
+          return h
         end
 
         def to_json(*args)

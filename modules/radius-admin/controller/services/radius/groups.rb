@@ -14,6 +14,7 @@ class OnBoard
         if objects['groups']
           objects['groups'].each do |group|
             group.retrieve_attributes_from_db
+            group.get_member_names
           end
         end
       end
