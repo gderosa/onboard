@@ -218,7 +218,18 @@ be requested via optional parameters e.g.<br/>
           "Value": "yes"
         }
       ],
-      "groups": [],
+      "groups": [
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_A",
+          "Priority": 1
+        },
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_B",
+          "Priority": 2
+        }
+      ],
       "personal": {
         "Id": 2,
         "User-Name": "georgeboole",
@@ -343,8 +354,17 @@ For example:
       }
     ],
     "groups": [
-      // ...
-    ],
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_A",
+          "Priority": 1
+        },
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_B",
+          "Priority": 2
+        }
+      ],
     "personal": [
       // ...
     ],
@@ -645,6 +665,10 @@ See [List Users (GET)](#list-users-get) for a more detailed example.
       ],
       "reply": [
         // ...
+      ],
+      "member_names": [
+        "user1",
+        "user2"
       ]
     },
     {
