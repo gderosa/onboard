@@ -218,7 +218,18 @@ be requested via optional parameters e.g.<br/>
           "Value": "yes"
         }
       ],
-      "groups": [],
+      "groups": [
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_A",
+          "Priority": 1
+        },
+        {
+          "User-Name": "georgeboole",
+          "Group-Name": "group_B",
+          "Priority": 2
+        }
+      ],
       "personal": {
         "Id": 2,
         "User-Name": "georgeboole",
