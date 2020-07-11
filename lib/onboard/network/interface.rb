@@ -97,9 +97,30 @@ class OnBoard
           @@all_layer3.each do |netif|
             netif.get_preferred_metric!
           end
+          # DEBUG
+          ary = ary.reject do |netif|
+            netif.type == 'ether:usbmodem' and early?
+          end
+          # /DEBUG
           return @@all = ary
         end
         alias get_all getAll # A bit of Ruby style... :-P
+
+        # DEBUG
+        def early?
+          first_time_fp = '/dev/shm/mgy_iface_first_time.yml'  # must disappear after a reboot
+          begin
+            @@first_time = YAML.load File.read first_time_fp
+          rescue Errno::ENOENT
+            puts "Saving into #{first_time_fp}"
+            @@first_time = Time.now
+            File.write first_time_fp, YAML.dump(@@first_time)
+          end
+          puts
+          puts @@first_time
+          return Time.now - @@first_time < 15
+        end
+        # /DEBUG
 
         def getAll_layer3
           return all_layer3(getAll_layer2())
@@ -292,18 +313,6 @@ class OnBoard
         end
 
         def restore(opt_h={})
-          # DEBUG
-          first_restore_fp = '/dev/shm/mgy_first_restore.yml'  # must disappear after a reboot
-          begin
-            @@first_restore_time = YAML.load File.read first_restore_fp
-          rescue Errno::ENOENT
-            puts "Saving into #{first_restore_fp}"
-            @@first_restore_time = Time.now
-            File.write first_restore_fp, YAML.dump(@@first_restore_time)
-          end
-          puts
-          puts @@first_restore_time
-          # /DEBUG
           saved_ifaces = []
 
           if opt_h[:saved_interfaces]
