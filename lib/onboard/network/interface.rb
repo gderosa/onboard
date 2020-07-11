@@ -391,7 +391,7 @@ class OnBoard
 
         ### HW detection
         if File.exists? "/sys/class/net/#{@name}/device"
-          @modalias = File.read "/sys/class/net/#{@name}/device/modalias"
+          @modalias = (File.read "/sys/class/net/#{@name}/device/modalias").strip
           @modalias =~ /^(\w+):/
           @bus = $1
           if @bus == 'pci'
