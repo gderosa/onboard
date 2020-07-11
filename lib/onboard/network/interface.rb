@@ -292,6 +292,18 @@ class OnBoard
         end
 
         def restore(opt_h={})
+          # DEBUG
+          first_restore_fp = '/dev/shm/mgy_first_restore.yml'  # must disappear after a reboot
+          begin
+            @@first_restore_time = YAML.load File.read first_restore_fp
+          rescue Errno::ENOENT
+            puts "Saving into #{first_restore_fp}"
+            @@first_restore_time = Time.now
+            File.write first_restore_fp, YAML.dump(@@first_restore_time)
+          end
+          puts
+          puts @@first_restore_time
+          # /DEBUG
           saved_ifaces = []
 
           if opt_h[:saved_interfaces]
