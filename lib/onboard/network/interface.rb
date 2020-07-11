@@ -314,29 +314,12 @@ class OnBoard
 
           saved_ifaces.each do |saved_iface|
             current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
-            if current_iface.name == 'eth1'
-              if rand < 0.7
-                current_iface = nil
-              end
-            end
             unless current_iface
               if saved_iface.type == 'bridge'
                 # bridge saved, not currently present: create it!
                 Bridge.brctl 'addbr' => saved_iface.name
                 current_ifaces = getAll
                 redo
-              elsif saved_iface.type =~ /^ether/  # HiLink 4G modems etc.
-                LOGGER.debug "#{saved_iface.name} not available yet in the system; retrying..."
-                sleep 3
-                current_ifaces = getAll
-                current_iface_ = current_ifaces.detect {|x| x.name == saved_iface.name}
-                if current_iface_
-                  LOGGER.debug "#{saved_iface.name} found."
-                  redo
-                else
-                  LOGGER.error "#{saved_iface.name} stll not found."
-                  next
-                end
               else
                 next
               end
