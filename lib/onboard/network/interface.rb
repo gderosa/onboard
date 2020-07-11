@@ -119,7 +119,7 @@ class OnBoard
             @@first_time = Time.now
             File.write first_time_fp, YAML.dump(@@first_time)
           end
-          return Time.now - @@first_time < 15
+          return Time.now - @@first_time < 7
         end
         # /DEBUG
 
