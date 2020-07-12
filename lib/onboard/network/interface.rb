@@ -325,7 +325,7 @@ class OnBoard
                 redo
               elsif saved_iface.type =~ /^ether/
                 LOGGER.info "restore: waiting for interface #{saved_iface.name} to show up..."
-                wait_for sleep: 1, timeout: 16 do
+                wait_for sleep: 1, timeout: 25 do
                   current_ifaces = getAll
                   current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
                   unless current_iface
