@@ -9,6 +9,7 @@ require 'onboard/hardware/lspci'
 require 'onboard/hardware/lsusb'
 require 'onboard/hardware/sdio'
 require 'onboard/extensions/array.rb'
+require 'onboard/util'
 
 class OnBoard
   module Network
@@ -85,6 +86,8 @@ class OnBoard
       # Class methods.
 
       class << self
+
+        include OnBoard::Util
 
         def getAll
           @@all_layer2 = getAll_layer2()
@@ -320,6 +323,23 @@ class OnBoard
                 Bridge.brctl 'addbr' => saved_iface.name
                 current_ifaces = getAll
                 redo
+              elsif saved_iface.type =~ /^ether/
+                LOGGER.info "restore: waiting for interface #{saved_iface.name} to show up..."
+                wait_for sleep: 1, timeout: 16 do
+                  current_ifaces = getAll
+                  current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
+                  unless current_iface
+                    LOGGER.debug "restore: interface #{saved_iface.name} not detected yet, retrying..."
+                  end
+                  current_iface
+                end
+                if current_iface
+                  LOGGER.info "restore: interface #{saved_iface.name} found"
+                  redo
+                else
+                  LOGGER.error "restore: waiting for interface #{saved_iface.name} has reached time out :("
+                  next
+                end
               else
                 next
               end
@@ -391,7 +411,7 @@ class OnBoard
 
         ### HW detection
         if File.exists? "/sys/class/net/#{@name}/device"
-          @modalias = File.read "/sys/class/net/#{@name}/device/modalias"
+          @modalias = (File.read "/sys/class/net/#{@name}/device/modalias").strip
           @modalias =~ /^(\w+):/
           @bus = $1
           if @bus == 'pci'
