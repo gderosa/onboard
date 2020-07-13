@@ -5,7 +5,7 @@
     </div>
     <div>
         <p style="text-align: center; font-size:110%; font-style:italic">A Linux-based Networking and Virtualization Appliance.</p>
-        </p>
+        <p style="text-align: center; font-size:80%">v. <a href="https://github.com/vemarsas/onboard/blob/margay/Changelog"><%= OnBoard::VERSION %></a></p>
     </div>
   </div>
 
