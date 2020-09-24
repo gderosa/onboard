@@ -168,6 +168,25 @@
       <th scope="row">MAC-Auth Password (type again)</th>
       <td><input type="password" name="verify_conf[macpasswd]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
     </tr>
+    <tr>
+      <th scope="row">
+        Fixed IP assignment
+        <div class="optinfo">
+        One MAC-IP association per line. For example:
+        <pre>00-11-22-AA-BB-CC 10.11.12.110
+11-22-33-BB-CC-DD 10.11.12.111
+        </pre>
+        </div>
+      </th>
+      <td><textarea cols="34" rows="8" name="ethers_content"/>
+00-11-22-AA-BB-CC 101.116.127.110
+11-22-33-BB-CC-DD 101.115.127.111
+00-11-22-AA-BB-CC 101.114.127.110
+11-22-33-BB-CC-DD 101.113.127.111
+00-11-22-AA-BB-CC 101.113.127.110
+11-22-33-BB-CC-DD 101.112.127.111
+      </textarea></td>
+    </tr>
   </tbody>
 </table>
 
