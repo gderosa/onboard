@@ -110,6 +110,7 @@ class OnBoard
           chilli_new.dynaconf # set temporary dirs, ipc, etc.
           if params['ethers_content']
             chilli_new.ethers_content = params['ethers_content']
+            chilli_new.conf['ethers'] = CONFDIR + '/current/ethers.' + params['conf']['dhcpif']
           end
           return chilli_new
         end
@@ -330,7 +331,7 @@ class OnBoard
             end
           end
           f.close
-          fe.close
+          fe.close if fe
           FileUtils.cp f.path "#{f.path}.debug" if
             opt_h[:tmp] and opt_h[:debug] # keep a copy: the temp file
                 # will be removed when f object is finalized

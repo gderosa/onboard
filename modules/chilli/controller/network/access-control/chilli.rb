@@ -71,9 +71,8 @@ class OnBoard
       begin
         chilli = CHILLI_CLASS.create_from_HTTP_request(params)
         chilli.conffile = "#{CHILLI_CLASS::CONFDIR}/current/chilli.conf.#{chilli.conf['dhcpif']}"
+        chilli.write_tmp_conffile_and_validate(:raise_exception => true)
         chilli.write_conffile
-        chilli.validate_conffile(:raise_exception => true)
-        #raise CHILLI_CLASS::BadRequest, 'Invalid configuration!' unless chilli.validate_conffile # for whatever is not already checked by Chilli::validate_HTTP_creation
         status(201) # HTTP Created
         headers(
             'Location' =>
@@ -206,38 +205,38 @@ class OnBoard
             msg[:ok] = true
           end
           if msg[:ok]
-            # we should have file permission...
-            if (FileUtils.rm chilli.conffile)
-              status 200 # OK (do nothing)
-              redirection = "/network/access-control/chilli.#{params[:format]}"
-              status(303)                       # HTTP "See Other"
-              headers('Location' => redirection)
-              # altough the client will move, an entity-body is always returned
-              format(
-                :path     => '/303',
-                :format   => params[:format],
-                :objects  => redirection
-              )
-            else
-              status 500 # internal Server Error
-              msg[:err] = $!
-              msg[:ok] = false
-              format(
-                :path     => '/500',
-                :format   => params[:format],
-                :msg      => msg
-              )
+            if chilli.conf['ethers'] and File.exists? chilli.conf['ethers']
+              FileUtils.rm chilli.conf['ethers']
             end
+            if File.exists? chilli.conffile
+              FileUtils.rm chilli.conffile
+            end
+            redirection = "/network/access-control/chilli.#{params[:format]}"
+            status(303)                       # HTTP "See Other"
+            headers('Location' => redirection)
+            # altough the client will move, an entity-body is always returned
+            format(
+              :path     => '/303',
+              :format   => params[:format],
+              :objects  => redirection
+            )
+            # Handling errors?
+            # status 500 # internal Server Error
+            # msg[:err] = $!
+            # msg[:ok] = false
+            # format(
+            #   :path     => '/500',
+            #   :format   => params[:format],
+            #   :msg      => msg
+            # )
           end
         else
           status 403 # Forbidden
-
         end
       else
         not_found
       end
     end
-
   end
 
 end
