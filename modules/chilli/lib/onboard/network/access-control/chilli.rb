@@ -180,9 +180,9 @@ class OnBoard
           end
         end
 
-        attr_reader :data, :conf, :managed
+        attr_reader :data, :conf, :managed, :ethers_content
             # no :conffile getter : there's already an explicit method
-        attr_writer :conf, :conffile
+        attr_writer :conf, :conffile, :ethers_content
 
         def initialize(h)
           # TODO? It would probably be more efficient to store IP address
@@ -284,15 +284,21 @@ class OnBoard
           FileUtils.mkdir_p File.dirname @conffile if @conffile
           if opt_h[:tmp]
             f = Tempfile.new 'chilli-test'
-            fe = Tempfile.new 'chilli-ethers-test' if @conf['ethers']
-            @conf['ethers'] = fe.path
+            if @conf['ethers']
+              fe = Tempfile.new 'chilli-ethers-test'
+              @conf['ethers'] = fe.path
+            end
           else
             f = File.open @conffile, 'w'
-            fe = File.open @conf['ethers'], 'w' if @conf['ethers']
-            @conf['ethers'] = CONFDIR + '/ethers.' + @conf['dhcpif']
+            if @conf['ethers']
+              @conf['ethers'] = CONFDIR + '/current/ethers.' + @conf['dhcpif']
+              fe = File.open @conf['ethers'], 'w'
+            end 
           end
 
           if conf['ethers']
+            puts fe.path
+            puts @ethers_content
             fe.write @ethers_content
           end
 
@@ -321,6 +327,7 @@ class OnBoard
             end
           end
           f.close
+          fe.close
           FileUtils.cp f.path "#{f.path}.debug" if
             opt_h[:tmp] and opt_h[:debug] # keep a copy: the temp file
                 # will be removed when f object is finalized
