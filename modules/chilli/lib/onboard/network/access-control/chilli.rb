@@ -108,6 +108,9 @@ class OnBoard
           chilli_new.conf.merge! params['conf']
           chilli_new.set_dhcp_range(params['dhcp_start'], params['dhcp_end'])
           chilli_new.dynaconf # set temporary dirs, ipc, etc.
+          if params['ethers_content']
+            chilli_new.ethers_content = params['ethers_content']
+          end
           return chilli_new
         end
 
@@ -281,8 +284,16 @@ class OnBoard
           FileUtils.mkdir_p File.dirname @conffile if @conffile
           if opt_h[:tmp]
             f = Tempfile.new 'chilli-test'
+            fe = Tempfile.new 'chilli-ethers-test' if @conf['ethers']
+            @conf['ethers'] = fe.path
           else
             f = File.open @conffile, 'w'
+            fe = File.open @conf['ethers'], 'w' if @conf['ethers']
+            @conf['ethers'] = CONFDIR + '/ethers.' + @conf['dhcpif']
+          end
+
+          if conf['ethers']
+            fe.write @ethers_content
           end
 
           # Allow either static and dynamic ip in net

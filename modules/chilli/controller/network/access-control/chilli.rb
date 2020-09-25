@@ -112,6 +112,7 @@ class OnBoard
     end
 
     put '/network/access-control/chilli/:ifname.:format' do
+      pp params
       all = CHILLI_CLASS.getAll()
       chilli = all.detect{|x| x.conf['dhcpif'] == params[:ifname]}
       chilli_new = nil
@@ -120,6 +121,7 @@ class OnBoard
         begin
           chilli_new = CHILLI_CLASS.create_from_HTTP_request(params)
           chilli_new.conf.each_pair do |key, val|
+            puts key
             chilli.conf[key] = val unless key =~ /secret|passwd/ or key == 'macauth'
           end
 
