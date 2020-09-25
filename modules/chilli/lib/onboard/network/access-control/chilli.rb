@@ -210,6 +210,9 @@ class OnBoard
             @conf = h[:conf]
             dynaconf_coaport unless @conf['coaport'].to_i > 0 # useless?
           end
+          if @conf['ethers'] and File.exists? @conf['ethers']
+            @ethers_content = File.read @conf['ethers']
+          end
         end
 
         def validate_conffile(h={})
