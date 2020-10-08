@@ -108,6 +108,10 @@ class OnBoard
           chilli_new.conf.merge! params['conf']
           chilli_new.set_dhcp_range(params['dhcp_start'], params['dhcp_end'])
           chilli_new.dynaconf # set temporary dirs, ipc, etc.
+          if params['ethers_content']
+            chilli_new.ethers_content = params['ethers_content']
+            chilli_new.conf['ethers'] = CONFDIR + '/current/ethers.' + params['conf']['dhcpif']
+          end
           return chilli_new
         end
 
@@ -177,9 +181,9 @@ class OnBoard
           end
         end
 
-        attr_reader :data, :conf, :managed
+        attr_reader :data, :conf, :managed, :ethers_content
             # no :conffile getter : there's already an explicit method
-        attr_writer :conf, :conffile
+        attr_writer :conf, :conffile, :ethers_content
 
         def initialize(h)
           # TODO? It would probably be more efficient to store IP address
@@ -206,6 +210,9 @@ class OnBoard
             @managed = true
             @conf = h[:conf]
             dynaconf_coaport unless @conf['coaport'].to_i > 0 # useless?
+          end
+          if @conf['ethers'] and File.exists? @conf['ethers']
+            @ethers_content = File.read @conf['ethers']
           end
         end
 
@@ -281,8 +288,22 @@ class OnBoard
           FileUtils.mkdir_p File.dirname @conffile if @conffile
           if opt_h[:tmp]
             f = Tempfile.new 'chilli-test'
+            if @conf['ethers']
+              fe = Tempfile.new 'chilli-ethers-test'
+              @conf['ethers'] = fe.path
+            end
           else
             f = File.open @conffile, 'w'
+            if @conf['ethers']
+              @conf['ethers'] = CONFDIR + '/current/ethers.' + @conf['dhcpif']
+              fe = File.open @conf['ethers'], 'w'
+            end 
+          end
+
+          if conf['ethers']
+            puts fe.path
+            puts @ethers_content
+            fe.write @ethers_content
           end
 
           # Allow either static and dynamic ip in net
@@ -310,6 +331,7 @@ class OnBoard
             end
           end
           f.close
+          fe.close if fe
           FileUtils.cp f.path "#{f.path}.debug" if
             opt_h[:tmp] and opt_h[:debug] # keep a copy: the temp file
                 # will be removed when f object is finalized
