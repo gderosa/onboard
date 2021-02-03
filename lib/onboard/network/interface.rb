@@ -129,7 +129,8 @@ class OnBoard
                 :misc       => $3.split(','), # es. %w{BROADCAST MULTICAST UP}
                 :mtu        => $4,
                 :qdisc      => $5,
-                :state      => $6
+                :state      => $6,
+                :ip         => []
               }
               if netif_h[:state] == "UNKNOWN"
                 if netif_h[:misc].include? "DOWN"
