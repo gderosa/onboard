@@ -19,8 +19,6 @@ class OnBoard::Controller
   end
 
   put '/network/nat/dnat.:format' do
-    puts JSON.pretty_generate params  # DEBUG
-
     # let's *write* into params... looks strange, but it's useful :-)
     params['version'] = '4'   # IPv4
     params['table']   = 'nat'
