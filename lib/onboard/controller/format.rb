@@ -6,6 +6,7 @@ require 'onboard/extensions/sinatra/templates'
 class OnBoard
   class Controller < ::Sinatra::Base
 
+    # TODO: it's deprecated: https://www.rubydoc.info/github/rack/rack-contrib/Rack/PostBodyContentTypeParser
     use Rack::PostBodyContentTypeParser
 
     @@formats = %w{html json} # order matters

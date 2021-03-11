@@ -113,8 +113,22 @@ class OnBoard
         return msg
       end
 
+      def self.get_rulespec(h)
+        iptablesobj = OnBoard::Network::Iptables.new(
+          :ip_version => h[:ip_version] || '4',
+          :tables     => [h[:table]]
+        )
+        iptablesobj.get_all_info
+        return iptablesobj.tables[h[:table]].chains[h[:chain]].rulespecs[h[:rulenum].to_i - 1]
+      end
+
       def self.move_rule_from_HTTP_request(params, position)
-        msg = del_rule_from_HTTP_request(params)
+        rulespec = params['rulespec'] || get_rulespec(
+          :table    => params['table'],
+          :chain    => params['chain'],
+          :rulenum  => params['rulenum']
+        )
+        msg = del_rule_from_HTTP_request(params)  # DEVEL DEBUG
         return msg if msg.respond_to? :[] and not msg[:ok]
         str = ""
         str << case params['version']
@@ -128,7 +142,7 @@ class OnBoard
         end
         str << '-t '      << params['table']         << ' ' if
             params['table'] =~ /\S/
-        str << '-I ' << params['chain'] << ' ' << position << ' ' << params['rulespec']
+        str << '-I ' << params['chain'] << ' ' << position << ' ' << rulespec
         return OnBoard::System::Command.run str, :sudo
       end
 
