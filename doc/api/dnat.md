@@ -1,4 +1,4 @@
-# **Margay's IP Routes API v1**
+# **Margay's DNAT API v1**
 
 JSON API to manage DNAT in a Margay system.
 
