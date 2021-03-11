@@ -49,6 +49,9 @@ Body:
 
 
 ## List rules
+```
+GET /api/v1/network/nat/dnat
+```
 
 ```javascript
 {
