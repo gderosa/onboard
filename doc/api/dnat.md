@@ -20,6 +20,7 @@ For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<passwo
 ```
 PUT /api/v1/network/nat/dnat
 ```
+
 Body:
 ```javascript
 {
@@ -39,3 +40,9 @@ Body:
   "to-destination_port": "54321"
 }
 ```
+
+### Info on some body properties:
+
+* `"append_insert"`: "-I" to insert on top, "-A" to append at the bottom of the list of rules
+* `"chain"`: always "PREROUTING"
+* `"jump-target"`: "DNAT" (recommended); "REDIRECT" (transparent proxy); "ACCEPT" (do nothing)
