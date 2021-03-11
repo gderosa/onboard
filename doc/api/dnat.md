@@ -46,3 +46,121 @@ Body:
 * `"append_insert"`: "-I" to insert on top, "-A" to append at the bottom of the list of rules
 * `"chain"`: always "PREROUTING"
 * `"jump-target"`: "DNAT" (recommended); "REDIRECT" (transparent proxy); "ACCEPT" (do nothing)
+
+
+## List rules
+
+```javascript
+{
+    "nat": {
+        "name": "nat",
+        "chains": {
+            "PREROUTING": {
+                "name": "PREROUTING",
+                "listfields": [
+                    "#",
+                    "pkts",
+                    "bytes",
+                    "target",
+                    "prot",
+                    "opt",
+                    "in",
+                    "out",
+                    "source",
+                    "destination",
+                    "misc"
+                ],
+                "rules": [
+                    [
+                        1,
+                        "0",
+                        "0",
+                        "DNAT",
+                        "tcp",
+                        "--",
+                        "eth0",
+                        "*",
+                        "0.0.0.0/0",
+                        "1.2.0.0/20",
+                        "tcp spts:666:777 dpts:123:456 MAC AA:BB:CC:DD:EE:12 /* ciao2 */ to:9.8.7.6:54321"
+                    ],
+                    [
+                        2,
+                        "0",
+                        "0",
+                        "DNAT",
+                        "tcp",
+                        "--",
+                        "eth0",
+                        "*",
+                        "5.6.7.0/24",
+                        "1.2.0.0/20",
+                        "tcp spts:666:777 dpts:123:456 MAC AA:BB:CC:DD:EE:12 /* ciao */ to:9.8.7.6:54321"
+                    ]
+                ],
+                "rulespecs": [
+                    "-d 1.2.0.0/20 -i eth0 -p tcp -m tcp --sport 666:777 --dport 123:456 -m mac --mac-source AA:BB:CC:DD:EE:12 -m comment --comment ciao2 -j DNAT --to-destination 9.8.7.6:54321",
+                    "-s 5.6.7.0/24 -d 1.2.0.0/20 -i eth0 -p tcp -m tcp --sport 666:777 --dport 123:456 -m mac --mac-source AA:BB:CC:DD:EE:12 -m comment --comment ciao -j DNAT --to-destination 9.8.7.6:54321"
+                ]
+            },
+            "INPUT": {
+                "name": "INPUT",
+                "listfields": [
+                    "#",
+                    "pkts",
+                    "bytes",
+                    "target",
+                    "prot",
+                    "opt",
+                    "in",
+                    "out",
+                    "source",
+                    "destination",
+                    "misc"
+                ],
+                "rules": [],
+                "rulespecs": []
+            },
+            "POSTROUTING": {
+                "name": "POSTROUTING",
+                "listfields": [
+                    "#",
+                    "pkts",
+                    "bytes",
+                    "target",
+                    "prot",
+                    "opt",
+                    "in",
+                    "out",
+                    "source",
+                    "destination",
+                    "misc"
+                ],
+                "rules": [],
+                "rulespecs": []
+            },
+            "OUTPUT": {
+                "name": "OUTPUT",
+                "listfields": [
+                    "#",
+                    "pkts",
+                    "bytes",
+                    "target",
+                    "prot",
+                    "opt",
+                    "in",
+                    "out",
+                    "source",
+                    "destination",
+                    "misc"
+                ],
+                "rules": [],
+                "rulespecs": []
+            }
+        }
+    }
+}
+```
+
+Only the PREROUTING chain is relevant for DNAT.
+
