@@ -164,3 +164,19 @@ Body:
 
 Only the PREROUTING chain is relevant for DNAT.
 
+## Delete a rule
+
+```
+PUT /api/v1/network/nat/dnat
+```
+
+### Body
+```javascript
+{
+  "chain": "PREROUTING",
+  "rulenum": "2",
+  "del_rule": true
+}
+```
+
+Refers to the list of rules above. Rules are numbered starting from 1.
