@@ -16,7 +16,6 @@ For example, with [cURL](https://curl.haxx.se/), use `curl -u <username>:<passwo
 # *DNAT*
 
 ## Create rule
-
 ```
 PUT /api/v1/network/nat/dnat
 ```
@@ -168,7 +167,6 @@ GET /api/v1/network/nat/dnat
 Only the PREROUTING chain is relevant for DNAT.
 
 ## Delete a rule
-
 ```
 PUT /api/v1/network/nat/dnat
 ```
@@ -182,4 +180,30 @@ PUT /api/v1/network/nat/dnat
 }
 ```
 
-Refers to the list of rules above. Rules are numbered starting from 1.
+Refers to the list of rules [above](#list-rules). Rules are numbered starting from 1.
+
+## Move a rule up/down
+```
+PUT /api/v1/network/nat/dnat
+```
+
+### Body
+Move up:
+```javascript
+{
+  "chain": "PREROUTING",
+  "rulenum": "2",
+  "move_rule_up": true
+}
+```
+Move down:
+```javascript
+{
+  "chain": "PREROUTING",
+  "rulenum": "2",
+  "move_rule_down": true
+}
+```
+
+`rulenum` is the rule order number (which can be inferred after a GET request, see [above](#list-rules)).
+Rules are numbered starting from 1.
