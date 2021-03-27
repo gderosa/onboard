@@ -24,18 +24,18 @@ Body:
 ```javascript
 {
   "add_rule": true,
-  "append_insert": "-I",
+  "append_insert": "-I",        // or "-A" to append the rule at bottom
   "chain": "POSTROUTING",
   "output_iface": "eth0",
   "proto": "tcp",
   "source_addr": "5.6.7.0/24",
   "source_ports": "666:777",
   "dest_addr": "1.2.3.0/20",
-  "dest_ports": "123:456",
+  "dest_ports": "123:456",      // range e.g. "123:456", or inidividual port e.g. "123"
   "comment": "ciao",
-  "jump-target": "MASQUERADE",        // "MASQUERADE" OR "DNAT"
-  "to-destination_addr": "9.8.7.6",   // "DNAT" only
-  "to-destination_port": "54321"      // "DNAT" only
+  "jump-target": "SNAT",        // or "MASQUERADE"
+  "to-source_addr": "9.8.7.6",  // only with "jump-target": "SNAT"
+  "to-source_port": "54321"     // only with "jump-target": "SNAT"
 }
 ```
 
@@ -45,7 +45,7 @@ Body:
 * `"chain"`: always "POSTROUTING"
 * `"jump-target"`:
   * "MASQUERADE" (simpler);
-  * "DNAT" (allows specifying address/port to translate into);
+  * "SNAT" (allows specifying address/port to translate into);
   * "ACCEPT" (do nothing)
 
 
