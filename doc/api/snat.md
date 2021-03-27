@@ -238,14 +238,14 @@ Refers to the list of rules [above](#list-rules). Rules are numbered starting fr
 
 ## Move a rule up/down
 ```
-PUT /api/v1/network/nat/dnat
+PUT /api/v1/network/nat/snat
 ```
 
 ### Body
 Move up:
 ```javascript
 {
-  "chain": "PREROUTING",
+  "chain": "POSTROUTING",
   "rulenum": "2",
   "move_rule_up": true
 }
@@ -253,7 +253,7 @@ Move up:
 Move down:
 ```javascript
 {
-  "chain": "PREROUTING",
+  "chain": "POSTROUTING",
   "rulenum": "2",
   "move_rule_down": true
 }
