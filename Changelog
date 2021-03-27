@@ -1,10 +1,14 @@
+2021.05
+
+* SNAT JSON API (and) doc
+
 2021.04
 
 * SNAT: form support for iptables [-s <ip>] [--sport <port/range>]
 
 2021.03
 
-* DNAT JSON API
+* DNAT JSON API (and) doc
 
 2020.10.01
 
