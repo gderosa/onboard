@@ -218,17 +218,17 @@ GET /api/v1/network/nat/snat
 }
 ```
 
-Only the PREROUTING chain is relevant for DNAT.
+Only the POSTROUTING chain is relevant for SNAT.
 
 ## Delete a rule
 ```
-PUT /api/v1/network/nat/dnat
+PUT /api/v1/network/nat/snat
 ```
 
 ### Body
 ```javascript
 {
-  "chain": "PREROUTING",
+  "chain": "POSTROUTING",
   "rulenum": "2",
   "del_rule": true
 }
