@@ -92,7 +92,7 @@ apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby
 install_conffiles
 
 # Let's not use the old Debian one...
-gem install --no-rdoc --no-ri  -v '~> 2' bundler
+gem install -v '~> 2' bundler
 
 su - $APP_USER -c "
     cd $PROJECT_ROOT
