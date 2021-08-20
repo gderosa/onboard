@@ -21,11 +21,14 @@ Then run
 vagrant up
 ```
 
-You can also start separately margay vm and client vm:
+The above is equivalent to:
 
 ```bash
 vagrant up margay
 ```
+
+YOu can start a "client" VM, connected "behind" Margay via virtualized internal network:
+
 ```bash
 vagrant up client
 ```
