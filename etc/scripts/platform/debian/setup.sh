@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set +e
+
 # This assumes that the user
 # OnBoard/Margay will run-as
 # already exists in the system and can sudo,
@@ -85,12 +87,12 @@ cd $PROJECT_ROOT
 apt-get update
 apt-get -y upgrade
 
-apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale ruby-facets sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates ntp psmisc
+apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates libssl-dev ntp psmisc
 
 install_conffiles
 
 # Let's not use the old Debian one...
-gem install --no-rdoc --no-ri  -v '~> 2' bundler
+gem install -v '~> 2' bundler
 
 su - $APP_USER -c "
     cd $PROJECT_ROOT

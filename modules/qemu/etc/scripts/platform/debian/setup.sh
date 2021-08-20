@@ -16,7 +16,8 @@ enable_onboard_modules() {
 	# touch glusterfs/.enable  # DEPRECATED
 }
 
-. $PROJECT_ROOT/etc/scripts/platform/debian/_upgrade_to_bullseye.sh
+# bullseye is stable now
+# . $PROJECT_ROOT/etc/scripts/platform/debian/_upgrade_to_bullseye.sh
 
 apt-get -y install qemu-system-x86 qemu-utils ruby-rmagick
 

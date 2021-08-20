@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-DEBIAN_BOX = "bento/debian-10"
+DEBIAN_BOX = "debian/bullseye64"
 WORKING_DIR = "/vagrant"
 APP_USER = "vagrant"
 PROVISIONER_ARGS = [WORKING_DIR, APP_USER]
@@ -130,7 +130,7 @@ EOFF
 
   # The client machine may be any OS, but for economy of storage and download time,
   # it's based on the same base box.
-  config.vm.define "client" do |mgyc|
+  config.vm.define "client", autostart: false do |mgyc|
     mgyc.vm.box = DEBIAN_BOX
     mgyc.vm.hostname = "mgyclient"
     mgyc.vm.network "private_network",
