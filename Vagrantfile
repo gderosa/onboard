@@ -120,7 +120,7 @@ EOFF
 
   config.vm.define "mgy_downstr", primary: true do |mgy_downstr|  # downstream switch, currently a mgy, could be an Arista, Cisco, etc.
     mgy_downstr.vm.box = DEBIAN_BOX
-    mgy_downstr.vm.hostname = "mgy_downstr"
+    mgy_downstr.vm.hostname = "mgy-downstr"
 
     mgy_downstr.vm.network "forwarded_port", guest: 4567, host: 4568
     mgy_downstr.vm.network "forwarded_port", guest: 443,  host: 4444
