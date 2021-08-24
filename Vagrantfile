@@ -11,7 +11,7 @@ PROVISIONER_ARGS = [WORKING_DIR, APP_USER]
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.define "margay", primary: true do |mgy|
+  config.vm.define "mgy", primary: true do |mgy|
     # The most common configuration options are documented and commented below.
     # For a complete reference, please see the online documentation at
     # https://docs.vagrantup.com.
@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
     # boxes at https://vagrantcloud.com/search.
     mgy.vm.box = DEBIAN_BOX
 
-    mgy.vm.hostname = "margay"
+    mgy.vm.hostname = "mgy"
 
     # Disable automatic box update checking. If you disable this, then
     # boxes will only be checked for updates when the user runs
@@ -41,9 +41,17 @@ Vagrant.configure("2") do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    mgy.vm.network "private_network",
+    mgy.vm.network "default_access",  # may also be used as vlan 1 access
       auto_config: false, # or will reset what margay-persist has configured on the interface
-      virtualbox__intnet: "margay-net-downstream"
+      virtualbox__intnet: "default_access"
+
+    mgy.vm.network "vlan_trunk",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "vlan_trunk"
+
+    mgy.vm.network "vlan2_access",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "vlan2_access"
 
     # Create a public network, which generally matched to bridged network.
     # Bridged networks make the machine appear as another physical device on
@@ -128,17 +136,45 @@ EOFF
 
   end
 
+  config.vm.define "mgy_downstr", primary: true do |mgy_downstr|  # downstream switch, currently a mgy, could be an Arista, Cisco, etc.
+    mgy_downstr.vm.box = DEBIAN_BOX
+    mgy_downstr.vm.hostname = "mgy_downstr"
+
+    mgy_downstr.vm.network "forwarded_port", guest: 4567, host: 4568
+    mgy_downstr.vm.network "forwarded_port", guest: 443,  host: 4444
+
+    mgy_downstr.vm.network "vlan_trunk",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "vlan_trunk"
+
+    mgy_downstr.vm.network "downstr_vlan_1_access",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "downstr_vlan_1_access"
+
+    mgy_downstr.vm.network "downstr_vlan_2_access",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "downstr_vlan_2_access"
+
+    # Enable provisioning with a shell script. Additional provisioners such as
+    # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+    # documentation for more information about their specific syntax and use.
+    mgy_downstr.vm.provision "core",
+        type: "shell",
+        path: "./etc/scripts/platform/debian/setup.sh",
+        args: PROVISIONER_ARGS
+  end
+
   # The client machine may be any OS, but for economy of storage and download time,
   # it's based on the same base box.
   config.vm.define "client", autostart: false do |mgyc|
     mgyc.vm.box = DEBIAN_BOX
     mgyc.vm.hostname = "mgyclient"
-    mgyc.vm.network "private_network",
+    mgyc.vm.network "default_access",
       auto_config: false,
           # Vagrant auto_config would otherwise mess things up here,
           # modifying /etc/network/interfaces so to remove the default gw from
           # margay (ordinary DHCP or chillispot).
-      virtualbox__intnet: "margay-net-downstream"
+      virtualbox__intnet: "default_access"
     mgyc.vm.provider "virtualbox" do |vb|
       vb.gui = true
       # https://stackoverflow.com/a/24253435
