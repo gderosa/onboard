@@ -41,38 +41,20 @@ Vagrant.configure("2") do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    mgy.vm.network "default_access",  # may also be used as vlan 1 access
+    mgy.vm.network "private_network",  # may also be used as vlan 1 access
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "default_access"
 
-    mgy.vm.network "vlan_trunk",
+    mgy.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "vlan_trunk"
 
-    mgy.vm.network "vlan2_access",
+    mgy.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "vlan2_access"
 
-    # Create a public network, which generally matched to bridged network.
-    # Bridged networks make the machine appear as another physical device on
-    # your network.
-    # config.vm.network "public_network"
-
-    # Share an additional folder to the guest VM. The first argument is
-    # the path on the host to the actual folder. The second argument is
-    # the path on the guest to mount the folder. And the optional third
-    # argument is a set of non-required options.
-
-    # A symlink could work too? Current strategy is running as vagrant,
-    # and generally being flexible/dynamic as per the user
-    # Margay/OnBoard runs as. So the dir is still owned by vagrant
-    # but compatibility with some legacy scripts is retained.
-
     mgy.vm.synced_folder ".", "/vagrant"
 
-    # Enable provisioning with a shell script. Additional provisioners such as
-    # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-    # documentation for more information about their specific syntax and use.
     mgy.vm.provision "core",
         type: "shell",
         path: "./etc/scripts/platform/debian/setup.sh",
@@ -143,15 +125,15 @@ EOFF
     mgy_downstr.vm.network "forwarded_port", guest: 4567, host: 4568
     mgy_downstr.vm.network "forwarded_port", guest: 443,  host: 4444
 
-    mgy_downstr.vm.network "vlan_trunk",
+    mgy_downstr.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "vlan_trunk"
 
-    mgy_downstr.vm.network "downstr_vlan_1_access",
+    mgy_downstr.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "downstr_vlan_1_access"
 
-    mgy_downstr.vm.network "downstr_vlan_2_access",
+    mgy_downstr.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "downstr_vlan_2_access"
 
@@ -169,7 +151,7 @@ EOFF
   config.vm.define "client", autostart: false do |mgyc|
     mgyc.vm.box = DEBIAN_BOX
     mgyc.vm.hostname = "mgyclient"
-    mgyc.vm.network "default_access",
+    mgyc.vm.network "private_network",
       auto_config: false,
           # Vagrant auto_config would otherwise mess things up here,
           # modifying /etc/network/interfaces so to remove the default gw from
