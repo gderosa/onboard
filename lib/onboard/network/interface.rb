@@ -401,13 +401,13 @@ class OnBoard
 
       # Instance methods and attributes.
 
-      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
+      attr_reader :n, :displayname, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
       attr_accessor :ipassign, :type, :wifi_properties
 
       include OnBoard::System
 
       def initialize(hash)
-        %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
+        %w{n displayname name misc mtu qdisc active state type mac ip ipassign}.each do |property|
           eval "@#{property} = hash[:#{property}]"
         end
 

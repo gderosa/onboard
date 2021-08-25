@@ -4,7 +4,7 @@
   require "onboard/network/interface"
 
   iface_path =
-      "/network/interfaces/#{Rack::Utils.escape(netif.name)}.html"
+      "/network/interfaces/#{Rack::Utils.escape(netif.displayname)}.html"
   iface_href ||= {}
   iface_href =
       request.path_info == iface_path           ?
@@ -13,7 +13,7 @@
         :open   => %Q{<a href="#{iface_path}">},
         :close  => '</a>'
       }
-  netif_html = "#{iface_href[:open]}#{netif.name}#{iface_href[:close]}"
+  netif_html = "#{iface_href[:open]}#{netif.displayname}#{iface_href[:close]}"
 %>
 
             <th scope="row">

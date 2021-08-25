@@ -23,7 +23,7 @@ class OnBoard::Controller
       :format => params[:format],
       :title    => "Network interfaces: #{params[:ifname]}",
       :objects  => OnBoard::Network::Interface.getAll.select do |iface|
-        iface.name == params[:ifname]
+        iface.name == params[:ifname] or iface.displayname == params[:ifname]
       end
     )
   end
