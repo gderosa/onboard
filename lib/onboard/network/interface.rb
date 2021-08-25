@@ -115,7 +115,7 @@ class OnBoard
 
           `ip addr show`.each_line do |line|
             # TODO: take advantage of /master ([^: ]+)/          HERE--> vv   ???
-            if line =~ /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+).*state ([^: ]+)/
+            if md = /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+).*state ([^: ]+)/.match(line)
             # It might useful to know earlier which bridge the interface
             # belongs to (if it's part of a bridge, of course :).
 
@@ -124,13 +124,14 @@ class OnBoard
                 netif_h = nil
               end
               netif_h = {
-                :n          => $1,
-                :name       => $2,
-                :misc       => $3.split(','), # es. %w{BROADCAST MULTICAST UP}
-                :mtu        => $4,
-                :qdisc      => $5,
-                :state      => $6,
-                :ip         => []
+                :n            => md[1],
+                :displayname  => md[2],
+                :name         => md[2].sub(/@.*$/, ''),
+                :misc         => md[3].split(','), # es. %w{BROADCAST MULTICAST UP}
+                :mtu          => md[4],
+                :qdisc        => md[5],
+                :state        => md[6],
+                :ip           => []
               }
               if netif_h[:state] == "UNKNOWN"
                 if netif_h[:misc].include? "DOWN"
