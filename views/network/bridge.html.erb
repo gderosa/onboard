@@ -87,8 +87,8 @@
     <div style="height:2em;"></div>
 
     <table>
-      <% fieldnames = %w{Interface Active/State Type MTU MAC\ Address IP\ Addresses Method Vendor/Model} %>
-      <% colspans = [2, 2, 1, 1, 1, 1, 1, 1] %>
+    <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method/Renew VLAN\ IDs/Trunk Preferred<br/>Metric Vendor/Model Bus} %>
+    <% colspans = [2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1,] %>
       <tr>
         <td class="warn" style="padding: 3px; background: white; /* TODO: DRY */" colspan="<%= colspans.sum %>">
           Please note: it is recommended to add IP addresses to the
