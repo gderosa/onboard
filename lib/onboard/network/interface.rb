@@ -1,5 +1,6 @@
 require 'timeout'
 require 'yaml'
+require 'json'
 require 'fileutils'
 
 require 'onboard/network/interface/mac'
@@ -74,7 +75,7 @@ class OnBoard
         # Also, handle the case of possible new types:
         order_by_type = 9999
         if OnBoard::Network::Interface::TYPES[iface.type]
-         order_by_type =  OnBoard::Network::Interface::TYPES[iface.type][:preferred_order] 
+         order_by_type =  OnBoard::Network::Interface::TYPES[iface.type][:preferred_order]
         end
 
         return [
@@ -114,7 +115,6 @@ class OnBoard
           netif_h = nil
 
           `ip addr show`.each_line do |line|
-            # TODO: take advantage of /master ([^: ]+)/          HERE--> vv   ???
             if md = /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+).*state ([^: ]+)/.match(line)
             # It might useful to know earlier which bridge the interface
             # belongs to (if it's part of a bridge, of course :).
@@ -127,7 +127,7 @@ class OnBoard
                 :n            => md[1],
                 :displayname  => md[2],
                 :name         => md[2].sub(/@.*$/, ''),
-                :misc         => md[3].split(','), # es. %w{BROADCAST MULTICAST UP}
+                :misc         => md[3].split(','), # e.g. %w{BROADCAST MULTICAST UP}
                 :mtu          => md[4],
                 :qdisc        => md[5],
                 :state        => md[6],
@@ -229,6 +229,22 @@ class OnBoard
                 :cmd            => cmd,
                 :args           => args
               }
+            end
+          end
+
+          # use iproute2 json output!
+          ip_link_show_json_info = JSON.parse `ip -d -j -p link show`
+          # 802.1Q VLANs
+          ip_link_show_json_info.each do |ip_link_entry|
+            ifname = ip_link_entry['ifname']
+            if ip_link_entry['linkinfo'] and ip_link_entry['linkinfo']['info_kind'] and ip_link_entry['linkinfo']['info_kind'] == 'vlan'
+              iface = ary.find{|iface| iface.name == ifname}
+              iface.vlan_info[:ids] = [ip_link_entry['linkinfo']['info_data']['id']]
+              trunk_ifname = ip_link_entry['link']
+              trunk_iface = ary.find{|iface| iface.name == trunk_ifname}
+              trunk_iface.vlan_info[:is_trunk] = true
+              trunk_iface.vlan_info[:ids] ||= []
+              trunk_iface.vlan_info[:ids] << ip_link_entry['linkinfo']['info_data']['id']
             end
           end
 
@@ -401,8 +417,8 @@ class OnBoard
 
       # Instance methods and attributes.
 
-      attr_reader :n, :displayname, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
-      attr_accessor :ipassign, :type, :wifi_properties
+      attr_reader :n, :displayname, :name, :vlan_info, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
+      attr_accessor :ipassign, :type, :wifi_properties, :vlan_info
 
       include OnBoard::System
 
@@ -410,6 +426,11 @@ class OnBoard
         %w{n displayname name misc mtu qdisc active state type mac ip ipassign}.each do |property|
           eval "@#{property} = hash[:#{property}]"
         end
+
+        @vlan_info = {
+          is_trunk: false,
+          ids: []
+        }
 
         ### HW detection
         if File.exists? "/sys/class/net/#{@name}/device"
@@ -646,7 +667,7 @@ class OnBoard
 
       def to_h
         h = {}
-        %w{name misc qdisc state type vendor model bus}.each do |property|
+        %w{name misc qdisc state type vendor model bus vlan_info}.each do |property|
           h[property] = eval "@#{property}" if eval "@#{property}"
         end
         h['active']   = @active   # may be true or false
