@@ -134,7 +134,7 @@
             <td style="font-size:66%;">
               <% if netif.vlan_info[:is_trunk] %>
                 <span style="font-weight: bold">TRUNK</span>
-              <% elsif netif.is_bridge? %>
+              <% elsif netif.is_bridge? and netif.vlan_info[:ids].any? %>
                 <span style="font-style: italic">BRIDGE</span>
               <% end %>
             </td>
