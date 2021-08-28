@@ -240,7 +240,8 @@ class OnBoard
             if ip_link_entry['linkinfo'] and ip_link_entry['linkinfo']['info_kind'] and ip_link_entry['linkinfo']['info_kind'] == 'vlan'
               iface = ary.find{|iface| iface.name == ifname}
               iface.vlan_info[:ids] = [ip_link_entry['linkinfo']['info_data']['id']]
-              trunk_ifname = ip_link_entry['link']
+              iface.vlan_info[:link] = ip_link_entry['link']
+              trunk_ifname = iface.vlan_info[:link]
               trunk_iface = ary.find{|iface| iface.name == trunk_ifname}
               trunk_iface.vlan_info[:is_trunk] = true
               trunk_iface.vlan_info[:ids] ||= []
