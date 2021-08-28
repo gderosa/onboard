@@ -1,16 +1,24 @@
 <h2><%= title %></h2>
 
 <table>
+  <thead>
+    <tr>
+      <th>Interface</th>
+      <th>VLAN IDs</th>
+    </tr>
+  </thead>
+  <tbody>
   <% objects.each do |netif| %>
     <% if netif.type == 'ether'%>
       <tr>
-        <td style="font-weight: bold">
+        <th scope="row">
           <%= netif.name %>
-        </td>
+        </th>
         <td>
           <input type="text" name="vlan[trunk][<%= netif.name %>]" value="<%= netif.vlan_info[:ids].join(',') %>"/>
         </td>
       </tr>
     <% end %>
   <% end %>
+  </tbody>
 </table>
