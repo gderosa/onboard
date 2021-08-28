@@ -24,8 +24,7 @@ class OnBoard::Controller
       'Location:' =>
           "/network/bridges/#{params['brctl']['addbr']}.#{params['format']}"
     )
-    interfaces  = OnBoard::Network::Interface.getAll
-    bridges     = interfaces.select {|i| i.type == 'bridge'}
+    bridges     = OnBoard::Network::Bridge.get_all
     format(
       :path     => 'network/bridges',
       :format   => params[:format],
@@ -44,8 +43,7 @@ class OnBoard::Controller
       end
     end
     # update info
-    interfaces = OnBoard::Network::Interface.getAll
-    bridges = interfaces.select {|i| i.type == 'bridge'}
+    bridges     = OnBoard::Network::Bridge.get_all
     # send response
     if [nil, false, [], {}].include? params['netifs']
       status(204)                     # HTTP "No Content"
@@ -88,8 +86,8 @@ class OnBoard::Controller
     # let's be procedural this turn... # TODO: security concerns?
     OnBoard::Network::Bridge.brctl(params['brctl'])
     # update info
-    interfaces = OnBoard::Network::Interface.getAll
-    bridge = interfaces.find do |netif|
+    bridges     = OnBoard::Network::Bridge.get_all
+    bridge = bridges.find do |netif|
       netif.name == params['brname']
     end
     format(
