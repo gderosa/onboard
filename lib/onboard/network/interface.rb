@@ -273,6 +273,7 @@ class OnBoard
           ary += bridges.map do |x|
             # create Bridge objects using generic Interface objects as templates
             br = OnBoard::Network::Bridge.new(x)
+            br.stp = br.stp?  # this should be in _layer2 but still...
             # if one of the children interfaces is configured via DHCP, then
             # consider the bridge itself configured via DHCP and grab all the info
             if br.ipassign[:method] == :static

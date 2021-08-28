@@ -73,7 +73,7 @@
           <% %w{pid cmd args}.each do |what| %>
             <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
           <% end %>
-        </td>]
+        </td>
         <td style="text-align: center">
           <input type="checkbox" name="netifs[<%= netif.name %>][stp]" <%= 'checked' if netif.stp %>/>
         </td>

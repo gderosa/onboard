@@ -8,7 +8,8 @@ require 'onboard/extensions/string'
 class OnBoard::Controller
 
   get "/network/bridges.:format" do
-    bridges     = OnBoard::Network::Bridge.get_all
+    interfaces  = OnBoard::Network::Interface.getAll
+    bridges     = interfaces.select {|i| i.type == 'bridge'}
     format(
       :path     => 'network/bridges',
       :format   => params[:format],
@@ -66,15 +67,15 @@ class OnBoard::Controller
   end
 
   get "/network/bridges/:brname.:format" do
-    bridges = OnBoard::Network::Bridge.get_all
-    bridge = bridges.find do |br|
-      br.name == params['brname']
+    interfaces  = OnBoard::Network::Interface.getAll
+    bridge      = interfaces.find do |netif|
+      netif.type == 'bridge' and netif.name == params['brname']
     end
     raise Sinatra::NotFound unless bridge
     format(
       :path     => 'network/bridge',
       :format   => params[:format],
-      :objects  => {:bridge => bridge, :all_interfaces => bridges},
+      :objects  => {:bridge => bridge, :all_interfaces => interfaces},
       :title    => "Bridge: #{params['brname']}"
     )
   end
