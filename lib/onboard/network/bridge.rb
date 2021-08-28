@@ -1,3 +1,5 @@
+require 'json'
+
 require 'onboard/system/command'
 require 'onboard/network/interface'
 
@@ -8,7 +10,11 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     include OnBoard::System
 
     def get_all
-      OnBoard::Network::Interface.get_all.select{|x| x.type == 'bridge'}
+      all = OnBoard::Network::Interface.get_all.select{|x| x.type == 'bridge'}
+      all.each do |br|
+        br.stp = br.stp?
+      end
+      return all
     end
 
     def brctl(h)
@@ -52,6 +58,8 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     end
 
   end
+
+  attr_accessor :stp
 
   def initialize(parentClassObjTemplate)
     parentClassObjTemplate.instance_variables.each do |ivar|
@@ -115,6 +123,10 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
         end
       end
     end
+  end
+
+  def stp?
+    JSON.parse(`ip -j -d link show dev #{@name}`).first['linkinfo']['info_data']['stp_state'] > 0
   end
 
   def data
