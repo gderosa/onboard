@@ -369,6 +369,14 @@ class OnBoard
               current_iface.ip_link_set_down
             end
             if saved_iface.type == 'bridge' and current_iface.type == 'bridge'
+              if saved_iface.stp
+                Bridge.brctl({
+                  'stp' => {
+                    current_iface.name => 'on'
+                  }
+                })
+              end
+
               to_add    = saved_iface.members_saved - current_iface.members
               to_remove = current_iface.members - saved_iface.members_saved
               # Bridge.brctl was meant to get HTTP POST/PUT params,
