@@ -131,7 +131,13 @@
               <% end %>
             </td>
             <td><%= netif.vlan_info[:ids].join(',') %></td>
-            <td style="font-size:66%; font-weight: bold"><% if netif.vlan_info[:is_trunk] %>TRUNK<% end %></td>
+            <td style="font-size:66%;">
+              <% if netif.vlan_info[:is_trunk] %>
+                <span style="font-weight: bold">TRUNK</span>
+              <% elsif netif.is_bridge? %>
+                <span style="font-style: italic">BRIDGE</span>
+              <% end %>
+            </td>
             <td style="text-align:center;">
             <% unless netif.type == 'P-t-P' %>
               <input class="rwtext" type="text" size="6" name="netifs[<%= netif.name %>][preferred_metric]" value="<%= netif.preferred_metric %>"/>
