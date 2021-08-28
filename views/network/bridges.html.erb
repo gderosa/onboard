@@ -99,7 +99,8 @@
             <% end %>
           </td>
           <td style="text-align: center">
-            <input type="checkbox" name="netifs[<%= netif.name %>][stp]" <%= 'checked' if netif.stp %>/>
+            <input type="hidden"    name="brctl[stp][<%= netif.name %>]" value="off"/>
+            <input type="checkbox"  name="brctl[stp][<%= netif.name %>]" <%= 'checked' if netif.stp %>/>
           </td>
         </tr>
       <% end %>

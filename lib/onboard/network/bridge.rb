@@ -55,6 +55,17 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
         Command.run "ip link set #{h['delbr']} down", :sudo
         Command.run "brctl delbr #{h['delbr']}", :sudo
       end
+      if h.respond_to? :[] and h['stp']
+        h['stp'].each_pair do |brname, onoff|
+          brname = brname.strip
+          if [0, false, 'no'].include? onoff
+            onoff = 'on'
+          elsif [1, true, 'yes'].include? onoff
+            onoff = 'on'
+          end
+          Command.run "brctl stp #{brname} #{onoff}", :sudo
+        end
+      end
     end
 
   end
