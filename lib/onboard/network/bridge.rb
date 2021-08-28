@@ -92,6 +92,19 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     return ary
   end
 
+  # Override the @vlan_info accessor, adding VLAN IDs of the bridged interfaces
+  def vlan_info
+    vlan_info_new = @vlan_info.clone
+    member_netifs.each do |member_netif|
+      if member_netif.vlan_info
+        vlan_info_new[:ids] += member_netif.vlan_info[:ids]
+      end
+    end
+    vlan_info_new[:ids].uniq!
+    vlan_info_new[:ids].sort!
+    return vlan_info_new
+  end
+
   def ip_addr_del(ipobj)
     if has_ip? ipobj
       return super(ipobj)
