@@ -9,7 +9,7 @@
     <table>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <td style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <td style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </td>
         <% end %>
@@ -91,7 +91,7 @@
     <div style="height:2em;"></div>
 
     <table>
-    <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method/Renew VLAN\ IDs/Trunk Preferred<br/>Metric Vendor/Model Bus} %>
+    <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method/Renew VLANs Preferred<br/>Metric Vendor/Model Bus} %>
     <% colspans = [2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1,] %>
       <tr>
         <td class="warn" style="padding: 3px; background: white; /* TODO: DRY */" colspan="<%= colspans.sum %>">
@@ -111,7 +111,7 @@
     <input type="hidden" name="_method" value="put"/>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <td style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <td style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </td>
         <% end %>
