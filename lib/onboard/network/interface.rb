@@ -315,7 +315,12 @@ class OnBoard
             to_add    = vlan_ids - iface.vlan_info[:ids]
             to_remove = iface.vlan_info[:ids] - vlan_ids
             to_add.each do |vlan_id|
-              System::Command.run "ip link add link #{name} name #{name}.VLAN-#{'%03d' % vlan_id} type vlan id #{vlan_id}", :sudo
+              # e.g. "eth0.VLAN-002"
+              vifname = name + '.VLAN-' + '%03d' % vlan_id
+              # See e.g. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/sec-configure_802_1q_vlan_tagging_using_the_command_line#sec-Configure_802_1Q_VLAN_Tagging_ip_Commands
+              System::Command.run "ip link add link #{name} name #{vifname} type vlan id #{vlan_id}", :sudo
+              # No reason not to bring it UP... (DOWN by default)
+              System::Command.run "ip link set up dev #{vifname}"
             end
             to_remove.each do |vlan_id|
               viface = @@all_layer2.find{|viface| viface.vlan_info[:link] == name and viface.vlan_info[:ids] == [vlan_id]}
