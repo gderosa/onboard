@@ -37,6 +37,7 @@ class OnBoard::Controller
   end
 
   put '/network/bridges.:format' do
+    # pp params
     interfaces = OnBoard::Network::Interface.getAll
     if params['netifs'].respond_to? :each_pair
       params['netifs'].each_pair do |ifname, ifhash| # PUT/[POST] params
@@ -44,6 +45,7 @@ class OnBoard::Controller
         interface.modify_from_HTTP_request(ifhash)
       end
     end
+    OnBoard::Network::Bridge.brctl(params['brctl'])
     # update info
     interfaces = OnBoard::Network::Interface.getAll
     bridges = interfaces.select {|i| i.type == 'bridge'}
@@ -86,7 +88,6 @@ class OnBoard::Controller
       interface = interfaces.detect {|i| i.name == ifname}
       interface.modify_from_HTTP_request(ifhash)
     end
-    # let's be procedural this turn... # TODO: security concerns?
     OnBoard::Network::Bridge.brctl(params['brctl'])
     # update info
     interfaces = OnBoard::Network::Interface.getAll

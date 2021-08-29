@@ -21,15 +21,15 @@
   )
 %>
 
-  <% fieldnames = %w{Bridge Interfaces Active/State MTU MAC\ Address IP\ Addresses Method} %>
-  <% colspans = [1, 1, 2, 1, 1, 1, 1, 1] %>
+  <% fieldnames = %w{Bridge Interfaces Active/State MTU MAC\ Address IP\ Addresses Method STP\ enabled?} %>
+  <% colspans = [1, 1, 2, 1, 1, 1, 1, 1, 1] %>
   <form method="post">
     <input type="hidden" name="_method" value="put"/>
     <table>
      <thead>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <th style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <th style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </th>
         <% end %>
@@ -97,6 +97,10 @@
             <% %w{pid cmd args}.each do |what| %>
               <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
             <% end %>
+          </td>
+          <td style="text-align: center">
+            <input type="hidden"    name="brctl[stp][<%= netif.name %>]" value="off"/>
+            <input type="checkbox"  name="brctl[stp][<%= netif.name %>]" <%= 'checked' if netif.stp %>/>
           </td>
         </tr>
       <% end %>

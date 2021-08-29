@@ -1,5 +1,6 @@
 require 'timeout'
 require 'yaml'
+require 'json'
 require 'fileutils'
 
 require 'onboard/network/interface/mac'
@@ -74,7 +75,7 @@ class OnBoard
         # Also, handle the case of possible new types:
         order_by_type = 9999
         if OnBoard::Network::Interface::TYPES[iface.type]
-         order_by_type =  OnBoard::Network::Interface::TYPES[iface.type][:preferred_order] 
+         order_by_type =  OnBoard::Network::Interface::TYPES[iface.type][:preferred_order]
         end
 
         return [
@@ -114,8 +115,7 @@ class OnBoard
           netif_h = nil
 
           `ip addr show`.each_line do |line|
-            # TODO: take advantage of /master ([^: ]+)/          HERE--> vv   ???
-            if line =~ /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+).*state ([^: ]+)/
+            if md = /^(\d+): ([^: ]+): <(.*)> mtu (\d+) qdisc ([^: ]+).*state ([^: ]+)/.match(line)
             # It might useful to know earlier which bridge the interface
             # belongs to (if it's part of a bridge, of course :).
 
@@ -124,13 +124,14 @@ class OnBoard
                 netif_h = nil
               end
               netif_h = {
-                :n          => $1,
-                :name       => $2,
-                :misc       => $3.split(','), # es. %w{BROADCAST MULTICAST UP}
-                :mtu        => $4,
-                :qdisc      => $5,
-                :state      => $6,
-                :ip         => []
+                :n            => md[1],
+                :displayname  => md[2],
+                :name         => md[2].sub(/@[^@]+$/, ''),
+                :misc         => md[3].split(','), # e.g. %w{BROADCAST MULTICAST UP}
+                :mtu          => md[4],
+                :qdisc        => md[5],
+                :state        => md[6],
+                :ip           => []
               }
               if netif_h[:state] == "UNKNOWN"
                 if netif_h[:misc].include? "DOWN"
@@ -231,6 +232,23 @@ class OnBoard
             end
           end
 
+          # use iproute2 json output!
+          ip_link_show_json_info = JSON.parse `ip -d -j link show`
+          # 802.1Q VLANs
+          ip_link_show_json_info.each do |ip_link_entry|
+            ifname = ip_link_entry['ifname']
+            if ip_link_entry['linkinfo'] and ip_link_entry['linkinfo']['info_kind'] and ip_link_entry['linkinfo']['info_kind'] == 'vlan'
+              iface = ary.find{|iface| iface.name == ifname}
+              iface.vlan_info[:ids] = [ip_link_entry['linkinfo']['info_data']['id']]
+              iface.vlan_info[:link] = ip_link_entry['link']
+              trunk_ifname = iface.vlan_info[:link]
+              trunk_iface = ary.find{|iface| iface.name == trunk_ifname}
+              trunk_iface.vlan_info[:is_trunk] = true
+              trunk_iface.vlan_info[:ids] ||= []
+              trunk_iface.vlan_info[:ids] << ip_link_entry['linkinfo']['info_data']['id']
+            end
+          end
+
           return @@all_layer2 = ary
         end
 
@@ -256,6 +274,7 @@ class OnBoard
           ary += bridges.map do |x|
             # create Bridge objects using generic Interface objects as templates
             br = OnBoard::Network::Bridge.new(x)
+            br.stp = br.stp?  # this should be in _layer2 but still...
             # if one of the children interfaces is configured via DHCP, then
             # consider the bridge itself configured via DHCP and grab all the info
             if br.ipassign[:method] == :static
@@ -282,6 +301,31 @@ class OnBoard
             return @@all_layer2
           rescue NameError
             return getAll_layer2
+          end
+        end
+
+        # TODO: move to its own module?
+        def set_802_1q_trunks(h)
+          @@all_layer2 ||= getAll_layer2
+          h.each_pair do |name, vlan_ids|
+            iface = @@all_layer2.find{|netif| netif.name == name}
+            # vlan_ids can be e.g. "1, 2, 44" or [1, 2, 44] etc.: normalize!
+            vlan_ids = vlan_ids.split(/[,\s]+/) if vlan_ids.respond_to? :split
+            vlan_ids.map!{|x| x.to_i}
+            to_add    = vlan_ids - iface.vlan_info[:ids]
+            to_remove = iface.vlan_info[:ids] - vlan_ids
+            to_add.each do |vlan_id|
+              # e.g. "eth0.VLAN-002"
+              vifname = name + '.VLAN-' + '%03d' % vlan_id
+              # See e.g. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/sec-configure_802_1q_vlan_tagging_using_the_command_line#sec-Configure_802_1Q_VLAN_Tagging_ip_Commands
+              System::Command.run "ip link add link #{name} name #{vifname} type vlan id #{vlan_id}", :sudo
+              # No reason not to bring it UP... (DOWN by default)
+              System::Command.run "ip link set up dev #{vifname}", :sudo
+            end
+            to_remove.each do |vlan_id|
+              viface = @@all_layer2.find{|viface| viface.vlan_info[:link] == name and viface.vlan_info[:ids] == [vlan_id]}
+              System::Command.run "ip link delete #{viface.name}", :sudo
+            end
           end
         end
 
@@ -315,6 +359,20 @@ class OnBoard
           else
             current_ifaces = getAll
           end
+
+          # VLANs
+          restore_trunks = {}
+          saved_ifaces.each do |saved_iface|
+            next unless saved_iface.respond_to? :vlan_info and saved_iface.vlan_info.respond_to? :[]
+            parent_ifname = saved_iface.vlan_info[:link]
+            vlan_id = saved_iface.vlan_info[:ids][0]
+            if parent_ifname and vlan_id
+              restore_trunks[parent_ifname] ||= []
+              restore_trunks[parent_ifname] << vlan_id
+            end
+          end
+          set_802_1q_trunks restore_trunks
+          # end VLANS
 
           saved_ifaces.each do |saved_iface|
             current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
@@ -351,6 +409,14 @@ class OnBoard
               current_iface.ip_link_set_down
             end
             if saved_iface.type == 'bridge' and current_iface.type == 'bridge'
+              if saved_iface.stp
+                Bridge.brctl({
+                  'stp' => {
+                    current_iface.name => 'on'
+                  }
+                })
+              end
+
               to_add    = saved_iface.members_saved - current_iface.members
               to_remove = current_iface.members - saved_iface.members_saved
               # Bridge.brctl was meant to get HTTP POST/PUT params,
@@ -400,15 +466,20 @@ class OnBoard
 
       # Instance methods and attributes.
 
-      attr_reader :n, :name, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
-      attr_accessor :ipassign, :type, :wifi_properties
+      attr_reader :n, :displayname, :name, :vlan_info, :misc, :mtu, :qdisc, :active, :state, :mac, :ip, :bus, :vendor, :model, :desc, :pciid, :preferred_metric
+      attr_accessor :ipassign, :type, :wifi_properties, :vlan_info
 
       include OnBoard::System
 
       def initialize(hash)
-        %w{n name misc mtu qdisc active state type mac ip ipassign}.each do |property|
+        %w{n displayname name misc mtu qdisc active state type mac ip ipassign}.each do |property|
           eval "@#{property} = hash[:#{property}]"
         end
+
+        @vlan_info = {
+          is_trunk: false,
+          ids: []
+        }
 
         ### HW detection
         if File.exists? "/sys/class/net/#{@name}/device"
@@ -645,7 +716,7 @@ class OnBoard
 
       def to_h
         h = {}
-        %w{name misc qdisc state type vendor model bus}.each do |property|
+        %w{name misc qdisc state type vendor model bus vlan_info}.each do |property|
           h[property] = eval "@#{property}" if eval "@#{property}"
         end
         h['active']   = @active   # may be true or false

@@ -11,7 +11,7 @@ PROVISIONER_ARGS = [WORKING_DIR, APP_USER]
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.define "margay", primary: true do |mgy|
+  config.vm.define "mgy", primary: true do |mgy|
     # The most common configuration options are documented and commented below.
     # For a complete reference, please see the online documentation at
     # https://docs.vagrantup.com.
@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
     # boxes at https://vagrantcloud.com/search.
     mgy.vm.box = DEBIAN_BOX
 
-    mgy.vm.hostname = "margay"
+    mgy.vm.hostname = "mgy"
 
     # Disable automatic box update checking. If you disable this, then
     # boxes will only be checked for updates when the user runs
@@ -41,30 +41,20 @@ Vagrant.configure("2") do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
+    mgy.vm.network "private_network",  # may also be used as vlan 1 access
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "default_access"
+
     mgy.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
-      virtualbox__intnet: "margay-net-downstream"
+      virtualbox__intnet: "vlan_trunk"
 
-    # Create a public network, which generally matched to bridged network.
-    # Bridged networks make the machine appear as another physical device on
-    # your network.
-    # config.vm.network "public_network"
-
-    # Share an additional folder to the guest VM. The first argument is
-    # the path on the host to the actual folder. The second argument is
-    # the path on the guest to mount the folder. And the optional third
-    # argument is a set of non-required options.
-
-    # A symlink could work too? Current strategy is running as vagrant,
-    # and generally being flexible/dynamic as per the user
-    # Margay/OnBoard runs as. So the dir is still owned by vagrant
-    # but compatibility with some legacy scripts is retained.
+    mgy.vm.network "private_network",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "vlan2_access"
 
     mgy.vm.synced_folder ".", "/vagrant"
 
-    # Enable provisioning with a shell script. Additional provisioners such as
-    # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-    # documentation for more information about their specific syntax and use.
     mgy.vm.provision "core",
         type: "shell",
         path: "./etc/scripts/platform/debian/setup.sh",
@@ -128,6 +118,34 @@ EOFF
 
   end
 
+  config.vm.define "mgy_downstr", primary: true do |mgy_downstr|  # downstream switch, currently a mgy, could be an Arista, Cisco, etc.
+    mgy_downstr.vm.box = DEBIAN_BOX
+    mgy_downstr.vm.hostname = "mgy-downstr"
+
+    mgy_downstr.vm.network "forwarded_port", guest: 4567, host: 4568
+    mgy_downstr.vm.network "forwarded_port", guest: 443,  host: 4444
+
+    mgy_downstr.vm.network "private_network",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "vlan_trunk"
+
+    mgy_downstr.vm.network "private_network",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "downstr_vlan_1_access"
+
+    mgy_downstr.vm.network "private_network",
+      auto_config: false, # or will reset what margay-persist has configured on the interface
+      virtualbox__intnet: "downstr_vlan_2_access"
+
+    # Enable provisioning with a shell script. Additional provisioners such as
+    # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+    # documentation for more information about their specific syntax and use.
+    mgy_downstr.vm.provision "core",
+        type: "shell",
+        path: "./etc/scripts/platform/debian/setup.sh",
+        args: PROVISIONER_ARGS
+  end
+
   # The client machine may be any OS, but for economy of storage and download time,
   # it's based on the same base box.
   config.vm.define "client", autostart: false do |mgyc|
@@ -138,7 +156,7 @@ EOFF
           # Vagrant auto_config would otherwise mess things up here,
           # modifying /etc/network/interfaces so to remove the default gw from
           # margay (ordinary DHCP or chillispot).
-      virtualbox__intnet: "margay-net-downstream"
+      virtualbox__intnet: "default_access"
     mgyc.vm.provider "virtualbox" do |vb|
       vb.gui = true
       # https://stackoverflow.com/a/24253435

@@ -4,12 +4,12 @@
 %>
 
 <h2>Network bridge: <%= objects[:bridge].name %></h2>
-  <% fieldnames = %w{Bridge Active/State MTU MAC\ Address IP\ Addresses Method} %>
-  <% colspans = [2, 2, 1, 1, 1, 1] %>
+  <% fieldnames = %w{Bridge Active/State MTU MAC\ Address IP\ Addresses Method STP\ enabled?} %>
+  <% colspans = [2, 2, 1, 1, 1, 1, 1] %>
     <table>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <td style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <td style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </td>
         <% end %>
@@ -74,6 +74,10 @@
             <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
           <% end %>
         </td>
+        <td style="text-align: center">
+          <input type="hidden"    name="brctl[stp][<%= netif.name %>]" value="off"/>
+          <input type="checkbox"  name="brctl[stp][<%= netif.name %>]" <%= 'checked' if netif.stp %>/>
+        </td>
       </tr>
       <tr>
         <td style="background: white; /* TODO: do not hardcode */" colspan="<%= colspans.sum %>">
@@ -87,8 +91,8 @@
     <div style="height:2em;"></div>
 
     <table>
-      <% fieldnames = %w{Interface Active/State Type MTU MAC\ Address IP\ Addresses Method Vendor/Model} %>
-      <% colspans = [2, 2, 1, 1, 1, 1, 1, 1] %>
+    <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method/Renew VLANs Preferred<br/>Metric Vendor/Model Bus} %>
+    <% colspans = [2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1,] %>
       <tr>
         <td class="warn" style="padding: 3px; background: white; /* TODO: DRY */" colspan="<%= colspans.sum %>">
           Please note: it is recommended to add IP addresses to the
@@ -107,7 +111,7 @@
     <input type="hidden" name="_method" value="put"/>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <td style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <td style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </td>
         <% end %>
