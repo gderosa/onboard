@@ -126,7 +126,7 @@ class OnBoard
               netif_h = {
                 :n            => md[1],
                 :displayname  => md[2],
-                :name         => md[2].sub(/@.*$/, ''),
+                :name         => md[2].sub(/@[^@]+$/, ''),
                 :misc         => md[3].split(','), # e.g. %w{BROADCAST MULTICAST UP}
                 :mtu          => md[4],
                 :qdisc        => md[5],
