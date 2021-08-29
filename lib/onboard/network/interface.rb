@@ -233,7 +233,7 @@ class OnBoard
           end
 
           # use iproute2 json output!
-          ip_link_show_json_info = JSON.parse `ip -d -j -p link show`
+          ip_link_show_json_info = JSON.parse `ip -d -j link show`
           # 802.1Q VLANs
           ip_link_show_json_info.each do |ip_link_entry|
             ifname = ip_link_entry['ifname']
