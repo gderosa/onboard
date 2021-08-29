@@ -304,8 +304,24 @@ class OnBoard
           end
         end
 
-        def set_802_1q_trunks(params)
-          pp params
+        # TODO: move to its own module?
+        def set_802_1q_trunks(h)
+          @@all_layer2 ||= getAll_layer2
+          h.each_pair do |name, vlan_ids|
+            iface = @@all_layer2.find{|netif| netif.name == name}
+            # vlan_ids can be e.g. "1, 2, 44" or [1, 2, 44] etc.: normalize!
+            vlan_ids = vlan_ids.split(/[,\s]+/) if vlan_ids.respond_to? :split
+            vlan_ids.map!{|x| x.to_i}
+            to_add    = vlan_ids - iface.vlan_info[:ids]
+            to_remove = iface.vlan_info[:ids] - vlan_ids
+            to_add.each do |vlan_id|
+              System::Command.run "ip link add link #{name} name #{name}.VLAN-#{'%03d' % vlan_id} type vlan id #{vlan_id}", :sudo
+            end
+            to_remove.each do |vlan_id|
+              viface = @@all_layer2.find{|viface| viface.vlan_info[:link] == name and viface.vlan_info[:ids] == [vlan_id]}
+              System::Command.run "ip link delete #{viface.name}", :sudo
+            end
+          end
         end
 
         def save

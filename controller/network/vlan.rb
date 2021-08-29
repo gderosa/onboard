@@ -18,7 +18,7 @@ class OnBoard::Controller
   end
 
   put '/network/vlan.:format' do
-    OnBoard::Network::Interface.set_802_1q_trunks(params['vlan'])
+    OnBoard::Network::Interface.set_802_1q_trunks(params['vlan']['trunk'])
 
     updated_objects = OnBoard::Network::Interface.getAll.sort_by(
         &OnBoard::Network::Interface::PREFERRED_ORDER
