@@ -304,6 +304,10 @@ class OnBoard
           end
         end
 
+        def set_802_1q_trunks(params)
+          pp params
+        end
+
         def save
           self_getAll = self.getAll
           File.open(OnBoard::CONFDIR + '/network/interfaces.yml', 'w') do |f|

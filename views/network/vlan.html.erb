@@ -1,5 +1,6 @@
 <h2><%= title %></h2>
 
+<form method="POST">
 <table>
   <thead>
     <tr>
@@ -22,3 +23,6 @@
   <% end %>
   </tbody>
 </table>
+<input type="hidden" name="_method" value="PUT"/>
+<button type="submit">Change!</button>
+</form>
