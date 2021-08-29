@@ -1,3 +1,7 @@
+2021.08
+
+* VLAN 802.1Q tagging / trunks
+
 2021.05.01
 
 * Fixes for Debian 11 / bullseye
@@ -26,7 +30,7 @@
 
 2020.07
 
-* Fix delay on mobile data usb modems 
+* Fix delay on mobile data usb modems
 
 2020.02
 

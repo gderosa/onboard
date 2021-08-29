@@ -1,6 +1,6 @@
 class OnBoard
   LONGNAME          ||= 'OnBoard'
-  VERSION           = '2021.05.01'
+  VERSION           = '2021.08'
   FILESDIR            ||= File.join ENV['HOME'], 'files' # mass storage...
   ROOTDIR = File.join(File.dirname(__FILE__), '../..')
   RWDIR = (
