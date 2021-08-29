@@ -363,6 +363,7 @@ class OnBoard
           # VLANs
           restore_trunks = {}
           saved_ifaces.each do |saved_iface|
+            next unless saved_iface.respond_to? :vlan_info and saved_iface.vlan_info.respond_to? :[]
             parent_ifname = saved_iface.vlan_info[:link]
             vlan_id = saved_iface.vlan_info[:ids][0]
             if parent_ifname and vlan_id
