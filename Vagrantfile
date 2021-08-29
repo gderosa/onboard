@@ -1,46 +1,28 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-DEBIAN_BOX = "debian/bullseye64"
-WORKING_DIR = "/vagrant"
-APP_USER = "vagrant"
-PROVISIONER_ARGS = [WORKING_DIR, APP_USER]
+require 'pp'
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
+DEBIAN_BOX = "debian/bullseye64"
+COMMON_MESSAGE = "To setup Margay: 
+  vagrant ssh
+  sudo -i
+  bash -c \"$(wget -O - https://raw.githubusercontent.com/vemarsas/margay/master/setup)\"
+# See also https://github.com/vemarsas/margay/blob/master/README.md"
+
 Vagrant.configure("2") do |config|
   config.vm.define "mgy", primary: true do |mgy|
-    # The most common configuration options are documented and commented below.
-    # For a complete reference, please see the online documentation at
-    # https://docs.vagrantup.com.
 
-    # Every Vagrant development environment requires a box. You can search for
-    # boxes at https://vagrantcloud.com/search.
     mgy.vm.box = DEBIAN_BOX
 
     mgy.vm.hostname = "mgy"
 
-    # Disable automatic box update checking. If you disable this, then
-    # boxes will only be checked for updates when the user runs
-    # `vagrant box outdated`. This is not recommended.
-    # config.vm.box_check_update = false
+    mgy.vm.synced_folder ".", "/vagrant", disabled: true
 
-    # Create a forwarded port mapping which allows access to a specific port
-    # within the machine from a port on the host machine. In the example below,
-    # accessing "localhost:8080" will access port 80 on the guest machine.
-    # NOTE: This will enable public access to the opened port
+    mgy.vm.network "forwarded_port", guest: 22,   host: 2222
     mgy.vm.network "forwarded_port", guest: 4567, host: 4567
     mgy.vm.network "forwarded_port", guest: 443,  host: 4443
 
-    # Create a forwarded port mapping which allows access to a specific port
-    # within the machine from a port on the host machine and only allow access
-    # via 127.0.0.1 to disable public access
-    # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
-    # Create a private network, which allows host-only access to the machine
-    # using a specific IP.
     mgy.vm.network "private_network",  # may also be used as vlan 1 access
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "default_access"
@@ -53,77 +35,25 @@ Vagrant.configure("2") do |config|
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "vlan2_access"
 
-    mgy.vm.synced_folder ".", "/vagrant"
-
-    mgy.vm.provision "core",
-        type: "shell",
-        path: "./etc/scripts/platform/debian/setup.sh",
-        args: PROVISIONER_ARGS
-
-    # Make sure the VBox shared folder is mounted before the Margay systemd service is invoked
-    VAGRANT_MOUNT_TEMPLATE = <<-EOF
-[Unit]
-Description=Vagrant Shared Folder
-
-[Mount]
-What=vagrant
-Where=/vagrant
-Type=vboxsf
-Options=uid=`id -u vagrant`,gid=`id -g vagrant`
-
-[Install]
-RequiredBy=margay.service margay-persist.service
-EOF
-
-    mgy.vm.provision "shell", inline: <<-EOF
-      cat > /etc/systemd/system/vagrant.mount <<EOFF
-#{VAGRANT_MOUNT_TEMPLATE}
-EOFF
-      systemctl daemon-reload
-      systemctl enable vagrant.mount
-    EOF
-
-    # Modules
-
-    mgy.vm.provision "openvpn",
-        type: "shell",
-        path: "./modules/openvpn/etc/scripts/platform/debian/setup.sh",
-        args: PROVISIONER_ARGS
-
-    # Optional modules
-
-    # Actually deploy all other AAA/Hotspot -related modules as well: chilli etc.
-    # Not automatically run on provision, you have to explicitly call it with
-    #    vagrant provision margay --provision-with radius
-    # after the first provision has been completed.
-    mgy.vm.provision "radius",
-        type: "shell",
-        path: "./modules/radius-admin/etc/scripts/platform/debian/setup.sh",
-        args: PROVISIONER_ARGS,
-        run: "never"
-
-    # Similarly, for qemu/virt (also enable the jQQueryFileTree module)
-    mgy.vm.provision "virt",
-        type: "shell",
-        path: "./modules/qemu/etc/scripts/platform/debian/setup.sh",
-        args: PROVISIONER_ARGS,
-        run: "never"
-
-    # Is there a way to emulate a Wi-Fi network?
-    mgy.vm.provision "ap",
-        type: "shell",
-        path: "./modules/ap/etc/scripts/platform/debian/setup.sh",
-        args: PROVISIONER_ARGS,
-        run: "never"
-
+    mgy.vm.post_up_message = [
+      COMMON_MESSAGE,
+      'After Margay seyup:',
+      'SSH: port 2222 @localhost, user: "onboard", password: "onboard"',
+      'Margay web: http://localhost:4567 or https://localhost:4443'
+    ].join("\n")
   end
 
-  config.vm.define "mgy_downstr", primary: true do |mgy_downstr|  # downstream switch, currently a mgy, could be an Arista, Cisco, etc.
+  config.vm.define "mgy_downstr", autostart: false do |mgy_downstr|  # downstream switch, currently a mgy, could be an Arista, Cisco, etc.
+
     mgy_downstr.vm.box = DEBIAN_BOX
+
     mgy_downstr.vm.hostname = "mgy-downstr"
 
-    mgy_downstr.vm.network "forwarded_port", guest: 4567, host: 4568
-    mgy_downstr.vm.network "forwarded_port", guest: 443,  host: 4444
+    mgy_downstr.vm.synced_folder ".", "/vagrant", disabled: true
+
+    mgy_downstr.vm.network "forwarded_port",  guest: 22,   host: 2223
+    mgy_downstr.vm.network "forwarded_port",  guest: 4567, host: 4568
+    mgy_downstr.vm.network "forwarded_port",  guest: 443,  host: 4444
 
     mgy_downstr.vm.network "private_network",
       auto_config: false, # or will reset what margay-persist has configured on the interface
@@ -137,13 +67,12 @@ EOFF
       auto_config: false, # or will reset what margay-persist has configured on the interface
       virtualbox__intnet: "downstr_vlan_2_access"
 
-    # Enable provisioning with a shell script. Additional provisioners such as
-    # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-    # documentation for more information about their specific syntax and use.
-    mgy_downstr.vm.provision "core",
-        type: "shell",
-        path: "./etc/scripts/platform/debian/setup.sh",
-        args: PROVISIONER_ARGS
+    mgy_downstr.vm.post_up_message = [
+      COMMON_MESSAGE,
+      'After Margay seyup:',
+      'SSH: port 2223 @localhost, user: "onboard", password: "onboard"',
+      'Margay web: http://localhost:4568 or https://localhost:4444'
+    ].join("\n")
   end
 
   # The client machine may be any OS, but for economy of storage and download time,
