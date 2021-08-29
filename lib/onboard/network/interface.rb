@@ -360,6 +360,19 @@ class OnBoard
             current_ifaces = getAll
           end
 
+          # VLANs
+          restore_trunks = {}
+          saved_ifaces.each do |saved_iface|
+            parent_ifname = saved_iface.vlan_info[:link]
+            vlan_id = saved_iface.vlan_info[:ids][0]
+            if parent_ifname and vlan_id
+              restore_trunks[parent_ifname] ||= []
+              restore_trunks[parent_ifname] << vlan_id
+            end
+          end
+          set_802_1q_trunks restore_trunks
+          # end VLANS
+
           saved_ifaces.each do |saved_iface|
             current_iface = current_ifaces.detect {|x| x.name == saved_iface.name}
             unless current_iface
