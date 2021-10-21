@@ -1,3 +1,5 @@
+source "https://rubygems.org"
+
 MODULESDIR = File.dirname(__FILE__) + '/modules'
 
 source "https://rubygems.org" do
