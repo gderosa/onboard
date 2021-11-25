@@ -1,3 +1,7 @@
+2021.08.02
+
+* More tolerant regex when parsing qemu snapshot list
+
 2021.08.01
 
 * Handle unparsed ip route output lines
