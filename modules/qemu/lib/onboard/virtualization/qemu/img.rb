@@ -79,12 +79,12 @@ class OnBoard
             # 1         test_snap0_off          0 B 2019-11-15 09:13:28   00:00:00.000
             # 2         test_snap1_off          0 B 2019-11-15 09:15:19   00:00:00.000
             # 3         test3off                0 B 2019-11-15 21:00:34   00:00:00.000
-            # 4         test1on             257 MiB 2019-11-15 21:43:00   00:00:34.011
+            # 4         test1on              257MiB 2019-11-15 21:43:00   00:00:34.011
             # 5         restore_me          260 MiB 2019-11-15 22:09:33   00:27:04.415
             # 6         myveryverylongtagnam270 MiB 2019-11-15 23:00:11   00:35:34.654
             out.each_line do |line|
-              if  line =~ /^(\d+)\s+(\S|\S.*\S)\s+([\d\.]+\s+[TGMkiB]+)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ or
-                  line =~ /^(\d+)\s+([^\d\.\s]|\S.*[^\d\.\s])([\d\.]+\s+[TGMkiB]+)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/
+              if  line =~ /^(\d+)\s+(\S|\S.*\S)\s+([\d\.]+\s*[TGMkiB]+)\s*(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ or
+                  line =~ /^(\d+)\s+([^\d\.\s]|\S.*[^\d\.\s])([\d\.]+\s*[TGMkiB]+)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/
                 list << Snapshot.new(
                   :id       =>                                $1.to_i,
                   :tag      =>                                $2,
