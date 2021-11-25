@@ -1,5 +1,6 @@
 require 'forwardable'
 require 'set'
+require 'logger'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/system/command'
@@ -9,6 +10,9 @@ require 'onboard/network/interface'
 
 
 class OnBoard
+
+  LOGGER ||= Logger.new(STDERR)
+
   module Network
     module Routing
       class Table
@@ -121,14 +125,24 @@ class OnBoard
 
           # IPv4
           `ip -f inet route show table #{table_n}`.each_line do |line|
-            ary << rawline2routeobj(line, Socket::AF_INET)
+            begin
+              ary << rawline2routeobj(line, Socket::AF_INET)
+            rescue IPAddr::InvalidAddressError
+              LOGGER.error "Could not parse ip route output line: #{line}"
+              LOGGER.debug "Command was: ip -f inet route show table #{table_n}"
+            end
           end
 
           #raise NotFound if ary.length == 0 and $?.exitstatus != 0
 
           # IPv6
           `ip -f inet6 route show table #{table_n}`.each_line do |line|
-            ary << rawline2routeobj(line, Socket::AF_INET6)
+            begin
+              ary << rawline2routeobj(line, Socket::AF_INET6)
+            rescue IPAddr::InvalidAddressError
+              LOGGER.error "Could not parse ip route output line: #{line}"
+              LOGGER.debug "Command was: ip -f inet6 route show table #{table_n}"
+            end
           end
 
           #raise NotFound if ary.length == 0 and $?.exitstatus != 0
