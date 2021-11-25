@@ -1,4 +1,7 @@
 GEM
+  specs:
+
+GEM
   remote: https://rubygems.org/
   specs:
     archive-tar-minitar (0.8)
@@ -117,4 +120,4 @@ DEPENDENCIES
   uuid!
 
 BUNDLED WITH
-   2.1.4
+   2.2.31
