@@ -30,7 +30,7 @@
 
 # Use the same version as the stdlib;
 # prevent something like https://github.com/ruby/psych/issues/503.
-gem 'psych', '~> 3.1.0', '< 4.0.0'
+gem 'psych', '< 4.0.0'
 require 'psych'
 
 require 'onboard/logger'
