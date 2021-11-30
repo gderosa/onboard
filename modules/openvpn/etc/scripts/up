@@ -28,6 +28,11 @@
 
 # require 'pp' # DEBUG
 
+# Use the same version as the stdlib;
+# prevent something like https://github.com/ruby/psych/issues/503.
+gem 'psych', '~> 3.1.0', '< 4.0.0'
+require 'psych'
+
 require 'onboard/logger'
 OnBoard.use_default_logfile  # instead of STDOUT
 

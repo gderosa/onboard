@@ -7,6 +7,7 @@ source "https://rubygems.org" do
   # A few of the below are currently only required by certain modules.
   # However, they are of general use (and perhaps not too heavyweight)
   # and may be required by the core as well at some point.
+  gem 'psych', '~> 3.1.0'  # prevent e.g. https://github.com/ruby/psych/issues/503
   gem 'hierarchical_menu'
   gem 'sinatra', '~> 2'
   gem 'rack-contrib', '~> 2'
