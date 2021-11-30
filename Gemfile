@@ -7,13 +7,14 @@ source "https://rubygems.org" do
   # A few of the below are currently only required by certain modules.
   # However, they are of general use (and perhaps not too heavyweight)
   # and may be required by the core as well at some point.
+  gem 'psych', '~> 3.1.0'  # prevent e.g. https://github.com/ruby/psych/issues/503
   gem 'hierarchical_menu'
   gem 'sinatra', '~> 2'
   gem 'rack-contrib', '~> 2'
   gem 'thin'
-  gem 'locale'
+  gem 'locale', '~> 2.1', '>= 2.1.3'
   gem 'i18n_data'
-  gem 'sinatra-r18n', '~> 2'  # TODO: v3? compat. issues?
+  gem 'sinatra-r18n', '~> 2.2.0'
   gem 'erubis'
   gem 'uuid'
   gem 'facets'
