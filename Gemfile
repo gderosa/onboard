@@ -11,9 +11,9 @@ source "https://rubygems.org" do
   gem 'sinatra', '~> 2'
   gem 'rack-contrib', '~> 2'
   gem 'thin'
-  gem 'locale'
+  gem 'locale', '~> 2.1', '>= 2.1.3'
   gem 'i18n_data'
-  gem 'sinatra-r18n', '~> 2'  # TODO: v3? compat. issues?
+  gem 'sinatra-r18n', '~> 2.2.0'
   gem 'erubis'
   gem 'uuid'
   gem 'facets'
