@@ -61,7 +61,7 @@ END
             </form>
           </td>
           <td class="file-manager">
-            <img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%== list.relative_path %></a>
+            <img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%= list.relative_path %></a>
           </td>
           <td style="text-align:center">
             <a class="img" href="<%= list.http_path %>.raw"><img src="<%= icon_dwnl %>" alt="<%= alt_dwnl %>"/></a>
@@ -101,7 +101,7 @@ END
           </td>
           <td class="file-manager">
             <img src="<%= icon %>" alt="<%= alt %>"/>
-            <a href="<%= subdir.http_path %>.html"><%== subdir.relative_path %>/</a>
+            <a href="<%= subdir.http_path %>.html"><%= subdir.relative_path %>/</a>
           </td>
         </tr>
       <% end %>

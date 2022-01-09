@@ -70,7 +70,7 @@
           #
           # It is: rule_idx = rule[0] - 1
           %>
-          <input type="hidden" name="rulespec" value="<%== chain.rulespecs[rule_idx] %>"/>
+          <input type="hidden" name="rulespec" value="<%= chain.rulespecs[rule_idx] %>"/>
           <%
           # we cannot use rulenum to move up/down a rule; we have to delete
           # it, then recreate in a different position, so we need the full

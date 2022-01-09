@@ -201,10 +201,10 @@ locals automatically provided by format() helper:
             <%= errortext %>
             <% if text.respond_to? :each %>
               <% text.each do |t| %>
-                <div><%== t %></div>
+                <div><%= t %></div>
               <% end %>
             <% else %>
-              <%== text %>
+              <%= text %>
             <% end %>
           </span>
         </td>

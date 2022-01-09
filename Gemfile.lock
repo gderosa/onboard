@@ -13,7 +13,6 @@ GEM
     dansguardian (0.5.2.1)
       configfiles
     diff-lcs (1.3)
-    erubis (2.7.0)
     escape (0.0.4)
     eventmachine (1.2.7)
     facets (3.1.0)
@@ -99,7 +98,6 @@ DEPENDENCIES
   chronic_duration!
   cronedit!
   dansguardian!
-  erubis!
   escape!
   facets!
   hierarchical_menu!
@@ -119,4 +117,4 @@ DEPENDENCIES
   uuid!
 
 BUNDLED WITH
-   2.2.31
+   2.3.4

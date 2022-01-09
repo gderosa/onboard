@@ -15,7 +15,6 @@ source "https://rubygems.org" do
   gem 'locale', '~> 2.1', '>= 2.1.3'
   gem 'i18n_data'
   gem 'sinatra-r18n', '~> 2.2.0'
-  gem 'erubis'
   gem 'uuid'
   gem 'facets'
   gem 'archive-tar-minitar'

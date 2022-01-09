@@ -294,7 +294,7 @@
         <td style="text-align:center;">
           <select name="C">
             <% country_codes_by_name.each do |cc| %>
-              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%== countries[cc] %>">
+              <option value="<%= cc %>" <%= 'selected' if cc == current_country_code %> title="<%= countries[cc] %>">
                 <%
                   truncate = 18
                   country_html = Rack::Utils.escape_html countries[cc][0..truncate]

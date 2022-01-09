@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'thin'
 require 'sinatra/base'
-require 'tilt/erubis'
+require 'tilt/erb'
 
 require 'rack'
 require 'rack/contrib'

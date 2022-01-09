@@ -128,10 +128,10 @@
 
 <% snapshot_stdout, snapshot_stderr = vm.snapshot_stdout, vm.snapshot_stderr %>
 <% if snapshot_stdout =~ /\S/m %>
-  <pre class="warn" style="margin-top:0.3em;"><%== snapshot_stdout %></pre>
+  <pre class="warn" style="margin-top:0.3em;"><%= snapshot_stdout %></pre>
 <% end %>
 <% if snapshot_stderr =~ /\S/m %>
- <pre class="error" style="margin-top:0.3em;"><%== snapshot_stderr %></pre>
+ <pre class="error" style="margin-top:0.3em;"><%= snapshot_stderr %></pre>
 <% end %>
 
     </div> <!-- tabs-snapshots-status -->

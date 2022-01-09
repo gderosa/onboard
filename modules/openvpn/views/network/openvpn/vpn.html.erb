@@ -151,13 +151,13 @@
         <td rowspan="<%= rowspan %>">
           <select name="cert">
             <% nonserver.each_pair do |name, h| %>
-              <option value="<%= name %>"><%== name %></option>
+              <option value="<%= name %>"><%= name %></option>
             <% end %>
             <% server.each_pair do |name, h| %>
-              <option class="lowlight" value="<%= name %>"><%== name %></option>
+              <option class="lowlight" value="<%= name %>"><%= name %></option>
             <% end %>
             <% bad.each_pair do |name, h| %>
-              <option title="Certificate with errors!" class="error" disabled><%== name %></option>
+              <option title="Certificate with errors!" class="error" disabled><%= name %></option>
             <% end %>
           </select>
         </td>
@@ -166,7 +166,7 @@
             <% if ssl['ca'] %>
               <% name = ssl['ca']['subject']['CN'] %>
               <option style="font-weight:bold;" class="highlight" value="__default__" selected>
-                <%== name %>
+                <%= name %>
               </option>
             <% end %>
             <% ssl['certs'].each_pair do |name, h| %>
@@ -178,7 +178,7 @@
                     displayname = name
                   end
                 %>
-                <option value="<%= name %>"><%==  displayname %></option>
+                <option value="<%= name %>"><%=  displayname %></option>
               <% end %>
             <% end %>
           </select>
@@ -298,12 +298,12 @@
             %>
             <optgroup label="Server Certificates">
               <%  good.each_pair do |name, h| %>
-                <option value="<%= name %>"><%== name %></option>
+                <option value="<%= name %>"><%= name %></option>
               <% end %>
             </optgroup>
             <optgroup title="Not recommended for a VPN server!" label="Not server-type Certs.">
               <% bad.each_pair do |name, h| %>
-                <option class="lowlight" value="<%= name %>"><%== name %></option>
+                <option class="lowlight" value="<%= name %>"><%= name %></option>
               <% end %>
             </optgroup>
           </select>
@@ -313,7 +313,7 @@
             <% if ssl['ca'] %>
               <% name = ssl['ca']['subject']['CN'] %>
               <option style="font-weight:bold;" class="highlight" value="__default__" selected>
-                <%== name %>
+                <%= name %>
               </option>
             <% end %>
             <% ssl['certs'].each_pair do |name, h| %>
@@ -325,7 +325,7 @@
                     displayname = name
                   end
                 %>
-                <option value="<%= name %>"><%== displayname %></option>
+                <option value="<%= name %>"><%= displayname %></option>
               <% end %>
             <% end %>
           </select>

@@ -40,7 +40,7 @@
             <td style="text-align: center;">
               <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]" <%= 'readonly' unless [:static, :dhcp].include? netif.ipassign[:method] %> />
             </td>
-            <td><!--<div>--><%== netif.data['state'] %><!--</div>--></td>
+            <td><!--<div>--><%= netif.data['state'] %><!--</div>--></td>
             <td><!--<div>-->
               <% if netif.data['type'] == 'bridge' %>
                 <a href="<%= '/network/bridges/' + Rack::Utils.escape(netif.name) + '.html' %>" title="Configure <%= netif.name %> bridge">
@@ -50,9 +50,9 @@
                 <%= netif.type_hr %>
               <% end %>
             <!--</div>--></td>
-            <td><!--<div>--><%== netif.data['mtu'] %><!--</div>--></td>
+            <td><!--<div>--><%= netif.data['mtu'] %><!--</div>--></td>
             <td>
-              <!--<div>--><code><%== netif.data['mac'] %></code><!--</div>-->
+              <!--<div>--><code><%= netif.data['mac'] %></code><!--</div>-->
             </td>
             <td>
               <% some_ip_printed = false %>

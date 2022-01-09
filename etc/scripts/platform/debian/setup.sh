@@ -87,7 +87,7 @@ cd $PROJECT_ROOT
 apt-get update
 apt-get -y upgrade
 
-apt-get -y install ruby ruby-dev ruby-erubis ruby-rack ruby-rack-protection ruby-locale sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates libssl-dev ntp psmisc
+apt-get -y install ruby ruby-dev ruby-rack ruby-rack-protection ruby-locale sudo iproute2 iptables bridge-utils pciutils usbutils usb-modeswitch dhcpcd5 dnsmasq resolvconf locales ifrename build-essential ca-certificates libssl-dev ntp psmisc
 
 install_conffiles
 
