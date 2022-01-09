@@ -204,7 +204,7 @@
       </tr>
       <tr>
         <th scope="row">Organization</th>
-        <td><%= cadata['O'] %><%= (', <span style="font-style: italic;">' + cadata['OU'] + '</span>') if cadata['OU'] =~ /\S/ %></td>
+        <td><%= escape_html cadata['O'] %><%= (', <span style="font-style: italic;">' + cadata['OU'] + '</span>') if cadata['OU'] =~ /\S/ %></td>
       </tr>
       <tr>
         <th scope="row">E-mail</th>
