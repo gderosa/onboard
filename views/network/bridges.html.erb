@@ -9,7 +9,7 @@
   <h2>Network bridges</h2>
 
 <%=
-  erubis(
+  erb(
     :"/_messages.html",
     {
       :layout => false,
@@ -58,10 +58,10 @@
           <td>
             <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
           </td>
-          <td><div><%== netif.data['state'] %></div></td>
-          <td><div><%== netif.data['mtu']   %></div></td>
+          <td><div><%= netif.data['state'] %></div></td>
+          <td><div><%= netif.data['mtu']   %></div></td>
           <td>
-            <div><code><%== netif.data['mac'] %></code></div>
+            <div><code><%= netif.data['mac'] %></code></div>
           </td>
           <td>
             <% some_ip_printed = false %>

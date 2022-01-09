@@ -3,13 +3,12 @@
 require 'rubygems'
 require 'thin'
 require 'sinatra/base'
-require 'tilt/erubis'
+require 'tilt/erb'
 
 require 'rack'
 require 'rack/contrib'
 
 require 'onboard/extensions/sinatra/base'
-require 'onboard/extensions/sinatra/templates'
 
 require 'onboard/controller/auth'
 require 'onboard/controller/error'

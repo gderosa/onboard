@@ -46,10 +46,10 @@
     </div>
     <div id="main">
 
-      <%= erubis(:"_navbar.html", :layout => false) %>
+      <%= erb(:"_navbar.html", :layout => false) %>
 
       <%=
-        erubis(
+        erb(
           :"_altbar.html",
           :layout => false,
           :locals => {

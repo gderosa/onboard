@@ -16,7 +16,7 @@
 
 <h2><%= title %></h2>
   <%=
-    erubis(
+    erb(
      :"/_messages.html",
      {
        :layout => false,
@@ -105,5 +105,5 @@
 <br/>
 <h3><code>hostapd</code> Log</h3>
 <%=
-  erubis(:"system/_log.html", :layout => false, :locals => {:log => log})
+  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
 %>

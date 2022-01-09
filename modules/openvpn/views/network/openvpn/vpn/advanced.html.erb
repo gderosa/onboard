@@ -85,7 +85,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
                 ''
             %>
             <td>
-              <textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
+              <textarea name="push_routes" cols=<%= cols %> rows=<%= rows %> wrap=off><%= text %></textarea>
             </td>
             <td style="text-align: center">
               <input type="text" name="push_route_metric" value="<%= vpn.data['push'] && vpn.data['push']['route_metric'] %>" class="rwtext" size="7">
@@ -105,13 +105,13 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
                   # end
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['iroutes'])
                 %>
-                <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
+                <textarea name="clients[][routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= text %></textarea>
               </td>
               <td>
                 <%
                   text = OnBoard::Network::OpenVPN::Convert.routes2textarea(h['push']['routes'])
                 %>
-                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%== text %></textarea>
+                <textarea name="clients[][push_routes]" cols=<%= cols %> rows=<%= rows %> wrap=off><%= text %></textarea>
               </td>
               <td style="text-align: center">
                 <input type="text" name="clients[][push_route_metric]" value="<%= h['push']['route_metric'] %>" class="rwtext" size="7"/>
@@ -188,7 +188,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
 
 <h3><span class="product-name">OpenVPN</span> log</h3>
 <%=
-  erubis(:"system/_log.html", :layout => false, :locals => {:log => log})
+  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
 %>
 
 

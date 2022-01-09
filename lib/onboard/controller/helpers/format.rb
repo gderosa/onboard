@@ -3,7 +3,6 @@
 require 'sinatra/base'
 
 require 'onboard/extensions/sinatra/base'
-require 'onboard/extensions/sinatra/templates'
 
 class OnBoard
   class Controller < ::Sinatra::Base
@@ -45,18 +44,13 @@ class OnBoard
 
           content_type 'text/html', :charset => 'utf-8' unless h[:partial]
 
-          erubis_template = (h[:path] + '.html').to_sym
-          # p abs_path + '.mobi.html.erubis' if abs_path =~ /_form_style/ # DEBUG
-          if File.exists?( abs_path + '.mobi.html.erubis' ) and mobile?
-            erubis_template = (h[:path] + '.mobi.html').to_sym
-            # p erubis_template if abs_path =~ /_form_style/ # DEBUG
+          erb_template = (h[:path] + '.html').to_sym
+          if File.exists?( abs_path + '.mobi.html.erb' ) and mobile?
+            erb_template = (h[:path] + '.mobi.html').to_sym
           end
 
-          # "Sinatra::Templates#erubis is deprecated and will be removed,
-          # use #erb instead. If you have Erubis installed, it will be used
-          # automatically"
           return erb(
-            erubis_template,
+            erb_template,
             :layout   => layout,
             :locals   => {
               :objects  => h[:objects],
@@ -137,7 +131,7 @@ class OnBoard
         if h[:module]
           h[:path] = '../modules/' + h[:module] + '/views/' + h[:path].sub(/^\//, '')
         end
-        return erb( # See above for #erb Vs #erubis
+        return erb(
           h[:path].to_sym,
           :layout   => false,
           :locals   => h[:locals]
