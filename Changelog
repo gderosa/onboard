@@ -1,3 +1,7 @@
+2022.01.00
+
+* Use ERB instead of erubis (erubis not updated since 2011 and was causing Bundler errors)
+
 2021.08.03
 
 * Handle YAML/Psych imcompatibility
