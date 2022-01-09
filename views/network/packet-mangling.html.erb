@@ -20,7 +20,7 @@
 <h2>Packet mangling (IPv<%= ip_version %>)</h2>
 
   <%=
-    erubis(
+    erb(
       :"/_messages.html",
       {
         :layout => false,

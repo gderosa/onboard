@@ -1,7 +1,7 @@
 # So autoload works well with gems
 require 'rubygems'
 
-%w{uuid escape erubis}.each do |g|
+%w{uuid escape}.each do |g|
   begin
     gem g
   rescue Gem::LoadError
@@ -14,7 +14,7 @@ autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
 autoload :Escape,     'escape'
-autoload :Erubis,     'erubis'
+autoload :ERB,        'erb'
 autoload :YAML,       'yaml'
 
 require 'onboard/extensions/ipaddr'
@@ -1107,7 +1107,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           cert    = h[:cert]
           key     = h[:key]
           port    = h[:port]
-          tmpl = Erubis::Eruby.new File.read(
+          tmpl    = ERB.new File.read(
               File.join ROOTDIR, 'templates/client.conf.erb')
           tmpl.result(binding)
         end

@@ -188,7 +188,7 @@ Certificate&rsquo;s&nbsp;CN:&nbsp;<code><%= vpn.data['cert']['subject']['CN'] %>
 
 <h3><span class="product-name">OpenVPN</span> log</h3>
 <%=
-  erubis(:"system/_log.html", :layout => false, :locals => {:log => log})
+  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
 %>
 
 

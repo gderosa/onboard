@@ -19,7 +19,7 @@
 <h2>Linux Firewall (IPv<%= ip_version %>)</h2>
 
   <%=
-    erubis(
+    erb(
       :"/_messages.html",
       {
         :layout => false,
@@ -208,7 +208,7 @@
         </td>
         <td>
           <%=
-            erubis(
+            erb(
               :"network/_interface_chooser.html",
               {
                 :layout => false,
@@ -222,7 +222,7 @@
         </td>
         <td>
           <%=
-            erubis(
+            erb(
               :"network/_interface_chooser.html",
               {
                 :layout => false,

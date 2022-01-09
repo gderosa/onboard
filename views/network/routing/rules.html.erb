@@ -18,7 +18,7 @@
 
 
 <%=
-  erubis(
+  erb(
     :"_messages.html",
     {
       :layout => false,
@@ -33,7 +33,7 @@
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
   <%=
-    erubis(
+    erb(
       :"network/routing/_rules.html",
       {
         :layout => false,
@@ -53,7 +53,7 @@
 
 <form method="POST">
   <%=
-    erubis(
+    erb(
       :"network/routing/_rules.html",
       {
         :layout => false,
