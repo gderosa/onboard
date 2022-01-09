@@ -119,7 +119,7 @@
                 title << 'Some reasonable defaults have been added to avoid LOG flooding'
               end
             %>
-            <td title="<%= title %>" style="text-align: left;"><kbd><%= rule[-1] %></kbd></td>
+            <td title="<%= title %>" style="text-align: left;"><kbd><%= escape_html rule[-1] %></kbd></td>
           </form>
         </tr>
       <% end %>
