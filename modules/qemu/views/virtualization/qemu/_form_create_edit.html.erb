@@ -23,7 +23,7 @@
     'writethrough'  => 'The slowest and most reliable',
     'writeback'     => 'Recommended, especially with QCOW2 images'
   }
-  cache_default       = 'writeback'  
+  cache_default       = 'writeback'
 
   # Pre-fill form fields.
   formvals = {}
@@ -31,7 +31,7 @@
   if vm
 
     %w{name m vnc k vga soundhw}.each do |k|
-      formvals[k] = vm.config["-#{k}"] 
+      formvals[k] = vm.config["-#{k}"]
     end
     formvals['rtc_base_localtime'] = (
       vm.config['-rtc']                         and
@@ -39,20 +39,20 @@
     )
     formvals['cmdline_append'] = vm.config.opts['append']
     formvals['spice'] ||= {}
-    formvals['spice']['port'] = vm.config['-spice']['port'] if 
-        vm.config['-spice'] and vm.config['-spice']['port'] 
+    formvals['spice']['port'] = vm.config['-spice']['port'] if
+        vm.config['-spice'] and vm.config['-spice']['port']
     optical_drive       = vm.config['-drive'].find{|d| d['media'] == 'cdrom'}
-    formvals['cdrom']   = 
+    formvals['cdrom']   =
         OnBoard::V12n::QEMU::Config.relative_path optical_drive['file']
 
     hd_drives_h           = vm.config['-drive'].select{|d| d['media'] == 'disk' }
     hd_drives             = hd_drives_h.map{|h| OnBoard::V12n::QEMU::Config::Drive.new h}
     #usb_disk            = (
-    #    vm.config['-usbdevice']                               and 
-    #    vm.config['-usbdevice'].find{|d| d['type'] == 'disk'} 
-    #)     
+    #    vm.config['-usbdevice']                               and
+    #    vm.config['-usbdevice'].find{|d| d['type'] == 'disk'}
+    #)
 
-    hd_drives ||= [] 
+    hd_drives ||= []
     formvals['disks'] = []
     hd_drives.each do |hd|
       hd['path'] = OnBoard::V12n::QEMU::Config.relative_path hd['file'] if hd['file']
@@ -62,23 +62,6 @@
     if vm.config['-smp'] and vm.config['-smp']['n'] and vm.config['-smp']['n'].to_i > 0
       formvals['smp'] ||= {}
       formvals['smp']['n'] = vm.config['-smp']['n'].to_i
-    end
-
-    # Now, the -net machinery: there are two (or more???) -net Hashes for
-    # each row in the form: -net nic,... -net tap,... , or 
-    # -net nic,... -net user,... and so...
-    #
-    # Do as follows: for each -net nic, associate th first -net (tap|user) 
-    # with same VLAN. Besides, does it make sense to have several host TAPs 
-    # on the same QEMU VLAN? I guess, no...
-
-    formvals['net'] = []
-
-    vm.config['-net'].select{|x| x['type'] == 'nic'}.each do |nic|
-      hostside = vm.config['-net'].detect do |x| 
-        x['vlan'] == nic['vlan'] and not %w{none nic}.include? x['type'] 
-      end
-      formvals['net'] << nic.merge( hostside )
     end
 
   end
@@ -93,42 +76,40 @@
 
 
   # Some defaults:
-  formvals['m']             ||= 348
+  formvals['m']             ||= 512
   formvals['vnc']           ||= ":#{vnc_available.first}"
   formvals['spice']         ||= {}
   formvals['spice']['port'] ||= spice_available.first
   # formvals['cache']         ||= cache_default # unused, we have an Array if disks...
-  formvals['disks']         ||= [{'cache' => cache_default}]  
+  formvals['disks']         ||= [{'cache' => cache_default}]
 
   extra_nics  = 1 # TODO: move on top
   min_nics    = 3 # TODO: move on top
 
-  formvals['net'] ||= []
-  nics_max = [formvals['net'].length + extra_nics, min_nics].max
-  
+  formvals['nic'] = (vm.respond_to? :config and vm.config['-nic'] or [])
+  nics_max = [formvals['nic'].length + extra_nics, min_nics].max
+
   random_macs               = []
   0.upto(nics_max-1) do |i|
     random_macs << OnBoard::V12n::QEMU::Network::NIC::MAC.random
   end
   random_macs.sort!
-  formvals['net']           ||= []
-  formvals['net'][0]        ||= {
+  formvals['nic']           ||= []
+  formvals['nic'][0]        ||= {
     'type'    => 'user',
-    'vlan'    => '0',
     'ifname'  => '[auto]',
-    'macaddr' => random_macs.first.to_s.upcase
+    'mac' => random_macs.first.to_s.upcase
   }
   1.upto(nics_max-1) do |i|
-    formvals['net'][i] ||= {
+    formvals['nic'][i] ||= {
       'type'    => 'none',
-      'vlan'    => i.to_s,
       'ifname'  => '[auto]',
-      'macaddr' => random_macs[i].to_s.upcase
-    } 
+      'mac' => random_macs[i].to_s.upcase
+    }
   end
-  formvals['net'].each do |fv|
+  formvals['nic'].each do |fv|
     fv['ifname']  ||= '[auto]'
-    fv['macaddr'] ||= '[auto]'
+    fv['mac'] ||= '[auto]'
   end
   formvals['smp']       ||= {}
   formvals['smp']['n']  ||= 1
@@ -146,11 +127,11 @@
       </tr>
       <tr>
         <th scope="row">RAM</th>
-        <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td> 
+        <td><input style="text-align:right" type="text" name="m" size="5" value="<%= formvals['m'] %>"/> MB <!-- names recall cmdline opts --></td>
       </tr>
       <tr>
         <th scope="row">Number of CPUs / cores</th>
-        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td> 
+        <td><input style="text-align:right" type="text" name="smp[n]" size="2" value="<%= formvals['smp']['n'] %>"/> <!-- names recall cmdline opts --></td>
       </tr>
       <tr>
         <th scope="row">Remote Display</th>
@@ -158,12 +139,12 @@
           VNC Display
           <select name="vnc">
             <% 1.upto(vnc_max) do |n| %>
-              <% 
+              <%
                 selected = ''
                 disabled = ''
                 if ":#{n}" == formvals['vnc']
                   selected = 'selected'
-                elsif not vnc_available.include? n 
+                elsif not vnc_available.include? n
                   disabled = 'disabled'
                 end
               %>
@@ -175,12 +156,12 @@
           <select name="spice[port]">
             <option <%= 'selected' if formvals['spice']['port'] == 0 %> value="0">(disable)</option>
             <% spice_min.upto(spice_max) do |n| %>
-              <% 
+              <%
                 selected = ''
                 disabled = ''
                 if n == formvals['spice']['port']
                   selected = 'selected'
-                elsif not spice_available.include? n 
+                elsif not spice_available.include? n
                   disabled = 'disabled'
                 end
               %>
@@ -210,7 +191,7 @@
           <select id="vga" name="vga">
             <option value="">(default/unspec)</option>
             <% OnBoard::V12n::QEMU::VGA::OPTIONS.each do |opt| %>
-              <option <%= 'selected' if opt == formvals['vga'] %> value="<%= opt %>"><%= opt %></option> 
+              <option <%= 'selected' if opt == formvals['vga'] %> value="<%= opt %>"><%= opt %></option>
             <% end %>
           </select>
         </td>
@@ -221,7 +202,7 @@
           <select id="soundhw" name="soundhw">
             <option value="">(none/default)</option>
             <% OnBoard::V12n::QEMU::Sound::Hardware.models.each do |model| %>
-              <option <%= 'selected' if model == formvals['soundhw'] %> value="<%= model %>"><%= model %></option> 
+              <option <%= 'selected' if model == formvals['soundhw'] %> value="<%= model %>"><%= model %></option>
             <% end %>
           </select>
         </td>
@@ -240,7 +221,7 @@
 
       <tr style="height:<%= sect_sep_height %>"> </tr>
 
-      <tr> 
+      <tr>
         <th scope="row">CD/DVD image (optional)</th>
         <td>
           <input class="vimagepath" type="text" name="cdrom" id="cdrom" onclick="javascript:popup_filechooser(this);" value="<%= formvals['cdrom'] %>"/>
@@ -259,7 +240,7 @@
   <table>
     <tbody>
 
-    <% taken_slots = formvals['disks'].map {|d| d.slot} %>  
+    <% taken_slots = formvals['disks'].map {|d| d.slot} %>
     <% formvals['disks'].each_with_index do |hd, idx| %>
       <% # p hd # DEBUG %>
       <% unless idx == 0%>
@@ -271,16 +252,16 @@
           <div class="optinfo">Choose existing</div>
         </th>
         <td style="padding-right:1.5ex;">
-          <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/> 
+          <input class="vimagepath" type="text" name="disk[<%= idx %>][path]" id="disk_<%= idx %>_path" onclick="javascript:popup_filechooser(this);" value="<%= hd['path'] %>"/>
           @<select name="disk[<%= idx %>][slot]" id="disk_<%= idx %>_slot">
             <% OnBoard::V12n::QEMU::Config::Drive.disk_slots.each do |slot| %>
               <!-- TODO: etach and remove special options... -->
               <%
-                runtime_name = begin 
+                runtime_name = begin
                                  hd.runtime_name
                                rescue Exception
                                  nil
-                               end              
+                               end
 
                 extra_attr = (
                   if slot == runtime_name
@@ -291,7 +272,7 @@
                     ''
                   end
                 )
-              %>                    
+              %>
               <option value="<%= slot %>"<%= extra_attr %>>
                 <%= slot %>
               </option>
@@ -299,24 +280,24 @@
           </select>
           <!-- -->
           <% begin %>
-            <% if hd.img_info %>  
+            <% if hd.img_info %>
               <span class="lowlight" style="margin:0 1ex">(<%= hd.img_info['virtual_size'].split.first %>)</span>
             <% end %>
           <% rescue NoMethodError %>
-            <% # turn the Hash into an object with proper methods %> 
+            <% # turn the Hash into an object with proper methods %>
             <% hd = OnBoard::V12n::QEMU::Config::Drive.new hd %>
             <% retry %>
           <% end %>
           <!-- -->
-        </td>  
+        </td>
       </tr>
       <tr>
         <th scope="row">
           <div class="optinfo">
-            Or create a new one 
+            Or create a new one
               <input title="Check this box to create a new disk image" style="vertical-align:middle;" type="checkbox" name="disk[<%= idx %>][qemu-img][create]" id="disk_<%= idx %>_qemu-img_create_checkbox" onClick="javascript:qemuImgCreateControls(<%= idx %>)"/>
-          </div>        
-        </th> 
+          </div>
+        </th>
         <td>
           &nbsp;Size <input type="text" name="disk[<%= idx %>][qemu-img][size][G]" id="disk_<%= idx %>_qemu-img_create_size" size="2" value="8" style="text-align:right" disabled/>GB;
           &nbsp;Format <select name="disk[<%= idx %>][qemu-img][fmt]" id="disk_<%= idx %>_qemu-img_create_fmt" disabled>
@@ -330,8 +311,8 @@
             <% OnBoard::V12n::QEMU.net_storage_subdirs.each do |subdir|  %>
               <%
                 subdir_show_as = subdir
-                # TODO: DRY: implement a library method 
-                if subdir =~ %r{^[^/]*net[^/]*/([^/]+)/([^/]+)/([^/]+)}
+                # TODO: DRY: implement a library method
+                if subdir =~ %r{^[^/]*nic[^/]*/([^/]+)/([^/]+)/([^/]+)}
                   proto, host, vol = $1, $2, $3
                   subdir_show_as = "#{proto}://#{host}/#{vol}"
                 end
@@ -340,7 +321,7 @@
             <% end %>
           </select>
         </td>
-      </tr> 
+      </tr>
       <tr>
         <th scope="row">
           Optimize access to distributed storage
@@ -380,7 +361,7 @@
         conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find{|h| h['host'] == pci_id }
         passthrough_type = conf_h && (conf_h['type'] || conf_h['driver'])
       %>
-      <% 
+      <%
         available = true
         using_vm = OnBoard::V12n::QEMU::Passthrough::PCI.new(pci_id).used_by
         if using_vm  and (vm ? (vm.uuid != using_vm.uuid ) : true)
@@ -394,7 +375,7 @@
           tr_args = %q{class="lowlight"}
         end
       %>
-      <tr <%= tr_args %>> 
+      <tr <%= tr_args %>>
         <td><%= pci_id %></th>
         <td><%= pci_device[:vendor] %></td>
         <td><%= pci_device[:model] %></td>
@@ -408,7 +389,7 @@
               <option value="vfio-pci" <%=    'selected' if passthrough_type == 'vfio-pci'    %>>
                 VFIO-PCI
               </option>
-              <option value="pci-assign" <%=  'selected' if passthrough_type == 'pci-assign'  %>> 
+              <option value="pci-assign" <%=  'selected' if passthrough_type == 'pci-assign'  %>>
                 PCI Assignment
               </option>
             </select>
@@ -437,14 +418,14 @@
       </tr>
       <tbody>
       <% all_usb_devices.each do |dev| %>
-        <% 
+        <%
           usb_passthrough = OnBoard::V12n::QEMU::Passthrough::USB.new(dev)
           conf_h = vm && vm.config.opts['-device'] && vm.config.opts['-device'].find do |cnf|
             usb_passthrough.match_config? cnf
-          end 
+          end
           conf_h ||= {}
         %>
-        <% 
+        <%
           available = true
           using_vm = usb_passthrough.used_by
           if vm
@@ -453,7 +434,7 @@
             end
           else
             if using_vm
-              available = false 
+              available = false
             end
           end
         %>
@@ -469,7 +450,7 @@
         <tr class="<%= tr_class %>">
           <td class="<%= passthrough_highlight if conf_h['hostbus'] %>"><%= dev.bus_id %></td>
           <input type="hidden" name="usb_passthrough[][hostbus]" value="<%= dev.bus_id %>"/>
-          
+
           <td class="<%= passthrough_highlight if conf_h['hostport'] %>"><%= dev.port_id %></td>
           <input type="hidden" name="usb_passthrough[][hostport]" value="<%= dev.port_id %>"/>
 
@@ -485,27 +466,27 @@
           <td class="<%= passthrough_highlight if conf_h.any? %>"><%= dev.description %></td>
           <% if available %>
             <td>
-              <select name="usb_passthrough[][mode]"> 
+              <select name="usb_passthrough[][mode]">
                 <option value="">(none)</option>
-                <option 
-                    value="hostbus,hostport" 
+                <option
+                    value="hostbus,hostport"
                     <%= 'selected' if conf_h['hostbus'] and conf_h['hostport'] %>
                 >By Bus / Port</option>
-                <option 
+                <option
                     value="hostbus,hostaddr"
-                    <%= 'selected' if conf_h['hostbus'] and conf_h['hostaddr'] %>    
+                    <%= 'selected' if conf_h['hostbus'] and conf_h['hostaddr'] %>
                 >By Bus / Device addr.</option>
-                <option 
+                <option
                     value="vendorid,productid"
-                    <%= 'selected' if conf_h['vendorid'] and conf_h['productid'] %>    
-                >By Vendor / Product</option> 
+                    <%= 'selected' if conf_h['vendorid'] and conf_h['productid'] %>
+                >By Vendor / Product</option>
               </select>
             </td>
             <td>
               <select name="usb_passthrough[][bus]">
                 <option value="">(auto)</option>
                 <%
-                  # Again, a JSON client still can't access this information: 
+                  # Again, a JSON client still can't access this information:
                   # TODO: move into ``objects'' or provide /virtualization/qemu/usb/default_controllers.json
                 %>
                 <% OnBoard::V12n::QEMU::Config::USB::DEFAULT_CONTROLLERS.each do |bus| %>
@@ -547,7 +528,6 @@
   <table id="net">
     <thead>
       <tr>
-        <th>VLAN</th>
         <th>Type</th>
         <th>
           Name (visible in the host)
@@ -573,43 +553,36 @@
       </tr>
     </thead>
     <tbody>
-      <% nn = formvals['net'].length - 1 %>
+      <% nn = formvals['nic'].length - 1 %>
       <% 0.upto nn do |n| %>
         <tr>
           <td>
-            <select id="net[<%= n %>][vlan]" name="net[][vlan]">
-              <% 0.upto nn do |vlan| %>
-                <option <%= 'selected' if formvals['net'][n]['vlan'] == vlan.to_s %> value="<%= vlan %>"><%= vlan %></option> 
-              <% end %>
-            </select>
-          </td>
-          <td>
-            <select onclick="javascript:qemuNetIfControls();" id="net[<%= n %>][type]" name="net[][type]">
-              <option <%= 'selected' if formvals['net'][n]['type'] == 'none' %> value="none">(none)</option>
-              <option <%= 'selected' if formvals['net'][n]['type'] == 'user' %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
-              <option <%= 'selected' if formvals['net'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
+            <select onchange="javascript:qemuNetIfControls();" id="nic[<%= n %>][type]" name="nic[][type]">
+              <option <%= 'selected' if formvals['nic'][n]['type'] == 'none' %> value="none">(none)</option>
+              <option <%= 'selected' if formvals['nic'][n]['type'] == 'user' %> value="user" title="For simpler setups, not recommended for servers">User/Default</option>
+              <option <%= 'selected' if formvals['nic'][n]['type'] == 'tap'  %> value="tap" title="Virtual Ethernet, recommended for servers and advanced setups">TAP</option>
             </select>
           </td>
           <td style="text-align:center;">
-            <input type="text" maxlength="15" id="net[<%= n %>][ifname]" name="net[][ifname]" value="<%= formvals['net'][n]['ifname'] %>" style="width:95%"/>
+            <input type="text" maxlength="15" id="nic[<%= n %>][ifname]" name="nic[][ifname]" value="<%= formvals['nic'][n]['ifname'] %>" style="width:95%"/>
           </td>
           <td>
-            <select id="net[<%= n %>][bridge]" name="net[][bridge]"> 
+            <select id="nic[<%= n %>][br]" name="nic[][br]">
               <option value="">(none)</option>
               <% all_bridges.each do |br| %>
-                <option <%= 'selected' if br.name == formvals['net'][n]['bridge'] %> value="<%= br.name %>"><%= br.name %></option>
+                <option <%= 'selected' if br.name == formvals['nic'][n]['br'] %> value="<%= br.name %>"><%= br.name %></option>
               <% end %>
             </select>
           </td>
           <td>
-            <select id="net[<%= n %>][model]" name="net[][model]">
+            <select id="nic[<%= n %>][model]" name="nic[][model]">
               <option value="">(default)</option>
               <% OnBoard::V12n::QEMU::Network::NIC.models.sort.each do |model| %>
-                <option <%= 'selected' if model == formvals['net'][n]['model'] %> value="<%= model %>"><%= model %></option> 
+                <option <%= 'selected' if model == formvals['nic'][n]['model'] %> value="<%= model %>"><%= model %></option>
               <% end %>
             </select>
           </td>
-          <td><input type="text" id="net[<%= n %>][macaddr]" name="net[][macaddr]" value="<%= formvals['net'][n]['macaddr'] %>"/></td>
+          <td><input type="text" id="nic[<%= n %>][mac]" name="nic[][mac]" value="<%= formvals['nic'][n]['mac'] %>"/></td>
         </tr>
       <% end %>
     </tbody>
@@ -617,10 +590,10 @@
 </div> <!-- tabs-config-net -->
 
   <% if vm %>
-    
+
     <div id="tabs-config-advanced">
       <h3>Experts/Development</h3>
-      
+
       <!-- sudo qemu -runas onboard might not suffice... -->
       <h4>
         Run as root
@@ -632,10 +605,10 @@
       <textarea name="command_line" style="width:100%; height:11em"><%
         %><%= vm.format_cmdline if vm %><%
       %></textarea>
-      
+
     </div>
 
   <% end %>
 
-  
+
 

@@ -19,7 +19,7 @@ class OnBoard::Controller
     all = OnBoard::Network::Routing::Table.getAllIDs
     already_used_numbers  = all['system_tables'].keys + all['custom_tables'].keys
     already_used_names    = (
-      all['system_tables'].values + 
+      all['system_tables'].values +
       all['custom_tables'].values
     )
     params['number'].strip!
@@ -30,7 +30,7 @@ class OnBoard::Controller
     elsif params['number'] =~ /^\d+$/
       n = params['number'].to_i
       if (1..255).include? n
-        if already_used_numbers.include? n 
+        if already_used_numbers.include? n
           status 409 # Conflict
           msg = {:err => "Error: table number #{n} already in use."}
         elsif params['name'] =~ OnBoard::Network::Routing::Table::VALID_NAMES
@@ -41,7 +41,7 @@ class OnBoard::Controller
         end
       else
         status 400 # Bad Request
-        msg = {:err => "Invalid table number: allowed range: 1-255"} 
+        msg = {:err => "Invalid table number: allowed range: 1-255"}
       end
     else
       status 400 # Bad Request
@@ -76,7 +76,7 @@ class OnBoard::Controller
       :msg      => msg
     )
   end
- 
+
   put "/network/routing/rules.:format" do
     msg = OnBoard::Network::Routing::Rule.change_from_HTTP_request(
       :http_params    => params,
@@ -90,7 +90,7 @@ class OnBoard::Controller
       :msg      => msg
     )
   end
- 
+
   get "/network/routing/tables/:table.:format" do
     begin
       format(
@@ -104,33 +104,33 @@ class OnBoard::Controller
     end
   end
 
-  # Instead of CREATEing or DELETEing ip routes, we UPDATE the ip routing 
-  # table, hence the use of the sole PUT method to an unique URI. 
-  # A way to retain our code simple but still respect (somewhat) 
+  # Instead of CREATEing or DELETEing ip routes, we UPDATE the ip routing
+  # table, hence the use of the sole PUT method to an unique URI.
+  # A way to retain our code simple but still respect (somewhat)
   # the HTTP semantics.
   put "/network/routing/tables/:table.:format" do
-    table = OnBoard::Network::Routing::Table.get(params[:table]) 
+    table = OnBoard::Network::Routing::Table.get(params[:table])
     format = params[:format]
     number = table.number
     all = OnBoard::Network::Routing::Table.getAllIDs
     names = (
-      all['system_tables'].values + 
+      all['system_tables'].values +
       all['custom_tables'].values
     ).select{|n| n =~ /\S/}
     comment = params['comment'].strip if params['comment']
     if params['name']
-      name = params['name'].strip.gsub(' ', '_') 
+      name = params['name'].strip.gsub(' ', '_')
       #
-      # One may just want to chenge the comment...
+      # One may just want to change the comment...
       #
-      #if names.include? name 
+      #if names.include? name
       #  status 409 # HTTP Conflict!
       #  msg = {:err => "Name \"#{name}\" already in use!"}
       #elsif
       if name =~ OnBoard::Network::Routing::Table::VALID_NAMES
         msg = OnBoard::Network::Routing::Table.rename number, name, comment
         if name == ''
-            redirect "/network/routing/tables/#{number}.#{format}"      
+            redirect "/network/routing/tables/#{number}.#{format}"
         else
           redirect "/network/routing/tables/#{name}.#{format}"
         end
@@ -140,7 +140,7 @@ class OnBoard::Controller
       end
     elsif params['ip_route_del']
       # 'default' might be ambiguous, 0.0.0.0/0 or ::/0 ? So, specifying
-      # the address family (af) is required. 
+      # the address family (af) is required.
       msg = table.ip_route_del params['ip_route_del'], :af => params['af']
     else
       msg = OnBoard::Network::Routing::Table.route_from_HTTP_request params
@@ -148,7 +148,7 @@ class OnBoard::Controller
     unless msg[:ok] # TODO: always sure the error is client-side?
       status(400)   # TODO: what is the most appropriate HTTP response in this
                     # case? 400 Bad Request? 409 Conflict?
-      #headers("X-STDERR" => msg[:stderr].strip.gsub("\n","\\n")) 
+      #headers("X-STDERR" => msg[:stderr].strip.gsub("\n","\\n"))
     end
     format(
       :path     => 'network/routing/table',
@@ -156,7 +156,13 @@ class OnBoard::Controller
       :title    => "Routing table: #{params[:table]}",
       :objects  => OnBoard::Network::Routing::Table.get(params['table']),
       :msg      => msg
-    )   
+    )
+  end
+
+  # Neverthless... allow some ReST-ful behavior...
+  post "/network/routing/tables/:table.:format" do
+    status, headers, body = call env.merge('REQUEST_METHOD' => 'PUT')
+    [status, headers, body]
   end
 
   delete "/network/routing/tables/:table.:format" do
@@ -177,7 +183,7 @@ class OnBoard::Controller
       end
     end
     if msg[:ok]
-      redirect "/network/routing/tables.#{params[:format]}" 
+      redirect "/network/routing/tables.#{params[:format]}"
     else
       format(
         :path     => 'network/routing/table',
@@ -185,7 +191,7 @@ class OnBoard::Controller
         :title    => "Routing table: #{params['table']}",
         :objects  => OnBoard::Network::Routing::Table.get(params['table']),
         :msg      => msg
-      )   
+      )
     end
   end
 

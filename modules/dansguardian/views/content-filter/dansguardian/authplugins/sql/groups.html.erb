@@ -1,4 +1,4 @@
-<% 
+<%
   # we are breaking MVC pattern here: lots of "logic" is put in the view
   # and in the Sinatra routes, instead of lib/ ; but Sinatra itself
   # encourages non-MVC development, so...
@@ -8,7 +8,7 @@
   fgnumbers     = fgnames.keys
   sqlfgnumbers  = groups.values.uniq
   allfgnumbers  = (fgnumbers | sqlfgnumbers).sort
-  
+
 %>
 
 <style type="text/css">
@@ -55,8 +55,8 @@
           <td>
             <select name="groups[][fgid]">
               <% allfgnumbers.each do |n| %>
-                <% print_n = sprintf("%02d", n) %> 
-                <% selected = (n == fgid ? 'selected' : '') %> 
+                <% print_n = sprintf("%02d", n) %>
+                <% selected = (n == fgid ? 'selected' : '') %>
                 <% if fgnumbers.include? n %>
                   <option <%= selected %> value="<%= n %>"><%= print_n %>: <%= fgnames[n] %></option>
                 <% else %>
@@ -87,8 +87,8 @@
             <select name="groups[][fgid]">
               <% allfgnumbers.each do |n| %>
                 <% fgid = 1 %>
-                <% print_n = sprintf("%02d", n) %> 
-                <% selected = (n == fgid ? 'selected' : '') %> 
+                <% print_n = sprintf("%02d", n) %>
+                <% selected = (n == fgid ? 'selected' : '') %>
                 <% if fgnumbers.include? n %>
                   <option <%= selected %> value="<%= n %>"><%= print_n %>: <%= fgnames[n] %></option>
                 <% else %>

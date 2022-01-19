@@ -16,9 +16,9 @@ class OnBoard
       root = nil
       out = ''
       if params['root_id'] == 'files' # for future extension
-        begin 
+        begin
           root = File.realpath(ENV['HOME']) + '/files'
-          dir = url_decode params['dir'] 
+          dir = url_decode params['dir']
           path = File.join root, dir
 
           out << "<ul class=\"jqueryFileTree\" style=\"display:none;\">"
@@ -36,16 +36,16 @@ class OnBoard
               end
               out << "<li class=\"directory collapsed\"><a href=\"#\" rel=\"#{dir}#{x}/\">#{x}</a></li>"
             end
-            
+
             #loop through all files
             Dir.glob("*").sort.each do |x|
-              if not File.file?(x.untaint) 
+              if not File.file?(x.untaint)
                 next
               end
               ext = File.extname(x)[1..-1]
               out << "<li class=\"file ext_#{ext}\"><a href=\"#\" rel=\"#{dir}#{x}\">#{x}</a></li>"
             end
-            
+
             out << "</ul>"
 
             return out
@@ -64,7 +64,7 @@ class OnBoard
 
     end
 
-    # POST is actually required by jqueryFileTree: a GET route is just 
+    # POST is actually required by jqueryFileTree: a GET route is just
     # there to naively debug with a browser :-P
     #post '/connectors/jqueryFileTree/:root_id.html' do
     #  same_as_GET ## DANGEROUS: leads to infinite loops :-o

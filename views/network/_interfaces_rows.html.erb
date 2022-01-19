@@ -1,19 +1,19 @@
-<% 
+<%
   require "pp"
   require "onboard/extensions/string"
   require "onboard/network/interface"
 %>
 
       <% objects.each do |netif| %>
-        <% if 
+        <% if
             ( # 'ieee802.11' is the "low-level" wifi iface and doesn't get IPs
               objects.length == 1 or
               not netif.bridged_to and
               not ['loopback', 'ieee802.11'].include? netif.type
-            ) or 
-              params['view'] == 'all' 
-          %> 
-          <% 
+            ) or
+              params['view'] == 'all'
+          %>
+          <%
             title = ''
             if netif.type == 'P-t-P'
               title = 'Point-to-Point interfaces are configured automatically by VPN daemons, modem connection utilities and so forth. You cannot manage them directly.'
@@ -21,15 +21,15 @@
           %>
           <tr title="<%= title %>">
             <%=
-              erubis(
+              erb(
                 :"network/_interfaces_row.html",
                 {
                   :layout => false,
                   :locals => {:netif => netif}
                 }
-              ) 
+              )
             %>
           </tr>
         <% end %>
       <% end %>
-      
+

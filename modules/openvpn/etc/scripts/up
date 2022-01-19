@@ -4,8 +4,8 @@
 #
 # ENVIRONMENT: (from openvpn --setenv)
 #
-# RUBYLIB 
-#   prepend to the standard Ruby $LOAD_PATH 
+# RUBYLIB
+#   prepend to the standard Ruby $LOAD_PATH
 #
 # NETWORK_INTERFACES_DATFILE
 #   YAML (was Marshal) dump of the saved interfaces state
@@ -18,28 +18,37 @@
 #
 # COMMAND LINE ARGUMENTS:
 #
-# ARGV[0] 
+# ARGV[0]
 #   interface name (automatically appended by openvpn --up)
 #
 #
 # EXAMPLE:
-#   
+#
 # RUBYLIB=/home/onboard/onboard/lib NETWORK_INTERFACES_DATFILE=/home/onboard/onboard/etc/config/network/interfaces.yml ./up ovpn_tap0
 
 # require 'pp' # DEBUG
 
+# Use the same version as the stdlib;
+# prevent something like https://github.com/ruby/psych/issues/503.
+gem 'psych', '< 4.0.0'
+require 'psych'
+
+require 'onboard/logger'
+OnBoard.use_default_logfile  # instead of STDOUT
+
 require 'onboard/network/interface'
 require 'onboard/network/routing'
 
-ifname = ARGV[0]
 
-puts "PATH=#{ENV['PATH']}"
+OnBoard::LOGGER.info "#{__FILE__} #{ARGV.join(' ')}  started."
+
+ifname = ARGV[0]
 
 all_interfaces = OnBoard::Network::Interface.getAll
 
 if File.exists? ENV['NETWORK_INTERFACES_DATFILE']
   begin
-    all_interfaces_saved = 
+    all_interfaces_saved =
         YAML.load File.read ENV['NETWORK_INTERFACES_DATFILE']
   rescue Exception# Psych::SyntaxError (and others?)
     # Handle the case when you get a .dat (Marshal) instead of
@@ -66,7 +75,7 @@ netifs_saved = all_interfaces_saved.select{|x| x.name == ifname}
 
 OnBoard::Network::Interface.restore(
   :saved_interfaces => netifs_saved,
-  :current_interfaces => netifs 
+  :current_interfaces => netifs
 )
 
 # For bridged TAP, implement our own persistence...
@@ -83,7 +92,8 @@ if ENV['bridge_to'] =~ /\S/
 end
 
 OnBoard::Network::Routing::Route.restore_static(
-  :match => lambda { |line| line =~ /dev\s+#{ifname}/ },  # Linux iproute2 syntax 
+  :match => lambda { |line| line =~ /dev\s+#{ifname}/ },  # Linux iproute2 syntax
   :file => ENV['STATIC_ROUTES_DATFILE']
 )
 
+OnBoard::LOGGER.info "#{__FILE__} #{ARGV.join(' ')} finished."

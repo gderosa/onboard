@@ -12,7 +12,7 @@ class OnBoard
             )
           end
         end
-          
+
         def initialize(h)
           @id   = h[:id]
           @file = DG.fg_file(@id)
@@ -47,12 +47,12 @@ class OnBoard
         def update!(params)
           # Update Hash: will be the argument of
           # ::DansGuardian::Updater.update!
-          u = {} 
+          u = {}
           u['groupname']        = params['groupname']
           u['naughtynesslimit'] = params['naughtynesslimit']
-          u['groupmode'] =  
-              ::DansGuardian::Config::FilterGroup::GROUPMODE.invert[ 
-                  params['groupmode'].to_sym 
+          u['groupmode'] =
+              ::DansGuardian::Config::FilterGroup::GROUPMODE.invert[
+                  params['groupmode'].to_sym
               ]
           u['disablecontentscan'] = case params['enablecontentscan']
                                     when 'on'

@@ -1,7 +1,7 @@
-# radius-admin 
+# radius-admin
 # encoding: utf-8
 
-logged_in_as: logged in as 
+logged_in_as: logged in as
 logout:
   you: logout
 login:
@@ -10,14 +10,14 @@ signup:
   you: signup
 
 radius:
-  user: 
+  user:
     user: user
     name: user name
     registered:
       already: already registered user
-    create_new: 
+    create_new:
       you: create new user
-      any: user creation   
+      any: user creation
 
 hotspot:
   signup: Hotspot signup
@@ -27,7 +27,7 @@ hotspot:
   signup_success: "User <span style=\"font-weight:bold\">\"%1\"</span> has been successfully created. You will be soon redirected to the page you requested, otherwise just type any address in your browser and surf the web (you might be asked again for username and password you’ve just created)."
   password:
     recovery:
-      you!: recover password    
+      you!: recover password
       message: If your email is associated to an existing account, password will be reset and sent to your inbox. Thank you.:w
 
 
@@ -37,7 +37,7 @@ personal:
     full: name
     first: first name
     last: last name
-  birth: 
+  birth:
     short: birth
     date: date of birth
     place: place of birth
@@ -57,15 +57,15 @@ personal:
   id_code:
     id_code: Personal ID code
     alt: "Tax code, SSN, etc."
-  
+
 terms:
   name: name / description
   terms: Terms and Conditions
   accept:
     i: accept
-  accepted: accepted Terms and Conditions 
+  accepted: accepted Terms and Conditions
   accepted_bare: accepted
   mandatory: mandatory # TODO? should be general?
-  mandatory_mark: acceptance of Terms marked with “%1” is mandatory 
+  mandatory_mark: acceptance of Terms marked with “%1” is mandatory
 
 

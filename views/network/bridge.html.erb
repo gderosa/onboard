@@ -1,15 +1,15 @@
-<% 
+<%
   require "onboard/extensions/string"
   require "onboard/network/interface"
 %>
 
 <h2>Network bridge: <%= objects[:bridge].name %></h2>
-  <% fieldnames = %w{Bridge Active/State MTU MAC\ Address IP\ Addresses Method} %>
-  <% colspans = [2, 2, 1, 1, 1, 1] %>
+  <% fieldnames = %w{Bridge Active/State MTU MAC\ Address IP\ Addresses Method STP\ enabled?} %>
+  <% colspans = [2, 2, 1, 1, 1, 1, 1] %>
     <table>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <td style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <td style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </td>
         <% end %>
@@ -21,7 +21,7 @@
         <input type="hidden" name="_method" value="delete"/>
         <td>
           <button type="submit" title="Delete this bridge!"><img src="<%= icondir + '/' + iconsize + '/actions/delete.png'%>" alt="delete"/></button>
-        </td>         
+        </td>
       </form>
       <form method="post">
         <input type="hidden" name="_method" value="put"/>
@@ -34,10 +34,10 @@
           <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
         </td>
         <% %w{state mtu}.each do |field| %>
-          <td><div><%== netif.data[field] %></div></td>
+          <td><div><%= netif.data[field] %></div></td>
         <% end %>
         <td>
-          <div><code><%== netif.data['mac'] %></code></div>
+          <div><code><%= netif.data['mac'] %></code></div>
         </td>
         <td>
           <% some_ip_printed = false %>
@@ -57,14 +57,14 @@
                 <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
               <% end %>
             <% end %>
-          <% end %>  
+          <% end %>
           <% if netif.ipassign[:method] == :static and netif.active %>
             <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
           <% end %>
           <% if netif.ipassign[:method] == :dhcp and netif.ipassign[:cmd] =~ /\S+/ and not some_ip_printed %>
             <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
           <% end %>
-        </td>       
+        </td>
         <td>
           <select name="netifs[<%= netif.name %>][ipassign][method]">
             <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
@@ -73,26 +73,30 @@
           <% %w{pid cmd args}.each do |what| %>
             <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
           <% end %>
-        </td> 
+        </td>
+        <td style="text-align: center">
+          <input type="hidden"    name="brctl[stp][<%= netif.name %>]" value="off"/>
+          <input type="checkbox"  name="brctl[stp][<%= netif.name %>]" <%= 'checked' if netif.stp %>/>
+        </td>
       </tr>
       <tr>
         <td style="background: white; /* TODO: do not hardcode */" colspan="<%= colspans.sum %>">
           <button type="submit">Change</button>
           (<a href="<%= request.path_info %>">Refresh</a>)
         </td>
-      </form>        
+      </form>
       </tr>
     </table>
 
-    <div style="height:2em;"></div>  
+    <div style="height:2em;"></div>
 
     <table>
-      <% fieldnames = %w{Interface Active/State Type MTU MAC\ Address IP\ Addresses Method Vendor/Model} %>
-      <% colspans = [2, 2, 1, 1, 1, 1, 1, 1] %>
+    <% fieldnames = %w{Name Active/State Type MTU MAC\ Address IP\ Addresses Method/Renew VLANs Preferred<br/>Metric Vendor/Model Bus} %>
+    <% colspans = [2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1,] %>
       <tr>
         <td class="warn" style="padding: 3px; background: white; /* TODO: DRY */" colspan="<%= colspans.sum %>">
-          Please note: it is recommended to add IP addresses to the 
-          bridge itself and leave the member interfaces &ldquo;up&rdquo; 
+          Please note: it is recommended to add IP addresses to the
+          bridge itself and leave the member interfaces &ldquo;up&rdquo;
           but unconfigured.
         </td>
       </tr>
@@ -102,26 +106,26 @@
           <h3>Member interfaces</h3>
         </td>
       </tr>
-  <form method="post"> 
+  <form method="post">
     <button style="display:none;" type="submit">Change</button> <!-- default button -->
     <input type="hidden" name="_method" value="put"/>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <td style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <td style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </td>
         <% end %>
       </tr>
       <% (objects[:all_interfaces].select {|x| x.bridged_to == objects[:bridge].name}).each do |netif| %>
-        <% if (not ['loopback', 'ieee802.11'].include? netif.type) or 
-              params['view'] == 'all' 
+        <% if (not ['loopback', 'ieee802.11'].include? netif.type) or
+              params['view'] == 'all'
         %>
           <tr>
             <td>
               <button title="Remove from the bridge" type="submit" name="brctl[delif][<%= objects[:bridge].name %>][<%= netif.name %>]" value="yes"><img src="<%= icondir + '/' + iconsize + '/actions/remove.png'%>" alt="remove"/></button>
             </td>
             <%=
-              erubis(
+              erb(
                 :"network/_interfaces_row.html",
                 {
                   :layout => false,
@@ -142,18 +146,18 @@
 
       <tr><td style="background: white; /* TODO: do not hardcode */" colspan="<%= colspans.sum %>"><h4>Add new interfaces:</h4></td></tr>
 
-      <% (objects[:all_interfaces].select do |x| 
+      <% (objects[:all_interfaces].select do |x|
         (not x.bridged_to) and x.type != 'bridge'
       end).each do |netif| %>
-        <% if (not ['loopback', 'ieee802.11'].include? netif.type) or 
-              params['view'] == 'all' 
+        <% if (not ['loopback', 'ieee802.11'].include? netif.type) or
+              params['view'] == 'all'
         %>
           <tr>
             <td>
               <button title="Add interface to the bridge" type="submit" name="brctl[addif][<%= objects[:bridge].name %>][<%= netif.name %>]" value="yes"><img src="<%= icondir + '/' + iconsize + '/actions/add.png'%>" alt="add"/></button>
             </td>
             <%=
-              erubis(
+              erb(
                 :"network/_interfaces_row.html",
                 {
                   :layout => false,

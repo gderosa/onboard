@@ -1,4 +1,4 @@
-<% 
+<%
   require "pp"
   require "onboard/extensions/string"
   require "onboard/network/interface"
@@ -6,21 +6,21 @@
 
 <% if objects.class == Array %>
   <h2><%= title %></h2>
-  <%= 
+  <%=
     erb(
-      :"network/_interfaces_table.html", 
+      :"network/_interfaces_table.html",
       {
-        :layout => false, 
+        :layout => false,
         :locals => {:objects => objects}
       }
-    )  
-  %> 
+    )
+  %>
 <% else %>
 
       <% netif = objects %>
       <h2>Network interface: <%= netif.name %></h2>
       <div class="item">
-        <pre><%== netif.pretty_inspect  %></pre>
+        <pre><%= netif.pretty_inspect  %></pre>
       </div>
 
       <a href="<%= request.path_info.to_dir + '/ip.html' %>">
@@ -29,3 +29,26 @@
 
 <% end %>
 
+<div class="warn" style="display:none">
+<p>Please note <span class="th-like">Preferred Metric</span>s
+will only be effective
+the next time:
+<ul>
+  <li>IP configuration is negotiated via DHCP
+    (check the <span class="th-like">Renew</span><input type="checkbox" disabled/> box
+    before <span class="btn-like">Submit!</span>-ing); or
+  <li>For statically configured interfaces,
+    a <a href="routing/tables/main.html">static&nbsp;route</a>[*] is
+    added or replaced.
+</ul>
+<p>This is because, internally, metrics are fundamentally per-route, not per-interface.
+<p>Please refer to the <a href="routing/tables/main.html">main routing table  </a>
+to see the route metrics currently in effect [*].
+<p>For Point-to-Point interfaces, metrics are configured at PPP/VPN daemon level only, if available.
+<hr>
+
+<p class="footnote">[*]
+If <a href="routing/rules.html">policy routing</a> is used,
+<a href="routing/tables.html">other routing tables</a>
+may need to be considered, in addition to the main one.
+</div>

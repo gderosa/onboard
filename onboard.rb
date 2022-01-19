@@ -12,65 +12,38 @@ require 'find'
 require 'logger'
 require 'etc'
 
+require 'onboard/constants'
+require 'onboard/logger'
 require 'onboard/exceptions'
 require 'onboard/extensions/object'
 require 'onboard/extensions/logger'
 require 'onboard/menu/node'
 require 'onboard/system/command'
 require 'onboard/platform/debian'
+require 'onboard/network/dnsmasq'
 
-begin
-  require 'onboard/constants/custom'
-rescue LoadError
-end
 
 if Process.uid == 0
-  fail 'OnBoard should not be run as root: use an user who can sudo with no-password instead!'
+  fail 'OnBoard should not be run as root: use an user who can sudo instead!'
 end
 
+
 class OnBoard
-  LONGNAME          ||= 'OnBoard'
-  VERSION           = '2015.07'
-
-  PLATFORM          = Platform::Debian # TODO? make it configurable? get rid of Platform?
-
-  ROOTDIR           = File.dirname File.expand_path(__FILE__)
-  DATADIR = RWDIR = (
-      ENV['ONBOARD_RWDIR'] or 
-      ENV['ONBOARD_DATADIR'] or 
-      File.join(ENV['HOME'], '.onboard')
-  )
   FileUtils.mkdir_p RWDIR
   FileUtils.chmod 0700, RWDIR # too much sensible data here ;-)
-  CONFDIR             = File.join RWDIR, '/etc/config'
-  LOGDIR              = File.join RWDIR, '/var/log'
-  FILESDIR            = File.join ENV['HOME'], 'files' # mass storage...
-  # sometimes files are uploaded elsewhere, as best suitable
-  DEFAULT_UPLOAD_DIR  = File.join RWDIR, '/var/uploads'
-  LOGFILE_BASENAME    = 'onboard.log'
-  LOGFILE_PATH        = File.join LOGDIR, LOGFILE_BASENAME
-
-  VARRUN              ||= '/var/run/onboard'
-
-  VARLIB              ||= File.join RWDIR, 'var/lib'
- 
   FileUtils.mkdir_p LOGDIR unless Dir.exists? LOGDIR
-  # NOTE: we are re-defining a constant!
-  # ...really, it should not be a constant... :-(
-  # TODO TODO TODO ...
-  LOGGER            = Logger.new(LOGDIR + '/' + 'onboard.log')
-  
-  LOGGER.formatter = proc { |severity, datetime, progname, msg|
-    "#{datetime} #{severity}: #{msg}\n"
-  }
+
+  use_logfile
 
   LOGGER.level = Logger::INFO
-  LOGGER.level = Logger::DEBUG if 
+  LOGGER.level = Logger::DEBUG if
       $0 == __FILE__ and not
       ENV['ONBOARD_ENVIRONMENT'] =~ /production/i
       # this is required because there is no Sinatra environment until
-      # controller.rb is loaded (where OnBoard::Controller inherits 
+      # controller.rb is loaded (where OnBoard::Controller inherits
       # from Sinatra::Base)
+
+  PLATFORM = Platform::Debian # TODO? make it configurable? get rid of Platform?
 
   MENU_ROOT = Menu::MenuNode.new('ROOT', {
     :href => '/',
@@ -94,13 +67,18 @@ class OnBoard
   end
 
   def self.web?
-    return true unless ARGV.include? '--no-web'
+    return true unless (ARGV.include?('--no-web') or ARGV.include?('--restore-dns'))
     return false
+  end
+
+  def self.restore_dns
+    Network::Dnsmasq.init_conf
+    Network::Dnsmasq.restart
   end
 
   def self.prepare
     system "sudo mkdir -p #{VARRUN}"
-    system "sudo chown onboard #{VARRUN}"
+    system "sudo chown #{Process.uid} #{VARRUN}"
 
     # modules
     Dir.foreach(ROOTDIR + '/modules') do |dir|
@@ -109,14 +87,15 @@ class OnBoard
         file = dir_fullpath + '/load.rb'
         if File.readable? file
           if File.exists? dir_fullpath + '/.disable'
-            puts "Module #{dir}: disabled!"
+            puts "Module #{dir}: disabled." if web?  # be quiet if non-web
           else
             load dir_fullpath + '/load.rb'
+            puts "Module #{dir}: enabled." if web?  # be quiet if non-web
           end
         else
           STDERR.puts "Warning: Couldn't load modules/#{dir}/load.rb: Skipped!"
         end
-      end 
+      end
     end
 
     # After the modules, 'cause we want to know, among other things,
@@ -125,16 +104,16 @@ class OnBoard
     if web?
       require 'onboard/controller/helpers'
       require 'onboard/controller'
-      
+
       # modular menu
       find_n_load ROOTDIR + '/etc/menu/'
     end
 
     # restore scripts, sorted like /etc/rc?.d/ SysVInit/Unix/Linux scripts
-    if ARGV.include? '--restore' 
-      restore_scripts = 
+    if ARGV.include? '--restore'
+      restore_scripts =
           Dir.glob(ROOTDIR + '/etc/restore/[0-9][0-9]*.rb')           #+
-          #Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb') 
+          #Dir.glob(ROOTDIR + '/modules/*/etc/restore/[0-9][0-9]*.rb')
       Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
         next if File.exists? "#{module_dir}/.disable"
         restore_scripts += Dir.glob("#{module_dir}/etc/restore/[0-9][0-9]*.rb")
@@ -153,15 +132,15 @@ class OnBoard
 
           LOGGER.error "loading #{script}: #{exception.inspect}"
           backtrace_str = "Exception backtrace follows:"
-          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          exception.backtrace.each{|line| backtrace_str << "\n" << line}
           LOGGER.error backtrace_str
         end
       end
     end
     # TODO: DRY DRY DRY
-    if ARGV.include? '--shutdown' 
-      shutdown_scripts = 
-          Dir.glob(ROOTDIR + '/etc/shutdown/[0-9][0-9]*.rb')           
+    if ARGV.include? '--shutdown'
+      shutdown_scripts =
+          Dir.glob(ROOTDIR + '/etc/shutdown/[0-9][0-9]*.rb')
       Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
         next if File.exists? "#{module_dir}/.disable"
         shutdown_scripts += Dir.glob("#{module_dir}/etc/shutdown/[0-9][0-9]*.rb")
@@ -179,7 +158,7 @@ class OnBoard
 
           LOGGER.error "loading #{script}: #{exception.inspect}"
           backtrace_str = "Exception backtrace follows:"
-          exception.backtrace.each{|line| backtrace_str << "\n" << line} 
+          exception.backtrace.each{|line| backtrace_str << "\n" << line}
           LOGGER.error backtrace_str
         end
       end
@@ -194,7 +173,7 @@ class OnBoard
     # modules
     Dir.glob(ROOTDIR + '/modules/*').each do |module_dir|
       next if File.exists? "#{module_dir}/.disable"
-      Dir.glob("#{module_dir}/etc/save/*.rb").each do |script| 
+      Dir.glob("#{module_dir}/etc/save/*.rb").each do |script|
         print "loading: #{script}... " and STDOUT.flush
         load script and puts ' OK'
       end
@@ -217,13 +196,12 @@ end
 
 OnBoard.prepare
 
+if ARGV.include? '--restore-dns'
+  OnBoard.restore_dns
+end
+
 if OnBoard.web?
-  #require 'onboard/controller'
-  #require 'onboard/controller/helpers'
   if $0 == __FILE__
     OnBoard::Controller.run! :bind => '0.0.0.0'
   end
 end
-
-
-

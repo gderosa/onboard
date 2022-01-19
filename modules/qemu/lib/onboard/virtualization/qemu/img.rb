@@ -10,7 +10,7 @@ class OnBoard
 
         # Please don'use url like gluster:// with qemu-img, ecen when supported;
         # it hangs for long time in case of a degraded cluster. Always prefer
-        # mount points (but of course you can use urls with qemu itself, if 
+        # mount points (but of course you can use urls with qemu itself, if
         # available, to get performance boost).
 
         ROOTDIR = File.join ENV['HOME'], 'files/QEMU'
@@ -25,11 +25,11 @@ class OnBoard
             QEMU::Config.relative_path *a
           end
 
-	  # gluster:// doesn't like spaces or brackets, even with quoting or 
-	  # escaping...
-	  def sanitize_file_or_dirname(name)
-            name.gsub(/\s/, '_').gsub(/[^\d\w_\+\-\.]/, '+').gsub(/\+{2,}/, '++')
-	  end
+          # gluster:// doesn't like spaces or brackets, even with quoting or
+          # escaping...
+          def sanitize_file_or_dirname(name)
+                  name.gsub(/\s/, '_').gsub(/[^\d\w_\+\-\.]/, '+').gsub(/\+{2,}/, '++')
+          end
 
           # for example an image is created at: ~/files/QEMU/Win7/{idx}.qcow2
           # or ~/files/QEMU/Debian/#{idx}.raw
@@ -46,16 +46,16 @@ class OnBoard
                          h['qemu-img']['subdir'] + '/QEMU'
                        end
               dir = File.join QEMU::FILESDIR, subdir, sanitize_file_or_dirname(name)
-              System::Command.run "mkdir -p '#{dir}'", :sudo # sudo, otherwise 
-                  # we should ensure that the onboard user has the same UID 
-                  # across the cluster, in case directories are on a 
+              System::Command.run "mkdir -p '#{dir}'", :sudo # sudo, otherwise
+                  # we should ensure that the onboard user has the same UID
+                  # across the cluster, in case directories are on a
                   # distributed file system.
               filepath = "#{dir}/disk#{h['idx']}.#{fmt}"
               if File.exists? filepath
                 System::Command.run "mv '#{filepath}' '#{filepath}.old'", :sudo
               end
               System::Command.run(
-                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :sudo, :raise_BadRequest) 
+                  "qemu-img create -f #{fmt} '#{filepath}' #{size_str}", :sudo, :raise_BadRequest)
               return filepath
             end
           end
@@ -70,10 +70,21 @@ class OnBoard
         def snapshots
           list = []
           if @file and (File.exists? @file or @file.is_uri?)
-            cmd = %Q{qemu-img snapshot -l "#{@file}"}
-            out = `sudo #{cmd}` # sudo to access gluster://
+            cmd = %Q{qemu-img snapshot -U -l "#{@file}"}
+            #out = `sudo #{cmd}` # sudo to access gluster://
+            out = `#{cmd}`
+            # E.g.:
+            # Snapshot list:
+            # ID        TAG                 VM SIZE                DATE       VM CLOCK
+            # 1         test_snap0_off          0 B 2019-11-15 09:13:28   00:00:00.000
+            # 2         test_snap1_off          0 B 2019-11-15 09:15:19   00:00:00.000
+            # 3         test3off                0 B 2019-11-15 21:00:34   00:00:00.000
+            # 4         test1on              257MiB 2019-11-15 21:43:00   00:00:34.011
+            # 5         restore_me          260 MiB 2019-11-15 22:09:33   00:27:04.415
+            # 6         myveryverylongtagnam270 MiB 2019-11-15 23:00:11   00:35:34.654
             out.each_line do |line|
-              if line =~ /^(\d+)\s+(\S|\S.*\S)\s+(\d*\.?\d*[TGMk]?)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ 
+              if  line =~ /^(\d+)\s+(\S|\S.*\S)\s+([\d\.]+\s*[TGMkiB]+)\s*(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/ or
+                  line =~ /^(\d+)\s+([^\d\.\s]|\S.*[^\d\.\s])([\d\.]+\s*[TGMkiB]+)\s+(\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d)\s+(\d+:\d\d:\d\d\.\d+)\s*$/
                 list << Snapshot.new(
                   :id       =>                                $1.to_i,
                   :tag      =>                                $2,
@@ -90,9 +101,9 @@ class OnBoard
         def info
           h = {}
           if @file and (File.exists? @file or @file.is_uri?)
-            `sudo qemu-img info "#{@file}"`.each_line do |line|
+            `sudo qemu-img info -U "#{@file}"`.each_line do |line|
               break if line =~ /^\s*Snapshot list:/
-              if line =~ /([^:]+):([^:]+)/ 
+              if line =~ /([^:]+):([^:]+)/
                 k = $1
                 v = $2
                 h[k.strip.gsub(' ', '_')] = v.strip if h and v

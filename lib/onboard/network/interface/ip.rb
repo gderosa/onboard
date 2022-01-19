@@ -15,7 +15,7 @@ require 'onboard/extensions/ipaddr'
 # are equal.
 #
 # With some degree of redundancy, IPAddrExt class stores *three* IPAddr
-# objects: @addr, @net and @netmask. There shouldn't be performance 
+# objects: @addr, @net and @netmask. There shouldn't be performance
 # problems since no router|server|appliance is supposed to have thousands
 # of IP addresses configuerd. For routing table entries, anyway, simple IPAddr
 # objects will be sufficent.
@@ -31,15 +31,15 @@ class OnBoard
           case arg
 
           when Hash
-            h = arg 
-            @addr       = IPAddr.new h[:addr]  
+            h = arg
+            @addr       = IPAddr.new h[:addr]
             if h[:prefixlen]
-              @prefixlen  = h[:prefixlen].to_i           
+              @prefixlen  = h[:prefixlen].to_i
             else
               @prefixlen  = @addr.prefixlen # /32 or /128
-            end 
-            @scope      = h[:scope]               
-            @net        = @addr.mask(@prefixlen)  
+            end
+            @scope      = h[:scope]
+            @net        = @addr.mask(@prefixlen)
               # returns the masked ip, not the mask
             # Point-to-Point connection
             if h[:peer].kind_of? Hash
@@ -54,8 +54,8 @@ class OnBoard
             str = arg.strip
             h = self.class.parse_string str
             if h
-              ip = h[:ip] 
-              prefixlen = h[:prefixlen]  
+              ip = h[:ip]
+              prefixlen = h[:prefixlen]
               @addr         = IPAddr.new ip
               if prefixlen
                 @prefixlen  = prefixlen.to_i
@@ -74,20 +74,20 @@ class OnBoard
             else
               raise ArgumentError, "#{str} is not a valid IPv4 or IPv6 address in CIDR notation. "
             end
-          
+
           else
-            raise TypeError, "Initialization argument for class #{self.class.name} must be a String or an Hash - got #{arg.class.name} instead."   
+            raise TypeError, "Initialization argument for class #{self.class.name} must be a String or an Hash - got #{arg.class.name} instead."
 
           end
 
-          @netmask    = @net.netmask            
+          @netmask    = @net.netmask
             # returns the netmask as an IPAddr
           @af         = case @addr.family # Socket::AF_* are Fixnum
                             when Socket::AF_INET
                               :inet
                             when Socket::AF_INET6
                               :inet6
-                        end         
+                        end
         end
 
         def ==(other)
@@ -104,9 +104,9 @@ class OnBoard
             h[p]  = (eval "@#{p}").to_s
           end
           %w{prefixlen scope}.each do |p|
-            h[p]  = (eval "@#{p}") 
+            h[p]  = (eval "@#{p}")
           end
-          h['af'] = @af.to_s 
+          h['af'] = @af.to_s
           if @peer
             h['peer'] = @peer.data
           end
@@ -117,7 +117,7 @@ class OnBoard
         def to_json(*a); to_h.to_json(*a); end
         # def to_yaml(*a); to_h.to_yaml(*a); end # save as an object!
 
-        # Detection of invalid IP addresses is too SLOW in the standard 
+        # Detection of invalid IP addresses is too SLOW in the standard
         # IPAddr library, so we implemented our own check. # TODO such a
         # duplicated effort is a pity # TODO: rewrite a better IPAddr?
         #
@@ -134,7 +134,7 @@ class OnBoard
             else
               return false
             end
-            return {:ip => addr, :prefixlen => prefixlen} 
+            return {:ip => addr, :prefixlen => prefixlen}
           else                    # just the address
             addr = str
             proto = self.valid_address?(addr)
@@ -172,16 +172,26 @@ class OnBoard
           end
         end
 
-        # turn the @ip Array (made up of 
-        # OnBoard::Network::Interface::IP objects) into an Hash of Strings, 
+        # turn the @ip Array (made up of
+        # OnBoard::Network::Interface::IP objects) into an Hash of Strings,
         # just like what it would be received from an HTML form.
         #
-        # Just a wrapper around OnBoard::Network::Interface#assign_static_ip, 
+        # Just a wrapper around OnBoard::Network::Interface#assign_static_ip,
         # which was designed to get form data, not saved marshaled objects.
+        #
+        # Also, we consider the JSON client,
+        # which is "ReSTfully happy" to send ["1.1.1.1/1", "2.2.2.2/2"]
+        # rather than {"0": "1.1.1.1/1", "1": "2.2.2.2/2"}.
         def self.ary_to_StringHash(ipary)
           h = {}
           ipary.each_with_index do |ip_obj, ip_idx|
-            h[ip_idx.to_s] = ip_obj.addr.to_s + '/' + ip_obj.prefixlen.to_s
+            ip_fulladdr_str = case ip_obj
+            when String
+              ip_obj
+            else
+              ip_obj.addr.to_s + '/' + ip_obj.prefixlen.to_s
+            end
+            h[ip_idx.to_s] = ip_fulladdr_str
           end
           return h
         end

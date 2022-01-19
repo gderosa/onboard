@@ -6,12 +6,12 @@
   </tr>
   <tr>
     <th scope="row">Content</th>
-    <td><textarea class="rwtext" name="content" rows="22" style="width:80ex; overflow:auto;"><%= d && d[:content] %></textarea></td> 
+    <td><textarea class="rwtext" name="content" rows="22" style="width:80ex; overflow:auto;"><%= d && d[:content] %></textarea></td>
   </tr>
   <tr>
     <th scope="row">Terms acceptance is</th>
     <td>
-      <% 
+      <%
         selected = 'asked'
         if d
           if d[:required]

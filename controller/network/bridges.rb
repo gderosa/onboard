@@ -19,11 +19,11 @@ class OnBoard::Controller
   end
 
   post "/network/bridges.:format" do
-    msg = OnBoard::Network::Bridge.brctl(params['brctl']) 
+    msg = OnBoard::Network::Bridge.brctl(params['brctl'])
     msg[:ok] ? status(201) : status(400)
     headers(
-      'Location:' => 
-          "/network/bridges/#{params['brctl']['addbr']}.#{params['format']}"  
+      'Location:' =>
+          "/network/bridges/#{params['brctl']['addbr']}.#{params['format']}"
     )
     interfaces  = OnBoard::Network::Interface.getAll
     bridges     = interfaces.select {|i| i.type == 'bridge'}
@@ -37,6 +37,7 @@ class OnBoard::Controller
   end
 
   put '/network/bridges.:format' do
+    # pp params
     interfaces = OnBoard::Network::Interface.getAll
     if params['netifs'].respond_to? :each_pair
       params['netifs'].each_pair do |ifname, ifhash| # PUT/[POST] params
@@ -44,6 +45,7 @@ class OnBoard::Controller
         interface.modify_from_HTTP_request(ifhash)
       end
     end
+    OnBoard::Network::Bridge.brctl(params['brctl'])
     # update info
     interfaces = OnBoard::Network::Interface.getAll
     bridges = interfaces.select {|i| i.type == 'bridge'}
@@ -86,8 +88,7 @@ class OnBoard::Controller
       interface = interfaces.detect {|i| i.name == ifname}
       interface.modify_from_HTTP_request(ifhash)
     end
-    # let's be procedural this turn... # TODO: security concerns?
-    OnBoard::Network::Bridge.brctl(params['brctl'])  
+    OnBoard::Network::Bridge.brctl(params['brctl'])
     # update info
     interfaces = OnBoard::Network::Interface.getAll
     bridge = interfaces.find do |netif|
@@ -106,10 +107,10 @@ class OnBoard::Controller
     if bridges.detect {|br| br.name == params['brname']}
       redirection = "/network/bridges.#{params['format']}"
       OnBoard::Network::Bridge.brctl(
-        'delbr' => params['brname'] 
+        'delbr' => params['brname']
       )
       status(303)                       # HTTP "See Other"
-      headers('Location' => redirection) 
+      headers('Location' => redirection)
       format(
         :path     => '/303',
         :format   => params['format'],
@@ -119,5 +120,5 @@ class OnBoard::Controller
       raise Sinatra::NotFound
     end
   end
-  
+
 end

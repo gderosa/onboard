@@ -1,29 +1,29 @@
-<% 
+<%
   require 'onboard/network/interface'
   require 'onboard/network/aaa/radius'
 
   # Used both for captive portals creation and editing
 
   chilli          = objects
-  interfaces      = 
-      OnBoard::Network::Interface.getAll().sort{|x,y| x.name <=> y.name} 
+  interfaces      =
+      OnBoard::Network::Interface.getAll().sort{|x,y| x.name <=> y.name}
   dictionary      =
-      OnBoard::Network::AAA::RADIUS::dictionary(:rfc2865) 
+      OnBoard::Network::AAA::RADIUS::dictionary(:rfc2865)
 
   nas_port_type   = dictionary.find_attribute_by_name 'NAS-Port-Type'
   nas_port_types  = nas_port_type.values
 
   interface = nil
-  if chilli and chilli.conf['dhcpif'] =~ /\S/ 
-    interface = interfaces.detect{|i| i.name == chilli.conf['dhcpif']} 
+  if chilli and chilli.conf['dhcpif'] =~ /\S/
+    interface = interfaces.detect{|i| i.name == chilli.conf['dhcpif']}
   end
 
-  
+
   nas_port_type_selected_value = nil
 
-  if 
-      chilli                                    and 
-      chilli.conf['radiusnasporttype']          and 
+  if
+      chilli                                    and
+      chilli.conf['radiusnasporttype']          and
       chilli.conf['radiusnasporttype'].to_i > 0
 
     nas_port_type_selected_value = nas_port_types.detect do |v|
@@ -44,11 +44,11 @@
   end
 %>
 
-<!-- 
+<!--
   conf[] form params will be written directly in the chilli config file ;
   other parameters will undergo some processing.
 -->
-  
+
 <h4>Network</h4>
 <table>
   <thead></thead>
@@ -59,7 +59,7 @@
         <% if interface %>
           <input type="text" name="conf[dhcpif]" value="<%= interface.name %>" readonly />
         <% else %>
-          <select name="conf[dhcpif]"> 
+          <select name="conf[dhcpif]">
             <option value="" class="lowlight">[choose one]</option>
             <% interfaces.each do |iface| %>
               <% next unless ['ether', 'wi-fi'].include? iface.type %>
@@ -145,6 +145,45 @@
     </tr>
   </tbody>
 </table>
+<h5>MAC-based Authentication</h5>
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        Enable MAC-based Authentication
+        <div class="optinfo" style="width:50ex">
+          To use it,
+          create RADIUS usernames equal to the the desired MAC addresses,
+          in the format <kbd style="display:inline-block">AB-CD-EF-12-34-56</kbd>,
+          and with same password as <span class="term">MAC-Auth Password</span> below.
+        </div>
+      </th>
+      <td><input type="checkbox" <%= 'checked' if chilli.conf['macauth'] %> name="conf[macauth]"/></td>
+    </tr>
+    <tr title="Empty to leave unchanged">
+      <th scope="row">MAC-Auth Password</th>
+      <td><input type="password" name="conf[macpasswd]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr title="Empty to leave unchanged">
+      <th scope="row">MAC-Auth Password (type again)</th>
+      <td><input type="password" name="verify_conf[macpasswd]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Fixed IP assignment
+        <div class="optinfo">
+        One MAC-IP association per line. For example:
+        <pre>00-11-22-AA-BB-CC 10.11.12.110
+11-22-33-BB-CC-DD 10.11.12.111
+        </pre>
+        </div>
+      </th>
+      <td>
+        <textarea cols="34" rows="8" name="ethers_content"/><%= chilli.ethers_content %></textarea>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <h4>Captive portal</h4>
 <table>
@@ -162,31 +201,31 @@
     <tr title="Leave empty to not use a shared secret">
       <th scope="row">&ldquo;UAM secret&rdquo; (new password)</th>
       <td><input type="password" name="conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
-    </tr>   
+    </tr>
     <tr title="Leave empty to not use a shared secret">
       <th scope="row">&ldquo;UAM secret&rdquo; (new password, type again)</th>
       <td><input type="password" name="verify_conf[uamsecret]" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %>/></td>
-    </tr>    
+    </tr>
   </tbody>
 </table>
 
 <h4>Advanced</h4>
 <table>
-  <tbody>   
+  <tbody>
     <tr>
       <th title="Web traffic will be trasparently proxied after authentication" scope="row">
         HTTP proxy address/port
         <div class="optinfo" style="width: 50ex;">
-          Hint: if <a href="http://www.dansguardian.org/">DansGuardian</a> 
-          is running on this system, 
+          Hint: if <a href="http://www.dansguardian.org/">DansGuardian</a>
+          is running on this system,
           you may choose the same address as "Listen Address" and port 8080
-          to take advantage of Web Content Filtering. Leave empty to not use 
+          to take advantage of Web Content Filtering. Leave empty to not use
           any proxy instead.
         </div>
       </th>
       <td style="vertical-align: top; padding-top:2ex;">
         <input type="text" name="conf[postauthproxy]" value="<%= chilli.conf['postauthproxy'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="40"/>
-        <input type="text" name="conf[postauthproxyport]" value="<%= chilli.conf['postauthproxyport'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="5"/>       
+        <input type="text" name="conf[postauthproxyport]" value="<%= chilli.conf['postauthproxyport'] if chilli %>" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> size="5"/>
       </td>
     </tr>
     <tr title="Comma-separated list of IP addresses, domain names or network segments">
@@ -197,7 +236,7 @@
       <th scope="row">Change-of-Authorization UDP port</th>
       <td><input type="text" name="conf[coaport]" size="5" <% if chilli.managed? %>class="rwtext"<% else %>readonly<% end %> value="<%= chilli.conf['coaport'] %>"/></td>
     </tr>
-  </tbody> 
+  </tbody>
 </table>
 
 

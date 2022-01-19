@@ -2,7 +2,7 @@
 <%
   dnsmasq = objects
   add_domains = 1
-  if params['add_domains'].respond_to? :to_i 
+  if params['add_domains'].respond_to? :to_i
     if params['add_domains'].to_i > 0
       add_domains = params['add_domains'].to_i
     end
@@ -10,17 +10,17 @@
 %>
 
 <style type="text/css">
-  input[name="domains[][name]"] { 
+  input[name="domains[][name]"] {
     width: 36ex;
   }
 </style>
 
 <h2 style="margin-bottom:0;"><%= title %></h2>
-<p style="margin-top:0; padding-top:0;" class="optinfo">Based on 
+<p style="margin-top:0; padding-top:0;" class="optinfo">Based on
 <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html">Dnsmasq</a>.</p>
 
   <%=
-    erubis(
+    erb(
       :"/_messages.html",
       {
         :layout => false,
@@ -36,7 +36,7 @@
   <input type="hidden" name="_method" value="put"/>
   <h3>Domains</h3>
   <p>
-    Here you can block domains (check the 
+    Here you can block domains (check the
     &ldquo;<span class="term">Block?</span>&rdquo; box) or make
     them be resolved with specified IP addresses.
   </p>
@@ -60,7 +60,7 @@
             </td>
             <td style="text-align:center;">
               <input type="checkbox" name="domains[][block]" checked/>
-            </td>  
+            </td>
           </tr>
         <% else %>
           <% ips.each do |ip| %>
@@ -90,7 +90,7 @@
     </tbody>
   </table>
   <div class="optional" style="margin: 0.75ex 1ex;">
-    Add <a href="?add_domains=<%= add_domains * 2 %>">more domains</a>       
+    Add <a href="?add_domains=<%= add_domains * 2 %>">more domains</a>
     <% if add_domains > 1 %>
       | <a href="?add_domains=<%= add_domains / 2 %>">less domains</a>
     <% end %>

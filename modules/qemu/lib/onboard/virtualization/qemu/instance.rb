@@ -8,7 +8,7 @@ begin
 rescue Gem::LoadError
   # May be available in vendor_ruby and not as a gem
 end
-autoload :Magick, 'RMagick'
+autoload :Magick, 'rmagick'
 
 require 'onboard/util'
 require 'onboard/extensions/process'
@@ -30,7 +30,7 @@ class OnBoard
         # as opposite, it take a few seconds with cache=unsafe :-P
         #
         # Obviously snapshot operations are handled asynchronously.
-        
+
         LOADVM_TIMEOUT = SAVEVM_TIMEOUT
 
         attr_reader :config, :monitor, :running
@@ -66,7 +66,7 @@ class OnBoard
               'cmdline'       => snapshot_cmdline,
               'stdout'        => snapshot_stdout,
               'stderr'        => snapshot_stderr,
-              'schedule'      => snapshot_cron_entry  ? 
+              'schedule'      => snapshot_cron_entry  ?
                   snapshot_cron_entry.to_hash         :
                   {},
             }
@@ -81,18 +81,18 @@ class OnBoard
           @config.cmd['opts']
         end
 
-        def format_cmdline          
+        def format_cmdline
 
           return @config.force_command_line if @config.force_command_line
 
-          exe = Config::Common.get['exe'] 
+          exe = Config::Common.get['exe']
           cmdline = ''
-          cmdline << %Q{#{exe} } 
+          cmdline << %Q{#{exe} }
           # NOTE: -loadvm has been excluded from the below for safety reason.
           # NOTE: A (full VM) snapshot will be actually loaded within #start
           %w{
-            -uuid 
-            -name 
+            -uuid
+            -name
             -m
             -vnc
             -k
@@ -100,21 +100,21 @@ class OnBoard
             -soundhw
             -pidfile
           }.each do |o|
-            cmdline << %Q{#{o} "#{opts[o]}" }     if 
-                opts[o] and opts[o].to_s =~ /\S/  
+            cmdline << %Q{#{o} "#{opts[o]}" }     if
+                opts[o] and opts[o].to_s =~ /\S/
           end
           if opts['-spice'].respond_to? :[]
             if opts['-spice']['port'] and opts['-spice']['port'].to_i != 0
-              cmdline << 
-"-spice port=#{opts['-spice']['port']},disable-ticketing "
-              #,image-compression=[auto_glz|auto_lz|quic|glz|lz|off] 
-              #,jpeg-wan-compression=[auto|never|always] 
-              #,zlib-glz-wan-compression=[auto|never|always] 
+              cmdline <<
+                "-spice port=#{opts['-spice']['port']},disable-ticketing "
+              #,image-compression=[auto_glz|auto_lz|quic|glz|lz|off]
+              #,jpeg-wan-compression=[auto|never|always]
+              #,zlib-glz-wan-compression=[auto|never|always]
               #,playback-compression=[on|off]
               #,streaming-video=[off|all|filter]
             end
           end
-          cmdline << '-daemonize' << ' ' if opts['-daemonize'] 
+          cmdline << '-daemonize' << ' ' if opts['-daemonize']
           %w{-monitor -qmp}.each do |k| # TODO: switch to QMP completely
             if opts[k]
               if opts[k]['unix']
@@ -138,7 +138,7 @@ class OnBoard
               end
             end
             if args.any?
-              cmdline << '-smp ' << args.join(',') << ' ' 
+              cmdline << '-smp ' << args.join(',') << ' '
             end
           end
 
@@ -173,7 +173,7 @@ class OnBoard
               next unless driver
               cmdline << "-device " << driver
               device.each_pair do |k, v|
-                cmdline << ",#{k}=#{v}" unless 
+                cmdline << ",#{k}=#{v}" unless
                     %{driver type}.include? k or k =~ /^_/ # e.g. '_comment'
               end
               cmdline << ' '
@@ -184,7 +184,7 @@ class OnBoard
             opts['-drive'].each do |d|
               drive_args = []
               # Non empty nor space-only Strings
-              %w{serial if media cache}.each do |par|  
+              %w{serial if media cache}.each do |par|
                 drive_args << %Q{#{par}="#{d[par]}"} if d[par] =~ /\S/
               end
               # Disk image might be on distributed storage...
@@ -199,7 +199,7 @@ class OnBoard
               end
               # Boolean
               %w{readonly}.each do |par|
-                drive_args << par if d[par] 
+                drive_args << par if d[par]
               end
               # Boolean mapped to 'on'|'off'
               %w{snapshot}.each do |par|
@@ -210,16 +210,18 @@ class OnBoard
           end
 
           # Network interfaces
-          opts['-net'].each do |net|
-            net_args = [ net['type'] ] 
-            net.each_pair do |k, v|
-              net_args << "#{k}=#{v}" if v and not %w{type bridge}.include? k
+          if opts['-nic'].respond_to? :each
+            opts['-nic'].each do |nic|
+              nic_args = [ nic['type'] ]
+              nic.each_pair do |k, v|
+                nic_args << "#{k}=#{v}" if v and k != 'type'
+              end
+              if nic['type'] == 'tap'
+                nic_args << 'script=no'
+                nic_args << 'downscript=no'
+              end
+              cmdline << '-nic' << ' ' << nic_args.join(',') << ' '
             end
-            if net['type'] == 'tap'
-              net_args << 'script=no' 
-              net_args << 'downscript=no'
-            end
-            cmdline << '-net' << ' ' << net_args.join(',') << ' '
           end
 
           # (Host) serial ports
@@ -233,39 +235,51 @@ class OnBoard
           #
           # Boot order: CDROM, disk (Network would be 'n')
           cmdline << '-boot' << ' ' << 'menu=on,order=dc' << ' '
-          # 
-          # Guest CPU will have host CPU features ('flags') 
+          #
+          # Guest CPU will have host CPU features ('flags')
           cmdline << '-cpu' << ' ' << 'host' << ' '
-=begin
-          cmdline << '-usbdevice' << ' ' << 'tablet' << ' '  
+
+          # cmdline << '-usbdevice' << ' ' << 'tablet' << ' '
+          #
           # The above should fix some problems with VNC,
           # but you have problems anyway with -loadvm ...
           #
           # Solution: use a VNC client like Vinagre, supporting
           # capture/release.
-=end
-          cmdline << '-enable-kvm' << ' ' 
 
-          cmdline << opts['append'] if opts['append'] 
+          cmdline << '-enable-kvm' << ' '
+
+          cmdline << opts['append'] if opts['append']
 
           return cmdline
         end
 
         def setup_networking(*opts)
           uid = Process.uid
-          @config['-net'].select{|x| x['type'] == 'tap'}.each do |tap| 
+          @config['-nic'].select{|x| x['type'] == 'tap'}.each do |tap|
             if opts.include? :wait
-              wait_for do
-	        System::Command.run( 
+              wait_for :sleep => 0.8, :timeout => 10.0 do
+                System::Command.run(
                   "ip link set up dev #{tap['ifname']}",
-                  :sudo, 
+                  :sudo,
                 )[:ok]
               end
             end
-            System::Command.run(
-                "brctl addif #{tap['bridge']} #{tap['ifname']}", 
-                :sudo 
-            ) if tap['bridge'] =~ /\S/ 
+            if tap['br'] =~ /\S/
+              if opts.include? :wait
+                wait_for :sleep => 0.8, :timeout => 10.0 do
+                  System::Command.run(
+                    "brctl addif #{tap['br']} #{tap['ifname']}",
+                    :sudo
+                  )[:ok]
+                end
+              end
+            else  # TODO: DRY
+              System::Command.run(
+                "brctl addif #{tap['br']} #{tap['ifname']}",
+                :sudo
+              )
+            end
           end
         end
 
@@ -341,20 +355,20 @@ class OnBoard
             end
           end
 
-          # Auto-update from previous versions' configs 
+          # Auto-update from previous versions' configs
           # which didn't use QMP.
           @config.upgrade :add_qmp and @config.save
-          
+
           cmdline = format_cmdline
           cmdline << ' -S' if opts.include? :paused
           cmdline << " -runas #{ENV['USER']}" if config.drop_privileges?
           begin
             prepare_pci_passthrough
             msg = System::Command.bgexec "sh -c 'ulimit -l unlimited ; #{cmdline}'", :sudo, :raise_Conflict
-              # ``ulimit -l unlimited'' to circumvent problems with VFIO and 
-              # limits on locking memory. The QEMU process must be child 
-              # of the process wich sets ulimit, so ulimit must me called 
-              # in the same shell which launches qemu. For that reason it 
+              # ``ulimit -l unlimited'' to circumvent problems with VFIO and
+              # limits on locking memory. The QEMU process must be child
+              # of the process wich sets ulimit, so ulimit must me called
+              # in the same shell which launches qemu. For that reason it
               # couldn't be moved to Instance#prepare_pci_passthrough .
               #
               # bgexec (uses Threads) because qemu 2.0 doens't detach
@@ -388,7 +402,7 @@ class OnBoard
           end
         end
 
-        def running? 
+        def running?
           return Process.running?(pid) if pid
           return false
         end
@@ -410,7 +424,7 @@ class OnBoard
             str = @monitor.sendrecv 'info status', opts
             if str =~ /error/i
               if snapshotting?
-                str = 'Running, Snapshotting' 
+                str = 'Running, Snapshotting'
               end
             end
             @cache['status'] = str.sub(/^VM status(: )?/, '').strip.capitalize
@@ -421,7 +435,7 @@ class OnBoard
         end
 
         # TODO: move to QEMU::Snapshot::Runtime or something
-        
+
         def snapshotting?
           pidfile = "#{VARRUN}/qemu-#{uuid_short}.snapshot.pid"
           if File.exists? pidfile
@@ -458,12 +472,12 @@ class OnBoard
           end
         end
         def snapshot_cron_entry
-          Snapshot::Schedule.get_entry(uuid_short) 
+          Snapshot::Schedule.get_entry(uuid_short)
         end
 
         def drives
           drives_h = {}
-          if running? 
+          if running?
 
             if @qmp.respond_to? :execute # TODO: move to drives_qmp
 
@@ -472,7 +486,7 @@ class OnBoard
               qmp_return = qmp_data['return']
 
               return {} unless qmp_return
-              
+
               # Compatibility with the old return value of this method
               # (which has been based on "human-redable" monitor...)
               # (and have been parsing interactive output...)
@@ -514,12 +528,12 @@ class OnBoard
                                         when '1'
                                           true
                                         else
-                                          raise ArgumentError, 
+                                          raise ArgumentError,
     "Asking 'info block' to monitor, either #{k}=0 or #{k}=1 was expected; "
     "got #{k}=#{val} instead"
                                         end
                   else
-                    drives_h[name][k] = val 
+                    drives_h[name][k] = val
                   end
                 end
               end
@@ -541,7 +555,7 @@ class OnBoard
             drives_h[runtime_name]['img']               ||= {}
             drives_h[runtime_name]['img']['snapshots']  =   img.snapshots
             #drives_h[runtime_name]['img']['virtual_size'] = img.info['virtual_size'] if img.info
-            
+
             # Compatibility code (don't want this to go into JSON etc.)
             class << drives_h[runtime_name]
               alias __square_brackets__orig []
@@ -606,11 +620,11 @@ class OnBoard
         def kill
           # System::Command.send_command "kill -9 #{pid}", :sudo
           p = OnBoard::System::Process.new pid
-          p.kill :sudo => true, :wait => true 
+          p.kill :sudo => true, :wait => true
         end
 
         def drive_eject(drive)
-          @monitor.sendrecv "eject #{drive}", :log => :verbose 
+          @monitor.sendrecv "eject #{drive}", :log => :verbose
         end
         alias eject drive_eject
 
@@ -620,12 +634,12 @@ class OnBoard
 
         def drive_save(drive, file)
           config_h = drives[drive]['config'].to_h
-          idx = @config['-drive'].index( config_h )  
+          idx = @config['-drive'].index( config_h )
           if idx
             @config['-drive'][idx]['file'] = file
             @config.save
           else
-            raise OnBoard::Warning, "#{__FILE__}:#{__LINE__}: No imedia/disk image has been saved for #{config_h.inspect}" 
+            raise OnBoard::Warning, "#{__FILE__}:#{__LINE__}: No imedia/disk image has been saved for #{config_h.inspect}"
           end
         end
 
@@ -678,7 +692,7 @@ class OnBoard
             begin
               ppm = Magick::ImageList.new ppmfile
               ppm.write pngfile
-              FileUtils.rm_f ppmfile 
+              FileUtils.rm_f ppmfile
                   # May be large, on a RAM fs, let's save memory.
               return pngfile
             rescue Magick::ImageMagickError

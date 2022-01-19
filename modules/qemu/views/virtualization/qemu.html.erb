@@ -5,22 +5,22 @@
   require 'onboard/virtualization/qemu'
 
   virtual_machines    = objects
-  all_vm_uuids        = virtual_machines.map  { |vm| vm.uuid  }   
+  all_vm_uuids        = virtual_machines.map  { |vm| vm.uuid  }
 
   all_netifs          = OnBoard::Network::Interface.get_all
-  all_bridges         = all_netifs.select     { |i| i.bridge? }  
-  all_running_ifnames = all_netifs.map        { |i| i.name    }        
+  all_bridges         = all_netifs.select     { |i| i.bridge? }
+  all_running_ifnames = all_netifs.map        { |i| i.name    }
 
 %>
 
-<%= 
+<%=
   partial(
     :module => 'qemu',
     :path   => 'virtualization/qemu/_style'
   )
 %>
 
-<%= 
+<%=
   partial(
     :module => 'qemu',
     :path   => 'virtualization/qemu/_js',
@@ -45,7 +45,7 @@
         VM Details
         <div class="optinfo">
           Click on the name to edit configuration
-        </div> 
+        </div>
       </th>
       <th>
         Drives
@@ -82,14 +82,14 @@
           </td>
 
           <!-- action buttons -->
-          <%# 
+          <%#
             DRYing this with a partial is complicated by heavy usage of
             colspan, rowspan, etc.
           %>
           <% show_saverestore = vm.running?             ?
                   vm.monitor.works? && vm.quick_snapshots?  :
                   vm.config['-loadvm']
-          %>          
+          %>
           <% action_button_rowspan = 1 %>
           <td class="button button_left" rowspan="<%= action_button_rowspan %>">
             <%=
@@ -104,45 +104,45 @@
                 )
               else
                 action_button(
-                  :start,                 
+                  :start,
                   :name     => 'start[uuid]',
                   :title    => 'Start',
                   :value    => vm.uuid,
                   :disabled => vm.snapshotting?
-                ) 
+                )
               end
             %>
           </td>
           <td class="button" rowspan="<%= action_button_rowspan %>">
-            <%= 
+            <%=
               if vm.running?
                 if vm.paused?
                   action_button(
-                    :start, 
-                    :name     => 'resume[uuid]', 
+                    :start,
+                    :name     => 'resume[uuid]',
                     :title    => 'Resume from Pause',
                     :value    => vm.uuid,
                     :disabled => (vm.snapshotting? or not vm.monitor.works?)
                   )
                 else
                   action_button(
-                    :pause, 
-                    :name     => 'pause[uuid]', 
+                    :pause,
+                    :name     => 'pause[uuid]',
                     :title    => 'Pause',
                     :value    => vm.uuid,
                     :disabled => (vm.snapshotting? or not vm.monitor.works?)
-                  ) 
+                  )
                 end
               else
                 action_button(
-                  :start_paused, 
-                  :name     => 'start_paused[uuid]', 
-                  :title    => 
+                  :start_paused,
+                  :name     => 'start_paused[uuid]',
+                  :title    =>
 'Start paused (so you have time to open a VNC client etc.)',
                   :value    => vm.uuid,
                   :disabled => vm.snapshotting?
-                ) 
-              end 
+                )
+              end
             %>
           </td>
           <td class="button" rowspan="<%= action_button_rowspan %>">
@@ -153,11 +153,11 @@
                 :id       => "quit[#{vm.uuid}]",
                 :imgid    => "quit_button_img[#{vm.uuid}]",
                 :alt      => '',
-                :title    => 
+                :title    =>
                     "Quit Virtualization (beware: if you don&rsquo;t or can&rsquo;t save state, you may corrupt data!)",
                 :value    => vm.uuid,
                 :disabled => (!vm.running? or vm.snapshotting?)
-              ) 
+              )
             %>
           </td>
           <td class="button button_right" rowspan="<%= action_button_rowspan %>">
@@ -174,14 +174,14 @@
 
           <td rowspan="2" class="vminfo">
             <a title="Machine UUID = <%= vm.config.uuid %>" href="qemu/vm/<%= vm.config.uuid_short %>.html">
-              <%= 
-                (vm.config.opts['-name'] =~ /\S/) ? 
-                    vm.config.opts['-name']       : 
-                    vm.config.uuid_short 
+              <%=
+                (vm.config.opts['-name'] =~ /\S/) ?
+                    vm.config.opts['-name']       :
+                    vm.config.uuid_short
               %>
             </a>
             <div class="vmdetails">
-              RAM: <%= vm.config.opts['-m'] %>&nbsp;MB 
+              RAM: <%= vm.config.opts['-m'] %>&nbsp;MB
             </div>
           </td>
           <td rowspan="2" class="vmdetails">
@@ -191,29 +191,29 @@
                   <%
                     file      = vm.running? ? h['file'] : h['config']['file']
                     inserted  = !h['tray-open'] && file
-                    disabled  = 
-                        (vm.running? && h['removable']) ? 
-                        ''                              : 
-                        'disabled' 
+                    disabled  =
+                        (vm.running? && h['removable']) ?
+                        ''                              :
+                        'disabled'
                     onclick   = ''
                     if vm.running? and h['removable'] and not inserted
                       onclick   = 'javascript:popup_filechooser(this);'
                     end
                     showed_path = ''
                     if h['removable']
-                      showed_path = 
+                      showed_path =
                           inserted                                          ?
                           OnBoard::V12n::QEMU::Img.relative_path(file) :
                           '[choose an image]'
                     else
-                      showed_path = 
+                      showed_path =
                           OnBoard::V12n::QEMU::Img.relative_path(file)
                     end
 
-                    field_title = 
-                        "#{name}: #{inserted ? showed_path : '[not inserted]'}" 
+                    field_title =
+                        "#{name}: #{inserted ? showed_path : '[not inserted]'}"
                   %>
-                  <li class="drive <%= h['config']['media'] %>"> 
+                  <li class="drive <%= h['config']['media'] %>">
                     <%= drive_icon h['config']['media'], :title => field_title %>
 
                     <input <%= disabled %> onclick="<%= onclick %>" type="text" name="drive[<%= vm.config.uuid %>][<%= name %>][file]" value="<%= showed_path %>" title="<%= field_title %>"/>
@@ -227,26 +227,25 @@
           </td>
 
           <!-- Network Interfaces -->
-          <td rowspan="2" class="vmnetwork">            
+          <td rowspan="2" class="vmnetwork">
             <table> <!-- nested table, yeah :-P -->
-              <% vm.config['-net'].each do |netif| %>
+              <% vm.config['-nic'].each do |netif| %>
                 <% next if netif['type'] == 'nic' %>
                 <tr>
-                  <td class="vlan">VLAN#<%= netif['vlan'] %></td>
                   <td class="ifname">
-                    <em><%= netif['type'] %></em><%= 
+                    <em><%= netif['type'] %></em><%=
                       if netif['ifname'] =~ /\S/
                         if all_running_ifnames.include? netif['ifname']
 %Q{: <a href="/network/interfaces.html">#{netif['ifname']}</a>}
                         else
                           %Q{: #{netif['ifname']}}
                         end
-                      end                    
+                      end
                     %>
                   </td>
                   <td class="bridge"><%= %Q{<em>Bridged to</em>: <a href="/network/bridges.html">#{netif['bridge']}</a>} if netif['bridge'] =~ /\S/ %></td>
                 </tr>
-              <% end if vm.config['-net'].respond_to? :each %>
+              <% end if vm.config['-nic'].respond_to? :each %>
             </table>
           </td>
 
@@ -267,7 +266,7 @@
             <br/>
 
             <% if vm.config.opts['-spice'] and vm.config.opts['-spice']['port'].to_i > 0 %>
-              <% spice_uri = "spice://#{request.host}:#{vm.config.opts['-spice']['port']}"%>       
+              <% spice_uri = "spice://#{request.host}:#{vm.config.opts['-spice']['port']}"%>
               <% if vm.running? %>
                 <a href="<%= spice_uri %>" title="<%= spice_uri %>">
               <% end %>
@@ -275,7 +274,7 @@
               <% if vm.running? %>
                 </a>
               <% end %>
-            <% end %>       
+            <% end %>
 
           </td>
 
@@ -285,9 +284,9 @@
           <!-- <td></td> --> <!-- "Status":             rowspan="2" -->
 
           <td colspan="4" class="saverestore<%= ' lowlight' unless show_saverestore %>"> <!-- under "Actions" -->
-            <input style="vertical-align:middle;" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> id="saverestore[<%= vm.uuid %>]" name="saverestore[<%= vm.uuid %>]" onclick="javascript:qemuSaveRestoreControls('<%= vm.uuid %>');"/> 
+            <input style="vertical-align:middle;" type="checkbox" <%= 'checked' if show_saverestore %> <%= 'disabled' unless show_saverestore %> id="saverestore[<%= vm.uuid %>]" name="saverestore[<%= vm.uuid %>]" onclick="javascript:qemuSaveRestoreControls('<%= vm.uuid %>');"/>
             <span style="vertical-align:middle;"><%= vm.running? ? 'Save state on Quit' : 'Restore state' %></span>
-          </td> 
+          </td>
           <!-- <td></td> --> <!-- "VM Details":         rowspan="2" -->
           <!-- <td></td> --> <!-- "Drives":             rowspan="2" -->
           <!-- <td></td> --> <!-- "Network Interfaces": rowspan="2" -->
@@ -303,7 +302,7 @@
 
 <form method="POST">
 
-  <%= 
+  <%=
     partial(
       :module => 'qemu',
       :path   => 'virtualization/qemu/_form_create_edit',

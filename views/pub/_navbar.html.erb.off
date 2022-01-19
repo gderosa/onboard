@@ -8,13 +8,13 @@
 %>
 
       <div id="navbar">
-        <% 
-          http_errors = false 
-          http_explicit_20x = false 
-          http_errors = true if status.to_s =~ /300|4..|5../ 
-          http_explicit_20x = true if 
+        <%
+          http_errors = false
+          http_explicit_20x = false
+          http_errors = true if status.to_s =~ /300|4..|5../
+          http_explicit_20x = true if
               status.to_s =~ /20[^0]/ or
-              (status == 200 and request.env['REQUEST_METHOD'] != 'GET') 
+              (status == 200 and request.env['REQUEST_METHOD'] != 'GET')
         %>
         <% if http_errors %>
           <span id="status" class="error"><%= Rack::Utils::HTTP_STATUS_CODES[status] %></span>

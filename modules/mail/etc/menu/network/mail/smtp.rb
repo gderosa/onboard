@@ -9,7 +9,7 @@
 # /network/ may change IP adresses, network interfaces, routing table,
 # packet filtering etc...
 #
-# Instead, /services/ are various daemons/servers operating at the 
+# Instead, /services/ are various daemons/servers operating at the
 # application layer only.
 
 class OnBoard

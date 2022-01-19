@@ -29,7 +29,7 @@ class OnBoard
                 retry
               else
                 LOGGER.error $!
-                return JSON.dump({'error' => {'message' => $!}}) 
+                return JSON.dump({'error' => {'message' => $!}})
               end
             end
           end

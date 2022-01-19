@@ -1,12 +1,14 @@
 # encoding: utf-8
 
 require 'rubygems'
-require 'thin' 
+require 'thin'
 require 'sinatra/base'
-require 'tilt/erubis'
+require 'tilt/erb'
+
+require 'rack'
+require 'rack/contrib'
 
 require 'onboard/extensions/sinatra/base'
-require 'onboard/extensions/sinatra/templates'
 
 require 'onboard/controller/auth'
 require 'onboard/controller/error'
@@ -19,23 +21,29 @@ require 'onboard/controller/thread'
 class OnBoard
   class Controller < ::Sinatra::Base
 
-    attr_accessor :msg 
+    attr_accessor :msg
         # so you don't need to pass it between routes, views, helpers ...
 
     before do
       @msg = {}
     end
 
-    # Several options are not enabled by default if you inherit from 
+    # Several options are not enabled by default if you inherit from
     # Sinatra::Base .
     enable :method_override, :static, :show_exceptions
-    
+
+    if test?  # https://stackoverflow.com/a/10917840
+      set :raise_errors, true
+      set :dump_errors, false
+      set :show_exceptions, false
+    end
+
     set :root, OnBoard::ROOTDIR
 
     # Sinatra::Base#static! has been overwritten to allow multiple path
-    set :public_folder, 
+    set :public_folder,
         Dir.glob(OnBoard::ROOTDIR + '/public')            +
-        Dir.glob(OnBoard::ROOTDIR + '/modules/*/public')      
+        Dir.glob(OnBoard::ROOTDIR + '/modules/*/public')
 
     set :views, OnBoard::ROOTDIR + '/views'
 
@@ -45,7 +53,7 @@ class OnBoard
       if @override_not_found
         pass
       else
-        format(:path=>'404', :format=>'html') 
+        format(:path=>'404', :format=>'html')
       end
     end
 

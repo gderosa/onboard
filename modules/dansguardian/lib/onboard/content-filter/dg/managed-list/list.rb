@@ -38,11 +38,11 @@ class OnBoard
           def file_encoding;  @data.file_encoding;  end
 
           #def includes
-          #  @data.includes.map do |abspath| 
+          #  @data.includes.map do |abspath|
           #    relpath = ManagedList.relative_path abspath
           #    ManagedList::List.new :relative_path => relpath
           #  end
-          #end 
+          #end
 
           def includables
             includes    = @data.includes
@@ -64,12 +64,12 @@ class OnBoard
           end
 
 # Lots of encoding issues :-( , download the raw file!
-=begin          
+=begin
           def export
             h = {}
             # h['file_encoding']  = @file_encoding.name # not 'intrinsic'
             h['listcategory']   = listcategory
-            h['items']          = items.map do |s| 
+            h['items']          = items.map do |s|
               s.encode Encoding::default_external
             end
             return h
@@ -89,13 +89,13 @@ class OnBoard
 
           def update!(params)
             File.open absolute_path, "w:#{@file_encoding}" do |f|
-              listcategory = 
-                  params['listcategory'].from_asciihex(@file_encoding) 
+              listcategory =
+                  params['listcategory'].from_asciihex(@file_encoding)
               f.puts "#listcategory: \"#{listcategory}\""
               f.puts
               f.puts '# List items:'
               f.puts params['items'].gsub(
-		      "\r\n", "\n").from_asciihex(@file_encoding)  
+		      "\r\n", "\n").from_asciihex(@file_encoding)
               f.puts
               f.puts '# Includes:'
               if params['include'].respond_to? :each

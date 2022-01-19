@@ -1,11 +1,11 @@
-class OnBoard 
+class OnBoard
   module Network
     class Interface
       class MAC
 
         def self.valid_address?(str)
           return false unless str =~ /^\s*[\da-f][\da-f]:[\da-f][\da-f]:[\da-f][\da-f]:[\da-f][\da-f]:[\da-f][\da-f]:[\da-f][\da-f]\s*$/i
-          return false if 
+          return false if
               ["00:00:00:00:00:00", "ff:ff:ff:ff:ff:ff"].include? str
           return true
         end
@@ -13,11 +13,11 @@ class OnBoard
         attr_reader :string, :raw
 
         def initialize(arg)
-          case arg 
+          case arg
           when String
             @string = arg
             set_raw_from_string
-          when Fixnum, Bignum
+          when Integer
             @raw = arg
             set_string_from_raw
           else
@@ -56,8 +56,8 @@ class OnBoard
         private
 
         def set_raw_from_string
-          s = @string.gsub(/[^\da-f]/i, "") 
-          @raw = s.to_i(16) 
+          s = @string.gsub(/[^\da-f]/i, "")
+          @raw = s.to_i(16)
         end
 
         def set_string_from_raw
@@ -66,7 +66,7 @@ class OnBoard
             /([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})/
           @string = "#$1:#$2:#$3:#$4:#$5:#$6"
         end
-       
+
       end
     end
   end

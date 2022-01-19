@@ -7,7 +7,7 @@ CRL="crl.pem"
 RT="revoke-test.pem"
 
 if [ $# -ne 1 ]; then
-    echo "usage: revoke-full <common-name>" 1>&2 
+    echo "usage: revoke-full <common-name>" 1>&2
     exit 1
 fi
 
@@ -30,7 +30,7 @@ if [ "$KEY_DIR" ]; then
     else
 	cat ca.crt "$CRL" >"$RT"
     fi
-    
+
     # verify the revocation
     $OPENSSL verify -CAfile "$RT" -crl_check "$1.crt"
 else

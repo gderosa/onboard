@@ -6,7 +6,7 @@
   conf                          ||= {}
   conf['mandatory']             ||= {}
   conf['mandatory']['personal'] ||= {}
-  
+
   m                             = conf['mandatory']['personal']
   smo                           = (conf['show_mandatory_only'] == 'on')
 
@@ -34,10 +34,10 @@
     margin-top: 0.4em;
     margin-bottom: 1em;
   }
-  table tr#personal-attachments td table tr th, 
-  table tr#personal-attachments td table tr td 
+  table tr#personal-attachments td table tr th,
+  table tr#personal-attachments td table tr td
   {
-    border: none; 
+    border: none;
     padding: 0;
   }
   table tr#personal-attachments td table tr th {
@@ -58,13 +58,13 @@
     <th scope="row"><%= i18n.personal.name.full.capitalize %> <%= mandatory_mark if m['Name'] %></th>
     <td>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[First-Name]"
             value="<%= personal['First-Name'] %>"/>(<%= i18n.personal.name.first.capitalize %>)</span>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[Last-Name]"
             value="<%= personal['Last-Name'] %>"/>(<%= i18n.personal.name.last.capitalize %>)</span>
     </td>
@@ -72,7 +72,7 @@
   <tr style="<%= 'display:none' if smo and not m['Email'] %>">
     <th scope="row">Email <%= mandatory_mark if m['Email'] %></th>
     <td>
-      <input type="text" name="personal[Email]" 
+      <input type="text" name="personal[Email]"
           value="<%= personal['Email'] %>"/>
     </td>
   </tr>
@@ -85,19 +85,19 @@
     </th>
     <td>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[Birth-Date]"
             title="<%= i18n.date.format.capitalize %>: 1980-01-30"
-            value="<%= personal['Birth-Date'] %>">(<%= i18n.personal.date.capitalize %>)</span> 
+            value="<%= personal['Birth-Date'] %>">(<%= i18n.personal.date.capitalize %>)</span>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[Birth-City]"
             value="<%= personal['Birth-City'] %>">(<%= i18n.personal.city.capitalize %>)</span>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[Birth-State]"
             style="width: 2ex;"
             value="<%= personal['Birth-State'] %>">(<%= i18n.personal.state.capitalize %>)</span>
@@ -107,33 +107,33 @@
     <th scope="row"><%= i18n.personal.address.capitalize %> <%= mandatory_mark if m['Full-Address'] %></th>
     <td>
       <span class="input-container">
-        <input 
-            type="text" 
-            name="personal[Address]" 
+        <input
+            type="text"
+            name="personal[Address]"
             style="width: 27ex;"
             value="<%= personal['Address'] %>"/>
       </span>
       <span class="input-container">
-        <input 
-            type="text" 
-            name="personal[City]" 
+        <input
+            type="text"
+            name="personal[City]"
             style="width: 15ex;"
             value="<%= personal['City'] %>"/>(<%= i18n.personal.city.capitalize %>)
       </span>
       <span class="input-container">
-        <input 
-            type="text" 
-            name="personal[State]" 
+        <input
+            type="text"
+            name="personal[State]"
             style="width: 2ex;"
             value="<%= personal['State'] %>"/>(<%= i18n.personal.state.capitalize %>)
       </span>
       <span class="input-container">
-        <input 
-            type="text" 
-            name="personal[Postal-Code]" 
+        <input
+            type="text"
+            name="personal[Postal-Code]"
             style="width: 5ex;"
             value="<%= personal['Postal-Code'] %>"/>(<%= i18n.personal.postcode %>)
-      </span>   
+      </span>
     </td>
   </tr>
   <tr style="<%= 'display:none' if smo and not m['Phone'] %>">
@@ -143,24 +143,24 @@
     </th>
     <td>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[Work-Phone]"
-            value="<%= personal['Work-Phone'] %>">(<%= i18n.personal.phone.work.capitalize %>)</span> 
+            value="<%= personal['Work-Phone'] %>">(<%= i18n.personal.phone.work.capitalize %>)</span>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[Home-Phone]"
             value="<%= personal['Home-Phone'] %>">(<%= i18n.personal.phone.home.capitalize %>)</span>
       <span class="input-container">
-        <input 
-            type="text" 
+        <input
+            type="text"
             name="personal[Mobile-Phone]"
             value="<%= personal['Mobile-Phone'] %>">(<%= i18n.personal.phone.mobile.capitalize %>)</span>
     </td>
   </tr>
   <tr id="personal-attachments" style="<%= 'display:none' if smo %>"> <%# and not m['Attachments'] %>
-    <th scope="row"><%= i18n.attachment(3).capitalize %></th> 
+    <th scope="row"><%= i18n.attachment(3).capitalize %></th>
     <td>
       <% if user and personal['Attachments'].respond_to? :each and personal['Attachments'].any? %>
         <table>
@@ -176,9 +176,9 @@
                 <a href="<%= user.name %>/attachments/personal/<%= attachment_basename %>?disposition=attachment">
                   <%= i18n.download.you %></a>
                 |
-                <span style="font-weight: bold; color: #111; "><%= i18n.delete_.you %></span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/> 
+                <span style="font-weight: bold; color: #111; "><%= i18n.delete_.you %></span> <input type="checkbox" name="delete[personal][Attachments][<%= attachment_basename %>]"/>
               </td>
-            </tr>  
+            </tr>
           <% end %>
         </table>
       <% end %>
@@ -187,7 +187,7 @@
       <% end %>
     </td>
   </tr>
-  <tr style="<%= 'display:none' if smo and not m['ID-Code'] %>"> 
+  <tr style="<%= 'display:none' if smo and not m['ID-Code'] %>">
     <th scope="row">
       <%= i18n.personal.id_code.id_code.titlecase %> <%= mandatory_mark if m['ID-Code'] %>
       <div class="optinfo"><%= i18n.personal.id_code.alt %></div>
@@ -209,9 +209,9 @@
               <!-- relative links which work either in public and admin interface -->
               <a target="_blank" href="../terms/<%= document[:id] %>.html"><%= document[:name] %></a> <%= mandatory_mark if document[:required] %>
             </li>
-          <% end %>           
+          <% end %>
         </ul>
-      </td>      
+      </td>
     </tr>
   <% end %>
   <tr style="<%= 'display:none' if smo %>"> <%# notes are optional by definition %>

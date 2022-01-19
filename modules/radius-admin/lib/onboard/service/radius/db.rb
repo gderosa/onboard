@@ -14,7 +14,7 @@ class OnBoard
           def connect;    RADIUS.db_connect;    end
           def disconnect; RADIUS.db_disconnect; end
           def reconnect;  RADIUS.db_reconnect;  end
-          
+
           def reset_data(params)
             tables = []
             if params['resetdata']
@@ -27,12 +27,12 @@ class OnBoard
                   RADIUS.conf['group']['check']['table'],
                   RADIUS.conf['group']['reply']['table'],
                   RADIUS.conf['group']['usermap']['table'],
-                  RADIUS.conf['terms_accept']['table']                  
+                  RADIUS.conf['terms_accept']['table']
                 ]
               end
               if params['resetdata']['accounting'] =~ /on|yes|true/
                 tables += [
-                  RADIUS.conf['accounting']['table'] 
+                  RADIUS.conf['accounting']['table']
                 ]
               end
               if params['resetdata']['terms'] =~ /on|yes|true/
@@ -42,7 +42,7 @@ class OnBoard
               end
             end
             tables.each do |table|
-              RADIUS.db[table.to_sym].delete 
+              RADIUS.db[table.to_sym].delete
             end
 
             Service::RADIUS::User.delete_all_attachments if params['resetdata']['default']

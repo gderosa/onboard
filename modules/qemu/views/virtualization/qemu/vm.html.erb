@@ -4,28 +4,35 @@
   require 'onboard/network/bridge'
   require 'onboard/virtualization/qemu'
 
-  vm                  = objects[:vm] 
+  vm                  = objects[:vm]
 
   all_netifs          = OnBoard::Network::Interface.get_all
-  all_bridges         = all_netifs.select     { |i| i.bridge? }  
-  all_running_ifnames = all_netifs.map        { |i| i.name    }        
+  all_bridges         = all_netifs.select     { |i| i.bridge? }
+  all_running_ifnames = all_netifs.map        { |i| i.name    }
 
-  vnc_uri             = ( 
-      "vnc://#{request.host}#{vm.config['-vnc']}" if vm.config['-vnc'] =~ /\d/ )
-  spice_uri           = ( 
-      "spice://#{request.host}:#{vm.config['-spice']['port']}" if 
-          vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'].to_i > 0 ) 
+  vncurlpart = vm.config['-vnc']
+  if vm.config['-vnc'] =~ /(\d+)/
+    vncurlpart = ':' + ($1.to_i + 5900).to_s
+  end
+
+  # Please make sure a possible reverse proxy does set X-Forwarded-Host -- https://linuxize.com/post/nginx-reverse-proxy/
+  # Sinatra/Rack's request.host reads it, if present.
+  vnc_uri             = (
+      "vnc://#{request.host}#{vncurlpart}" if vm.config['-vnc'] =~ /\d/ )
+  spice_uri           = (
+      "spice://#{request.host}:#{vm.config['-spice']['port']}" if
+          vm.config['-spice'].respond_to? :[] and vm.config['-spice']['port'].to_i > 0 )
 
 %>
 
-<%= 
+<%=
   partial(
     :module => 'qemu',
     :path   => 'virtualization/qemu/_style'
   )
 %>
 
-<%= 
+<%=
   partial(
     :module => 'qemu',
     :path   => 'virtualization/qemu/_js',
@@ -72,11 +79,11 @@
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
     <div id="runPanel" style="margin:0;padding:0;border:none">
-      <%= 
+      <%=
         partial(
           :module => 'qemu',
           :path   => 'virtualization/qemu/vm/_run',
-          :locals => {:vm => vm} 
+          :locals => {:vm => vm}
         )
       %>
     </div>
@@ -100,7 +107,7 @@
 <p>
   <% if vm.snapshotting? %>
     <% if vm.snapshot_waiting? %>
-      Waiting for other processes to complete. 
+      Waiting for other processes to complete.
     <% else %>
       Taking / Applying a snapshot.
     <% end %>
@@ -115,18 +122,18 @@
 <% if vm.snapshot_cmdline %>
   <p><%= vm.snapshotting? ? 'Running: ' : 'Last snapshot process: ' %><code class="highlight" style="margin-left:0.2em;"> <%= vm.snapshot_cmdline.join(' ').sub(
     %r{(^.*)bin/snapshot(.*)$}, 'snapshot\2'
-  )  
+  )
   %></code>
 <% end %>
 
 <% snapshot_stdout, snapshot_stderr = vm.snapshot_stdout, vm.snapshot_stderr %>
 <% if snapshot_stdout =~ /\S/m %>
-  <pre class="warn" style="margin-top:0.3em;"><%== snapshot_stdout %></pre>
+  <pre class="warn" style="margin-top:0.3em;"><%= snapshot_stdout %></pre>
 <% end %>
 <% if snapshot_stderr =~ /\S/m %>
- <pre class="error" style="margin-top:0.3em;"><%== snapshot_stderr %></pre>
+ <pre class="error" style="margin-top:0.3em;"><%= snapshot_stderr %></pre>
 <% end %>
-    
+
     </div> <!-- tabs-snapshots-status -->
 
     <div id="tabs-snapshots-saved">
@@ -134,10 +141,10 @@
 <h4>Saved Snapshots</h4>
 
 <p class="info" style="margin-top:0;">
-  <span class="term">Disk Only</span> snapshots are taken and applied at 
-  machine turned off. Full <span class="term">VM</span> snapshots also include 
-  CPU and memory state, and are taken and applied on a <em>running</em> machine 
-  (which is temporarily paused during the process). 
+  <span class="term">Disk Only</span> snapshots are taken and applied at
+  machine turned off. Full <span class="term">VM</span> snapshots also include
+  CPU and memory state, and are taken and applied on a <em>running</em> machine
+  (which is temporarily paused during the process).
   <span class="term">size</span> is the size of non-disk data in such case.
 </p>
 
@@ -162,13 +169,21 @@
     </tr>
   </thead>
   <tbody>
-    <% 
-      drives_w_snapshots = vm.drives.select do |k,v| 
+    <%
+      drives_w_snapshots = vm.drives.select do |k,v|
         v['snapshots'] and v['snapshots'].any?
       end
-      drives_w_snapshots.each_pair do |drive_name, drive| 
+      drives_w_snapshots.each_pair do |drive_name, drive|
     %>
       <% drive['snapshots'].each do |snapshot| %>
+        <%
+          # This is without units...
+          snapshot_vmsize = 0.0
+          if snapshot.vmsize =~ /([\d\.]+)/
+            num = $1
+            snanpshot_vmsize = num.to_f
+          end
+        %>
         <tr>
           <form method="POST">
             <input type="hidden" name="_method" value="put"/>
@@ -177,20 +192,16 @@
             <td style="text-align:right;"><%= snapshot.id %></td>
             <td><%= snapshot.tag %></td>
             <td>
-              <%= 
-                if snapshot.vmsize == '0'
-                  'Disk Only'
-                else
-                  "VM, size=#{snapshot.vmsize}"
-                end
+              <%=
+                (snanpshot_vmsize == 0.0) ? 'Disk Only' : "VM, size=#{snapshot.vmsize}"
               %>
             </td>
             <td><%= snapshot.time %></td>
-            <% 
+            <%
               disabled = (
                   OnBoard::V12n::QEMU::Snapshot.running?      or
                   ( vm.running?     and snapshot.disk_only? ) or
-                  ( not vm.running? and snapshot.full_vm?   )           
+                  ( not vm.running? and snapshot.full_vm?   )
               )
             %>
             <td>
@@ -201,7 +212,7 @@
             </td>
             <td>
               <%= action_button :delete, :name=>"snapshot_delete[name]", :value=>snapshot.name, :title=>'Delete Snapshot!', :disabled=>disabled %>
-            </td>             
+            </td>
           </form>
         </tr>
       <% end %>
@@ -219,7 +230,7 @@
         <td style="text-align:right;"></td>
         <td><input type="text" name="snapshot_take[name]" title="Add New"/></td>
         <td>
-          <%= 
+          <%=
             if vm.running?
               'VM'
             else
@@ -236,7 +247,7 @@
         </td>
         <td>
           <%= action_button :delete, :name=>"snapshot_delete[name]", :title=>'Delete Snapshot!', :disabled=>true %>
-        </td>             
+        </td>
       </form>
     </tr>
 
@@ -248,7 +259,7 @@
     <div id="tabs-snapshots-schedule">
 
 <h4>Schedule Snapshot</h4>
-<% 
+<%
   snapshot_cron_entry     = vm.snapshot_cron_entry # CronEdit::CronEntry
 
   snapshot_cron_defaults  = {
@@ -265,21 +276,21 @@
       'M'       => snapshot_cron_entry[:minute  ].sub(/^.*,.*$/, '*'),
       'w'       => snapshot_cron_entry[:weekday ].sub(/^.*,.*$/, '*'),
       'd'       => snapshot_cron_entry[:day     ].sub(/^.*,.*$/, '*')
-    } ) 
+    } )
   else
     snapshot_cron_defaults.update( {
       'H'       => '3',
       'M'       => '20',
       'w'       => '*',
       'd'       => '*'
-    } ) 
+    } )
   end
-  if 
-      snapshot_cron_entry and 
+  if
+      snapshot_cron_entry and
       snapshot_cron_entry[:command] =~ /DELETE_SCHEDULED_OLDER_THAN=\s*([\d\.]+)d/
     snapshot_cron_defaults.update({
       'delete_older_than_days' => $1
-    }) 
+    })
   end
   vals = snapshot_cron_defaults # shorten
 %>
@@ -304,36 +315,36 @@
     <tbody>
       <tr>
         <td style="text-align:center">
-          <input type="checkbox" name="snapshot_schedule[enable]" <%= 'checked' if vals['enable'] %>/> 
+          <input type="checkbox" name="snapshot_schedule[enable]" <%= 'checked' if vals['enable'] %>/>
         </td>
         <td style="text-align:right;">
           <% vm.drives.each_pair do |drive_name, drive| %>
             <% next unless drive and drive['config'] and drive['config']['media'] == 'disk' %>
             <%
-              checked = false 
-              if  snapshot_cron_entry                 and 
+              checked = false
+              if  snapshot_cron_entry                 and
                   snapshot_cron_entry.respond_to? :[] and
                   snapshot_cron_entry[:command].include? drive_name # naive !!
                 checked = true
               end
             %>
-            <%= drive_name %> <input 
-              type="checkbox" 
+            <%= drive_name %> <input
+              type="checkbox"
               name="snapshot_schedule[drives][<%= drive_name %>]"
               <%= 'checked' if checked %>
               style="vertical-align:middle; margin-left:1ex;"
-            > 
+            >
           <% end %>
         </td>
         <td>
-          <!-- try to follow strftime(3) conventions --> 
+          <!-- try to follow strftime(3) conventions -->
           <select name="snapshot_schedule[H]">
             <option value="*">*</option>
-            <% 
+            <%
               # 0 is a special case: it shouldn't match "0,1,2,3,4,5..." which
               # should atcually match the cron entry '*'
             %>
-            <option value="0"<%= ' selected' if vals['M'] =~ /^\s*0+\s*$/ %>>0 </option>            
+            <option value="0"<%= ' selected' if vals['M'] =~ /^\s*0+\s*$/ %>>0 </option>
             <% 1.upto(23) do |_H| %>
               <option value="<%= _H %>" <%= 'selected' if _H == vals['H'].to_i %>><%= _H %></option>
             <% end %>
@@ -356,22 +367,22 @@
             <option value="4" <%= 'selected' if vals['w'] == '4' %>>Thursday</option>
             <option value="5" <%= 'selected' if vals['w'] == '5' %>>Friday</option>
             <option value="6" <%= 'selected' if vals['w'] == '6' %>>Saturday</option>
-          </select> 
+          </select>
         </td>
         <td style="text-align:center">
           <select name="snapshot_schedule[d]" style="width:95%">
             <option value="*">*</option>
             <% 1.upto(31) do |d| %>
-              <% 
-                dstr = sprintf('%02d', d) 
+              <%
+                dstr = sprintf('%02d', d)
                     # not really necessary, but follow strftime(3) ...
-              %> 
+              %>
               <option value="<%= dstr %>" <%= 'selected' if d == vals['d'].to_i %>><%= dstr %></option>
             <% end %>
           </select>
         </td>
         <td style="text-align:center">
-          <input 
+          <input
             type="text" name="snapshot_schedule[delete_older_than_days]"
             value="<%= vals['delete_older_than_days'] %>"
             style="text-align:right; margin-right:1ex; width:3.5ex;"
@@ -386,7 +397,7 @@
     </div> <!-- tabs-snapshots-schedule -->
   </div> <!-- tabs-snapshots -->
 
-  <div id="tabs-config"> 
+  <div id="tabs-config">
 
 <h3>Configuration</h3>
 
@@ -400,7 +411,7 @@
 
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
-  <%= 
+  <%=
     partial(
       :module => 'qemu',
       :path   => 'virtualization/qemu/_form_create_edit',
@@ -432,16 +443,16 @@
         qemuRefreshHTML('button_power_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/power.html" %>');
         qemuRefreshHTML('button_resumepause_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/resumepause.html" %>');
         qemuRefreshHTML('button_quit_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/quit.html" %>');
-        qemuSaveRestoreControls('<%= vm.uuid %>');   
+        qemuSaveRestoreControls('<%= vm.uuid %>');
         qemuRefreshHTML('button_delete_wrapper[<%= vm.uuid %>]', '<%= "#{vm.uuid_short}/bits/buttons/delete.html" %>');
- 
+
         qemuRefreshScreenshot('screenshot', '<%= screenshot_path %>');
         if (qemuIsRunning('<%= vm.uuid_short %>')) {
           document.getElementById('remote-displays').style.display = '';
         } else {
           document.getElementById('remote-displays').style.display = 'none';
         }
-      }, 
+      },
       1400
     );
   <% end %>

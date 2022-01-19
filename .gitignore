@@ -2,3 +2,7 @@
 .enable
 .disable
 .bundle/
+
+# MacOS
+*.DS_Store
+._*

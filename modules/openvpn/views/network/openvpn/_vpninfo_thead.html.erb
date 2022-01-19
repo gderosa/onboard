@@ -1,17 +1,20 @@
-<%# 
+<%#
   locals:
-    actions: 
+    actions:
     common_name_description:
     show_actions_column: boolean or an alternate String
+    multi_pkis:
 %>
 
-<% 
-  show_actions_column     ||= '' 
+<%
+  show_actions_column     ||= ''
   common_name_description ||= ''
 
   if show_actions_column == true
     show_actions_column = 'Actions'
   end
+
+  multi_pkis              ||= false
 %>
 
     <tr>
@@ -24,11 +27,16 @@
       <th rowspan="3" title="<%= common_name_description %>">
         &ldquo;Common Name&rdquo;
       </th>
+      <% if multi_pkis %>
+      <th rowspan="3">
+        PKI
+      </th>
+      <% end %>
       <th colspan="5">
         Real
       </th>
       <th colspan="3">
-        Virtual 
+        Virtual
       </th>
       <th rowspan="3">LZO<br/>Compression?</th>
     </tr>
@@ -37,8 +45,8 @@
         Local
       </th>
       <th colspan="2">
-        Remote 
-      </th>     
+        Remote
+      </th>
       <th rowspan="2">
         Protocol
       </th>
@@ -47,7 +55,7 @@
       </th>
       <th rowspan="2">
         Destinations
-      </th>     
+      </th>
       <th rowspan="2">
         Device
       </th>

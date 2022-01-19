@@ -17,7 +17,7 @@ class OnBoard
                 rescue NoMethodError
                 end
               end
-              return (MIN..MAX).to_a - busy 
+              return (MIN..MAX).to_a - busy
             end
 
           end
@@ -28,5 +28,5 @@ class OnBoard
   end
 end
 
-        
+
 

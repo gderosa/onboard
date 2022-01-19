@@ -3,7 +3,7 @@ class OnBoard
     :name => 'Routing',
     #:n    => -10
   })
-  
+
   MENU_ROOT.add_path('/network/routing/basic', {
     :href => '/network/routing/tables/main',
     :name => 'Basic / main table',

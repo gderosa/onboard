@@ -1,13 +1,13 @@
 <% if log.data['tail'] %>
-  <pre class="log"><%== log.data['tail'] %></pre>
+  <pre class="log"><%= log.data['tail'] %></pre>
   <p>
     <% if log.data['tail'].count("\n") < log.class::Tail_n %>
       Click <a href="/system/logs/<%= log.data['meta']['id'] or Rack::Utils.escape(log.data['meta']['path']) %>.raw">here</a> to download
       the file.
     <% else %>
       Only the last <%= log.class::Tail_n.to_s %> lines were shown. Click
-      <a href="/system/logs/<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download 
-      the whole file. 
+      <a href="/system/logs/<%= log.data['meta']['id'] or url_encode(log.data['meta']['path']) %>.raw">here</a> to download
+      the whole file.
     <% end %>
     </p>
 <% else %>

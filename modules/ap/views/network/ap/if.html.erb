@@ -1,0 +1,109 @@
+<%
+  require 'i18n_data'
+
+  require 'onboard/system/log'
+  require 'onboard/network/ap'
+
+  ENV['LANG'] =~ /_([A-Z]{2})/
+  default_country_code = $1
+  selected_country_code = (objects['country_code'] || default_country_code)
+
+  channels24  = OnBoard::Network::AP::CHANNELS[2.4]
+  channels5   = OnBoard::Network::AP::CHANNELS[5]
+
+  log = OnBoard::System::Log.new({'path' => objects['logfile']})
+%>
+
+<h2><%= title %></h2>
+  <%=
+    erb(
+     :"/_messages.html",
+     {
+       :layout => false,
+       :locals => {
+         :msg => msg,
+         :status => status
+       }
+     }
+    )
+  %>
+
+<form method="post">
+<input type="hidden" name="_method" value="put"/>
+<table>
+  <tr>
+    <th>Driver</th>
+    <td>
+      <select name="driver">
+      <% %w{nl80211 hostap wired bsd none}.each do |drv| %>
+        <option value="<%= drv %>" <%= 'selected' if drv == objects['driver'] %>><%= drv %></option>
+      <% end %>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>SSID</th>
+    <td><input type="text" name="ssid" value="<%= objects['ssid'] %>"/></td>
+  </tr>
+  <tr>
+    <th>Mode/freq.: IEEE 802.11-</th>
+    <td>
+      <select name="mode">
+        <option title="hostapd.conf: hw_mode=a" value="a" <%= 'selected' if 'a' == objects['mode'] %>>a (5GHz)</option>
+        <option title="hostapd.conf: hw_mode=b" value="a" <%= 'selected' if 'b' == objects['mode'] %>>b (2.4GHz)</option>
+        <option title="hostapd.conf: hw_mode=g" value="g" <%= 'selected' if 'g' == objects['mode'] %>>g (2.4GHz)</option>
+        <option title="hostapd.conf: ieee80211n=1 hw_mode=a" value="n_5" <%= 'selected' if 'n_5' == objects['mode'] %>>n (5GHz)</option>
+        <option title="hostapd.conf: ieee80211n=1 hw_mode=g" value="n_2.4" <%= 'selected' if 'n_2.4' == objects['mode'] %>>n (2.4GHz)</option>
+        <option title="hostapd.conf: ieee80211ac=1 hw_mode=a" value="ac" <%= 'selected' if 'ac' == objects['mode'] %>>ac (5GHz)</option>
+        <option title="hostapd.conf: hw_mode=ad" value="ad" <%= 'selected' if 'ad' == objects['mode'] %>>ad (60GHz)</option>
+      </select>
+    </td>
+  </tr>
+  <!-- TODO: bridge option? -->
+  <tr>
+    <th>Channel <div class="optinfo">Actual availabilty depends on <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_WLAN_channels">mode and country regulation</a>.</div></th>
+    <td>
+      <select name="channel">
+        <option value="0">0 / auto / not set</option>
+        <option disabled>Channels @ 2.4 GHz:</option>
+        <% channels24.each do |c| %>
+        <option value="<%= c %>" <%= 'selected' if c == objects['channel'].to_i %>><%= c %></option>
+        <% end %>
+        <option disabled>Channels @ 5 GHz:</option>
+        <% channels5.each do |c| %>
+        <option value="<%= c %>" <%= 'selected' if c == objects['channel'].to_i %>><%= c %></option>
+        <% end %>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>Country <div class="optinfo" style="text-align: center">Regulatory domain.</div></th>
+    <td>
+      <select name="country_code">
+        <% I18nData.countries.sort_by{|code, name| name}.each do |codecountry|  %>
+        <% code, country = codecountry %>
+        <option value="<%= code %>" <%= 'selected' if code == selected_country_code %>><%= country %> (<%= code %>)</option>
+      <% end %>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>WPA2 Passphrase <div class="optinfo" style="text-align: center">Leave empty for an open network.</div></th>
+    <td>
+      <input type="password" name="passphrase" value="<%= objects['passphrase'] %>"/>
+    </td>
+  </tr>
+  <tr>
+    <th>Run?</th>
+    <td>
+      <input type="checkbox" name="run" <%= 'checked' if objects['run'] %>/>
+    </td>
+  </tr>
+</table>
+<button type="submit">Change!</button>
+</form>
+<br/>
+<h3><code>hostapd</code> Log</h3>
+<%=
+  erb(:"system/_log.html", :layout => false, :locals => {:log => log})
+%>

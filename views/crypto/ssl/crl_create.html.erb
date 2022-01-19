@@ -1,20 +1,20 @@
 <h2>Certificate</h2>
 <% if msg[:ok] %>
   <p>Certificate Revocation List has been successfully uploaded.</p>
-<% else %> 
+<% else %>
   <div class="error" style="padding: 0.4em;">
     <% if msg[:err_html] =~ /\S/ %>
       <p><%= msg[:err_html] %></p>
     <% else %>
-      <% if msg[:err].kind_of? OpenSSL::X509::CRLError %> 
-        <p>Invalid certificate. OpenSSL reported: &ldquo;<code><%= html_escape msg[:err] %></code>&rdquo;.</p>
-      <% 
-        else  #String assumed, .to_s as a fallback 
+      <% if msg[:err].kind_of? OpenSSL::X509::CRLError %>
+        <p>Invalid certificate. OpenSSL reported: &ldquo;<code><%= escape_html msg[:err] %></code>&rdquo;.</p>
+      <%
+        else  #String assumed, .to_s as a fallback
       %>
-       <pre><%= html_escape msg[:err] %></pre>
+       <pre><%= escape_html msg[:err] %></pre>
      <% end %>
     <% end %>
-    <pre><%= html_escape msg[:stderr] %></pre>
+    <pre><%= escape_html msg[:stderr] %></pre>
   </div>
 <% end %>
 <% if request.referer =~ /\S/ %>

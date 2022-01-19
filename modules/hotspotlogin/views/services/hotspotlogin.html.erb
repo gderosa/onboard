@@ -1,11 +1,11 @@
-<% 
+<%
   require 'uuid'
-  
-  hslogin         = objects 
+
+  hslogin         = objects
   running         = hslogin['running']
   userpassword    = hslogin['conf']['userpassword']
   port            = hslogin['conf']['port']
-  interval        = hslogin['conf']['interval'] 
+  interval        = hslogin['conf']['interval']
   uamsecret       = hslogin['conf']['uamsecret']
   logo            = hslogin['conf']['logo']
   logo_link       = hslogin['conf']['logo-link']
@@ -15,24 +15,24 @@
       hslogin['conf']['remember-credentials']
   password_recovery_url =
       hslogin['conf']['password-recovery-url']
-  custom_headline = hslogin['conf']['custom-headline'] 
+  custom_headline = hslogin['conf']['custom-headline']
   custom_text     = hslogin['conf']['custom-text']
   custom_footer   = hslogin['conf']['custom-footer']
 
   defaults        = hslogin['defaults']
 
-  interval        = hslogin['defaults']['interval'] if 
+  interval        = hslogin['defaults']['interval'] if
       (!interval or interval =~ /^\s*$/)
-    
-  # sugar/name-consistency: not a file    
-  custom_headline_content = custom_headline 
-      
+
+  # sugar/name-consistency: not a file
+  custom_headline_content = custom_headline
+
   custom_text_content     = nil
-  custom_text_content     = File.read custom_text   if 
+  custom_text_content     = File.read custom_text   if
       custom_text and File.readable? custom_text
 
   custom_footer_content   = nil
-  custom_footer_content   = File.read custom_footer if 
+  custom_footer_content   = File.read custom_footer if
       custom_footer and File.readable? custom_footer
 
   textrows = 5
@@ -49,7 +49,7 @@
 <h2>HotSpot Login page</h2>
 
 <%=
-  erubis(
+  erb(
     :"/_messages.html",
     {
       :layout => false,
@@ -108,7 +108,7 @@
       <th scope="row">&ldquo;UAM secret&rdquo; (type again)</th>
       <td><input class="rwtext" type="password" name="uamsecret_verify" size="12"/></td>
     </tr>
-   
+
     <tr>
       <th scope="row">Use ordinary user/password for RADIUS authentication <div class="optinfo">i.e. don't use <a href="http://en.wikipedia.org/wiki/Challenge-handshake_authentication_protocol">CHAP</a> (you <strong>must</strong> set a UAM shared secret in this case)</div></th>
     <td><input type="checkbox" name="userpassword" <% if userpassword %>checked<% end %>/></td>
@@ -151,11 +151,11 @@
 
     <tr>
       <th scope="row">
-        Signup Link 
+        Signup Link
         <div class="optinfo">Leave blank to not display</div>
       </th>
       <td>
-        <input type="text" size="<%= textcols %>" class="rwtext" name="signup_url" value="<%= signup_url %>"/> 
+        <input type="text" size="<%= textcols %>" class="rwtext" name="signup_url" value="<%= signup_url %>"/>
       </td>
       <td style="text-align: center;">
       <% if signup_url and signup_url =~ /\S/ %><a title="Displayed text may vary according to localization" target="_blank" href="<%= signup_url %>">Signup</a><% end %>
@@ -169,12 +169,12 @@
       <th scope="row">
         “My Account” Link
         <div class="optinfo">
-          <code>-USER-</code> will be replaced by the actual username, as in<br/> 
+          <code>-USER-</code> will be replaced by the actual username, as in<br/>
           <code>/pub/services/radius/users/-USER-.html</code>
         </div>
       </th>
       <td>
-        <input type="text" size="<%= textcols %>" class="rwtext" name="my_url" value="<%= my_url %>"/> 
+        <input type="text" size="<%= textcols %>" class="rwtext" name="my_url" value="<%= my_url %>"/>
       </td>
       <td style="text-align: center;">
       <% if my_url and my_url =~ /\S/ %><a title="Link cannot work since an actual end user should be specified or logged in" target="_blank" href="">My Account</a><% end %>
@@ -188,7 +188,7 @@
       <th scope="row">
         &ldquo;Remember password&rdquo;
         <div class="optinfo">
-          Users may store their credentials within a 
+          Users may store their credentials within a
           <em>cookie</em> in their own computers and reuse them for successive
           logins with no need to retype them.
         </div>
@@ -202,11 +202,11 @@
 
     <tr>
       <th scope="row">
-        Password Recovery Link 
+        Password Recovery Link
         <div class="optinfo"></div>
       </th>
       <td>
-        <input type="text" size="<%= textcols %>" class="rwtext" name="password_recovery_url" value="<%= password_recovery_url %>"/> 
+        <input type="text" size="<%= textcols %>" class="rwtext" name="password_recovery_url" value="<%= password_recovery_url %>"/>
       </td>
       <td style="text-align: center;">
       <% if password_recovery_url and password_recovery_url =~ /\S/ %><a title="Displayed text may vary according to localization" target="_blank" href="<%= password_recovery_url %>">Recover Password</a><% end %>
@@ -215,14 +215,14 @@
         <input type="checkbox" name="delete[password_recovery_url]"/>
       </td>
     </tr>
-   
+
     <tr>
       <th scope="row">
         Custom headline
         <div class="optinfo">e.g. Your Organization Name</div>
       </th>
       <td>
-        <input type="text" size="<%= textcols %>" class="rwtext" name="custom_headline" value="<%= custom_headline_content %>"/> 
+        <input type="text" size="<%= textcols %>" class="rwtext" name="custom_headline" value="<%= custom_headline_content %>"/>
       </td>
       <td style="text-align: center;">
         <h4><%= custom_headline_content %></h4>
@@ -257,10 +257,10 @@
     </tr>
   </tbody>
 </table>
-<button 
-  style="margin-top:2ex;" 
-  type="submit" 
-  name="change" 
+<button
+  style="margin-top:2ex;"
+  type="submit"
+  name="change"
   value="change">Change</button>
 </form>
 

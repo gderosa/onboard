@@ -5,7 +5,7 @@ class OnBoard
   module Pub
     module Layout
       FILESDIR        = File.join OnBoard::RWDIR, 'var/www/pub'
-      CONFDIR         = File.join OnBoard::CONFDIR, 'webif/pub' 
+      CONFDIR         = File.join OnBoard::CONFDIR, 'webif/pub'
       CONFFILE        = File.join CONFDIR, 'layout.yml'
 
       class << self
@@ -38,20 +38,20 @@ class OnBoard
             conf.delete 'logo'
           elsif params['logo']
             FileUtils.cp(
-              params['logo'][:tempfile], 
+              params['logo'][:tempfile],
               File.join(
-                FILESDIR, 
+                FILESDIR,
                 params['logo'][:filename]
               )
-            )  
+            )
             conf['logo']      = params['logo'][:filename]
           end
           conf['logo_link'] = params['logo_link']
 
           if params['delete'] and params['delete']['custom_text']
             conf.delete 'custom_text'
-          elsif  params['custom_text'].respond_to? :length and 
-              params['custom_text'].length >    0           # useful?      
+          elsif  params['custom_text'].respond_to? :length and
+              params['custom_text'].length >    0           # useful?
             conf['custom_text'] = params['custom_text']
           end
 

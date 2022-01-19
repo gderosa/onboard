@@ -41,7 +41,7 @@ class OnBoard
         end
       rescue Service::HotSpotLogin::BadRequest
         status 400 # HTTP Bad Request
-        msg = {:err => $!} 
+        msg = {:err => $!}
       end
       format(
         :module => 'hotspotlogin',

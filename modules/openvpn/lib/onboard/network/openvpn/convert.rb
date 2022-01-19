@@ -7,7 +7,13 @@ class OnBoard
 
         module_function
 
-        def textarea2push_routes(text)
+        def textarea2push_routes(text, metric=nil)
+          if metric
+            # an empty of space-only string should bring to default
+            unless metric =~/\S/
+              metric = nil
+            end
+          end
           out = ''
           push_routes = text.lines.map{|x| x.strip}
           push_routes.each do |push_route|
@@ -17,7 +23,7 @@ class OnBoard
             rescue ArgumentError
               next
             end
-            out << %Q{push "route #{ip} #{ip.netmask} vpn_gateway #{DEFAULT_METRIC}"}
+            out << %Q{push "route #{ip} #{ip.netmask} vpn_gateway #{metric or DEFAULT_METRIC}"}
             out << "\n"
           end
           return out
@@ -30,7 +36,7 @@ class OnBoard
           h_ary.each do |route_h|
             # out << route_h.pretty_inspect
             if route_h['net'] and route_h['mask']
-              out << route_h['net'] << '/' << route_h['mask'] << "\n" 
+              out << route_h['net'] << '/' << route_h['mask'] << "\n"
             end
           end
           return out

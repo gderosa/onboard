@@ -22,6 +22,7 @@ class OnBoard
 
     get '/network/openvpn.:format' do
       vpns = OnBoard::Network::OpenVPN::VPN.getAll()
+      OnBoard::Network::OpenVPN::VPN.cleanup_config_files! :vpns => vpns
       format(
         :module => 'openvpn',
         :path => '/network/openvpn/vpn',
@@ -32,12 +33,15 @@ class OnBoard
     end
 
     post '/network/openvpn.:format' do
+      params['pki'] = 'default' unless params['pki'] =~ /\S/
+      params['pki'].strip!
       msg = {:ok => true}
       vpns = OnBoard::Network::OpenVPN::VPN.getAll()
-      certfile = "#{Crypto::SSL::CERTDIR}/#{params['cert']}.crt"
+      ssl_pki = Crypto::SSL::PKI.new params['pki']
+      certfile = "#{ssl_pki.certdir}/#{params['cert']}.crt"
 
       begin
-        certobj = OpenSSL::X509::Certificate.new(File.read certfile) 
+        certobj = OpenSSL::X509::Certificate.new(File.read certfile)
         requested_cn = certobj.to_h['subject']['CN']
         # The following check should be done by openvpn, which should exit
         # with a non-zero status... unfortunately it isn't, and you end with
@@ -53,7 +57,7 @@ class OnBoard
                   )                                                   and
                   # TODO: use gethostbyname when useful?
                   # NOTE: the two values compared may be IP addresses as well
-                  # as DNS host names.       
+                  # as DNS host names.
                   params['remote_port'].map{|x| x.strip}.include?(
                       remote['port'].strip
                   )                                                   and
@@ -70,9 +74,9 @@ class OnBoard
         end
       rescue OpenSSL::X509::CertificateError
         msg = {
-            :ok => false, 
-            :err => "#{$!.class.name}: #{$!.to_s}", 
-            :err_html => "OpenSSL Certificate error: &ldquo;<code>#{html_escape $!.to_s}</code>&rdquo;"
+            :ok => false,
+            :err => "#{$!.class.name}: #{$!.to_s}",
+            :err_html => "OpenSSL Certificate error: &ldquo;<code>#{escape_html $!.to_s}</code>&rdquo;"
         }
       rescue Errno::ENOENT
         msg = {
@@ -105,13 +109,13 @@ class OnBoard
 
     put '/network/openvpn.:format' do
       vpns = OnBoard::Network::OpenVPN::VPN.getAll()
-      msg = OnBoard::Network::OpenVPN::VPN.modify_from_HTTP_request(params) 
+      msg = OnBoard::Network::OpenVPN::VPN.modify_from_HTTP_request(params)
       sleep 0.3 # diiiirty!
       vpns = OnBoard::Network::OpenVPN::VPN.getAll()
       # Bringin' an OpenVPN connection up is an asynchronous operation,
       # while bringing it down is synchronous.
       if params['start']
-        msg[:ok] ? status(202) : status(409) 
+        msg[:ok] ? status(202) : status(409)
       elsif params['stop']
         if not msg[:ok] and msg[:stderr]
           status(409)                       # HTTP 'Conflict'
@@ -133,15 +137,15 @@ class OnBoard
     get '/network/openvpn/vpn/:vpn_identifier.:format' do
       vpn = OnBoard::Network::OpenVPN::VPN.lookup(
         :any => params[:vpn_identifier]
-      ) 
-      if vpn 
+      )
+      if vpn
         format(
           :module   => 'openvpn',
           :path     => '/network/openvpn/vpn/advanced',
           :format   => params[:format],
           :objects  => vpn,
           :title    => "OpenVPN: ##{params[:vpn_identifier]}"
-        )      
+        )
       else
         not_found
       end
@@ -150,8 +154,8 @@ class OnBoard
     put '/network/openvpn/vpn/:vpn_identifier.:format' do
       vpn = OnBoard::Network::OpenVPN::VPN.lookup(
         :any => params[:vpn_identifier]
-      ) 
-      if vpn 
+      )
+      if vpn
         msg = vpn.modify_from_HTTP_request(params)
         vpn = OnBoard::Network::OpenVPN::VPN.lookup(
           :any => params[:vpn_identifier]) # update
@@ -163,18 +167,18 @@ class OnBoard
           :objects  => vpn,
           :msg      => msg,
           :title    => "OpenVPN: ##{params[:vpn_identifier]}"
-        )      
+        )
       else
         not_found
       end
     end
-   
+
     delete '/network/openvpn/vpn/:vpn_identifier.:format' do
       vpn = OnBoard::Network::OpenVPN::VPN.lookup(
         :any => params[:vpn_identifier]
-      ) 
-      if vpn 
-        vpn.stop(:rmlog, :rmconf) 
+      )
+      if vpn
+        vpn.stop(:rmlog, :rmconf)
         OnBoard::Network::OpenVPN::VPN.all_cached.delete vpn
         sleep 0.3 # diiirty!
         redirection = "/network/openvpn.#{params[:format]}"
@@ -186,7 +190,7 @@ class OnBoard
           :path     => '/303',
           :format   => params[:format],
           :objects  => redirection
-        )      
+        )
       else
         not_found
       end

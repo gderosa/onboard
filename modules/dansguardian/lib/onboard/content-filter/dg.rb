@@ -25,7 +25,7 @@ class OnBoard
         end
 
         def fg_file(fgid)
-          "#{CONFDIR}/dansguardianf#{fgid}.conf"  
+          "#{CONFDIR}/dansguardianf#{fgid}.conf"
         end
 
         def saverestore_file
@@ -36,9 +36,9 @@ class OnBoard
 
       attr_reader :pid, :config, :deleted_filtergroups
 
-      def initialize(opts={:bare => false}) 
+      def initialize(opts={:bare => false})
         reset
-        get_info unless opts[:bare] 
+        get_info unless opts[:bare]
       end
 
       def reset
@@ -74,7 +74,7 @@ class OnBoard
       def write_all
         dg = self
         ERB::recurse CONFTEMPLATEDIR, binding, '.erb' do |subpath|
-          "#{CONFDIR}/#{subpath}" 
+          "#{CONFDIR}/#{subpath}"
         end
       end
 
@@ -83,7 +83,7 @@ class OnBoard
         status = $?.dup
         if status == 0
           output =~ /(\d+)/ and @pid[:parent] = $1.to_i
-          @pid[:children] = 
+          @pid[:children] =
               `pidof dansguardian`.split.map{|x| x.to_i} - [@pid[:parent]]
         else
           reset_pid
@@ -99,7 +99,7 @@ class OnBoard
           if filepath =~ /dansguardianf(\d+)\.conf$/
             fgid = $1.to_i
             if File.symlink? filepath
-              if 
+              if
                   File.readlink(filepath) == "#{CONFDIR}/dansguardianf1.conf" or
                   File.readlink(filepath) == 'dansguardianf1.conf'
                 @deleted_filtergroups << fgid
@@ -119,7 +119,7 @@ class OnBoard
       #
       # In this case, dansguardianf5.conf and dansguardianf6.conf
       # will be deleted and "filtergroups = 4" will be set in dansguardian.conf
-      def fix_filtergroups 
+      def fix_filtergroups
         fg_statuses     = []
         to_be_unlinked  = []
         filtergroups    = 1
@@ -204,7 +204,7 @@ class OnBoard
       end
 
       def reload_groups
-        # This is buggy: 
+        # This is buggy:
         # System::Command.run "dansguardian -c #{config_file} -g", :sudo
 
         # use HUP instead of USR1: it's safer and not that slower
@@ -237,7 +237,7 @@ class OnBoard
           File.open saverestore_file, 'w' do |f|
             f.write YAML.dump (
               {
-                :running => running? 
+                :running => running?
               }
             )
           end

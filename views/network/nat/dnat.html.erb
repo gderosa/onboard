@@ -1,8 +1,8 @@
-<% 
+<%
   # not just DNAT, also REDIRECT target
 %>
 
-<% 
+<%
   require 'pp'
 
   require 'onboard/network/interface'
@@ -11,7 +11,7 @@
 		OnBoard::Network::Interface::PREFERRED_ORDER
 	)
   # all_interfaces.delete_if {|x| x.type == "loopback"}
-  interface_names = all_interfaces.map {|x| x.name} 
+  interface_names = all_interfaces.map {|x| x.name}
 
   iptablesobj       = objects
 
@@ -25,7 +25,7 @@
 <h2>Destination NAT / Port Mapping</h2>
 
   <%=
-    erubis(
+    erb(
       :"/_messages.html",
       {
         :layout => false,
@@ -39,7 +39,7 @@
 
 <h3>NAT rules</h3>
 
-<% chainname = 'PREROUTING' %>  
+<% chainname = 'PREROUTING' %>
 <% chain = iptablesobj.tables['nat'].chains[chainname] %>
 <h4>Chain <%= chain.name %></h4>
 <table>
@@ -60,19 +60,19 @@
           <input type="hidden" name="_method" value="put"/>
           <input type="hidden" name="chain" value="<%= chain.name %>"/>
           <input type="hidden" name="rulenum" value="<%= rule[0] %>"/>
-          <% 
-          # rule is an Array of fields, the first (rule[0]) represents
-          # rulenum according to iptables conventions (starts from 1) 
-          # 
-          # Other "fields" come directly from iptables -L -v -n
-          # 
-          # chain.rules is the Array of such arrays
-          #    
-          # It is: rule_idx = rule[0] - 1    
-          %>
-          <input type="hidden" name="rulespec" value="<%== chain.rulespecs[rule_idx] %>"/>
           <%
-          # we cannot use rulenum to move up/down a rule; we have to delete 
+          # rule is an Array of fields, the first (rule[0]) represents
+          # rulenum according to iptables conventions (starts from 1)
+          #
+          # Other "fields" come directly from iptables -L -v -n
+          #
+          # chain.rules is the Array of such arrays
+          #
+          # It is: rule_idx = rule[0] - 1
+          %>
+          <input type="hidden" name="rulespec" value="<%= chain.rulespecs[rule_idx] %>"/>
+          <%
+          # we cannot use rulenum to move up/down a rule; we have to delete
           # it, then recreate in a different position, so we need the full
           # rule specification
           %>
@@ -83,17 +83,17 @@
             <button type="submit" name="del_rule" title="Remove"><img src="<%= icondir + '/16x16/actions/remove.png'%>" alt="Remove" title="Remove"/></button>
           </td>
           <td>
-            <% 
+            <%
               # first rule in the chain, so cannot move up? => disable button!
             %>
             <button <%= 'disabled' if rule[0] == 1 %> type="submit" name="move_rule_up" title="Move up"><img src="<%= icondir + '/16x16/actions/go-up.png'%>" alt="Move up" title="Move up"></button>
           </td>
           <td>
-            <% 
+            <%
               # last rule in the chain, so cannot move down? => disable button!
             %>
             <button <%= 'disabled' if rule[0] == chain.rules.length %> type="submit" name="move_rule_down" title="Move down"><img src="<%= icondir + '/16x16/actions/go-down.png'%>" alt="Move down" title="Move down"/></button>
-          </td>           
+          </td>
           <% rule[1..-2].each do |value| %>
             <td><%= value %></td>
           <% end %>
@@ -104,7 +104,7 @@
               title << 'Some reasonable defaults have been added to avoid LOG flooding'
             end
           %>
-          <td title="<%= title %>" style="text-align: left;"><kbd><%= rule[-1] %></kbd></td>
+          <td title="<%= title %>" style="text-align: left;"><kbd><%= escape_html rule[-1] %></kbd></td>
         </form>
       </tr>
     <% end %>
@@ -132,10 +132,10 @@
         </th>
         <th>
           Destination Address/Network
-        </th>        
+        </th>
         <th>
           Destination Port/Interval
-        </th>        
+        </th>
         <th>
           Comment
         </th>
@@ -163,21 +163,21 @@
         </td>
         <td>
           <select name="proto">
-            <option value=""></option> 
+            <option value=""></option>
             <option value="tcp">TCP</option>
             <option value="udp">UDP</option>
-            <!-- <option value="icmp">ICMP</option> --> 
+            <!-- <option value="icmp">ICMP</option> -->
               <!-- does it make any sense ? -->
-          </select>        
+          </select>
         </td>
         <td>
           <input type="text" class="rwtext" name="dest_addr"/>
-        </td>       
+        </td>
         <td>
           <input type="text" class="rwtext" name="dest_ports" size="11" title="Use colon for port interval, e.g. `2100:2200'"/>
         </td>
         <td>
-          <input type="text" name="comment" class="humantext"/> 
+          <input type="text" name="comment" class="humantext"/>
         </td>
       </tr>
     </tbody>
@@ -200,15 +200,15 @@
       <tr>
         <td>
           <input type="text" class="rwtext" name="source_addr"/>
-        </td>       
+        </td>
         <td>
           <input type="text" class="rwtext" name="source_ports"/>
-        </td>       
+        </td>
         <td>
           <input type="text" class="rwtext" name="mac_source"/>
         </td>
       </tr>
-    </tbody>   
+    </tbody>
   </table>
   <h4>Action</h4>
   <fieldset>
@@ -223,7 +223,7 @@
     <span title="Do not perform any transformation or redirection, just let the traffic through">
       <input type="radio" name="jump-target" value="ACCEPT"/>
       <span style="vertical-align: middle;">Do nothing (&ldquo;ACCEPT&rdquo;)</span>
-    </span>   
+    </span>
   </fieldset>
   <h4>Forward to:</h4>
   <table>
@@ -236,7 +236,7 @@
     <tbody>
       <tr>
         <td>
-          <input type="text" class="rwtext" name="to-destination_addr"/> 
+          <input type="text" class="rwtext" name="to-destination_addr"/>
         </td>
         <td>
           <input type="text" class="rwtext" name="to-destination_port" size="11"/>

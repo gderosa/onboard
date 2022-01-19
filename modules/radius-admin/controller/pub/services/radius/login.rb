@@ -16,8 +16,8 @@ class OnBoard
       )
     end
 
-    # This is un-ReSTful: HTTP Authentication should be used instead of 
-    # sessions; but this is unconvenient to end users who expect a "logout" 
+    # This is un-ReSTful: HTTP Authentication should be used instead of
+    # sessions; but this is unconvenient to end users who expect a "logout"
     # link somewhere
     post '/pub/services/radius/login.html' do
       session[:raduser] = params['raduser']
@@ -37,7 +37,7 @@ class OnBoard
         msg[:err] = 'Login Failed'
         status 403 # Forbidden
       end
-      
+
       format(
         :module   => 'radius-admin',
         :path     => '/pub/services/radius/login',

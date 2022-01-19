@@ -9,6 +9,10 @@
 # Description:       OnBoard web interface
 ### END INIT INFO
 
+#
+# THIS IS OBSOLETE: WE USE SYSTEMD NOW!
+#
+
 # Author: Guido De Rosa <guido.derosa@vemarsas.it>
 #
 # Do NOT "set -e"

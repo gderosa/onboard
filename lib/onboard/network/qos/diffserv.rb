@@ -127,7 +127,7 @@ class OnBoard
             :long_name    => 'Assured Forwarding class 2, high drop',
             :symbol       => :AF23,
           },
-         
+
           {
             :value        => CS3,
             :short_name   => 'CS3',
@@ -210,14 +210,14 @@ class OnBoard
             :long_name    => 'Capacity-Admitted Traffic',
             :symbol       => :"VOICE-ADMIT",
             :comment      => 'Capacity-Admitted Traffic, RFC5865'
-          },    
+          },
           {
             :value        => EF,
             :short_name   => 'EF',
             :long_name    => 'Expedited Forwarding',
             :symbol       => :EF,
             :comment      => 'Highest priority, recommended for VoIP: voice'
-          }   
+          }
         ]
       end # module DiffServ
 

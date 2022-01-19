@@ -10,7 +10,7 @@ if [ "$KEY_DIR" ]; then
 	chmod go-rwx "$KEY_DIR" && \
 	touch "$KEY_DIR/index.txt" && \
 	echo 01 >"$KEY_DIR/serial" && \
-	touch "$KEY_DIR/.placeholder" # for git... 
+	touch "$KEY_DIR/.placeholder" # for git...
 else
     echo 'Please source the vars script first (i.e. "source ./vars")' >&2
     echo 'Make sure you have edited it to reflect your configuration.' >&2

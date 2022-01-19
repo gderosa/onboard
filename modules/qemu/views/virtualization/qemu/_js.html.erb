@@ -25,28 +25,25 @@
   function qemuNetIfControls() {
     var i = 0;
     var typeSelect;
-    while(typeSelect = document.getElementById('net[' + i + '][type]')) {
+    while(typeSelect = document.getElementById('nic[' + i + '][type]')) {
       switch(typeSelect.value) {
         case 'none':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = true;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
-          document.getElementById('net[' + i + '][model]'   ).disabled = true;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = true;
+          document.getElementById('nic[' + i + '][ifname]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][model]'   ).disabled = true;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = true;
           break;
         case 'user':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = true;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = true;
-          document.getElementById('net[' + i + '][model]'   ).disabled = false;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
+          document.getElementById('nic[' + i + '][ifname]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = true;
+          document.getElementById('nic[' + i + '][model]'   ).disabled = false;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = false;
           break;
         case 'tap':
-          document.getElementById('net[' + i + '][vlan]'    ).disabled = false;
-          document.getElementById('net[' + i + '][ifname]'  ).disabled = false;
-          document.getElementById('net[' + i + '][bridge]'  ).disabled = false;
-          document.getElementById('net[' + i + '][model]'   ).disabled = false;
-          document.getElementById('net[' + i + '][macaddr]' ).disabled = false;
+          document.getElementById('nic[' + i + '][ifname]'  ).disabled = false;
+          document.getElementById('nic[' + i + '][br]'  ).disabled = false;
+          document.getElementById('nic[' + i + '][model]'   ).disabled = false;
+          document.getElementById('nic[' + i + '][mac]' ).disabled = false;
           break;
       }
       i++;
@@ -58,13 +55,13 @@
       this.uuidsLength = 1;
     } else {
       this.uuids = this.uuids || <%= all_vm_uuids %>;
-      this.uuidsLength = this.uuids.length; 
-    } 
+      this.uuidsLength = this.uuids.length;
+    }
     for (var i=0; i<uuidsLength; i++) {
       var uuid = uuids[i];
       var quit_button =
           document.getElementById('quit[' + uuid + ']');
-      var quit_button_img = 
+      var quit_button_img =
           document.getElementById('quit_button_img[' + uuid + ']');
       var saverestore_checkbox =
           document.getElementById('saverestore[' + uuid + ']');
@@ -73,7 +70,7 @@
         quit_button.title = 'Quit virtualization and save machine state';
       } else {
         quit_button_img.src = '<%= action_icon_path(:process_stop) %>';
-      quit_button.title = 'Quit virtualization immediately (beware: you may corrupt data!)';  
+      quit_button.title = 'Quit virtualization immediately (beware: you may corrupt data!)';
       }
     }
   }
@@ -106,7 +103,7 @@
     }
   }
   function qemuIsRunning(vmid, basepath) {
-    if (typeof basepath === 'undefined') 
+    if (typeof basepath === 'undefined')
       basepath = '';
     var fetch_from = basepath + vmid + '/running.json';
     var request = new XMLHttpRequest();

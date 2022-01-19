@@ -1,4 +1,4 @@
-<% 
+<%
   directory_class     = OnBoard::ContentFilter::DG::ManagedList::Dir
   single_list_class   = OnBoard::ContentFilter::DG::ManagedList::List
 
@@ -21,15 +21,15 @@ END
   td.file-manager img {
     vertical-align: middle;
   }
-  td button[type="submit"] { 
+  td button[type="submit"] {
     margin: 0 0;
   }
 </style>
 
 <h2><%= title %></h2>
 
-<% 
-  dir     = objects 
+<%
+  dir     = objects
   subdirs = dir.select {|item| item.is_a? directory_class}
   lists   = dir.select {|item| item.is_a? single_list_class}
 %>
@@ -54,24 +54,24 @@ END
       <% lists.sort.each do |list| %>
         <tr>
           <td style="text-align:center">
-            <form method="POST" action="<%= list.http_path %>.html"> 
+            <form method="POST" action="<%= list.http_path %>.html">
               <input type="hidden" name="_method" value="delete">
               <%= action_button :delete, :alt => '[Trash]'  %>
               <input type="checkbox" name="confirm"/>
             </form>
           </td>
           <td class="file-manager">
-            <img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%== list.relative_path %></a>
-          </td> 
+            <img src="<%= icon %>" alt="<%= alt %>"/> <a href="<%= list.http_path %>.html"><%= list.relative_path %></a>
+          </td>
           <td style="text-align:center">
             <a class="img" href="<%= list.http_path %>.raw"><img src="<%= icon_dwnl %>" alt="<%= alt_dwnl %>"/></a>
-          </td> 
+          </td>
         </tr>
       <% end %>
     </tbody>
   </table>
 <% else %>
-  <p style="font-style: italic;">(no list files right now)</p> 
+  <p style="font-style: italic;">(no list files right now)</p>
 <% end %>
 
 <h3 id="sub_directories">Sub directories</h3>
@@ -93,7 +93,7 @@ END
         %>
         <tr>
           <td style="text-align:center">
-            <form method="POST" action="<%= subdir.http_path %>.html"> 
+            <form method="POST" action="<%= subdir.http_path %>.html">
               <input type="hidden" name="_method" value="delete">
               <%= action_button :delete, :alt => '[Trash]' %>
               <input type="checkbox" name="confirm"/>
@@ -101,7 +101,7 @@ END
           </td>
           <td class="file-manager">
             <img src="<%= icon %>" alt="<%= alt %>"/>
-            <a href="<%= subdir.http_path %>.html"><%== subdir.relative_path %>/</a>
+            <a href="<%= subdir.http_path %>.html"><%= subdir.relative_path %>/</a>
           </td>
         </tr>
       <% end %>
@@ -116,11 +116,11 @@ END
   <input type="hidden" name="_method" value="post"/>
   <input type="text" name="name"/>
   <select name="new">
-    <option value="directory" selected>Sub directory</option> 
+    <option value="directory" selected>Sub directory</option>
     <option value="file">Empty list file</option>
     <% lists.sort.each do |list| %>
-      <option 
-          value="copy_from:<%= list.relative_path %>">copy from: <%= 
+      <option
+          value="copy_from:<%= list.relative_path %>">copy from: <%=
           list.basename %></option>
     <% end %>
   </select>

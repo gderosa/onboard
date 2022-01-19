@@ -1,7 +1,7 @@
 # So autoload works well with gems
 require 'rubygems'
 
-%w{uuid escape erubis}.each do |g|
+%w{uuid escape}.each do |g|
   begin
     gem g
   rescue Gem::LoadError
@@ -14,13 +14,14 @@ autoload :Time,       'time'
 autoload :UUID,       'uuid'
 autoload :Timeout,    'timeout'
 autoload :Escape,     'escape'
-autoload :Erubis,     'erubis'
+autoload :ERB,        'erb'
 autoload :YAML,       'yaml'
 
 require 'onboard/extensions/ipaddr'
 require 'onboard/extensions/openssl'
 
 require 'onboard/system/process'
+require 'onboard/crypto/ssl/pki'
 require 'onboard/network/interface'
 require 'onboard/network/routing/table'
 require 'onboard/network/openvpn/convert'
@@ -41,7 +42,7 @@ class OnBoard
 
       UPSCRIPT ||= OpenVPN::ROOTDIR + '/etc/scripts/up'
 
-      DEFAULT_METRIC ||= 5000 
+      DEFAULT_METRIC ||= 5000
           # An HIGH value; e.g. maximum for Win XP is 9999
           # for Linux? unlimited?
 
@@ -50,23 +51,45 @@ class OnBoard
 
         System::Log.register_category 'openvpn', 'OpenVPN'
 
+        def self.cleanup_config_files!(h={})
+          h[:vpns] ||= getAll()
+          uuids = h[:vpns].map{|vpn| vpn.data['uuid']}
+
+          # Be safe: empty uuids list may be due to a bug? or the fact that the list is really empty?
+          # We are about to remove config files here...
+          return unless uuids.any?
+
+          removed_dir = File.join CONFDIR, '.__cleanup__removed__'
+          FileUtils.mkdir_p removed_dir
+          Dir.glob(CONFDIR +
+              '/[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]-[a-f0-9][a-f0-9][a-f0-9][a-f0-9]*').each do |fp|
+            if File.directory? fp
+              uuid = File.basename fp
+              unless uuids.include? uuid
+                FileUtils.mv fp, removed_dir
+                # FileUtils.rm_r fp, :secure => true
+              end
+            end
+          end
+        end
+
         def self.save
           FileUtils.mkdir_p CONFDIR unless Dir.exists? CONFDIR
           @@all_vpn = getAll() unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
           File.open(
-              CONFDIR + '/vpn.yml', 
+              CONFDIR + '/vpn.yml',
               'w'
           ) do |f|
             f.write(
               YAML.dump(
-                @@all_vpn.map do |vpn| 
+                @@all_vpn.map do |vpn|
                   vpn_data_internal = vpn.instance_variable_get(:@data_internal)
                   {
                     :process        => vpn_data_internal['process'],
                     :conffile       => vpn_data_internal['conffile'],
                     :start_at_boot  => vpn.data['running']
-                  } 
+                  }
                 end
               )
             )
@@ -78,13 +101,12 @@ class OnBoard
           return false unless File.readable? datafile
           current_VPNs = getAll()
           YAML.load(File.read datafile).each do |h|
-            if current_vpn = current_VPNs.detect{ |x| 
-                h[:process].portable_id == x.data['portable_id'] }
-              next if current_vpn.data['running'] 
-              current_vpn.start() if h[:start_at_boot] 
+            if current_vpn = current_VPNs.detect{|x| h[:uuid] == x.uuid}
+              next if current_vpn.data['running']
+              current_vpn.start() if h[:start_at_boot]
             else
               new_vpn = new(h)
-              new_vpn.start() if h[:start_at_boot] 
+              new_vpn.start() if h[:start_at_boot]
               @@all_vpn << new_vpn
             end
           end
@@ -98,13 +120,13 @@ class OnBoard
             f.write YAML.dump @@all_vpn
           end
         end
-    
+
         # get info on running OpenVPN instances
         def self.getAll
 
           @@all_interfaces  = Network::Interface.getAll()
           @@all_routes      = Network::Routing::Table.getCurrent()
-          @@all_vpn         = [] unless ( 
+          @@all_vpn         = [] unless (
               class_variable_defined? :@@all_vpn and @@all_vpn)
 
           if @@all_vpn.none? and File.readable? "#{CONFDIR}/vpn_current.yml"
@@ -123,7 +145,7 @@ class OnBoard
             end
             p.cmdline.each_with_index do |arg, idx|
               next if idx == 0
-              if p.cmdline[idx - 1] =~ /^\s*\-\-config/ 
+              if p.cmdline[idx - 1] =~ /^\s*\-\-config/
                 conffile = arg
                 break
                end
@@ -141,26 +163,19 @@ class OnBoard
         end
 
         def self.all_cached; @@all_vpn; end
-        
-        # TODO: get rid of portable_id, because you cannot foresee it before
-        # starting the openvpn process (i.e. on creation)
-        # 
+
         def self.lookup(h)
-          h[:all] ||= getAll 
-          if h[:any] 
+          h[:all] ||= getAll
+          if h[:any]
             return (
               lookup(:all => h[:all], :human_index  => h[:any]) or
-              lookup(:all => h[:all], :uuid         => h[:any]) or
-              lookup(:all => h[:all], :portable_id  => h[:any])
+              lookup(:all => h[:all], :uuid         => h[:any])
             )
           elsif h[:human_index]
             return h[:all][h[:human_index].to_i - 1]
           elsif h[:uuid]
-            return h[:all].detect {|x| 
+            return h[:all].detect {|x|
               x.data['uuid']            == h[:uuid]}
-          elsif h[:portable_id]
-            return h[:all].detect {|x| 
-              x.data['portable_id']     == h[:portable_id]}
           else
             return nil
           end
@@ -168,52 +183,71 @@ class OnBoard
 
         # opt_h:
         #   {:conffile => nil}      # use the long command line
-        #   {:conffile => :auto}    # 
-        #   {:conffile => filename} # 
-        def self.start_from_HTTP_request(params, opt_h={:conffile => :auto})  
+        #   {:conffile => :auto}    #
+        #   {:conffile => filename} #
+        # If conffile is used, this method is only invoked on first creation of the
+        # vpn instance, to generate the config file content, so changes to this method require
+        # re-creation to be effective.
+        def self.start_from_HTTP_request(params, opt_h={:conffile => :auto})
+          params['pki'] = 'default' unless params['pki']
+          ssl_pky = Crypto::SSL::PKI.new params['pki']
+          easyrsa_pki = Crypto::EasyRSA::PKI.new params['pki']
+
           uuid = UUID.generate
           config_dir = "#{CONFDIR}/#{uuid}"
           reserve_a_tcp_port = TCPServer.open('127.0.0.1', 0)
-          reserved_tcp_port = reserve_a_tcp_port.addr[1] 
+          reserved_tcp_port = reserve_a_tcp_port.addr[1]
           cmdline = []
           cmdline << 'openvpn'
           cmdline << '--script-security' << '2'
           cmdline << '--up' << UPSCRIPT
           # cmdline << '--up-restart'
+          cmdline << '--setenv' << 'HOME' << ENV['HOME']
           cmdline << '--setenv' << 'PATH' << ENV['PATH']
-	  cmdline << '--setenv' << 'bridge_to' << params['bridge_to']
+          cmdline << '--setenv' << 'bridge_to' << params['bridge_to']
           cmdline << '--setenv' << 'RUBYLIB' << OnBoard::ROOTDIR + '/lib'
-          cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' << 
-              OnBoard::CONFDIR + '/network/interfaces.yml' 
-          cmdline << '--setenv' << 'STATIC_ROUTES_DATFILE' << 
-              OnBoard::CONFDIR + '/network/routing/static_routes'          
+          cmdline << '--setenv' << 'ONBOARD_DATADIR' << OnBoard::DATADIR
+          cmdline << '--setenv' << 'NETWORK_INTERFACES_DATFILE' <<
+              OnBoard::CONFDIR + '/network/interfaces.yml'
+          cmdline << '--setenv' << 'STATIC_ROUTES_DATFILE' <<
+              OnBoard::CONFDIR + '/network/routing/static_routes'
           cmdline << '--persist-tun'
           cmdline << '--management' << '127.0.0.1' << reserved_tcp_port.to_s
           cmdline << '--daemon'
-          logfile = "/var/log/ovpn-#{uuid}.log" 
+          logfile = "/var/log/ovpn-#{uuid}.log"
           cmdline << '--log-append' << logfile
           cmdline << '--status' << "/var/run/ovpn-#{uuid}.status" <<
               OpenVPN::STATUS_UPDATE_INTERVAL
           cmdline << '--status-version' << '2'
           cmdline << '--ca' << case params['ca']
-              when '__default__'
-                Crypto::SSL::CACERT
+              when '__default__', /^__(\S*[^a-z0-9])?ca\S*__$/i
+                ssl_pky.cacertpath
               else
-                "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crt'"
+                "'#{ssl_pky.certdir}/#{params['ca']}.crt'"
               end
-          cmdline << '--cert' << 
-              "'#{Crypto::SSL::CERTDIR}/#{params['cert']}.crt'"
-          keyfile = "#{Crypto::SSL::KEYDIR}/#{params['cert']}.key"
+          cmdline << '--cert' <<
+              "'#{ssl_pky.certdir}/#{params['cert']}.crt'"
+          keyfile = "#{ssl_pky.keydir}/#{params['cert']}.key"
           key = OpenSSL::PKey::RSA.new File.read keyfile
-          dh = "#{Crypto::SSL::DIR}/dh#{key.size}.pem"
-          cmdline << '--key' << "'#{keyfile}'" 
-          crlfile = case params['ca']
-          when '__default__'
-            Crypto::EasyRSA::CRL
-          else
-            "'#{Crypto::SSL::CERTDIR}/#{params['ca']}.crl'"
+          dh = "#{ssl_pky.datadir}/dh#{key.size}.pem"
+          cmdline << '--key' << "'#{keyfile}'"
+
+          # CRL feature has been buggy even with single PKI...
+          # crlfile = case params['ca']
+          # when '__default__'
+          #   Crypto::EasyRSA::CRL
+          # else
+          #   "'#{ssl_pky.certdir}/#{params['ca']}.crl'"
+          # end
+          # cmdline << '--crl-verify' << crlfile if File.exists? crlfile
+
+          # TLS opts which may be useful for compat w/ older peers
+          if params['tls-version-min'] =~ /\S/
+            cmdline << '--tls-version-min' << params['tls-version-min']
           end
-          cmdline << '--crl-verify' << crlfile if File.exists? crlfile
+          if params['tls-cipher'] =~ /\S/
+            cmdline << '--tls-cipher' << params['tls-cipher']
+          end
 
           dev_type ||= 'tun' # default
           if params['dev-type'] =~ /^\s*(tun|tap)\s*$/
@@ -229,13 +263,13 @@ class OnBoard
                      params['dev']
                    else
                      OpenVPN::Interface::Name.generate(dev_type)
-                   end          
+                   end
           cmdline << '--dev' << dev_name
-          
+
           if params['server_net'] # it's a server, may be empty for TAPs
             client_config_dir = config_dir + '/clients'
 
-            net = nil            
+            net = nil
             if params['server_net'] =~ /\S/
               net = IPAddr.new params['server_net']
             end
@@ -251,31 +285,31 @@ class OnBoard
             cmdline << '--port' << params['port'].to_s
             cmdline << '--proto' << params['proto']
             cmdline << '--keepalive' << '10' << '120' # suggested in OVPN ex.
-            cmdline << '--dh' << dh # Diffie Hellman params :-)
+            cmdline << '--dh' << dh # Diffie Hellman params
             cmdline << '--client-config-dir' << client_config_dir
             FileUtils.mkdir_p client_config_dir
-          elsif params['remote_host'] =~ /\S/ 
+          elsif params['remote_host'] =~ /\S/
               # it's a client, one server (old API)
-            cmdline << 
+            cmdline <<
                 '--client' << '--nobind'
-            cmdline << 
+            cmdline <<
                 '--remote' << params['remote_host'] << params['remote_port'] << params['proto']
-            cmdline << '--ns-cert-type' << 'server' if 
+            cmdline << '--ns-cert-type' << 'server' if
                 params['ns-cert-type_server'] == 'on'
           elsif params['remote_host'].respond_to? :each_index and
-              params['remote_host'].detect{|x| x =~ /\S/} 
+              params['remote_host'].detect{|x| x =~ /\S/}
               # client -> multiple server (for redundancy)
             cmdline << '--client' << '--nobind'
             cmdline << '--ns-cert-type' << 'server' if
                 params['ns-cert-type_server'] == 'on'
             params['remote_host'].each_index do |i|
               next unless params['remote_host'][i] =~ /\S/
-              params['proto'][i] = 'udp'        unless 
+              params['proto'][i] = 'udp'        unless
                   params['proto'][i] =~ /\S/
-              params['remote_port'][i] = '1194' unless 
+              params['remote_port'][i] = '1194' unless
                   params['remote_port'][i] =~ /\S/
-              cmdline << '--remote' << 
-                  params['remote_host'][i] << 
+              cmdline << '--remote' <<
+                  params['remote_host'][i] <<
                   params['remote_port'][i] <<
                   params['proto'][i]
             end
@@ -305,7 +339,7 @@ class OnBoard
             end
             msg = System::Command.run <<EOF
 sudo touch #{logfile}
-sudo chown :onboard #{logfile}
+sudo chown :#{Process.gid} #{logfile}
 sudo chmod g+rw #{logfile}
 cd /
 UUID=#{uuid} sudo -E openvpn --config #{conffile} # -E is important!
@@ -313,7 +347,7 @@ EOF
           else
             msg = System::Command.run <<EOF
 sudo touch #{logfile}
-sudo chown :onboard #{logfile}
+sudo chown :#{Process.gid} #{logfile}
 sudo chmod g+rw #{logfile}
 cd /
 UUID=#{uuid} sudo -E #{cmdline.join(' ')} # -E is important!
@@ -326,28 +360,22 @@ EOF
             'category'  => 'openvpn',
             'hidden'    => false
           })
+          # Cleaup config dir if failed
+          if msg[:err] and opt_h[:conffile] == :auto
+            if Dir.exists? "#{CONFDIR}/#{uuid}"
+              FileUtils.rm_r "#{CONFDIR}/#{uuid}", :secure => true
+            end
+          end
           return msg
         end
 
-        def self.modify_from_HTTP_request(params) 
-          vpn = nil
-          if    params['portable_id'] and params['portable_id'] =~ /\S/
-            vpn = @@all_vpn.detect do |x| 
-              x.data['portable_id'] == params['portable_id'] 
-            end
-          end
-          if vpn  # the VPN has been found by portable_id (preferred method?)
-            if params['stop']
-              return vpn.stop()
-            elsif params['start']
-              return vpn.start()
-            end
-          elsif params['stop'] # try to seek the right VPN by array index
-            i = params['stop'].to_i - 1 
+        def self.modify_from_HTTP_request(params)
+          if params['stop'] # try to seek the right VPN by array index
+            i = params['stop'].to_i - 1
                 # array index = "human-friendly index" - 1
             return @@all_vpn[i].stop()
           elsif params['start']
-            i = params['start'].to_i - 1 
+            i = params['start'].to_i - 1
                 # array index = "human-friendly index" - 1
             return @@all_vpn[i].start()
           end
@@ -361,25 +389,25 @@ EOF
         attr_reader :data
         attr_writer :data
 
-        def initialize(h) 
+        def initialize(h)
           @data_internal = {
             'process'   => h[:process],
             'conffile'  => h[:conffile]
           }
-          @data = {'running' => h[:running]} 
-          @data['portable_id'] = @data_internal['process'].portable_id 
+          @data = {'running' => h[:running]}
           @data['uuid'] = uuid unless @data['uuid']
+          @data['pkiname'] = h[:pkiname]
           parse_conffile() if File.file? @data_internal['conffile'] # regular
-          parse_conffile(:text => cmdline2conf())  
+          parse_conffile(:text => cmdline2conf())
           if @data['server']
-            if @data_internal['status'] 
+            if @data_internal['status']
               parse_status() # TODO: TCP management interface, not just file
               set_portable_client_list_from_status_data()
-              # TODO?: get client info (and certificate info) 
+              # TODO?: get client info (and certificate info)
               # through --client-connect ?
             end
-            parse_ip_pool() if @data_internal['ifconfig-pool-persist'] 
-          elsif @data['client'] 
+            parse_ip_pool() if @data_internal['ifconfig-pool-persist']
+          elsif @data['client']
             @data['client'] = {} unless @data['client'].respond_to? :[]
             if @data_internal['management'] and @data['running']
               begin
@@ -414,17 +442,16 @@ EOF
 
             params['clients'].each do |client|
               next unless client['CN'] =~ /\S/
-              if 
-                  client['delete'] == 'on' and 
+              if
+                  client['delete'] == 'on' and
                   File.exists? "#{@data_internal['client-config-dir']}/#{client['CN']}"
-                FileUtils.rm "#{@data_internal['client-config-dir']}/#{client['CN']}" 
+                FileUtils.rm "#{@data_internal['client-config-dir']}/#{client['CN']}"
                 next
               end
 
               routes      = client['routes'].lines.map{|x| x.strip}
 
-              client_config_file = 
-"#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
+              client_config_file = "#{@data_internal['client-config-dir']}/#{client['CN'].gsub(' ', '_')}"
               File.open(client_config_file, 'w') do |f|
                 routes.each do |route|
                   # Translate "10.11.12.0/24" -> "10.11.12.0 255.255.255.0"
@@ -439,7 +466,7 @@ EOF
                       @data['explicitly_configured_routes'].include? h
                 end
 
-                f.puts Convert.textarea2push_routes client['push_routes']
+                f.puts Convert.textarea2push_routes client['push_routes'], client['push_route_metric']
 
               end
 
@@ -449,7 +476,7 @@ EOF
             text = ''
             # remove old configuration we want to change
             File.foreach(@data_internal['conffile']) do |line|
-              text << line unless 
+              text << line unless
                   line =~ /^\s*route\s+(\S+)\s+(\S)/ or
                   line =~ /^\s*client-to-client\s*(#.*)?$/ or
                   line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
@@ -459,7 +486,8 @@ EOF
               text << "route #{route_h['net']} #{route_h['mask']}\n"
             end
             text << "client-to-client\n" if params['client_to_client'] == 'on'
-            text << Convert.textarea2push_routes(params['push_routes'])
+            # All-client push-routes
+            text << Convert.textarea2push_routes(params['push_routes'], params['push_route_metric'])
             File.open @data_internal['conffile'], 'w' do |f|
               f.write text
             end
@@ -489,11 +517,12 @@ EOF
             pwd = @data_internal['process'].env['PWD']
             cmd = Escape.shell_command(@data_internal['process'].cmdline)
             cmd += ' --daemon' unless @data_internal['daemon']
-            msg = System::Command.bgexec ("cd #{pwd} && UUID=#{uuid} sudo -E #{cmd}") 
+            cmd += " --setenv HOME #{ENV['HOME']}"
+            msg = System::Command.bgexec ("cd #{pwd} && UUID=#{uuid} sudo -E #{cmd}")
             msg[:ok] = true
             msg[:info] = 'Request accepted. You may check <a href="">this page</a> again to get updated info for the active VPNs. You may also check the <a href="/system/logs.html">logs</a>.'
             return msg
-          end          
+          end
         end
 
         def stop(*opts)
@@ -512,7 +541,7 @@ EOF
               #pp System::Log.all
             end
           end
-          FileUtils.rm_rf config_dir if 
+          FileUtils.rm_rf config_dir if
               config_dir and Dir.exists? config_dir and opts.include? :rmconf
           return msg
         end
@@ -520,7 +549,7 @@ EOF
         def config_dir
           uuid ? "#{CONFDIR}/#{uuid}" : nil
         end
-       
+
         def set_not_running
           @data['running'] = false
         end
@@ -532,7 +561,8 @@ EOF
                 vpn.data_internal['process'].cmdline ==
                     self.data_internal['process'].cmdline and
                 vpn.data_internal['process'].env['PWD'] ==
-                    self.data_internal['process'].env['PWD']
+                    self.data_internal['process'].env['PWD'] or
+                vpn.uuid == self.uuid
             )
               @@all_vpn[vpn_i] = self
               already_in_the_pool = true
@@ -544,7 +574,7 @@ EOF
           end
         end
 
-        
+
         # Turn the OpenVPN command line into a "virtual" configuration file
         def cmdline2conf
           self.class.cmdline2conf @data_internal['process'].cmdline
@@ -565,14 +595,14 @@ EOF
             @data['interface'] = interface.name if interface
           else
             @data['interface'] = @data['dev']
-          end          
+          end
         end
 
         def find_virtual_address
           @@all_interfaces ||= Network::Interface.getAll()
-          iface = @@all_interfaces.detect do |x| 
+          iface = @@all_interfaces.detect do |x|
             x.name == @data['interface'] or
-            x.name == @data['dev'] 
+            x.name == @data['dev']
           end
           if @data['dev-type'] == 'tap' or @data['dev'] =~ /^tap/
             @data['virtual_addresses'] = iface.data['ip'] if iface
@@ -600,8 +630,9 @@ EOF
           data['routes'] = ary
         end
 
-        def find_client_certificates(opts={})
-          Crypto::SSL::getAllCerts(opts).select do |key, value| #Facets
+        def find_client_certificates_from_pki(pkiname, opts={})
+          ssl_pki = Crypto::SSL::PKI.new(pkiname)
+          ssl_pki.getAllCerts(opts).select do |key, value| #Facets
             cert = value['cert']
             cert['issuer'] == data['ca']['subject'] and not
             cert['subject'] == data['cert']['subject']
@@ -609,7 +640,7 @@ EOF
           end
         end
 
-        def parse_conffile(opts={})  
+        def parse_conffile(opts={})
           @data['explicitly_configured_routes'] = [] unless
             @data['explicitly_configured_routes'].respond_to? :[]
 
@@ -621,27 +652,27 @@ EOF
               conffile = find_file opts[:file]
             else
               conffile = find_file @data_internal['conffile']
-            end 
+            end
             begin
-              text = File.read conffile 
+              text = File.read conffile
             rescue
               @data['err'] = "couldn't open config file: '#{conffile}'"
               if @data_internal['conffile'] =~ /\S/
                 @data['err'] << " '#{@data_internal['conffile']}'"
               end
               return false
-            end    
-          end      
-            
+            end
+          end
+
           text.each_line do |line|
 =begin
 # this is a comment
 #this too
 a_statement # this is a comment # another comment
-address#port # 'port' was not a comment (for example, dnsmasq config files) 
+address#port # 'port' was not a comment (for example, dnsmasq config files)
 =end
             next if line =~ /^\s*[;#]/
-            line.sub! /\s+[;#].*$/, '' 
+            line.sub! /\s+[;#].*$/, ''
 
             # "public" options with no arguments ("boolean" options)
             %w{duplicate-cn client-to-client client comp-lzo}.each do |optname|
@@ -649,11 +680,11 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 @data[optname] = true
                 next
               end
-            end 
+            end
 
-            # "public" options with 1 argument 
+            # "public" options with 1 argument
             %w{port proto dev dev-type max-clients local comp-lzo}.each do |optname|
-              if line =~ /^\s*#{optname}\s+(.*)\s*$/ 
+              if line =~ /^\s*#{optname}\s+(.*)\s*$/
                 @data[optname] = $1
                 next
               end
@@ -691,10 +722,11 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                   @data['explicitly_configured_routes'].include? h
             end
             # TODO: DRY with parse_client_config code: How?
-            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
+            if line =~ /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)(\s+(\S+))?(\s+(\S+))?.*"/
               @data['push'] ||= {}
               @data['push']['routes'] ||= []
-              @data['push']['routes'] << {'net' => $1, 'mask' => $2}
+              @data['push']['routes'] << {'net' => $1, 'mask' => $2, 'metric' => $6}
+              @data['push']['route_metric'] ||= $6  # a default value for UI use
             end
 
             # "private" options with no args
@@ -703,7 +735,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 @data_internal[optname] = true
                 next
               end
-            end 
+            end
 
             # "private" options with 1 argument
             %w{key dh ifconfig-pool-persist status status-version log log-append client-config-dir}.each do |optname|
@@ -712,7 +744,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 if optname == 'log' or optname == 'log-append'
                   logfile = find_file $1
                   System::Log.register({
-                      'path' => logfile, 
+                      'path' => logfile,
                       'category' => 'openvpn',
                       'hidden' => false
                   })
@@ -722,9 +754,11 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end
 
             %w{ca cert}.each do |optname|
-              if line =~ /^\s*#{optname}\s+(\S.*\S)\s*$/ 
-                  # match filenames containing spaces  
-                if file = find_file($1)
+              if line =~ /^\s*#{optname}\s+(\S.*\S)\s*$/
+                # match filenames containing spaces
+                filepath = $1
+                @data['pkiname'] = Crypto::SSL::PKI.guess_pkiname :filepath => filepath
+                if file = find_file(filepath)
                   begin
                     c = OpenSSL::X509::Certificate.new(File.read file)
                     @data_internal[optname] = c
@@ -740,7 +774,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                     end
                     subject__to_h = {}
                     c.subject.to_a.each do |name_val_type|
-                      subject__to_h[name_val_type[0]] = name_val_type[1] 
+                      subject__to_h[name_val_type[0]] = name_val_type[1]
                     end
                     @data[optname] = {
                       'serial'      => c.serial.to_i,
@@ -751,7 +785,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                     }
                   rescue OpenSSL::X509::CertificateError
                     @data_internal[optname] = $!
-                    @data[optname] = {'err' => $!.to_s} 
+                    @data[optname] = {'err' => $!.to_s}
                   end
                   next
                 else
@@ -765,7 +799,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             if line =~ /^\s*status\s+(\S+)\s+(\S+)\s*$/
               @data_internal['status'] = $1
               @data_internal['status_update_seconds'] = $2
-              @data['status_update_seconds'] = 
+              @data['status_update_seconds'] =
                   @data_internal['status_update_seconds']
                       # keep also in @data_internal for compatibility
               next
@@ -778,7 +812,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             elsif line =~ /^\s*management\s+(\S+)\s+(\S+)\s*$/
               address = $1
               port = $2
-              address = '127.0.0.1' if 
+              address = '127.0.0.1' if
                   address =~ /(\*|0\.0\.0\.0|::)/ and not
                   address =~ /[a-f\d]::/i and not
                   address =~ /::[a-f\d]/i
@@ -788,7 +822,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 'address' => address,
                 'port'    => port
               }
-              # TODO: configuration of the management interface may be more 
+              # TODO: configuration of the management interface may be more
               # complicated than that! See OpenVPN docs.
             elsif line =~ /^\s*ifconfig\s+(\S+)\s+(\S+)\s*$/
               @data_internal['ifconfig'] = {
@@ -826,15 +860,16 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 case l
                 when /^\s*iroute\s+(\S+)\s+(\S+)/
                   @data['client-config'][cn]['iroutes'] <<
-                      {'net' => $1, 'mask' => $2}  
+                      {'net' => $1, 'mask' => $2}
                   next
                 when /^\s*route\s+(\S+)\s+(\S+)/
                   @data['client-config'][cn]['routes'] <<
                       {'net' => $1, 'mask' => $2}
                   next
-                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+).*"/
+                when /^\s*push\s+"\s*route\s+(\S+)\s+(\S+)(\s+(\S+))?(\s+(\S+))?.*"/
                   @data['client-config'][cn]['push']['routes'] <<
-                      {'net' => $1, 'mask' => $2}
+                      {'net' => $1, 'mask' => $2, 'metric' => $6}
+                  @data['client-config'][cn]['push']['route_metric'] ||= $6  # one for all routes for a client from a user perspective
                 end
               end
             end
@@ -850,7 +885,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
           status_file = find_file @data_internal['status']
 
-          unless status_file 
+          unless status_file
             @data_internal['status_data']['err'] = 'no readable status file has been found'
             return false
           end
@@ -860,9 +895,9 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             parse_status_v1(status_file)
           when /2/
             parse_status_v2(status_file)
-          else 
+          else
             raise \
-                RuntimeError, 
+                RuntimeError,
                 '@data_internal[\'status-version\'] was not set!'
           end
         end
@@ -881,7 +916,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
             where = :client_list    if line =~ /OpenVPN CLIENT LIST/
             where = :routing_table  if line =~ /ROUTING TABLE/
-            where = :global_stats   if line =~ /GLOBAL STATS/ 
+            where = :global_stats   if line =~ /GLOBAL STATS/
 
             if line =~ /^\s*Updated,(\S.*\S)\s*$/
               @data_internal['status_data']['updated'] = $1
@@ -890,7 +925,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             if where == :client_list
               if line =~ /Common Name,Real Address,Bytes Received,Bytes Sent,Connected Since/
                 got_client_list_header = true
-                client_list_fields = line.split(',') 
+                client_list_fields = line.split(',')
               elsif got_client_list_header
                 h = {}
                 values = line.split(',')
@@ -905,12 +940,12 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             if where == :routing_table
               if line =~ /Virtual Address,Common Name,Real Address,Last Ref/
                 got_routing_table_header = true
-                routing_table_fields = line.split(',') 
+                routing_table_fields = line.split(',')
               elsif got_routing_table_header
                 h = {}
                 values = line.split(',')
 
-                break unless 
+                break unless
                     values.respond_to? :length and
                     routing_table_fields.respond_to? :length and
                     values.length == routing_table_fields.length
@@ -923,7 +958,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end
 
             # TODO? GLOBAL STATS?
-           
+
           end
         end
 
@@ -936,7 +971,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             if line =~ /TIME,([^,]+)/
               @data_internal['status_data']['updated'] = $1
             elsif line =~ /^HEADER,([^,]+),(.*)$/
-              headers[$1] = $2.split(',') 
+              headers[$1] = $2.split(',')
             elsif line =~ /^CLIENT_LIST,(.*)/
               values = $1.split(',')
               h = {}
@@ -954,9 +989,9 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             end
 
             # TODO? GLOBAL STATS?
-           
+
           end
-        end       
+        end
 
         def set_portable_client_list_from_status_data
           ary = []
@@ -976,12 +1011,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
             ary.each do |client|
               t = client['Connected Since (time_t)'].to_i
               if t > 0
-                client['Connected Since'] = 
-                    Time.at t
+                client['Connected Since'] = Time.at t
               else
-                client['Connected Since'] =
-                    Time.parse client['Connected Since']
-              end 
+                client['Connected Since'] = Time.parse client['Connected Since']
+              end
               # creating a Time object from a Unix timestamp should be
               # more efficient than parsing a human readable string, so
               # use the former when available
@@ -1002,7 +1035,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
           ip_pool_file = find_file @data_internal['ifconfig-pool-persist']
 
-          unless ip_pool_file 
+          unless ip_pool_file
             @data['ip_pool']['err'] = "no readable IP pool file has been found -- @data_internal['ifconfig-pool-persist'] = #{@data_internal['ifconfig-pool-persist']}"
             return false
           end
@@ -1010,7 +1043,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           File.foreach(ip_pool_file) do |line|
             line.strip!
             h = {}
-            h['Common Name'], h['Virtual Address'] = line.split(',') 
+            h['Common Name'], h['Virtual Address'] = line.split(',')
             @data['ip_pool']['pool'] << h
           end
         end
@@ -1022,7 +1055,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
                 @data_internal['management']['port']
             )
           rescue
-            @data['client'] = {} unless @data['client'].respond_to? :[] 
+            @data['client'] = {} unless @data['client'].respond_to? :[]
             @data_internal['management']['err'] = $!
             @data['client']['management_interface_err'] = $!.to_s
             return false
@@ -1046,15 +1079,15 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
               @data_internal['management']['status'][key] = val
             end
           end
-          tcp.puts 'exit'          
+          tcp.puts 'exit'
           tcp.close
 
           @data['client'] = {
-            # 'Common Name'           => 
+            # 'Common Name'           =>
             #     TODO: an OpenSSL/TLS/x509 class ? ,
-            'Virtual Address'         => 
+            'Virtual Address'         =>
                 @data_internal['management']['state'][3],
-            'Bytes Received'          => 
+            'Bytes Received'          =>
                 @data_internal['management']['status']['TCP/UDP read bytes'],
             'Bytes Sent'              =>
                 @data_internal['management']['status']['TCP/UDP write bytes'],
@@ -1073,10 +1106,10 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           ca      = h[:ca]
           cert    = h[:cert]
           key     = h[:key]
-          port    = h[:port] 
-          tmpl = Erubis::Eruby.new File.read(  
+          port    = h[:port]
+          tmpl    = ERB.new File.read(
               File.join ROOTDIR, 'templates/client.conf.erb')
-          tmpl.result(binding) 
+          tmpl.result(binding)
         end
 
         protected
@@ -1089,16 +1122,16 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
 
         # Find out the right path to config files, status logs etc.
         def find_file(name)
-          
+
           return false unless name
 
           attempts = []
           attempts << name
           attempts << File.join(
-              @data_internal['process'].env['PWD'], 
+              @data_internal['process'].env['PWD'],
               name
           ) if @data_internal['process'].env['PWD'] and name
-          
+
           unless @data_internal['conffile'].strip == name.strip
             attempts << File.join(
               File.dirname(@data_internal['conffile']),
@@ -1107,7 +1140,7 @@ address#port # 'port' was not a comment (for example, dnsmasq config files)
           end
 
           attempts.each do |attempt|
-            return attempt if File.exists? attempt 
+            return attempt if File.exists? attempt
               # it may be root:root -rw-------, but still good: will be
               # read with "sudo cat"
           end

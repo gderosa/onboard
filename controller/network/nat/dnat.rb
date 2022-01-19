@@ -5,7 +5,7 @@ require 'onboard/network/iptables'
 class OnBoard::Controller
   get '/network/nat/dnat.:format' do
     iptablesobj = OnBoard::Network::Iptables.new(
-      :ip_version => '4', # no IPv6 NAT implemented (probably useless...)  
+      :ip_version => '4', # no IPv6 NAT implemented (probably useless...)
       :tables => %w{nat}
     )
     iptablesobj.get_all_info
@@ -53,5 +53,5 @@ class OnBoard::Controller
       :title => 'DNAT'
     )
   end
- 
+
 end

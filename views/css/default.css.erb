@@ -1,17 +1,18 @@
-<% 
-  superhighlight  = "#080"
-  highlight       = DEFAULT_THEME[:highlight]
-  lighthighlight  = "#88e" 
-  almostblack     = "#222"
-  lowlight        = DEFAULT_THEME[:lowlight] 
-  superlowlight   = "#bbb" 
-  hover           = "color: white; background: #{highlight};" 
-  lightbg         = "#dfdfdf" 
-  lightbg_off     = "#eedddd"
-  lightbg_high    = "#ddeedd"
-  serif           = %q{"Times New Roman", Times, Georgia, serif}
-  sans_serif      = %q{Helvetica, Arial, sans-serif}
-  monospace       = %q{monospace}
+<%
+  superhighlight    = "#080"
+  highlight         = DEFAULT_THEME[:highlight]
+  lighthighlight    = "#88e"
+  almostblack       = "#222"
+  lowlight          = DEFAULT_THEME[:lowlight]
+  superlowlight     = "#bbb"
+  hover             = "color: white; background: #{highlight};"
+  lightbg           = "#dfdfdf"
+  lightbg_off       = "#eedddd"
+  lightbg_high      = "#ddeedd"
+  serif             = %q{"Times New Roman", Times, Georgia, serif}
+  sans_serif        = %q{Helvetica, Arial, sans-serif}
+  monospace         = %q{monospace}
+  terminalfontcolor = "#060"
 %>
 
 body {
@@ -87,7 +88,7 @@ a.created, a.new {
 div#main {
   border: 0;
   float: right;
-  width: 80%;	
+  width: 80%;
   padding: 2px;
   margin: 1em 1px;
 }
@@ -133,7 +134,7 @@ textarea {
 }
 
 input[type="radio"], input[type="checkbox"] {
-  vertical-align: middle; 
+  vertical-align: middle;
 }
 
 .product-name, em {
@@ -141,11 +142,11 @@ input[type="radio"], input[type="checkbox"] {
   margin-right: 0.3ex;
 }
 
-div#main div.error, div#main div.warn, div#main div.info, div#main pre.error, div#main pre.warn, div#main pre.info div#main p.error, div#main p.warn, div#main p.info { 
+div#main div.error, div#main div.warn, div#main div.info, div#main pre.error, div#main pre.warn, div#main pre.info div#main p.error, div#main p.warn, div#main p.info {
   color: black;
   padding: 0.3em 0.3em;
   margin-bottom: 1em;
-  margin-top: 2em;
+  margin-top: 1em;
 }
 
 div#main .error pre, div#main .warn pre, div#main .info pre {
@@ -160,7 +161,31 @@ div#navbar .error, div#navbar .warn, div#navbar .info {
 
 .error, .error-like {border: 1px red dashed;}
 .warn,  .warn-like  {border: 1px yellow solid; font-style: italic; font-size:105%;}
-.info,  .info-like  {border: 1px #4b0 dotted;} 
+.info,  .info-like  {border: 1px #4b0 dotted;}
+
+td span.error {
+  border: 1px #f62 dotted;
+}
+
+td span.error code {
+  color: black;
+  font-weight: bold;
+}
+
+td span.warn {
+  border: 1px yellow dotted;
+  font-style: normal;
+}
+
+td span.info {
+  border-style: dashed;
+}
+
+
+
+.warn em {
+  font-style: normal;
+}
 
 .optional, .optinfo {
   text-align:   left;
@@ -185,9 +210,22 @@ div#main p {
 	margin-top: 0.3em;
 }
 
-div#main pre, kbd, code {
+div#main pre {
   /* font-size: 11pt; */
   color: <%= highlight %>;
+}
+
+kbd, code {
+  color: <%= terminalfontcolor %>;
+  font-weight: bold;
+}
+
+td kbd, td code {
+    color: black;
+}
+
+h2 code, h3 code, h4 code {
+  color: #040;
 }
 
 div#main td pre {
@@ -199,9 +237,11 @@ div#main pre.framed {
 }
 
 pre.log {
+  padding-bottom: 0.9ex;
+  padding-top: 0.6ex;
   margin: 2em 0;
   width: 95%;
-  height: 17em; 
+  max-height: 66vh;
   border: 2px <%= lightbg %> solid;
 }
 
@@ -209,19 +249,19 @@ pre {
   overflow: auto;
 }
 
-a, .hmenu-bullet {
+a, .hmenu-bullet, td a code, a code {
   color: <%= highlight %>;
   text-decoration: none;
 }
 
-a {
+a, td a code, a code {
   font-weight: bold;
 }
 
-a:hover   {
-  color: white; 
-  background: <%= highlight %>; 
-} 
+a:hover, td a:hover code, a:hover code {
+  color: white;
+  background: <%= highlight %>;
+}
 
 .hmenu-bullet:hover  {
   color: <%= superhighlight %>;
@@ -234,19 +274,19 @@ li .hmenu-content {
 
 li span.hmenu-selected, li div.hmenu-selected {
   font-weight: bold;
-  color: <%= superhighlight %>; 
+  color: <%= superhighlight %>;
   padding: 0;
   margin: 0 0 0 2px; /* Y A alignment hack ? */
 }
 
-li.hmenu-selected > .hmenu-bullet, 
+li.hmenu-selected > .hmenu-bullet,
 li.hmenu-selected > .hmenu-bullet-nochildren {
   color: <%= superhighlight %>;
 }
 
 /* border-aligment hack... */
 ul.hmenu li.hmenu-selected, ul.hmenu-submenu li.hmenu-selected {
-  border-left: 1px <%= superhighlight %> dashed; 
+  border-left: 1px <%= superhighlight %> dashed;
   padding-left: 4px;  /* 4px + 1px = 5px */
 }
 ul.hmenu li, ul.hmenu-submenu li {
@@ -265,13 +305,13 @@ a.img, a.img:hover, a img  {
   background: transparent;
 }
 
-.superhighlight a {
+.superhighlight a, a .superhighlight {
   color: <%= superhighlight %>;
 }
 
-.superhighlight a:hover {
+.superhighlight a:hover, a:hover .superhighlight {
   color: white;
-  background: <%= superhighlight %>;
+  background: <%= highlight %>;
 }
 
 table {
@@ -284,7 +324,7 @@ table caption {
 }
 
 table tr th {
-  border:0; 
+  border:0;
   text-align: center;
   padding: 0 1em;
 }
@@ -293,8 +333,8 @@ table tr td, table tr th, table thead tr th, table tbody tr td {
   border: 1px white solid;
 }
 
-table tr td, table tr th, fieldset, .table-cell-bg, ul[role="tablist"] { 
-  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png"); 
+table tr td, table tr th, fieldset, .table-cell-bg, ul[role="tablist"], .th-like {
+  background: url("/backgrounds/kollermedia.at/pattern4u/lined/39original.moretransp.png");
   background-attachment: fixed;
 }
 
@@ -377,6 +417,26 @@ table tr td div {
   margin: 0.3em 0;
 }
 
+td.num {
+  text-align: right;
+  padding-right: 1ex;
+}
+
+.th-like {
+  font-style: normal;
+  font-weight: bold;
+}
+
+.btn-like {
+  display: inline-block;
+  border: 1px #ccc solid;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: bold;
+  font-size: 85%;
+  font-style: normal;
+}
+
 .term, .em-special {
   text-decoration: none;
   border-bottom: 1px #444 dashed;
@@ -393,6 +453,7 @@ fieldset {
 
 button[type="submit"] {
   margin: 1ex 0;
+  font-weight: bold;
 }
 
 button[disabled] {
@@ -400,7 +461,7 @@ button[disabled] {
   border: 1px <%= superlowlight %> solid;
 }
 
-button[disabled] img { /* CSS3 */ 
+button[disabled] img { /* CSS3 */
   opacity: 0.4; /* Firefox */
   filter: alpha(opacity=40); /* MSIE */
 }
@@ -416,7 +477,7 @@ input[disabled] {
 
 ul li ul li .hmenu-content  {
   font-size: 97%;
-} 
+}
 
 div#sidebar ul {
   font-weight: bold;
@@ -424,7 +485,7 @@ div#sidebar ul {
 
 li {
   margin: 0.2em 0;
-} 
+}
 
 li.hmenu-item, li.hmenu-submenu {
   margin-top: 0.5em;
@@ -452,5 +513,10 @@ sup {
   margin-top: 0.5em;
 }
 
+.footnote {
+  font-size: smaller;
+}
 
-
+hr {
+  border: 1px solid #eee;
+}

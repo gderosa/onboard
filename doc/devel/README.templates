@@ -6,4 +6,3 @@ templates/ contains non-web templates; they live outside of Sinatra and
 know nothing about helpers, params, Rack request and so on.
 
 Usually they generate configuration files for various Unix daemons.
-

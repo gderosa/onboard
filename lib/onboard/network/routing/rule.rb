@@ -16,7 +16,7 @@ class OnBoard
           File.open SAVE_FILE, 'w' do |f|
             f.write `ip rule show`
           end
-        end        
+        end
 
         def self.restore(opt_h={})
           return false unless File.readable? SAVE_FILE
@@ -24,15 +24,15 @@ class OnBoard
           # This is critical code. If something goes wrong here your network
           # may break...
 
-          System::Command.run "ip rule flush", :sudo if opt_h[:flush] 
+          System::Command.run "ip rule flush", :sudo if opt_h[:flush]
           File.foreach SAVE_FILE do |line|
             if line =~ /^\s*(\d+):\s+(\S.*\S)\s*$/
               prio, rulespec = $1, $2
               # next if prio.to_i == 0
                 # Yes, rule 0 (lookup local) may have been deleted by misuse
-                # of 'ip rule' at the shell, so it definitely makes sense to 
+                # of 'ip rule' at the shell, so it definitely makes sense to
                 # restore it.
-              del = "ip rule del prio #{prio} #{rulespec}"  
+              del = "ip rule del prio #{prio} #{rulespec}"
               add = "ip rule add prio #{prio} #{rulespec}"
 	      # Avoid duplicates / make restoring idempotent
               System::Command.run del, :sudo, :try unless opt_h[:flush]
@@ -47,7 +47,7 @@ class OnBoard
           `ip rule show`.each_line do |line|
             if line =~ /^(\d+):\s+(.*)$/
               rulespec = "prio #{$1} #{$2}"
-              if line =~ 
+              if line =~
                   /^(\d+):\s+from\s+(\S+)(\s+to\s+(\S+))?(\s+fwmark\s+(\S+))?(\s+iif\s+(\S+))?\s+(lookup|table)\s+(\S+)/
                 prio, from, to, fwmark_and_fwmask, iif, table =
                     $1, ($2 || 'all'), ($4 || 'all'), $6, $8, $10
@@ -79,25 +79,25 @@ class OnBoard
             cmd << "from  #{rule['from']} "   if rule['from']   =~ /\S/
             cmd << "to    #{rule['to']} "     if rule['to']     =~ /\S/
             cmd << "iif   #{rule['iif']} "    if rule['iif']    =~ /\S/
-            h = compute_fwmark!(rule) 
+            h = compute_fwmark!(rule)
             fwmark = h[:mark]
             fwmask = h[:mask]
             cmd << "fwmark #{fwmark}/#{fwmask} " if fwmark and fwmark > 0
             cmd << "lookup #{rule['table']} " if rule['table']  =~ /\S/
             msg = System::Command.run cmd, :sudo
-            return msg if msg[:err] 
+            return msg if msg[:err]
           end
         end
 
         def self.change_from_HTTP_request(h)
           old_rules               = h[:current_rules]
           new_rules_params        = h[:http_params]['rules']
-          new_rules               = new_rules_params.map{|h| self.new(h)} 
+          new_rules               = new_rules_params.map{|h| self.new(h)}
 
           rules_to_del            = []
           rules_to_add_params     = []
 
-          # explicit deletion, i.e. from an explicit deletion request, not as a 
+          # explicit deletion, i.e. from an explicit deletion request, not as a
           # consequence of a *change* request
           deleted_indexes         = []
           new_rules_params.each_with_index do |rule_params, idx|
@@ -109,12 +109,12 @@ class OnBoard
           old_rules.delete_values_at        *deleted_indexes
           new_rules_params.delete_values_at *deleted_indexes
           new_rules.delete_values_at        *deleted_indexes
-          
+
           # Change request
 
           new_rules.each_with_index do |new_rule, n|
             unless old_rules.include? new_rule
-              rules_to_add_params << new_rules_params[n] 
+              rules_to_add_params << new_rules_params[n]
             end
           end
 
@@ -139,11 +139,11 @@ class OnBoard
   |________| |________| |________| |________|
    unused/0   iphysdev   unused/0   DSCP + 00  # physdev = bridge port
 
-  It's assumed no other is making packet mangling, which would led to 
+  It's assumed no other is making packet mangling, which would led to
   unpredictable results...!
-  
+
 =end
-        
+
         # TODO TODO TODO: rename h -> rule_h (more meaningful and less bug-prone)
         def self.compute_fwmark!(h)
           return_h = {
@@ -169,7 +169,7 @@ class OnBoard
                 :mask_str                   => '0xff0000',
                 :bitshift                   => 16 # two bytes
               }, # same as above...
-            },             
+            },
             :dscp => { # DiffServ Code Points
               :value                      => h['dscp'].to_i,
               :ipt_switch                 => "-m dscp --dscp",
@@ -179,7 +179,7 @@ class OnBoard
                 :mask_str                   => '0xff',
                 :bitshift                   => 0 # last byte
               }
-            }            
+            }
           }
 
           detected_mark         = {}
@@ -188,13 +188,13 @@ class OnBoard
           [:iphysdev, :dscp].each do |match_by|
 
             detected_mark_others[match_by] ||= [] # initialize as empty Array
-            value         = config[match_by][:value] 
+            value         = config[match_by][:value]
                 # iterface name, dscp value etc.
-              
+
             next if value.kind_of? Integer  and value == 0
             next if value.kind_of? String   and value =~ /^\s*$/
-              
-            ipt_switch    = config[match_by][:ipt_switch]              
+
+            ipt_switch    = config[match_by][:ipt_switch]
             ipt_match     = "#{ipt_switch} #{value}"
             ipt_match_any = "#{ipt_switch} (\\S+)"
             fwmark        = config[match_by][:fwmark]
@@ -204,7 +204,7 @@ class OnBoard
 
             `sudo iptables-save -t mangle`.each_line do |line|
 
-              re = 
+              re =
 /-A PREROUTING #{ipt_match} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
               re_any =
 /-A PREROUTING #{ipt_match_any} .*-j MARK --set-xmark #{regex}\/#{mask_str}/
@@ -223,36 +223,36 @@ class OnBoard
 
             end
 
-            if 
-                detected_mark[match_by].kind_of?  Integer and 
-                detected_mark[match_by] >         0               
+            if
+                detected_mark[match_by].kind_of?  Integer and
+                detected_mark[match_by] >         0
 
               computed_mark[match_by] = detected_mark[match_by]
 
-            else 
+            else
 
               if match_by == :dscp # DSCP is special, no need to create a "map"
 
-                computed_mark[match_by] = (value.to_i << 2) 
+                computed_mark[match_by] = (value.to_i << 2)
                 # DS FIELD bits = DSCP(6 bits) + ECN(2 bits)
                 # fw mark "byte" will be identical to a DS field with ECN bits
-                # set to zero, hence the bitshift "<< 2" 
+                # set to zero, hence the bitshift "<< 2"
                 #
-                # Last two bits will be used when a ECN match will be 
+                # Last two bits will be used when a ECN match will be
                 # desired/implemented, so they are reserved for future use.
 
               else
                 # find the first available mark
-                computed_mark[match_by] = ( 
-                    (0x01..0xff).to_a               - 
-                    detected_mark_others[match_by]   
+                computed_mark[match_by] = (
+                    (0x01..0xff).to_a               -
+                    detected_mark_others[match_by]
                 ).min
               end
 
               shifted_mark = computed_mark[match_by] << bitshift
-              set_mark = "0x#{shifted_mark.to_s(16)}/0x#{fwmark[:mask].to_s(16)}"  
-              comment = "-m comment --comment \"automatically added by #{self.name}\"" 
-              
+              set_mark = "0x#{shifted_mark.to_s(16)}/0x#{fwmark[:mask].to_s(16)}"
+              comment = "-m comment --comment \"automatically added by #{self.name}\""
+
               System::Command.run "iptables -t mangle -A PREROUTING #{ipt_match} -j MARK --set-mark #{set_mark} #{comment}", :sudo, :raise_exception
             end
 
@@ -269,7 +269,7 @@ class OnBoard
             # retval_mask will be 0x00ff00ff ;
             # if the rule is on dscp only
             # retval_mask will be 0x000000ff ;
-            # if the rule is on iphysdev only 
+            # if the rule is on iphysdev only
             # retval_mask will be 0x00ff0000 .
             retval_mask |= mask if (h[match_by.to_s] =~ /\S/ or h[match_by.to_s].to_i > 0)
 
@@ -286,11 +286,11 @@ class OnBoard
 
 =begin
         def self.delete_rules_by_fwmark(h)
-           select_rules_by_fwmark(h).map{|x| x.del!}  
+           select_rules_by_fwmark(h).map{|x| x.del!}
         end
 
         def self.select_rules_by_fwmark(h)
-          getAll.select{|x| x.fwmark_match(h)} 
+          getAll.select{|x| x.fwmark_match(h)}
         end
 =end
 
@@ -306,7 +306,7 @@ class OnBoard
           @fwmark   = h[:fwmark]
           @fwmask   = h[:fwmask]
           @iif      = h[:iif]
-          @rulespec = h[:rulespec] 
+          @rulespec = h[:rulespec]
 
           if @fwmark # object comes from the OS
             info      = find_info_from_fwmark
@@ -329,7 +329,7 @@ class OnBoard
         def ==(other)
           return true if (
               (
-                @from == other.from or 
+                @from == other.from or
                 (
                   Interface::IP.valid_address? @from and
                   Interface::IP.valid_address? other.from and
@@ -384,12 +384,12 @@ class OnBoard
                 :mask => $3.to_i
               }
 
-              if (@fwmark.to_i & detected[:mask]) == (detected[:mark] & detected[:mask]) 
-                retval[:dscp] = detected[:dscp] 
+              if (@fwmark.to_i & detected[:mask]) == (detected[:mark] & detected[:mask])
+                retval[:dscp] = detected[:dscp]
               end
             end
 
-            if line =~ 
+            if line =~
 /-m physdev .*--physdev-in (\S+) .*-j MARK .*--set-x?mark (0x\h+)\/(0x\h+)/
               detected = {
                 :iphysdev => $1,
@@ -397,8 +397,8 @@ class OnBoard
                 :mask     => $3.to_i
               }
 
-              if (@fwmark.to_i & detected[:mask]) == (detected[:mark] & detected[:mask]) 
-                retval[:iphysdev] = detected[:iphysdev] 
+              if (@fwmark.to_i & detected[:mask]) == (detected[:mark] & detected[:mask])
+                retval[:iphysdev] = detected[:iphysdev]
               end
             end
 

@@ -26,7 +26,7 @@ VOYAGE_SYNC_RECOVER="YES"
 VOYAGE_SYNC_RECOVER_DIRS="home/onboard/.onboard"
 
 # Similar to VOYAGE_SYNC_DIRS, a space-separated list of directories to allow
-# read-write, but do not support sync back  
+# read-write, but do not support sync back
 VOYAGE_RW_DIRS=""
 
 # set unionfs type for writable directory. Support tmp, unionfs and aufs.  i

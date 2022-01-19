@@ -3,7 +3,7 @@
 <p class="credits">Based on <a href="http://coova.org/CoovaChilli">CoovaChilli</a>.</p>
 
   <%=
-    erubis(
+    erb(
       :"/_messages.html",
       {
         :layout => false,
@@ -29,7 +29,7 @@
       :msg      => msg
     )
   %>
-  <% if chilli.managed? %>  
+  <% if chilli.managed? %>
     <div style="margin-top: 1em;">
       <button type="submit">Change!</button>
       <% if chilli.running? %>

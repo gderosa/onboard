@@ -16,7 +16,7 @@ module OpenSSL
       #
       def ==(other)
         self.hash == other.hash # other methods: to_a, to_s, to_der
-      end 
+      end
 
       def to_h
         h = {}
@@ -25,14 +25,14 @@ module OpenSSL
             elem[1].force_encoding 'utf-8'
           end # lacking info on a raw byte sequence, utf8 encoding is assumed
           h[elem[0]] = elem[1] # we loose elem[2] (numeric 'type')
-        end        
+        end
         return h
       end
     end
 
     class Certificate
 
-      def fingerprint(h={}) 
+      def fingerprint(h={})
         h_default = {
           :digest => :SHA1,
           :hex    => false
@@ -46,7 +46,7 @@ module OpenSSL
       end
 
       def ca?
-        to_h['is_ca'] 
+        to_h['is_ca']
       end
 
       def to_h

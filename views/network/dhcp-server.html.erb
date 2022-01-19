@@ -3,7 +3,7 @@
 <h2>DHCP Server</h2>
 
   <%=
-    erubis(
+    erb(
       :"/_messages.html",
       {
         :layout => false,
@@ -15,15 +15,15 @@
     )
   %>
 
-<% 
-  dhcp_ranges       = objects.data['conf']['dhcp']['ranges'] 
+<%
+  dhcp_ranges       = objects.data['conf']['dhcp']['ranges']
   dhcp_fixed_hosts  = objects.data['conf']['dhcp']['fixed-hosts']
-  dhcp_hosts        = dhcp_fixed_hosts 
-  dhcp_leases       = objects.data['leases'] 
+  dhcp_hosts        = dhcp_fixed_hosts
+  dhcp_leases       = objects.data['leases']
   # Arrays of Hash'es
 
   dnsmasq_leasetimes = %w{5m 15m 30m 45m 1h 2h 3h 4h 6h 8h 12h 18h 24h infinite}
-%> 
+%>
 
 <% fieldnames = %w{Delete? Start\ IP End\ IP Lease\ time} %>
 <% colspans   =   [1,      1,        1,      1]           %>
@@ -84,8 +84,8 @@
             <% end %>
           </select>
         </td>
-      </tr>     
-      
+      </tr>
+
     </tbody>
   </table>
   <button type="submit">Change</button>
@@ -149,8 +149,8 @@
             <% end %>
           </select>
         </td>
-      </tr>     
-      
+      </tr>
+
     </tbody>
   </table>
   <button type="submit">Change</button>
@@ -167,17 +167,17 @@
           </th>
         <% end %>
       </tr>
-    </thead>    
+    </thead>
     <tbody>
       <% style = "padding: 0.5em; " %>
       <% dhcp_leases.each do |lease| %>
         <%
-          if lease['expiry'].to_i > 0 
+          if lease['expiry'].to_i > 0
             begin
-              expiry = Time.at lease['expiry'].to_i 
+              expiry = Time.at lease['expiry'].to_i
             rescue RangeError
               expiry = 'Never'
-            end 
+            end
           else
             expiry = 'Never'
           end # A Time or String object, will be coerced to_s ...
@@ -190,6 +190,6 @@
         </tr>
       <% end %>
     </tbody>
-  </table>  
+  </table>
 
 </form>

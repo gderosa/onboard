@@ -1,6 +1,6 @@
-<% 
+<%
   # bridges.html.erb -- Modeled on interfaces.html.erb
- 
+
   require 'rack/utils'
   require "onboard/extensions/string"
   require "onboard/network/interface"
@@ -8,8 +8,8 @@
 
   <h2>Network bridges</h2>
 
-<%= 
-  erubis(
+<%=
+  erb(
     :"/_messages.html",
     {
       :layout => false,
@@ -21,23 +21,23 @@
   )
 %>
 
-  <% fieldnames = %w{Bridge Interfaces Active/State MTU MAC\ Address IP\ Addresses Method} %>
-  <% colspans = [1, 1, 2, 1, 1, 1, 1, 1] %>
-  <form method="post"> 
+  <% fieldnames = %w{Bridge Interfaces Active/State MTU MAC\ Address IP\ Addresses Method STP\ enabled?} %>
+  <% colspans = [1, 1, 2, 1, 1, 1, 1, 1, 1] %>
+  <form method="post">
     <input type="hidden" name="_method" value="put"/>
     <table>
      <thead>
       <tr>
         <% fieldnames.each_index do |i| %>
-          <th style="border:0; font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
+          <th style="font-weight: bold; font-size:80%; text-align: center;" colspan="<%= colspans[i] %>">
             <%= fieldnames[i] %>
           </th>
         <% end %>
       </tr>
      <tbody>
-      <% 
+      <%
         objects.each do |netif| # TODO: block argument sould be called 'bridge'
-      %> 
+      %>
         <tr>
           <td>
             <div>
@@ -58,10 +58,10 @@
           <td>
             <input type="checkbox" <%= 'checked' if netif.data['active'] %> name="netifs[<%= netif.name %>][active]"/>
           </td>
-          <td><div><%== netif.data['state'] %></div></td>
-          <td><div><%== netif.data['mtu']   %></div></td>
+          <td><div><%= netif.data['state'] %></div></td>
+          <td><div><%= netif.data['mtu']   %></div></td>
           <td>
-            <div><code><%== netif.data['mac'] %></code></div>
+            <div><code><%= netif.data['mac'] %></code></div>
           </td>
           <td>
             <% some_ip_printed = false %>
@@ -81,14 +81,14 @@
                   <input type="hidden" name="netifs[<%= netif.name %>][ip][<%= ip_n %>]" value="<%= ip.addr.to_s + '/' + ip.prefixlen.to_s %>"/>
                 <% end %>
               <% end %>
-            <% end %>  
+            <% end %>
             <% if netif.ipassign[:method] == :static and netif.active %>
               <div><input class="rwtext" type="text" name="netifs[<%= netif.name %>][ip][<%= netif.ip ? (netif.ip.length + 0) : 0 %>]" value="[add new]"/></div>
             <% end %>
             <% if netif.ipassign[:method] == :dhcp and netif.ipassign[:cmd] =~ /\S+/ and not some_ip_printed %>
               <small><code><%= netif.ipassign[:cmd] %></code> running...</small>
             <% end %>
-          </td>       
+          </td>
           <td>
             <select name="netifs[<%= netif.name %>][ipassign][method]">
               <option value="dhcp" <%= "selected" if netif.ipassign[:method] == :dhcp %>>DHCP</option>
@@ -97,7 +97,11 @@
             <% %w{pid cmd args}.each do |what| %>
               <input type="hidden" name="netifs[<%= netif.name %>][ipassign][<%= what %>]" value="<%= netif.ipassign[what.to_sym] %>"/>
             <% end %>
-          </td> 
+          </td>
+          <td style="text-align: center">
+            <input type="hidden"    name="brctl[stp][<%= netif.name %>]" value="off"/>
+            <input type="checkbox"  name="brctl[stp][<%= netif.name %>]" <%= 'checked' if netif.stp %>/>
+          </td>
         </tr>
       <% end %>
     </table>
@@ -105,7 +109,7 @@
     (<a href="<%= request.fullpath %>">Refresh</a>)
     <% showhide = 'IPv6 link-local addresses' %>
     <% if params['view'] == 'all' %>
-      (<a title="Hide <%= showhide %>" 
+      (<a title="Hide <%= showhide %>"
         href="<%= request.path_info %>">Compact view</a>)
     <% else %>
       (<a title="Show <%= showhide %>"

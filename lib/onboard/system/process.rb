@@ -6,10 +6,21 @@ class OnBoard
         def running?(pid)
           # http://stackoverflow.com/a/325097
           begin
-            return !!::Process.getpgid(pid) 
+            return !!::Process.getpgid(pid)
           rescue Errno::ESRCH
             return false
           end
+        end
+        #
+        # method_missing ?
+        #
+        # Do not break compat with code that believes they are calling Ruby core
+        # instead of OnBoard::System::Process .
+        def uid
+          ::Process.uid
+        end
+        def gid
+          ::Process.gid
         end
       end
 
@@ -39,7 +50,7 @@ class OnBoard
         opt_ary << :sudo if opt_h[:sudo]
         msg = System::Command.run "kill #{@pid}", *opt_ary
         if opt_h[:wait]
-          #while 
+          #while
           #    File.exists? "/proc/#{@pid}" or
           #    `pidof #{@cmdline[0]}`.split.include? @pid.to_s
           #    # be sure that pidof #{command_name} output is up-to-date
@@ -64,12 +75,12 @@ class OnBoard
         ary = `sudo cat /proc/#{@pid}/environ`.split("\0")
         ary.each do |name_val|
           name_val.strip!
-          if name_val =~ /^([^=]*)=([^=]*)$/ 
+          if name_val =~ /^([^=]*)=([^=]*)$/
             env[$1] = $2
           end
         end
         return env
       end
-    end  
+    end
   end
 end

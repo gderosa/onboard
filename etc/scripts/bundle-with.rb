@@ -1,20 +1,23 @@
 #!/usr/bin/env ruby
 
-# Since bundle --with doesn't exist, and --without is "remembered",
-# let's remove a group from the "without"-list, by just running
+# Bundler does not handle when a gem is (or would be) both in
+# BUNDLE_WITHOUT and BUNDLE_WITH,
+# therefore we better use only one of those options.
 #
-#     ruby bundle-with.rb group1 [group2] [...]
-
-# I can't find a better programmatic way to change Bundler config than
-# hacking into the YAML config file...
+# When we want to add a group of gems, we actually remove it
+# from BUNDLE_WITHOUT. This script implements the necessary "negative" logic.
+#
+# Example: bundle-with.rb openvpn easy-rsa
 
 require 'yaml'
 
 ROOT = File.join File.dirname(__FILE__), '../..'
 BUNDLECONFIG = File.join ROOT, '/.bundle/config'
 
+# TODO: use system('bundle config ...') instead?
 if File.exists? BUNDLECONFIG
   config = YAML.load File.read BUNDLECONFIG
+  config.delete 'BUNDLE_WITH'
   if config['BUNDLE_WITHOUT'].respond_to? :split
     withouts = config['BUNDLE_WITHOUT'].split(':')
     withouts = withouts - ARGV

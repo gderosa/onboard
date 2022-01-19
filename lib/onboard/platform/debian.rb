@@ -9,17 +9,17 @@ class OnBoard
 
       # Use a modified init script.
       #
-      # Currently, this is to get rid of --local-service, which 
-      # doesn't seem to play very well with virtualization and 
+      # Currently, this is to get rid of --local-service, which
+      # doesn't seem to play very well with virtualization and
       # TAP bridges.
       #
       DNSMASQ_INIT_SCRIPT =
-"#{::OnBoard::ROOTDIR}/etc/scripts/platform/debian/init.d/dnsmasq"
+          "#{::OnBoard::ROOTDIR}/etc/scripts/platform/debian/init.d/dnsmasq"
 
       def self.restart_dnsmasq(confdir)
         msg = OnBoard::System::Command.run(
             "#{DNSMASQ_INIT_SCRIPT} stop", :sudo, :try)
-        if not msg[:ok] 
+        if not msg[:ok]
           msg = OnBoard::System::Command.run(
               'killall dnsmasq', :sudo, :try)
         elsif not msg[:ok]
@@ -28,19 +28,19 @@ class OnBoard
         end
         # 'new' subdirectory is always the current config dir
         # do not copy new/*.conf to parent directory if you don't want
-        # persistence        
+        # persistence
         msg = OnBoard::System::Command.run(
-            'DNSMASQ_OPTS="--conf-dir=' << 
+            'DNSMASQ_OPTS="--conf-dir=' <<
             confdir << '" ' <<
-            "#{DNSMASQ_INIT_SCRIPT} start", 
+            "#{DNSMASQ_INIT_SCRIPT} start",
             :sudo, :try
         )
         if not msg[:ok]
           msg = OnBoard::System::Command.run(
-              "dnsmasq --conf-dir=#{confdir}", 
+              "dnsmasq --conf-dir=#{confdir}",
               :sudo
           )
-        end   
+        end
       end
     end
   end

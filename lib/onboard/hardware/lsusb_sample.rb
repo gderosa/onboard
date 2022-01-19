@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.join File.dirname(__FILE__), '../..'
 
 require 'pp'
 
-require 'onboard/hardware/lsusb' 
+require 'onboard/hardware/lsusb'
 
 include OnBoard::Hardware
 

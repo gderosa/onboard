@@ -10,7 +10,7 @@ class OnBoard
       module Accounting
 
         class << self
-        
+
           def get(params)
             conf      = RADIUS.read_conf
             table     = conf['accounting']['table'].to_sym
@@ -33,4 +33,4 @@ class OnBoard
       end
     end
   end
-end 
+end

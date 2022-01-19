@@ -1,5 +1,9 @@
-CREATE DATABASE `radius` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS `radius` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+CREATE USER IF NOT EXISTS 'radius'@'localhost';
 
 GRANT ALL PRIVILEGES ON `radius`.* TO 'radius'@'localhost';
 
-SET PASSWORD FOR 'radius'@'localhost' = PASSWORD( 'radius' ); -- Change to the actual password.
+SET PASSWORD FOR 'radius'@'localhost' = PASSWORD( 'radius' );
+
+FLUSH PRIVILEGES;

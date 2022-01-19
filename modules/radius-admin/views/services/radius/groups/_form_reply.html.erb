@@ -8,11 +8,11 @@
   <table class="raduserform">
     <tbody>
       <tr>
-        <th scope="row">Reply-Message</th> 
+        <th scope="row">Reply-Message</th>
         <td>
-          <input 
-              type="text" 
-              name="reply[Reply-Message]" 
+          <input
+              type="text"
+              name="reply[Reply-Message]"
               value="<%= group.attribute :reply, 'Reply-Message' if group %>"/>
         </td>
       </tr>
@@ -20,10 +20,10 @@
         <th scope="row">
           Session-Timeout
           <div class="optinfo">Max connection time (seconds)</div>
-        </th> 
+        </th>
         <td>
-          <input 
-              type="text" 
+          <input
+              type="text"
               name="reply[Session-Timeout]"
               value="<%= group.attribute :reply, 'Session-Timeout' if group %>"/>
         </td>
@@ -32,10 +32,10 @@
         <th scope="row">
           Idle-Timeout
           <div class="optinfo">Max inactivity time (seconds)</div>
-        </th> 
+        </th>
         <td>
-          <input 
-              type="text" 
+          <input
+              type="text"
               name="reply[Idle-Timeout]"
               value="<%= group.attribute :reply, 'Idle-Timeout' if group %>"/>
         </td>
@@ -46,10 +46,10 @@
           <div class="optinfo">Max Downstream bandwidth (bits/sec)</div>
         </th>
         <td>
-          <input 
-              type="text" 
+          <input
+              type="text"
               name="reply[WISPr-Bandwidth-Max-Down]"
-              value="<%= group.attribute :reply, 'WISPr-Bandwidth-Max-Down' if 
+              value="<%= group.attribute :reply, 'WISPr-Bandwidth-Max-Down' if
                   group %>"/>
         </td>
       </tr>
@@ -59,8 +59,8 @@
           <div class="optinfo">Max Upstream bandwidth (bits/sec)</div>
         </th>
         <td>
-          <input 
-              type="text" 
+          <input
+              type="text"
               name="reply[WISPr-Bandwidth-Max-Up]"
               value="<%= group.attribute :reply, 'WISPr-Bandwidth-Max-Up' if
                   group %>"/>

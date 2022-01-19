@@ -4,7 +4,7 @@ class OnBoard
     module QEMU
       module VGA
         # Taken from QEMU man page
-        OPTIONS = %w{cirrus std vmware qxl none} 
+        OPTIONS = %w{cirrus std vmware qxl tcx cg3 virtio none}
       end
     end
   end

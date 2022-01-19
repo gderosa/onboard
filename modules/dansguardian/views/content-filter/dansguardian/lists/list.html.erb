@@ -1,8 +1,8 @@
 <%
-  require 'onboard/extensions/string' 
+  require 'onboard/extensions/string'
   require 'onboard/extensions/file'
 
-  list                  = objects 
+  list                  = objects
   valid_file_encodings  = File.valid_encodings(list.absolute_path)
 %>
 
@@ -10,13 +10,13 @@
 
 <form method="GET">
   <select name="file_encoding">
-    <option value="">(none / ASCII + hex codes)</option> 
+    <option value="">(none / ASCII + hex codes)</option>
     <% Encoding.list.each do |enc| %>
       <% next if enc == Encoding::BINARY %> <%# already provided by "" (none) %>
-      <option 
-        value="<%= enc %>" 
-        <%= 'selected' if 
-            params['file_encoding'] and 
+      <option
+        value="<%= enc %>"
+        <%= 'selected' if
+            params['file_encoding'] and
             params['file_encoding'].upcase == enc.name.upcase %>
         <%= 'disabled' unless valid_file_encodings.include? enc %>
       >
@@ -30,19 +30,19 @@
 <form method="POST">
   <input type="hidden" name="_method" value="put"/>
 
-  <h3>List category (shown in DansGuardian message pages)</h3> 
-  <input size="50" type="text" name="listcategory" value="<%= 
+  <h3>List category (shown in DansGuardian message pages)</h3>
+  <input size="50" type="text" name="listcategory" value="<%=
     begin
-      list.listcategory.encode(current_encoding) 
+      list.listcategory.encode(current_encoding)
     rescue
       list.listcategory ? list.listcategory.to_asciihex : ''
     end
   %>"/>
 
   <h3>List items (use DansGuardian syntax)</h3>
-  <textarea name="items" cols="80" rows="12"><%= 
+  <textarea name="items" cols="80" rows="12"><%=
     begin
-      list.items.join("\n").encode(current_encoding)  
+      list.items.join("\n").encode(current_encoding)
     rescue
       list.items.map{|item| item.to_asciihex}.join("\n")
     end
@@ -56,7 +56,7 @@
     <thead>
       <tr>
         <th>List</th>
-        <th>Include?</th> 
+        <th>Include?</th>
       </tr>
     </thead>
     <tbody>

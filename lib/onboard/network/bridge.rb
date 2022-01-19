@@ -1,3 +1,5 @@
+require 'json'
+
 require 'onboard/system/command'
 require 'onboard/network/interface'
 
@@ -8,7 +10,11 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     include OnBoard::System
 
     def get_all
-      OnBoard::Network::Interface.get_all.select{|x| x.type == 'bridge'}
+      all = OnBoard::Network::Interface.get_all.select{|x| x.type == 'bridge'}
+      all.each do |br|
+        br.stp = br.stp?
+      end
+      return all
     end
 
     def brctl(h)
@@ -21,23 +27,23 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
       end
       ['addif', 'delif'].each do |command|
         h[command].each_pair do |bridgename, ifh|
-          ifh.each_pair do |ifname, value| 
-            Command.run "brctl #{command} #{bridgename} #{ifname}", :sudo if 
+          ifh.each_pair do |ifname, value|
+            Command.run "brctl #{command} #{bridgename} #{ifname}", :sudo if
                 value and not [0, "0", "no", "false", "off"].include? value
           end
         end if h.respond_to? :[] and h[command].respond_to? :each_pair
-      end  
+      end
       if h.respond_to? :[] and h['addbr']
-        substitution = h['addbr'].sub! /\s.*$/, '' 
-            # truncate anything after a space (if any), to avoid command 
+        substitution = h['addbr'].sub! /\s.*$/, ''
+            # truncate anything after a space (if any), to avoid command
             # injection
-        if substitution 
+        if substitution
           msg[:warn] = 'Bridge name has been truncated'
         end
         unless h['addbr'] =~ /\S/
           return {:ok => false, :err => 'No valid bridge name!'}
         end
-        msg.merge! Command.run "brctl addbr #{h['addbr']}", :sudo 
+        msg.merge! Command.run "brctl addbr #{h['addbr']}", :sudo
         if msg[:ok]
           msg.merge! Command.run "ip link set #{h['addbr']} up", :sudo
         end
@@ -49,9 +55,22 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
         Command.run "ip link set #{h['delbr']} down", :sudo
         Command.run "brctl delbr #{h['delbr']}", :sudo
       end
+      if h.respond_to? :[] and h['stp']
+        h['stp'].each_pair do |brname, onoff|
+          brname = brname.strip
+          if [0, false, 'no'].include? onoff
+            onoff = 'on'
+          elsif [1, true, 'yes'].include? onoff
+            onoff = 'on'
+          end
+          Command.run "brctl stp #{brname} #{onoff}", :sudo
+        end
+      end
     end
 
   end
+
+  attr_accessor :stp
 
   def initialize(parentClassObjTemplate)
     parentClassObjTemplate.instance_variables.each do |ivar|
@@ -69,7 +88,7 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
   # *current* mmebers
   def members
     if Dir.exists? @bridgeifdir
-      @members = 
+      @members =
           Dir.entries(@bridgeifdir).reject{|x| x =~ /^\./} # remove '.' and '..'
     else
       @members = []
@@ -92,6 +111,19 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     return ary
   end
 
+  # Override the @vlan_info accessor, adding VLAN IDs of the bridged interfaces
+  def vlan_info
+    vlan_info_new = @vlan_info.clone
+    member_netifs.each do |member_netif|
+      if member_netif.vlan_info
+        vlan_info_new[:ids] += member_netif.vlan_info[:ids]
+      end
+    end
+    vlan_info_new[:ids].uniq!
+    vlan_info_new[:ids].sort!
+    return vlan_info_new
+  end
+
   def ip_addr_del(ipobj)
     if has_ip? ipobj
       return super(ipobj)
@@ -104,6 +136,10 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
     end
   end
 
+  def stp?
+    JSON.parse(`ip -j -d link show dev #{@name}`).first['linkinfo']['info_data']['stp_state'] > 0
+  end
+
   def data
     super.update('members' => @members)
   end
@@ -112,7 +148,7 @@ class OnBoard::Network::Bridge < OnBoard::Network::Interface
   private
 
   def member_netifs
-    OnBoard::Network::Interface.all_layer2.select do |netif| 
+    OnBoard::Network::Interface.all_layer2.select do |netif|
       netif.bridged_to == @name
     end
   end

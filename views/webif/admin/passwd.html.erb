@@ -8,8 +8,8 @@
 
 <h2>Users and Passwords</h2>
 <h3>Administrator’s password</h3>
-<%= 
-  erubis(
+<%=
+  erb(
     :"/_messages.html",
     {
       :layout => false,
@@ -22,7 +22,7 @@
 %>
 <% if request.env['REQUEST_METHOD'] == 'GET' %>
   <div class="warn">
-    After a successful password change, you will be authenticated again for the 
+    After a successful password change, you will be authenticated again for the
     new credentials.
   </div>
 <% end %>
@@ -48,7 +48,7 @@
       <th scope="row">New password (confirm)</th>
     </tr>
   </table>
-  <input type="checkbox" name="system" checked/> Also change Unix login passwords 
+  <input type="checkbox" name="system" checked/> Also change Unix login passwords
   <% if root_passwd.locked? %>
     (<code><%= current_user.name %></code>  user).
   <% else %>

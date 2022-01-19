@@ -4,7 +4,7 @@ class OnBoard
       class Passwd
         class Recovery
 
-          autoload :Config, 'onboard/service/radius/passwd/recovery/config' 
+          autoload :Config, 'onboard/service/radius/passwd/recovery/config'
 
           include Configurable
 

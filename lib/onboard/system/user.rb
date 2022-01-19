@@ -5,13 +5,13 @@ class OnBoard
     class User
 
       autoload :Passwd, 'onboard/system/user/passwd'
-      
+
       class << self
         def current
-          new(Etc.getpwuid(::Process.uid)) 
+          new(Etc.getpwuid(::Process.uid))
         end
         def root
-          new('root') 
+          new('root')
         end
       end
 
